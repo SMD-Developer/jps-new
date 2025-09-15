@@ -1,0 +1,11 @@
+core/storage/*.key
+core/vendor
+core/.env
+core/.env.backup
+core/.phpunit.result.cache
+assets/attachments
+assets/images
+.idea
+core/storage/logs/laravel.log
+core/error_log
+error_log

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Classic Invoicer Documentation</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+</head>
+<body data-offset="50" data-target="#sidebar" data-spy="scroll">
+<div class="row-offcanvas row-offcanvas-left">
+    <div>
+    <div id="sidebar" class="sidebar-offcanvas">
+        <div class="logo"><img src="img/logo.png" alt=""/></div>
+        <div class="col-md-12">
+            <div id="sidebar-menu">
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#introduction">Introduction</a></li>
+                    <li><a href="#requirements">Requirements</a></li>
+                    <li><a href="#pre_installation">Pre-Installation Steps</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#post_installation">Post Installation Steps</a></li>
+                    <li><a href="#user_guide">User Guide</a></li>
+                    <li><a href="#client_area">Client Area</a></li>
+                    <li><a href="#acknowledgement">Acknowledgement</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="main">
+        <p class="visible-xs">
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="offcanvas"><i class="glyphicon glyphicon-align-justify"></i></button>
+        </p>
+        <div class="col-md-12" id="introduction">
+            <h3 style="text-decoration: underline">Classic Invoicer Documentation</h3>
+            <p style="font-weight: bold">Created by : Elant Systems<br>Email : <span style="color:#2196f3;text-decoration: underline;">support@elantsys.com</span></p>
+            <h4>Introduction</h4>
+            <div class="row">
+                <div class="col-md-12"><p>Classic Invoicer is a web-based invoicing application implemented using Laravel 5 framework. It uses JQuery and MYSQL database. . It uses JQuery and MYSQL database. Classic Invoicer system will give you the opportunity to create custom invoices and send them to your clients directly, it will also help you in managing and tracking your income and expenses by the detailed reports it produces.</p></div>
+            </div>
+        </div>
+        <div class="col-md-12" id="requirements">
+            <h4>Requirements</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    The application can be installed on any PHP enabled web server that can connect to a MySQL database. This includes shared servers, dedicated servers, and local installations running on Linux, UNIX, BSD, Mac OS X, and Microsoft Windows operating systems. The requirements to have the application up and running are: -
+                    <ul>
+                        <li>Web Server</li>
+                        <li>PHP</li>
+                        <li>MySQL Database Server</li>
+                    </ul>
+                 </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="pre_installation">
+            <h4>Pre-Installation Steps</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>This is a web based solution that needs its relevant files to exist on the web server. The files can be copied to the web server by extracting the download package on your computer and uploading its contents to the web server via FTP, or by copying the download package to the web server directly and extracting its contents there.</p>
+                    <p>The contents of the download package need to be copied to the public HTML directory in the web server it is serving from.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Examples of public HTML directories are:</p>
+                    <ul>
+                        <li>/home/invoice/public_html/</li>
+                        <li>/srv/www/htdocs/</li>
+                        <li>/usr/local/htdocs/</li>
+                        <li>/var/www/vhosts/invoice.com/httpdocs/</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="installation">
+            <h4>Installation</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>a. Minimum System Requirements</h5>
+                    The installation process is quick and straight forward, after uploading the files to your web server, open your browser and navigate to the install url by typing
+                    <p><b>http://[yourdomain]/[youappfolder]/install</b></p>
+                    <p>After entering the above url the install screen should appear as shown below</p>
+                    <p><img src="img/requirements.jpg" alt="requirements" class="img-responsive"/></p>
+                </div>
+                <div class="col-md-12">
+                    <p>The installer will begin by checking the whether the minimum system requirements have been met, after every test passes successfully, it’s time to begin the installation process. Click on the <b>“Let’s Begin”</b>  button to start the installation.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>b. Database Settings</h5>
+                    <p>Fill in your database details i.e. the hostname, database user, database password and the database name in the next page that look like this</p>
+                    <p><img src="img/database.jpg" alt="database" class="img-responsive"/></p>
+                </div>
+                <div class="col-md-12">
+                    <p>Fill in the database details as click on the submit button, in this stage the application will attempt to create the database if it doesn’t already exist, it will also, create the required tables.</p>
+                    <p><b>NB. In most servers you will have to create the database manually and assign a user to it and then continue with the installation process.</b></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>c. Create user account</h5>
+                    <p>This stage may take some time to complete depending on your system, after the process has completed successfully you will be redirected to the last step where you create a user account that you will use to login.</p>
+                    <p><img src="img/install_user.jpg" alt="user" class="img-responsive"/></p>
+                </div>
+                <div class="col-md-12">
+                    <p>Fill in your user account details in the form that appears, this will create a user account in the database, this is the account you will use to login to the system for the fiirst time. After entering all the details correctly, click on the submit button, if you entered everything correctly you should be redirected to the login page.</p>
+                    <p><img src="img/login.jpg" alt="user" class="img-responsive"/></p>
+                    <p>Hurray, that’s all!!!! You are now ready to starting creating your client list and invoicing them as well as recording your expenses Hope you enjoy using the application.</p>
+                    <p>Feel free to customize the script in whichever way that suits your requirements.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="post_installation">
+            <h4>Post Installation</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>The first step after the installation is to setup the system settings so that you can add details for your business. This can be done under the settings menu. The settings section has the following sub sections</p>
+                    <ul>
+                        <li><b>Company</b></li>
+                        <p>In this section you set the details of your company like the name, address, email, contact, logo etc. </p>
+                        <li><b>Invoice</b></li>
+                        <p>Here you will be able to set the details for the invoices you will be generating, things like the logo, start number, invoice terms and invoice due days</p>
+                        <p><img src="img/invoice_settings.jpg" class="img-responsive"/></p>
+                        <li><b>Email</b></li>
+                        <p>Here you will be able to set the mail server details by setting the mail protocol, the smtp hostname, the smtp username, smtp password and the port number. These details will be used when sending invoices and estimates to your clients.</p>
+                        <p><b>For invoices and estimates to be sent via email, the details must be provided.</b></p>
+                        <li><b>Tax</b></li>
+                        <p>Create your tax rates here and set which one is the default one.</p>
+                        <p><img src="img/settings_tax.jpg" class="img-responsive"/></p>
+                        <li><b>Templates</b></li>
+                        <p>In this section you will be able to set email templates that are to be used when you send invoices and estimates to your clients.</p>
+                        <p><img src="img/settings_templates.jpg" class="img-responsive"/></p>
+                        <li><b>Numbering</b></li>
+                        <p>Here you set the Numbering prefix for the customer numbers, invoice numbers and estimate numbers.</p>
+                        <p><img src="img/settings_numbering.jpg" class="img-responsive"/></p>
+                        <li><b>Payment Methods</b></li>
+                        <p>In this section you will be able to create/edit/delete payment methods, you can also set the default method.</p>
+                        <p><img src="img/settings_payment_methods.jpg" class="img-responsive"/></p>
+                        <li><b>Currency</b></li>
+                        <p>Here is where you manage the different currencies that will be used in your application. You can also set which currency will be the default one.</p>
+                        <p><img src="img/settings_currency.jpg" class="img-responsive"/></p>
+                        <li><b>Roles</b></li>
+                        <p>In this section you can create as many roles as possible who will have different access levels that you will assign permissions in the permissions module.</p>
+                        <p><img src="img/roles.jpg" class="img-responsive"/></p>
+                        <li><b>Permissions</b></li>
+                        <p>This is where you set the permissions for different user roles in the system.</p>
+                        <p><img src="img/roles_permissions.jpg" class="img-responsive"/></p>
+                        <li><b>Language Manager</b></li>
+                        <p>In the language manager section, you will be able to translate the application into various languages. </p>
+                        <p><img src="img/language_manager.jpg" class="img-responsive"/></p>
+                        <p>The module has been made as simple as possible so that you are able to translate using the web interface. You start by adding a new language by clicking on the “create locale” button on the top right hand corner.</p>
+                        <p>A new window will come up where you enter the language name, the short name, status and language flag.</p>
+                        <p><img src="img/add_locale.jpg" class="img-responsive"/></p>
+                        <p>To view the translations, click on the “view” button, By default the application comes with translation keys already added in the script.</p>
+                        <p><img src="img/view_translations.jpg" class="img-responsive"/></p>
+                        <p>Here you can append new translations or replace existing translation.</p>
+                        <p>
+                            <ul>
+                                <li><b>"Append new translations"</b> is used when you have added a new translation in the views and have not added them to the database, for you to be able translation them you need to add them to the database by selecting append new translations and then click on find translations in files. This action will scan all the files and look for any new translation keys that you may have added in the files.</li>
+                                <li><b>"Replace existing translations"</b> is used when you want to replace all the translation keys in the db with new ones from the files. The action will scan through all the files and get all the translation keys, then it will replace all the keys in the db with the ones from the files.</li>
+                                <li><b>"Import groups"</b> is used to import the translations groups from the files and save them into the database.</li>
+                            </ul>
+                        </p>
+                        <p>You can also add keys in the database using this web interface, you just need to select the group that you want to add the keys for from the dropdown field and then enter the keys in the textarea each key per line without the group prefix.</p>
+                        <p><img src="img/add_keys.jpg" class="img-responsive"/></p>
+                        <p>After you are done listing the keys click on add keys button at the bottom and it will save the keys to the database, you can now use the keys in the files.</p>
+                        <p>To edit a key, just click on the key you want to edit and a popover will appear above the key</p>
+                        <p><img src="img/edit_key.jpg" class="img-responsive"/></p>
+                        <p>Click on the blue button with a tick on the right to save the key.</p>
+                        <p>After you are done editing all keys you wanted to edit, click on the “Publish translations” Button at the far button in order to save you changes to the database and also append then in the language files.</p>
+                        <p><img src="img/publish.jpg" class="img-responsive"/></p>
+                    </ul>
+                </div>
+                <div class="col-sm-12">
+                    <p><strong>PLEASE NOTE: </strong></p>
+                    <p>For recurring invoices to be sent automatically, you need to add the following Cron entry to your server </p>
+                    <p><strong>* * * * * cd /{path-to-your-project} && php artisan schedule:run >> /dev/null 2>&1</strong></p>
+                    <p>Remember to replace <strong>{path-to-your-project}</strong> with the correct path to the classic invoicer core folder. </p>
+                    <p>For Example</p>
+                    <p><strong>* * * * * cd /home/username/public_html/core && php artisan schedule:run >> /dev/null 2>&1</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="user_guide">
+            <h3>User Guide</h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>1. Dashboard</h4>
+                    <p>The Dashboard is the main screen that appears immediately after logging in. The dashboard mainly contains the links to the different functions that the system user will be performing which include:-</p>
+                    <div>
+                        <ul>
+                            <li>Managing Clients</li>
+                            <li>Creating/editing/deleting invoices</li>
+                            <li>Creating/editing/deleting Estimates</li>
+                            <li>Creating/editing/deleting payments</li>
+                            <li>Creating/editing/deleting expenses</li>
+                            <li>Managing products</li>
+                            <li>Generating reports</li>
+                            <li>Generating new system users</li>
+                            <li>Editing system settings</li>
+                            <li>Managing tax rates</li>
+                            <li>Managing payment methods</li>
+                        </ul>
+                        <p><img src="img/dashboard.jpg" class="img-responsive"/></p>
+                        <h4>2. Clients</h4>
+                        <p>The clients menu allows one to create, edit and delete system clients, when you click on the clients menu, the following window will appear.</p>
+                        <p><img src="img/clients.jpg" class="img-responsive"/></p>
+                        <p>To create a new client, click on the “New Client” blue button on the right side of the client list window. A modal window will appear where you can enter the details of the client</p>
+                        <p><img src="img/new_client.jpg" class="img-responsive"/></p>
+                        <p><b>NB. You can set the client number prefix from the settings menu under numbering section.</b></p>
+                        <p><img src="img/number_prefix.jpg" class="img-responsive"/></p>
+                        <h4>3. Invoices</h4>
+                        <p>In this section, you will be able to set up your invoices, edit, add payments to the invoices and even send them to your clients.</p>
+                        <p><img src="img/invoices.jpg" class="img-responsive"/></p>
+                        <p><b>NB. You can set the client number prefix from the settings menu under numbering section.</b></p>
+                        <h4>4. Estimates</h4>
+                        <p>In this section you will be able to create Estimates for your clients; you can also edit existing estimates from here.</p>
+                        <p><img src="img/estimates.jpg" class="img-responsive"/></p>
+                        <p><b>NB. You can set the client number prefix from the settings menu under numbering section.</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="client_area">
+            <h4>Client Area</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>The client area allows customers to view their estimates and invoices, the customers are also able to view reports of how they have spent their money and how much they owe you.</p>
+                    <p>To access the client area panel visit <span style="color:#008cba"><b>http://[your_domain]/clientarea</b></span></p>
+                    <p><img src="img/clientarea.jpg" class="img-responsive"/></p>
+                    <p>Customers can also make payments to the outstanding invoices.</p>
+                    <p><img src="img/client_pay.jpg" class="img-responsive"/></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="acknowledgement">
+            <h4>Acknowledgement</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>I really hope this documentation is detailed enough to get you started on using the system, for any issues that are not covered in this documentation, please contact me via my email. You can also hire me to customize the system for you at a reasonable fee.</p>
+                    <p>Once again, thank you so much for purchasing this script. As I said at the beginning, I'd be glad to help you if you have any questions relating to this script. No guarantees, but I'll do my best to assist. I will also be updating the script every now and then so watch this space ;)</p>
+                    <p>I kindly request you to rate the script on codecanyon.net and I will greatly appreciate.</p>
+                    <p><b>NB.</b> All the images are used for <b>DEMO</b> purposes only. I am not responsible for copyrights issues.</p>
+                    <p>Thank you for purchasing my application, if you have any questions that are beyond the scope of this documentation, please feel free to email me via the email provided above.</p>
+                    <p>Enjoy and best of luck!</p>
+                    <p><i>Elantsys.</i></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!--/row-offcanvas -->
+</div>
+<script src="js/jquery-2.1.3.min.js"></script>
+<script src="js/documentation.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>

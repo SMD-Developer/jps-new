@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permohonan Diterima Untuk Semakan</title>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif !important;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 150px;
+        }
+
+        .title {
+            text-align: left;
+            color: #ff6600;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+        }
+
+        .content {
+            padding: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .footer {
+            text-align: left;
+            padding: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .footer-container {
+            font-size: 13px;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .footer-container a {
+            color: #00aced;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td class="header">
+                <img src="{{ asset('assets/images/selangor.png') }}" alt="Company Logo" class="logo" width="30%">
+            </td>
+        </tr>
+        <tr>
+            <td class="title">
+                Permohonan Diterima Untuk Semakan
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <p>Dear Client,</p>
+                <p><strong>Good news! Your payment has been approved!</strong></p>
+                <p><strong>Application ID: {{ $application->id }}</strong></p>
+                <p><strong>Receipt Number: {{ $application->reciept_number }}</strong></p>
+                <p><strong>Transaction Reference: {{ $application->transaction }}</strong></p>
+                <p><strong>Payment Status: <span style="color: #00AA00;">{{ $application->payment_status }}</span></strong></p>
+                
+                <p>Your application is now proceeding to the next stage. You can check the status of your application at any time by logging into your account.</p>
+                
+                <p style="margin-top: 20px;">
+                    <a href="{{ url('/client/applications/' . $application->id) }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">View Application</a>
+                </p>
+                
+                <p style="margin-top: 20px;">Thank you for your patience.</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="footer">
+                Salam Hormat,<br>
+                <strong>JPS</strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="footer-container">
+                <h3>JOM BERHUBUNG                </h3>
+                <p>Jika anda mempunyai sebarang soalan, lawati tapak sokongan kami di <a href="https://www.jps.com">https://www.jps.com</a>,<br>
+                    hubungi kami di <a href="mailto:support@jps.com">support@jps.com</a>
+                </p>
+                <p>E-mel ini adalah sulit. Ia juga mungkin mendapat keistimewaan dari segi undang-undang. Jika anda bukan penerima, anda tidak boleh menyalin, memajukan, mendedahkan atau menggunakan mana-mana bahagian daripadanya. Jika anda tersilap menerima mesej ini, sila padamkannya dan maklumkan kepada penghantar dengan segera melalui e-mel balasan. Komunikasi Internet tidak boleh dijamin tepat pada masanya, selamat, bebas ralat atau bebas virus. Pengirim tidak menerima liabiliti untuk sebarang kesilapan atau ketinggalan.
+                </p>
+                <p>"JIMAT KERTAS - FIKIRKAN SEBELUM ANDA CETAK"</p>
+                <p>© Hak Cipta 2025. Hak Cipta Terpelihara</p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
