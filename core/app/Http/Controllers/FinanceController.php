@@ -659,10 +659,14 @@ class financeController extends Controller {
         $query = DB::table('applications')
             ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
             ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
+            ->join('payments', 'payments.application_id', '=', 'applications.id')
+            ->where('payments.payment_status', 'completed')
             ->select(
                 'applications.*',
                 'client_register.userName as client_name', 
-                'account_types.name as account_type_name'
+                'account_types.name as account_type_name',
+                'payments.payment_status',
+                'payments.created_at as payment_created_at'
             );
     
         if ($accountTypeId && $accountTypeId != '') {
@@ -752,11 +756,15 @@ class financeController extends Controller {
             ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
             ->join('district', 'applications.district', '=', 'district.iddaerah')
             ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
+            ->join('payments', 'payments.application_id', '=', 'applications.id')
+            ->where('payments.payment_status', 'completed')
             ->select(
                 'applications.*',
                 'client_register.userName as client_name',
                 'district.daerah as district_name',
-                'account_types.name as account_type_name'
+                'account_types.name as account_type_name',
+                'payments.payment_status',
+                'payments.created_at as payment_created_at'
             );
         
         if ($districtId && $districtId != '') {
@@ -904,6 +912,7 @@ class financeController extends Controller {
             )
             ->where('payment_date', '>=', $startDate)
             ->where('payment_date', '<=', $endDate)
+            ->where('payment_status', 'completed') 
             ->groupBy(DB::raw('DATE(payment_date)'))
             ->orderBy('payment_date', 'desc')
             ->get();
@@ -914,6 +923,7 @@ class financeController extends Controller {
         $detailedPayments = DB::table('payments')
             ->where('payment_date', '>=', $startDate)
             ->where('payment_date', '<=', $endDate)
+            ->where('payment_status', 'completed')
             ->get();
 
         $paymentsByStatus = $detailedPayments->groupBy('payment_status');
