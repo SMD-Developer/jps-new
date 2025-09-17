@@ -664,7 +664,7 @@ i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middl
                 </a>
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
-                <h2 class="">PORTAL e-CC (CARUMAN PARIT)</h2>
+                <h2 class="">PORTAL e-CP (CARUMAN PARIT)</h2>
                 <h3>JPS NEGERI SELANGOR</h3>
             </div>
         </div>
