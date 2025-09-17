@@ -309,7 +309,7 @@ input.btn.btn-primary.login-button.btn-sm.form-control.disabled {
     font-size: inherit;
 }
 body {
-    background-image: url("https://jpsonline.smddeveloper.com/assets/images/JPS logo.jpg");
+    background-image: url("https://jpsmy.smddeveloper.com/assets/images/JPS logo.jpg");
     background-size: cover; /* Ensures the image covers the entire screen */
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
