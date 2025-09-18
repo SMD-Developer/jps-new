@@ -322,10 +322,11 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <p class="mb-0">Tetuan {{ $application->applicant }}</p>
-                    <p class="mb-0">{{ $application->address }}</p>
-                    <p class="mb-0">{{ $application->city }}, {{ $application->postal_code }}</p>
-                    <p class="mb-0">{{ $application->daerah ?? 'N/A' }},{{ $application->negeri ?? 'N/A' }} </p>
+                    <p class="mb-0">Tetuan {{ ucfirst(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->address)) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->daerah ?? 'N/A')) }}, {{ ucwords(strtolower($application->negeri ?? 'N/A')) }}</p>
+
                     <br>
                     <p class="">Tuan,</p>
                     <h6 class="mb-0 text-justify"><b>PENGESAHAN BAYARAN CARUMAN PARIT DI ATAS

@@ -403,7 +403,7 @@
                                             </td>
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},
-                                                {{ $item->landDivision->mukim ?? '' }},
+                                                {{ $item->landDivision->mukim ?? '' }}, Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                                 </td>
                                             <td>
