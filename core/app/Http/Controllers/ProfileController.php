@@ -53,6 +53,7 @@ class ProfileController extends CrudController {
             $input['password']= Hash::make($request->password);
         }
     }
+    
     public function afterStore($request, &$entity): void
     {
         if ($request->hasFile('photo')){
@@ -74,6 +75,7 @@ class ProfileController extends CrudController {
         if ($loggedUser){
             $user = $this->repository->getById($loggedUser->uuid);
             $data =  [
+               'photo' => 'nullable|file|max:2048',
               'username'=>$request->username,
               'name'=>$request->name,
               'email'=>$request->email,
