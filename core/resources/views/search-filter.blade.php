@@ -215,11 +215,13 @@
                             <thead class="table-header">
                                 <tr>
                                     <th>Bil</th>
+                                    <th>Nama Pemohon</th>
+                                    <th>{{ __('app.land_lot') }}</th>
+                                    <th>Daerah</th>
+                                    <th>Mukim</th>
                                     <th>{{ __('app.date') }}</th>
                                     <th>{{ __('app.reference_number') }}</th>
-                                    <th>{{ __('app.land_lot') }}</th>
-                                    <th>{{ __('app.division') }}</th>
-                                    <th>{{ __('app.applicant_list') }}</th>
+                                    <th>status</th>
                                     {{-- <th>{{ __('app.actions') }}</th> --}}
                                 </tr>
                             </thead>
@@ -228,11 +230,13 @@
                                     @foreach ($results as $key => $result)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
+                                            <td>{{ $result->applicant ?? 'N/A' }}</td>
+                                            <td>{{ $result->land_lot ?? 'N/A' }}</td>
+                                            <td>{{ $result->district->daerah ?? 'N/A' }}</td>
+                                            <td>{{ $result->division->mukim ?? 'N/A' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
                                             <td>{{ $result->refference_no ?? 'N/A' }}</td>
-                                            <td>{{ $result->land_lot ?? 'N/A' }}</td>
-                                            <td>{{ $result->division->mukim ?? ($result->land_state ?? 'N/A') }}</td>
-                                            <td>{{ $result->applicant ?? 'N/A' }}</td>
+                                            <td>{{ $result->status ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 @else
