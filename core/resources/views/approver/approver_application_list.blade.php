@@ -224,8 +224,9 @@
                                             </td>
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},
-                                                {{ $item->landDistrict->daerah ?? '' }},
-                                                {{ $item->landDivision->mukim ?? '' }}</td>
+                                                {{ $item->landDivision->mukim ?? '' }}, Daerah
+                                                {{ $item->landDistrict->daerah ?? '' }}
+                                                </td>
                                             <!--<td>-->
                                             <!--    <div class="sbtn">-->
                                             <!--        @if($canApproverViewApplicationDetails)-->
