@@ -2120,12 +2120,8 @@ class HomeController extends Controller {
             }
             
             // Eager load both relationships
-            $results = $query->with(['applicant', 'division'])->get();
+            $results = $query->with(['applicant', 'division', 'district'])->get();
             
-            // For debugging
-            \Log::info('Query executed: ' . $query->toSql());
-            \Log::info('Bindings: ', $query->getBindings());
-            \Log::info('Results count: ' . $results->count());
         }
         
         return view('search-filter', [

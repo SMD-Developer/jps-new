@@ -235,7 +235,9 @@
                                             <td>{{ $result->district->daerah ?? 'N/A' }}</td>
                                             <td>{{ $result->division->mukim ?? 'N/A' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
-                                            <td>{{ $result->refference_no ?? 'N/A' }}</td>
+                                            <td>
+                                                <a href="{{ route('apporver_view_letter', $result->id) }}">{{ $result->refference_no }}</a>
+                                            </td>
                                             <td>{{ $result->status ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
