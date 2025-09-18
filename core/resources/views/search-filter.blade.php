@@ -97,40 +97,9 @@
                         <div class="card-body">
                             <form action="{{ route('search-filter') }}" method="POST" id="searchForm">
                                 @csrf
-                                <!-- Lot/PT Dropdown -->
-                                <div class="form-group">
-                                    <label>{{ __('app.lot_pt') }}</label>
-                                    <div class="dropdown-container">
-                                        <!-- Button to open dropdown -->
-                                        <button type="button" class="dropdown-btn" data-target="lotPtDropdown"
-                                            onclick="toggleDropdown('lotPtDropdown')">
-                                            <span id="selectedLotPtText">{{ __('app.select_lot_pt') }}</span>
-                                            <span>▼</span>
-                                        </button>
-
-                                        <!-- Lot/PT Dropdown -->
-                                        <div id="lotPtDropdown" class="dropdown-content">
-                                            <!-- Search Input -->
-                                            <input type="text" class="dropdown-search"
-                                                placeholder="{{ __('app.search_lot_pt') }}" id="lotPtSearchInput"
-                                                onkeyup="filterLotPt()">
-
-                                            <!-- List of Lot/PT options -->
-                                            <div id="lotPtList">
-                                                @foreach ($lotPts ?? [] as $lotPt)
-                                                    <a href="#"
-                                                        onclick="selectLotPt('{{ $lotPt->lot_number ?? $lotPt->name }}', '{{ $lotPt->id }}')">
-                                                        {{ $lotPt->lot_number ?? $lotPt->name }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- District Dropdown -->
                                 <div class="form-group">
-                                    <label>{{ __('app.district') }}</label>
+                                    <label>Daerah</label>
                                     <select class="form-control" name="district" id="district" onchange="loadDivisions()">
                                         <option value="">{{ __('app.select_district') }}</option>
                                         @foreach ($districts as $district)
@@ -144,7 +113,7 @@
 
                                 <!-- Division Dropdown -->
                                 <div class="form-group">
-                                    <label>{{ __('app.division') }}</label>
+                                    <label>Mukim</label>
                                     <select class="form-control" name="division" id="division">
                                         <option value="">{{ __('app.select_division') }}</option>
                                         @if (old('district', $request->district ?? ''))
@@ -164,7 +133,7 @@
 
                                 <!-- Applicant Dropdown -->
                                 <div class="form-group">
-                                    <label>{{ __('app.applicant_list') }}</label>
+                                    <label>Nama Pemohon</label>
                                     <div class="dropdown-container">
                                         <button type="button" class="dropdown-btn" data-target="applicantDropdown"
                                             onclick="toggleDropdown('applicantDropdown')">
@@ -198,6 +167,37 @@
                                     <label>{{ __('app.date_of_application') }}</label>
                                     <input type="date" class="form-control" name="application_date" id="application_date"
                                         value="{{ old('application_date') }}">
+                                </div>
+
+                                <!-- Lot/PT Dropdown -->
+                                <div class="form-group">
+                                    <label>{{ __('app.lot_pt') }}</label>
+                                    <div class="dropdown-container">
+                                        <!-- Button to open dropdown -->
+                                        <button type="button" class="dropdown-btn" data-target="lotPtDropdown"
+                                            onclick="toggleDropdown('lotPtDropdown')">
+                                            <span id="selectedLotPtText">{{ __('app.select_lot_pt') }}</span>
+                                            <span>▼</span>
+                                        </button>
+
+                                        <!-- Lot/PT Dropdown -->
+                                        <div id="lotPtDropdown" class="dropdown-content">
+                                            <!-- Search Input -->
+                                            <input type="text" class="dropdown-search"
+                                                placeholder="{{ __('app.search_lot_pt') }}" id="lotPtSearchInput"
+                                                onkeyup="filterLotPt()">
+
+                                            <!-- List of Lot/PT options -->
+                                            <div id="lotPtList">
+                                                @foreach ($lotPts ?? [] as $lotPt)
+                                                    <a href="#"
+                                                        onclick="selectLotPt('{{ $lotPt->lot_number ?? $lotPt->name }}', '{{ $lotPt->id }}')">
+                                                        {{ $lotPt->lot_number ?? $lotPt->name }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Reference Number Field -->
