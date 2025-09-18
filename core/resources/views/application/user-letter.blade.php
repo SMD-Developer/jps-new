@@ -325,7 +325,7 @@
                     <p class="mb-0">Tetuan {{ $application->applicant }}</p>
                     <p class="mb-0">{{ $application->address }}</p>
                     <p class="mb-0">{{ $application->city }}, {{ $application->postal_code }}</p>
-                    <p class="mb-0">{{ $application->negeri ?? 'N/A' }}, {{ $application->daerah ?? 'N/A' }}</p>
+                    <p class="mb-0">{{ $application->daerah ?? 'N/A' }},{{ $application->negeri ?? 'N/A' }} </p>
                     <br>
                     <p class="">Tuan,</p>
                     <h6 class="mb-0 text-justify"><b>PENGESAHAN BAYARAN CARUMAN PARIT DI ATAS
