@@ -89,7 +89,7 @@
 
                         <!-- Notification Dropdown -->
                         <div id="notificationDropdown"
-                                style="display: none; position: absolute; top: 35px; right: 0; background: white; 
+                                style="display: none; position: absolute; top: 35px; left: 0; background: white; 
                                     width: 430px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); border-radius: 5px; z-index: 1000;">
 
                             <div
