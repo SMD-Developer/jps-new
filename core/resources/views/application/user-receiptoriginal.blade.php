@@ -184,7 +184,7 @@
                                     {{ strtoupper($application->address) }}<br>
                                     {{ strtoupper($application->city) }}<br>
                                     {{ strtoupper($application->postal_code) }}<br>
-                                    {{ strtoupper($application->negeri ?? 'N/A') }}
+                                    {{ strtoupper($application->negeri ?? 'N/A') }} Darul Ehsan
                                 </div>
                             </div>
                             <div class="info-row">
