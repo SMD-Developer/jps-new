@@ -135,10 +135,10 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <p class="mb-0">Tetuan {{ $application->applicant }}</p>
-                    <p class="mb-0">{{ $application->address }}</p>
-                   <p class="mb-0">{{ $application->city }}, {{ $application->postal_code }}</p>
-                    <p class="mb-0">{{ $application->negeri ?? 'N/A' }}, {{ $application->daerah ?? 'N/A' }}</p>
+                    <p class="mb-0">Tetuan {{ ucwords(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}</p>
+                   <p class="mb-0">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}, {{ ucwords(strtolower($application->daerah ?? 'N/A')) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }} Darul Ehsan</p>
                     <br>
                     <p class="">Tuan,</p>
                     <h6 class="mb-0 text-justify"><b>PENGESAHAN BAYARAN CARUMAN PARIT DI ATAS {{strtoupper($application->land_lot)}},{{ strtoupper($application->land_mukim ?? 'N/A') }}, DAERAH {{ strtoupper($application->land_daerah ?? 'N/A') }}, NEGERI SELANGOR UNTUK TETUAN {{strtoupper($application->applicant)}}.</b></h6>
