@@ -238,7 +238,25 @@
                                             <td>
                                                 <a href="{{ route('apporver_view_letter', $result->id) }}">{{ $result->refference_no }}</a>
                                             </td>
-                                            <td>{{ $result->status ?? 'N/A' }}</td>
+                                           <td>
+                                                @switch($result->status)
+                                                    @case('approved')
+                                                        Diluluskan
+                                                        @break
+
+                                                    @case('rejected')
+                                                        Tolak
+                                                        @break
+
+                                                    @case('pending')
+                                                        Belum selesai
+                                                        @break
+
+                                                    @default
+                                                        N/A
+                                                @endswitch
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 @else

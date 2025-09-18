@@ -290,6 +290,16 @@
         text-transform: none;
         align-items: baseline !important;
     }
+
+    .graph-counts {
+    font-size: 14px;
+    color: #333;
+}
+
+.graph-counts span {
+    margin-right: 20px;
+}
+
 </style>
 
 <!--@extends('app')-->
@@ -381,7 +391,18 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="graph-counts text-center mt-2 col-6">
+                            <span class="me-3">
+                                @lang('app.passed') - <strong>{{ $passed ?? 0 }}</strong>
+                            </span>
+                            <span>
+                                @lang('app.reject') - <strong>{{ $rejected ?? 0 }}</strong>
+                            </span>
+                        </div>
+                   </div>
                 </div>
+                
 
                 <div class="col-lg-5 col-sm-6 col-xs-12">
                     <h5>@lang('app.application_according_to_the_district')</h5>
