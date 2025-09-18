@@ -1046,7 +1046,7 @@
                 if (isDuplicateRef) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Duplicate Reference',
+                        title: 'Nombor Rujukan telah wujud',
                         text: "@lang('app.reference_number_allready_exist')",
                         confirmButtonColor: '#d33'
                     }).then(() => {

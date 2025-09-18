@@ -262,7 +262,7 @@
     }
 
     .info-box {
-       height: -webkit-fill-available;
+        height: 140px;
         text-transform: none;
 
     }
