@@ -215,7 +215,7 @@
 
                         <table class="receipt-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                             <tr style="background-color: #f2f2f2;">
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">BILL</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">BIL</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">CARA BAYARAN</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">NO RUJUKAN /<br>TARIKH
                                 </th>
@@ -226,7 +226,7 @@
                             <tr>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                                     1</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">FPX</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">{{$application->payment_method}}</td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                                     {{ $application->refference_no }}<br>
                                     {{ $application->created_at->format('d/m/Y') }}
@@ -238,8 +238,8 @@
                                     H0161304<br><br>H0161304
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                                    {{ number_format($application->final_amount / 2, 2) }}<br><br>
-                                    {{ number_format($application->final_amount / 2, 2) }}
+                                    {{ number_format($application->payment_amount / 2, 2) }}<br><br>
+                                    {{ number_format($application->payment_amount / 2, 2) }}
                                 </td>
                             </tr>
                             <tr>
@@ -247,7 +247,7 @@
                                     style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;">
                                     JUMLAH KESELURUHAN </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    {{ number_format($application->final_amount, 2) }}
+                                    {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
                         </table>
