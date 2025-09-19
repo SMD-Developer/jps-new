@@ -574,6 +574,12 @@
                             <td>L431</td>
                             <td>{{ number_format($grandTotal / 2, 2) }}</td>
                         </tr>
+                        <tr>
+                            <td>JUMLAH</td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ number_format($grandTotal , 2) }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

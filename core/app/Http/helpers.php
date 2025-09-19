@@ -1232,7 +1232,7 @@ if(! function_exists('getMenus')){
     
         // Finance Menu
          else if($user->HasRole('Finance')){
-          $applicationCount = getDepositSubmitNotificationCount();
+          $applicationCount = getAgencyApplicationCount();
              
          $menus = [
             'main_menu' => [
@@ -2254,10 +2254,11 @@ function getAdminApproverApplicationCount() {
 function getAgencyApplicationCount() {
     try {
         return \App\Models\Application::join('client_register', 'applications.user_id', '=', 'client_register.client_id')
+            ->join('payments', 'applications.id', '=', 'payments.application_id')
             ->where('client_register.accountType', 3)   // agency users
-            ->where('applications.status', 'approved') // approved applications
+            ->where('applications.status', 'approved')  // approved applications
+            ->where('payments.payment_status', 'in_review')     // payment status is in_review
             ->count();
-
     } catch (\Exception $e) {
         \Log::error('Error getting agency application count: ' . $e->getMessage());
         return 0;
