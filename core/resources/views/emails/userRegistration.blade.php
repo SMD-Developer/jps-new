@@ -87,17 +87,11 @@
                 <h3 style="color: blue;">Kami ingin memaklumkan bahawa permohonan anda telah ditolak kerana dokumen sokongan yang dikemukakan tidak lengkap.</h3>
                 <p>Untuk membolehkan kami memproses semula permohonan anda, sila pastikan semua dokumen yang diperlukan dilampirkan dan dikemukakan dengan lengkap.</p>
                 <p>Sila log masuk ke laman web Caruman Parit dan kemas kini permohonan anda.</p>
-                <p>👉 <a href="https://jpsmy.smddeveloper.com/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
+                <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
                 <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila hubungi kami di support@e-cp.jps.com.my atau telefon 03-7333 4545.</p>
                 <p>Terima kasih atas kerjasama anda.</p>
                 <p>Yang benar,</p>
                 <p>Portal e-CP Caruman Parit</p>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
             </td>
         </tr>
         <tr>

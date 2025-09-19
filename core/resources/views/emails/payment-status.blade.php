@@ -83,26 +83,24 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Dear Client,</p>
-                <p><strong>Good news! Your payment has been approved!</strong></p>
-                <p><strong>Application ID: {{ $application->id }}</strong></p>
-                <p><strong>Receipt Number: {{ $application->reciept_number }}</strong></p>
-                <p><strong>Transaction Reference: {{ $application->transaction }}</strong></p>
-                <p><strong>Payment Status: <span style="color: #00AA00;">{{ $application->payment_status }}</span></strong></p>
+                <p>Pelanggan yang dihormati,</p>
+                <p><strong>Pambayaran anda telah diterima</strong></p>
+                <p><strong>Nombor Resit: {{ $application->reciept_number }}</strong></p>
+                <p><strong>Rujukan Transaksi: {{ $application->transaction }}</strong></p>
+                <p><strong>Status Pembayaran: <span style="color: #00AA00;">{{ $application->payment_status }}</span></strong></p>
                 
-                <p>Your application is now proceeding to the next stage. You can check the status of your application at any time by logging into your account.</p>
+                <p>Permohonan anda kini sedang diproses ke peringkat seterusnya. Anda boleh menyemak status permohonan anda pada bila-bila masa dengan log masuk ke akaun anda.</p>
                 
                 <p style="margin-top: 20px;">
-                    <a href="{{ url('/client/applications/' . $application->id) }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">View Application</a>
+                    <a href="{{ url('/client/applications/' . $application->id) }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">Lihat Permohonan</a>
                 </p>
                 
-                <p style="margin-top: 20px;">Thank you for your patience.</p>
+                <p style="margin-top: 20px;">Yang benar,</p>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
+                <p>Portal e-CP Caruman Parit</p>
             </td>
         </tr>
         <tr>

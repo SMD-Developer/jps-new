@@ -83,15 +83,13 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Sayang Adminastaff,</p>
+                <p>Kepada Adminastaff,</p>
                 <p><strong>Permohonan baharu diterima untuk semakan!</strong></p>
-                <p><strong>ID Permohonan: {{ $application->id }}</strong></p>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
+                <p>Portal e-CP Caruman Parit</p>
             </td>
         </tr>
         <tr>

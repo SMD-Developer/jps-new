@@ -46,7 +46,7 @@ class PaymentApprovedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Payment Approved for Application #' . $this->application->id)
+            ->subject('Pembayaran Diterima')
             ->view('emails.payment-status', [
                 'application' => $this->application,
                 'notifiable' => $notifiable

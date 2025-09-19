@@ -86,17 +86,11 @@
                 <p>Assalamualaikum / Salam Sejahtera, {{ $application->applicant }},</p>
                 <h3 style="color: blue;">Tahniah! Permohonan anda telah diluluskan.</h3>
                 <p>Sila log masuk ke laman web Caruman Parit untuk tindakan seterusnya dan melengkapkan proses yang berkaitan.</p>
-                <p>👉 <a href="https://jpsmy.smddeveloper.com/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
+                <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
                 <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila hubungi kami di support@e-cp.jps.com.my atau telefon 03-7333 4545.</p>
                 <p>Terima kasih atas kerjasama anda.</p>
                 <p>Yang benar,</p>
                 <p>Portal e-CP Caruman Parit</p>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
             </td>
         </tr>
         <tr>

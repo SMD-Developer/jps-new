@@ -85,13 +85,11 @@
             <td class="content">
                 <p>Sayang Approver,</p>
                 <p><strong>Permohonan baharu telah diterima untuk disemak!</strong></p>
-                <p><strong>ID Permohonan: {{ $application->id }}</strong></p>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
+                <p>Portal e-CP Caruman Parit</p>
             </td>
         </tr>
         <tr>
