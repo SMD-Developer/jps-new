@@ -33,35 +33,41 @@ class AdminStaffController extends Controller
 
     public function index()
     {
-        $totalapplication = DB::table('applications')->count(); // Total applications
-        $totalclient = DB::table('client_register')->count(); 
+        $totalapplication = DB::table('applications')->count(); 
+        $totalclient = DB::table('client_register')->count();
+
         $newapplication = DB::table('applications')
                     ->where('status', 'pending')
                     ->whereNull('forwarded_by_admin_staff')
                     ->count();
+        
         $monthapplication = DB::table('applications')
             ->whereMonth('created_at', date('m'))
-            ->count(); 
-        $approvedapplication = DB::table('applications')->where('status', 'approved')->count(); 
+            ->count();
+
+        $approvedapplication = DB::table('applications')->where('status', 'approved')->count();
+
         $passed = DB::table('applications')->where('status', 'approved')->count();
         $rejected = DB::table('applications')->where('status', 'rejected')->count();
-        
+
+        // Changed from 'district' to 'land_district'
         $applicationsByDistrict = DB::table('applications')
-            ->select('district', DB::raw('count(*) as total'))
-            ->groupBy('district')
+            ->select('land_district', DB::raw('count(*) as total'))
+            ->groupBy('land_district')
             ->get();
-            
+
+        // Updated to use 'land_district' instead of 'district'
         $districtCounts = DB::table('applications')
-        ->select('district', DB::raw('count(*) as count'))
-        ->groupBy('district')
-        ->get();
-            
+            ->select('land_district', DB::raw('count(*) as count'))
+            ->groupBy('land_district')
+            ->get();
+
         $districts = [];
         foreach ($districtCounts as $item) {
             $districtInfo = DB::table('district')
-                ->where('iddaerah', $item->district)
+                ->where('iddaerah', $item->land_district) // Using land_district now
                 ->first();
-                
+
             if ($districtInfo) {
                 $districts[] = [
                     'name' => $districtInfo->daerah,
@@ -69,13 +75,13 @@ class AdminStaffController extends Controller
                 ];
             }
         }
-        
+
         return view('adminstaff.home_admin_staff', compact(
-            'totalapplication', 
+            'totalapplication',
             'totalclient',
-            'newapplication', 
-            'monthapplication', 
-            'approvedapplication', 
+            'newapplication',
+            'monthapplication',
+            'approvedapplication',
             'passed',
             'rejected',
             'applicationsByDistrict',

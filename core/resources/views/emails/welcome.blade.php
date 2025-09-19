@@ -94,12 +94,6 @@
             </td>
         </tr>
         <tr>
-            <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
-            </td>
-        </tr>
-        <tr>
             <td class="footer-container">
                 <h3>JOM BERHUBUNG </h3>
                 <p>Jika anda mempunyai sebarang soalan, lawati tapak sokongan kami di <a href="https://www.jps.com">https://www.jps.com</a>,<br>
