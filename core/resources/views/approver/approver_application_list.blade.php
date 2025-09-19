@@ -306,6 +306,17 @@
                                                             <i class="fa-solid fa-xmark"></i>
                                                         </span>
                                                     @endif
+
+                                                    {{-- Appeal Status --}}
+                                                    @if($item->appeal === 'yes' && $item->appeal_status === 'approved')
+                                                        <span class="btn btn-success btn-sm" style="cursor: default; background-color:#e2b74a !important; border:none;" data-bs-toggle="tooltip" title="Appeal Approved">
+                                                            <i class="fa-solid fa-repeat"></i>
+                                                        </span>
+                                                    @elseif($item->appeal === 'yes' && $item->appeal_status === 'rejected')
+                                                        <span class="btn btn-danger btn-sm" style="cursor: default;" data-bs-toggle="tooltip" title="Appeal Rejected">
+                                                            <i class="fa-solid fa-repeat"></i>
+                                                        </span>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
