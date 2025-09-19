@@ -182,15 +182,15 @@ class AuthController extends Controller {
             
             // Set redirect URL based on user type
             $redirectUrls = [
-                'admin' => route('home'),
-                'adminstaff' => route('home_admin_staff'),
-                'finance' => route('home-finance'),
-                'approver' => route('approver-home'),
-                'reviewer' => route('home-reviewer'),
-                'applicationapprover' => route('home_adminapprover'),
+                '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76' => route('home'),
+                '9e032984-8ef0-4e00-b7b9-439679a4d1aa' => route('home_admin_staff'),
+                '9e032970-5f48-4d2b-b88e-abb9da79140f' => route('home-finance'),
+                '27f41653-a968-4885-8000-7aaf4efc385d' => route('approver-home'),
+                '9e032769-7342-46ba-b7c9-4f6f70570c98' => route('home-reviewer'),
+                '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d' => route('home_adminapprover'),
             ];
             
-            $redirect_url = $redirectUrls[$user->username] ?? route('home');
+            $redirect_url = $redirectUrls[$user->role_id] ?? route('home');
             
             return response()->json([
                 'success' => true,
