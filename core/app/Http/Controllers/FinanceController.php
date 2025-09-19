@@ -55,22 +55,22 @@ class financeController extends Controller {
                 $generateCollectorReport = DB::table('report_reviews')->count();
                 
                 $applicationsByDistrict = DB::table('applications')
-                    ->select('district', DB::raw('count(*) as total'))
-                    ->groupBy('district')
-                    ->get();
+                ->select('land_district', DB::raw('count(*) as total'))
+                ->groupBy('land_district')
+                ->get();
                  
-                    $districtCounts = DB::table('applications')
-                    ->select('district', DB::raw('count(*) as count'))
-                    ->groupBy('district')
+                     $districtCounts = DB::table('applications')
+                    ->select('land_district', DB::raw('count(*) as count'))
+                    ->groupBy('land_district')
                     ->get();
                     
                 // Get district names
                 $districts = [];
                 foreach ($districtCounts as $item) {
                     $districtInfo = DB::table('district')
-                        ->where('iddaerah', $item->district)
+                        ->where('iddaerah', $item->land_district) // Using land_district now
                         ->first();
-                        
+
                     if ($districtInfo) {
                         $districts[] = [
                             'name' => $districtInfo->daerah,

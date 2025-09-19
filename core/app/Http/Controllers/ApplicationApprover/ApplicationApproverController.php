@@ -54,20 +54,20 @@ class ApplicationApproverController extends Controller
         ->count();
         
         $applicationsByDistrict = DB::table('applications')
-            ->select('district', DB::raw('count(*) as total'))
-            ->groupBy('district')
+            ->select('land_district', DB::raw('count(*) as total'))
+            ->groupBy('land_district')
             ->get();
             
              $districtCounts = DB::table('applications')
-            ->select('district', DB::raw('count(*) as count'))
+            ->select('land_district', DB::raw('count(*) as count'))
             ->where('forwarded_by_admin_staff', 1)  
-            ->groupBy('district')
+            ->groupBy('land_district')
             ->get();
 
         $districts = [];
         foreach ($districtCounts as $item) {
             $districtInfo = DB::table('district')
-                ->where('iddaerah', $item->district)
+                ->where('iddaerah', $item->land_district)
                 ->first();
                 
             if ($districtInfo) {
