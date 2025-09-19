@@ -13,6 +13,14 @@
     .content-wrapper{
             background-color: #fff !important;
     }
+
+    .address-wrap {
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+
     /* Print-specific styles */
     @media print {
         @page {
@@ -323,7 +331,14 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                     <p class="mb-0">Tetuan {{ ucwords(strtolower($application->applicant)) }}</p>
-                    <p class="mb-0">{{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="mb-0 address-wrap">
+                                {{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}
+                            </p>
+                       </div>
+                    </div>
+
                     <p class="mb-0">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}, {{ ucwords(strtolower($application->daerah ?? 'N/A')) }}</p>
                     <p class="mb-0">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }} Darul Ehsan</p>
 
