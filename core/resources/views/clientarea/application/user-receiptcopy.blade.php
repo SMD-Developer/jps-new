@@ -197,7 +197,7 @@
                                     {{ strtoupper($application->address) }}<br>
                                     {{ strtoupper($application->city) }}<br>
                                     {{ strtoupper($application->postal_code) }}<br>
-                                    {{ strtoupper($application->negeri ?? 'N/A') }}
+                                    {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
                                 </div>
                             </div>
                             <div class="info-row">
@@ -211,7 +211,7 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
-                                    {{ $application->land_lot }},
+                                    {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
                                     MUKIM {{ strtoupper($application->negeri ?? 'N/A' )}}, DAERAH
@@ -232,7 +232,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">1</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">FPX</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">{{$application->payment_method}}</td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                                     {{ $application->refference_no }}<br>
                                     {{ $application->created_at->format('d/m/Y') }}
@@ -244,8 +244,8 @@
                                     H0161304<br><br>H0161304
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                                    {{ number_format($application->final_amount / 2, 2) }}<br><br>
-                                    {{ number_format($application->final_amount / 2, 2) }}
+                                    {{ number_format($application->payment_amount  / 2, 2) }}<br><br>
+                                    {{ number_format($application->payment_amount  / 2, 2) }}
                                 </td>
                             </tr>
                             <tr>
@@ -253,7 +253,7 @@
                                     style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;">
                                     JUMLAH KESELURUHAN </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    {{ number_format($application->final_amount, 2) }}
+                                    {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
                         </table>

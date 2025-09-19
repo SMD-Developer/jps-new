@@ -184,7 +184,7 @@
                                     {{ strtoupper($application->address) }}<br>
                                     {{ strtoupper($application->city) }}<br>
                                     {{ strtoupper($application->postal_code) }}<br>
-                                    {{ strtoupper($application->negeri ?? 'N/A') }} Darul Ehsan
+                                    {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
                                 </div>
                             </div>
                             <div class="info-row">
@@ -204,7 +204,7 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
-                                    {{ $application->land_lot }},
+                                    {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
                                     MUKIM {{ strtoupper($application->negeri ?? 'N/A') }}, DAERAH
