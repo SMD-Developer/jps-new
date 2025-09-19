@@ -583,6 +583,7 @@ if(! function_exists('getMenus')){
         // Adminstaff Menu
          else if($user->HasRole('adminstaff')){
              $applicationCount = getAdminStaffApplicationCount();
+             $claimCount =  getClaimContributionPendingCount();
          $menus = [
             'main_menu' => [
                 'title' => trans('app.main_menu'),
@@ -643,6 +644,8 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.claim_contribution'),
                                 'route' => url('claim-list'),
                                 'menu_active' => '',
+                                'badge_count' => $claimCount,
+                                'badge_class' => 'badge bg-danger text-secondary',
                                 'permission' => 'claim-contribution.view-list'
                             ]
                         ]
@@ -2250,6 +2253,17 @@ function getAdminApproverApplicationCount() {
         return 0;
     }
 }
+
+
+function getClaimContributionPendingCount() {
+    try {
+        return \App\Models\ClaimContribution::where('status', 'pending')->count();
+    } catch (\Exception $e) {
+        \Log::error('Error getting claim contribution pending count: ' . $e->getMessage());
+        return 0;
+    }
+}
+
 
 function getAgencyApplicationCount() {
     try {

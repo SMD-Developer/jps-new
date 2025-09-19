@@ -209,10 +209,16 @@ i.right.fa.fa-angle-right.mt-2 {
                                                     <i class="fa fa-{{ $submenu['icon'] }} nav-icon"></i>
                                                     <p>
                                                         {{ $submenu['text'] }}
+                                                        @if(isset($submenu['badge_count']) && $submenu['badge_count'] > 0)
+                                                            <span class="{{ $submenu['badge_class'] ?? 'badge bg-danger text-white' }}" style="margin-left: 8px;">
+                                                                {{ $submenu['badge_count'] }}
+                                                            </span>
+                                                        @endif
                                                         @if(isset($submenu['submenus']) && count($submenu['submenus']) > 0)
                                                             <i class="right fa fa-angle-right"></i>
                                                         @endif
                                                     </p>
+
                                                 </a>
                                                 @if(isset($submenu['submenus']) && count($submenu['submenus']) > 0)
                                                     <ul class="nav nav-treeview">
