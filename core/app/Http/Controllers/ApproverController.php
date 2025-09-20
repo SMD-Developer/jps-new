@@ -93,7 +93,7 @@ class ApproverController extends Controller
     }
     
      public function approved_statement_approver()
-        {
+     {
             $approvals = DB::table('report_approvals')
                 ->select(
                     'report_approvals.id',
@@ -112,18 +112,18 @@ class ApproverController extends Controller
                 )
                 ->leftJoin('users as submitter', 'report_approvals.submitted_by', '=', 'submitter.uuid')
                 ->leftJoin('users as approver', 'report_approvals.assigned_to', '=', 'approver.uuid')
-                ->orderBy('report_approvals.approved_at', 'desc') // Order by approval date
-                ->whereIn('report_approvals.status', ['pending', 'approved'])
-                ->get();
+                ->orderBy('report_approvals.created_at', 'desc') // Order by approval date
+                ->paginate(10); 
         
             // Decode JSON data
-            $approvals = $approvals->map(function ($approval) {
-                $approval->report_data = json_decode($approval->report_data, true);
-                return $approval;
-            });
+                $approvals->getCollection()->transform(function ($approval) {
+                    $approval->report_data = json_decode($approval->report_data, true);
+                    
+                    return $approval;
+                });
         
-            $totalApprovals = $approvals->count();
-            $approvedCount = $approvals->where('status', 'approved')->count();
+            $totalApprovals = $approvals->total();
+            $approvedCount = $approvals->getCollection()->where('status', 'approved')->count();
         
             return view('approver.approved_statement_approver', compact('approvals', 'totalApprovals', 'approvedCount'));
         }

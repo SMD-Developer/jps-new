@@ -109,6 +109,11 @@
         color: #0c5460;
     }
 
+    .status-under-review{
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
     .status-approved {
         background: #d4edda;
         color: #155724;
@@ -311,7 +316,7 @@
                                             break;
                                         case 'under_review':
                                             $statusClass = 'status-under-review';
-                                            $statusText = 'Sedang Disemak';
+                                            $statusText = 'Disemak';
                                             break;
                                         case 'reviewed':
                                             $statusClass = 'status-reviewed';
@@ -345,8 +350,8 @@
                             </td>
                             <td>
                                 <div class="action-buttons" style="display: flex; gap: 5px; justify-content: center;">
-                                    @if($report->approval_id)
-                                        {{-- Show view button only if record exists in report_approvals --}}
+                                     @if($report->can_view)
+                                        {{-- Show view button only if approved --}}
                                         <a href="{{ route('finance.view_report', ['report_id' => $report->approval_id]) }}" 
                                         class="btn btn-primary btn-sm view-report"
                                         title="View Report Details"
@@ -354,9 +359,10 @@
                                             <i class="fa fa-eye"></i>
                                         </a>
                                     @else
-                                        {{-- Show disabled button or different action for review-only records --}}
-                                        <span class="btn btn-secondary btn-sm disabled" title="Not yet submitted for approval">
-                                            <i class="fa fa-clock"></i>
+                                        {{-- Show disabled button --}}
+                                        <span class="btn btn-secondary btn-sm disabled" 
+                                            title="Report not approved yet">
+                                            <i class="fa fa-eye-slash"></i>
                                         </span>
                                     @endif
                                     

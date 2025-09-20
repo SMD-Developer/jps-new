@@ -155,6 +155,11 @@
         opacity: 0.5;
     }
 
+    .status-under-review{
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
     /* Scrollable container */
     .table-scroll {
         overflow-x: auto;
@@ -280,6 +285,10 @@
                                             case 'pending':
                                                 $statusClass = 'status-pending';
                                                 $statusText = 'Menunggu Semakan';
+                                                break;
+                                            case 'under_review':
+                                                $statusClass = 'status-under-review';
+                                                $statusText = 'Disemak';
                                                 break;
                                             case 'rejected':
                                                 $statusClass = 'status-reviewed';

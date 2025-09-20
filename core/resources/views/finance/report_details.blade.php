@@ -166,6 +166,12 @@ th {
         max-width: none !important;
     }
 }
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
 </style>
 
 <title>@lang('app.collectors_receipt') | JPS</title>
@@ -801,23 +807,18 @@ th {
                             <p>No. Kelulusan Perb. : BNPK(8.15)248-10(SK.6)JD.33(9) </p>
                         </section>
                         
-                        <!--<div class="row px-2 mb-3" style="display: flex;justify-content: flex-end;">-->
-                        <!--    <div class="col d-flex justify-content-end">-->
-                        <!--    <button class="btn btn-danger mx-2" id="demo" @if($report->status == 'approved') disabled @endif>-->
-                        <!--        @lang('app.reject')-->
-                        <!--    </button>-->
-                        <!--     <button class="btn btn-primary mx-2" onclick="window.print()">-->
-                        <!--        @lang('app.print')-->
-                        <!--    </button>-->
-                        <!--    <button class="btn btn-info mx-2"-->
-                        <!--            id="demo2"-->
-                        <!--            @if($report->status == 'approved') disabled @endif>-->
-                        <!--        @lang('app.passed')-->
-                        <!--    </button>-->
+                        <div class="row px-2 mb-3 no-print" style="display: flex;justify-content: flex-end;">
+                            <div class="col d-flex justify-content-end">
+                                <button class="btn btn-primary mx-2" onclick="window.print()">
+                                  @lang('app.print')
+                                </button>
+                                <button class="btn btn-info mx-2"
+                                        onclick="window.location.href='{{ route('approved-statement') }}'">  
+                                  Back
+                                </button>
+                            </div>
+                        </div>
 
-                        <!--    </div>-->
-                            
-                        <!--</div>-->
                 </div>
             </div>
         </div>

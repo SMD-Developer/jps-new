@@ -112,6 +112,11 @@
         background: #fff3cd;  /* light yellow */
         color: #856404;       /* dark yellow/brown */
     }
+
+    .status-under_approval{
+         background: #259ca5ff;  /* light yellow */
+        color: #fff; 
+    }
     
     /* Rejected */
     .status-rejected {
@@ -275,6 +280,7 @@
                                             'approved' => 'Diluluskan',
                                             'pending'  => 'Menunggu Semakan',
                                             'rejected' => 'Tolak',
+                                            'under_approval'=> 'Disemak',
                                             default    => $approval->status ?? 'N/A',
                                         };
                                     @endphp
@@ -319,6 +325,18 @@
                             @endforelse
                         </tbody>
                     </table>
+                    @if($approvals->hasPages())
+                    <div class="pagination-container" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                        <div class="pagination-info">
+                            <small class="text-muted">
+                                Showing {{ $approvals->firstItem() ?? 0 }} to {{ $approvals->lastItem() ?? 0 }} of {{ $approvals->total() }} results
+                            </small>
+                        </div>
+                        <div class="pagination-links">
+                            {{ $approvals->links() }}
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 

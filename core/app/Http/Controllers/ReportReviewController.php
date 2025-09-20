@@ -213,7 +213,7 @@ class ReportReviewController extends Controller
 
         // Update ReportReview status
         $report->update([
-            'status' => 'pending', // Or 'forwarded_to_approver'
+            'status' => 'under_review', // Or 'forwarded_to_approver'
             'reviewed_at' => now(),
         ]);
 
@@ -229,7 +229,7 @@ class ReportReviewController extends Controller
             'report_data' => $validated['report_data'],
             'submitted_by' => auth('admin')->id(),
             'assigned_to' => $approver->uuid,
-            'status' => 'pending',
+            'status' => 'under_approval',
             'submitted_at' => now(),
         ]);
 

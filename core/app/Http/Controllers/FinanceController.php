@@ -157,11 +157,14 @@ class financeController extends Controller {
             if ($report->approval_report_data) {
                 $report->approval_report_data = json_decode($report->approval_report_data, true);
             }
+
+            $report->can_view = ($report->approval_id && $report->approval_status === 'approved');
             return $report;
         });
         
         $totalApprovals = $reports->total();
         $approvedCount = $reports->where('review_status', 'approved')->count();
+        
         
         return view('finance.approved_statement', compact('reports', 'totalApprovals', 'approvedCount'));
     }
