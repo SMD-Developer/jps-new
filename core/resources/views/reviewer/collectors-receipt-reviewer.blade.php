@@ -340,7 +340,7 @@ th {
                             </tr>
                             <tr>
                               <td>Nama</td>
-                              <td>{{ $report->submitter_name }}</td>
+                              <td>{{ strtoupper($report->submitter_name) }}</td>
                               <td></td>
                               <td></td>
                             </tr>
@@ -579,7 +579,7 @@ th {
                             </tr>
                             <tr>
                               <td>Nama</td>
-                              <td>{{ $report->submitter_name }}</td>
+                              <td>{{ strtoupper($report->submitter_name) }}</td>
                               <td></td>
                               <td></td>
                             </tr>
@@ -749,8 +749,19 @@ th {
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
+                              <td class="text-center">9</td>
+                              <td>EFT</td>
+                              <td></td>
+                              <td></td>
+                              <td class="text-right">476.00</td>
+                            </tr>
+                            <tr>
                               <td colspan="4" class="text-right" style="border-right: 0;">JUMLAH BERSIH</td>
-                              <td style="border-left: 0;" class="text-right">63,512.00</td>
+                              @php
+                                  $amount = $report->report_data['totalAmount'] ?? '0';
+                                  $numericAmount = is_numeric($amount) ? (float)$amount : (float)preg_replace('/[^\d.-]/', '', $amount);
+                              @endphp
+                              <td style="border-left: 0;" class="text-right">{{ number_format($numericAmount, 2) }}</td>
                             </tr>
                          </table>
                     </section>
@@ -765,7 +776,7 @@ th {
                             </tr>
                             <tr>
                               <td>Nama</td>
-                              <td>{{ $report->submitter_name }}</td>
+                              <td>{{ strtoupper($report->submitter_name) }}</td>
                               <td></td>
                               <td></td>
                             </tr>

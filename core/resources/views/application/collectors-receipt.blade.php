@@ -886,6 +886,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             sendReportToReviewer();
+            window.location.href = "{{ route('approved-statement') }}";
         }
     });
 });
