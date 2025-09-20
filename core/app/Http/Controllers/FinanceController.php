@@ -1147,6 +1147,69 @@ class financeController extends Controller {
             'currentTime' => $currentTime
         ]);
     }
+
+
+    public function deleteReport($id)
+    {
+        try {
+            DB::beginTransaction();
+            $reviewReport = DB::table('report_reviews')->where('id', $id)->first();
+            $approvalReport = DB::table('report_approvals')->where('id', $id)->first();
+            
+            if (!$reviewReport && !$approvalReport) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Report not found'
+                ], 404);
+            }
+            
+            $deletedCount = 0;
+            $reportNumber = '';
+            
+            // Delete from report_reviews if exists
+            if ($reviewReport) {
+                $reportNumber = $reviewReport->report_number ?? '';
+                $deleted = DB::table('report_reviews')->where('id', $id)->delete();
+                $deletedCount += $deleted;
+            }
+            
+            // Delete from report_approvals if exists
+            if ($approvalReport) {
+                $reportNumber = $approvalReport->report_number ?? $reportNumber;
+                $deleted = DB::table('report_approvals')->where('id', $id)->delete();
+                $deletedCount += $deleted;
+
+            }
+            
+            DB::commit();
+            
+            if ($deletedCount > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Laporan {$reportNumber} telah berjaya dipadamkan"
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete report'
+                ], 500);
+            }
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            Log::error("Error deleting report", [
+                'report_id' => $id,
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the report'
+            ], 500);
+        }
+    }
     
 }
 

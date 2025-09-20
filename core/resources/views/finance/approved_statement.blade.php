@@ -253,91 +253,98 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($reports as $index => $report)
-                            @php
-                                // Use report_reviews data for display in the list
-                                $reportData = null;
-                                if (isset($report->review_report_data) && is_array($report->review_report_data)) {
-                                    $reportData = $report->review_report_data;
-                                } elseif (isset($report->review_report_data)) {
-                                    $reportData = json_decode($report->review_report_data, true);
-                                } else {
-                                    $reportData = [];
-                                }
-                            @endphp
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    <strong>{{ $report->report_number }}</strong>
-                                </td>
-                                <td>
-                                    @if(isset($reportData['formattedStartDate']) && isset($reportData['formattedEndDate']))
-                                        {{ $reportData['formattedStartDate'] }}
-                                        <div class="report-period">to {{ $reportData['formattedEndDate'] }}</div>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                                <td class="amount-cell">
-                                    @php
-                                        $amount = $reportData['totalAmount'] ?? 0;
-                                        
-                                        if (is_string($amount)) {
-                                            $cleanAmount = preg_replace('/[^\d.-]/', '', $amount);
-                                            $numericAmount = is_numeric($cleanAmount) ? (float)$cleanAmount : 0;
-                                        } else {
-                                            $numericAmount = is_numeric($amount) ? (float)$amount : 0;
-                                        }
-                                    @endphp
-                                    RM {{ number_format($numericAmount, 2) }}
-                                </td>
-                                <td>
-                                    @php
-                                        // Show status from report_reviews or report_approvals
-                                        $displayStatus = $report->review_status ?? $report->approval_status;
-                                        $statusClass = 'status-pending';
-                                        $statusText = ucfirst($displayStatus);
-                                
-                                        switch(strtolower($displayStatus)) {
-                                            case 'pending':
-                                                $statusClass = 'status-pending';
-                                                $statusText = 'Menunggu Semakan';
-                                                break;
-                                            case 'under_review':
-                                                $statusClass = 'status-under-review';
-                                                $statusText = 'Sedang Disemak';
-                                                break;
-                                            case 'reviewed':
-                                                $statusClass = 'status-reviewed';
-                                                $statusText = 'Telah Disemak';
-                                                break;
-                                            case 'approved':
-                                                $statusClass = 'status-approved';
-                                                $statusText = 'Diluluskan';
-                                                break;
-                                            case 'rejected':
-                                                $statusClass = 'status-rejected';
-                                                $statusText = 'Tolak';
-                                                break;
-                                        }
-                                    @endphp
-                                    <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
-                                </td>
-                                <td>
-                                    {{-- Show original submitter from report_reviews --}}
-                                    {{ $report->review_submitter_name ?? 'Unknown' }}
-                                </td>
-                                <td>
-                                    @php
-                                        // Show submission date from report_reviews table
-                                        $createdDate = $report->review_created_at ? \Carbon\Carbon::parse($report->review_created_at) : null;
-                                    @endphp
-                                    {{ $createdDate ? $createdDate->format('d/m/Y') : '-' }}
-                                    <div class="report-period">
-                                        {{ $createdDate ? $createdDate->format('H:i') : '' }}
-                                    </div>
-                                </td>
-                                <td>
+                            {{-- Make sure each table row has the correct ID --}}
+                        @forelse($reports as $index => $report)
+                        @php
+                            // Use report_reviews data for display in the list
+                            $reportData = null;
+                            if (isset($report->review_report_data) && is_array($report->review_report_data)) {
+                                $reportData = $report->review_report_data;
+                            } elseif (isset($report->review_report_data)) {
+                                $reportData = json_decode($report->review_report_data, true);
+                            } else {
+                                $reportData = [];
+                            }
+                            
+                            // Determine the correct ID to use
+                            $reportRowId = $report->approval_id ?? $report->review_id ?? $report->id;
+                        @endphp
+
+                        {{-- IMPORTANT: This tr tag must have the correct ID --}}
+                        <tr id="report-row-{{ $reportRowId }}" data-report-id="{{ $reportRowId }}" data-report-number="{{ $report->report_number }}">
+                            <td>{{ $index + 1 }}</td>
+                            <td>
+                                <strong>{{ $report->report_number }}</strong>
+                            </td>
+                            <td>
+                                @if(isset($reportData['formattedStartDate']) && isset($reportData['formattedEndDate']))
+                                    {{ $reportData['formattedStartDate'] }}
+                                    <div class="report-period">to {{ $reportData['formattedEndDate'] }}</div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="amount-cell">
+                                @php
+                                    $amount = $reportData['totalAmount'] ?? 0;
+                                    
+                                    if (is_string($amount)) {
+                                        $cleanAmount = preg_replace('/[^\d.-]/', '', $amount);
+                                        $numericAmount = is_numeric($cleanAmount) ? (float)$cleanAmount : 0;
+                                    } else {
+                                        $numericAmount = is_numeric($amount) ? (float)$amount : 0;
+                                    }
+                                @endphp
+                                RM {{ number_format($numericAmount, 2) }}
+                            </td>
+                            <td>
+                                @php
+                                    // Show status from report_reviews or report_approvals
+                                    $displayStatus = $report->review_status ?? $report->approval_status;
+                                    $statusClass = 'status-pending';
+                                    $statusText = ucfirst($displayStatus);
+                            
+                                    switch(strtolower($displayStatus)) {
+                                        case 'pending':
+                                            $statusClass = 'status-pending';
+                                            $statusText = 'Menunggu Semakan';
+                                            break;
+                                        case 'under_review':
+                                            $statusClass = 'status-under-review';
+                                            $statusText = 'Sedang Disemak';
+                                            break;
+                                        case 'reviewed':
+                                            $statusClass = 'status-reviewed';
+                                            $statusText = 'Telah Disemak';
+                                            break;
+                                        case 'approved':
+                                            $statusClass = 'status-approved';
+                                            $statusText = 'Diluluskan';
+                                            break;
+                                        case 'rejected':
+                                            $statusClass = 'status-rejected';
+                                            $statusText = 'Tolak';
+                                            break;
+                                    }
+                                @endphp
+                                <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
+                            </td>
+                            <td>
+                                {{-- Show original submitter from report_reviews --}}
+                                {{ $report->review_submitter_name ?? 'Unknown' }}
+                            </td>
+                            <td>
+                                @php
+                                    // Show submission date from report_reviews table
+                                    $createdDate = $report->review_created_at ? \Carbon\Carbon::parse($report->review_created_at) : null;
+                                @endphp
+                                {{ $createdDate ? $createdDate->format('d/m/Y') : '-' }}
+                                <div class="report-period">
+                                    {{ $createdDate ? $createdDate->format('H:i') : '' }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons" style="display: flex; gap: 5px; justify-content: center;">
                                     @if($report->approval_id)
                                         {{-- Show view button only if record exists in report_approvals --}}
                                         <a href="{{ route('finance.view_report', ['report_id' => $report->approval_id]) }}" 
@@ -352,17 +359,28 @@
                                             <i class="fa fa-clock"></i>
                                         </span>
                                     @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="8" class="empty-state">
-                                    <i class="fa fa-inbox"></i>
-                                    <h4>No Reports Found</h4>
-                                    <p>There are no payment reports pending for review at the moment.</p>
-                                </td>
-                            </tr>
-                            @endforelse
+                                    
+                                    {{-- Delete button with the same ID used in the row --}}
+                                    <button type="button" 
+                                        class="btn btn-danger btn-sm delete-report" 
+                                        title="Delete Report"
+                                        data-id="{{ $reportRowId }}"
+                                        data-report-number="{{ $report->report_number }}"
+                                        onclick="confirmDelete({{ $reportRowId }}, '{{ $report->report_number }}')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr class="empty-state-row">
+                            <td colspan="8" class="empty-state">
+                                <i class="fa fa-inbox"></i>
+                                <h4>Tiada Laporan Dijumpai</h4>
+                                <p>Tiada laporan pembayaran yang menunggu semakan pada masa ini.</p>
+                            </td>
+                        </tr>
+                        @endforelse
                         </tbody>
                     </table>
                   
@@ -386,5 +404,301 @@
         </div>
     </div>
 </section>
+
+  <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- JavaScript for Delete Functionality using SweetAlert2 --}}
+    <script>
+        function confirmDelete(reportId, reportNumber) {
+            Swal.fire({
+                title: 'Adakah anda pasti?',
+                text: `Anda akan memadamkan laporan: ${reportNumber}`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, padamkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteReport(reportId);
+                }
+            });
+        }
+
+        function deleteReport(reportId) {
+            // Show loading alert
+            Swal.fire({
+                title: 'Memadamkan...',
+                text: 'Sila tunggu semasa kami memadamkan laporan.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Get CSRF token
+            const token = document.querySelector('meta[name="csrf-token"]');
+            if (!token) {
+                console.error('CSRF token not found');
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'CSRF token tidak dijumpai. Sila muat semula halaman.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Make AJAX request using fetch
+            fetch(`/finance/reports/${reportId}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token.getAttribute('content'),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    // Try to get error message from response
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    }).catch(() => {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success response:', data);
+                
+                if (data.success) {
+                    // First close the loading alert
+                    Swal.close();
+                    
+                    // Find and remove the row from table
+                    const row = document.getElementById(`report-row-${reportId}`);
+                    console.log('Found row:', row);
+                    
+                    if (row) {
+                        // Add fade out animation
+                        row.style.transition = 'all 0.3s ease-out';
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(-20px)';
+                        
+                        // Remove row after animation
+                        setTimeout(() => {
+                            row.remove();
+                            console.log('Row removed successfully');
+                            
+                            // Check if table is now empty
+                            checkIfTableEmpty();
+                            
+                            // Update row numbers
+                            updateRowNumbers();
+                            
+                        }, 300);
+                    } else {
+                        console.warn(`Row with ID report-row-${reportId} not found`);
+                    }
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Berjaya Dipadamkan!',
+                        text: data.message || 'Laporan telah berjaya dipadamkan.',
+                        icon: 'success',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
+                    
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        title: 'Ralat!',
+                        text: data.message || 'Gagal memadamkan laporan.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Delete error:', error);
+                
+                Swal.fire({
+                    title: 'Ralat!',
+                    text: 'Ralat berlaku semasa memadamkan laporan. Sila cuba lagi.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+        }
+
+        // Function to check if table is empty and show empty state
+        function checkIfTableEmpty() {
+            const tbody = document.querySelector('.modern-table tbody');
+            const dataRows = tbody.querySelectorAll('tr:not(.empty-state-row)');
+            
+            if (dataRows.length === 0) {
+                // Add empty state row
+                const emptyRow = document.createElement('tr');
+                emptyRow.className = 'empty-state-row';
+                emptyRow.innerHTML = `
+                    <td colspan="8" class="empty-state">
+                        <i class="fa fa-inbox"></i>
+                        <h4>Tiada Laporan Dijumpai</h4>
+                        <p>Tiada laporan pembayaran yang menunggu semakan pada masa ini.</p>
+                    </td>
+                `;
+                tbody.appendChild(emptyRow);
+            }
+        }
+
+        // Function to update row numbers after deletion
+        function updateRowNumbers() {
+            const tbody = document.querySelector('.modern-table tbody');
+            const dataRows = tbody.querySelectorAll('tr:not(.empty-state-row)');
+            
+            dataRows.forEach((row, index) => {
+                const firstCell = row.querySelector('td:first-child');
+                if (firstCell) {
+                    firstCell.textContent = index + 1;
+                }
+            });
+        }
+
+        // Alternative jQuery version (if you prefer jQuery)
+        function deleteReportJQuery(reportId) {
+            // Show loading alert
+            Swal.fire({
+                title: 'Memadamkan...',
+                text: 'Sila tunggu semasa kami memadamkan laporan.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Setup CSRF token
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            
+            $.ajax({
+                url: `/finance/reports/${reportId}/delete`,
+                type: 'DELETE',
+                dataType: 'json',
+                timeout: 30000, // 30 seconds timeout
+                success: function(data) {
+                    console.log('Success response:', data);
+                    
+                    if (data.success) {
+                        // Close loading alert
+                        Swal.close();
+                        
+                        // Remove row with animation
+                        const $row = $(`#report-row-${reportId}`);
+                        console.log('Found row:', $row.length);
+                        
+                        if ($row.length > 0) {
+                            $row.fadeOut(300, function() {
+                                $(this).remove();
+                                console.log('Row removed successfully');
+                                
+                                // Check if table is empty
+                                checkIfTableEmptyJQuery();
+                                
+                                // Update row numbers
+                                updateRowNumbersJQuery();
+                            });
+                        } else {
+                            console.warn(`Row with ID report-row-${reportId} not found`);
+                        }
+                        
+                        // Show success message
+                        Swal.fire({
+                            title: 'Berjaya Dipadamkan!',
+                            text: data.message || 'Laporan telah berjaya dipadamkan.',
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        });
+                        
+                    } else {
+                        Swal.fire({
+                            title: 'Ralat!',
+                            text: data.message || 'Gagal memadamkan laporan.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Delete error:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                    
+                    let errorMessage = 'Ralat berlaku semasa memadamkan laporan.';
+                    
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (status === 'timeout') {
+                        errorMessage = 'Permintaan telah tamat masa. Sila cuba lagi.';
+                    } else if (status === 'error' && xhr.status === 0) {
+                        errorMessage = 'Tiada sambungan rangkaian. Sila semak sambungan internet anda.';
+                    }
+                    
+                    Swal.fire({
+                        title: 'Ralat!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        // jQuery versions of helper functions
+        function checkIfTableEmptyJQuery() {
+            const $tbody = $('.modern-table tbody');
+            const $dataRows = $tbody.find('tr:not(.empty-state-row)');
+            
+            if ($dataRows.length === 0) {
+                const emptyRow = `
+                    <tr class="empty-state-row">
+                        <td colspan="8" class="empty-state">
+                            <i class="fa fa-inbox"></i>
+                            <h4>Tiada Laporan Dijumpai</h4>
+                            <p>Tiada laporan pembayaran yang menunggu semakan pada masa ini.</p>
+                        </td>
+                    </tr>
+                `;
+                $tbody.append(emptyRow);
+            }
+        }
+
+        function updateRowNumbersJQuery() {
+            $('.modern-table tbody tr:not(.empty-state-row)').each(function(index) {
+                $(this).find('td:first-child').text(index + 1);
+            });
+        }
+
+        // Optional: Add a function to reload the page if needed
+        function reloadPageData() {
+            window.location.reload();
+        }
+
+    </script>
 
 @endsection
