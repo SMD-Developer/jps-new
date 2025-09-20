@@ -416,8 +416,11 @@ Route::group(['middleware' => 'install'], function(){
     Route::get('finance/view-report/{report_id}', 'FinanceController@viewReportDetails')
     ->name('finance.view_report')
     ->where('report_id', '[0-9]+');
+    // delete routes
     Route::delete('finance/reports/{id}/delete', 'FinanceController@deleteReport')
     ->name('finance.delete_report');
+
+
     
     Route::get('government-agency-application', 'FinanceController@governmentAgencyApplication')->name('finance.view.government-application');
     Route::get('collectors-statement-send-report-finance','FinanceController@collectors_statement_report_ispek')->name('collectors-statement-send-report-finance');
