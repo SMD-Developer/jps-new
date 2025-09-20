@@ -440,12 +440,39 @@ if(! function_exists('getMenus')){
                   
                     
                     [
-                        'icon' => 'line-chart',
-                        'text' => trans('app.reports'),
-                        'route' => url('#'),
-                        'active_dropdown' => request()->is('daily-receipt-report-type-approver') || request()->is('cash-book-report-approver') || request()->is('new-assignment-approver') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('daily-receipt-report-type-approver') || request()->is('cash-book-report-approver') || request()->is('new-assignment-approver') ? 'block' : 'none',
-                        'menu_active' => '',
+                       'icon' => 'line-chart',
+                       'text' => trans('app.reports'),
+                       'route' => url('#'),
+                       'active_dropdown' => request()->is('new-assignment-approver') || 
+                        request()->is('daily-receipt-report-type-approver') || 
+                        request()->is('cash-book-report-approver') || 
+                        request()->is('report-list-all-application-contribution-ditch-search') ||
+                        request()->is('report-list-all-application-contribution-ditch') ||
+                        request()->is('report-collection-contribution-ditch-by-district-search') ||
+                        request()->is('report-collection-contribution-ditch-by-district') ||
+                        request()->is('daily-receipt-report-type-finance') ||
+                        request()->is('payment-summary-report-search') ||
+                        request()->is('claim-contribution-report-search') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('new-assignment-approver') || 
+                        request()->is('daily-receipt-report-type-approver') || 
+                        request()->is('cash-book-report-approver') ||
+                        request()->is('report-list-all-application-contribution-ditch-search') ||
+                        request()->is('report-list-all-application-contribution-ditch') ||
+                        request()->is('report-collection-contribution-ditch-by-district-search') ||
+                        request()->is('report-collection-contribution-ditch-by-district') ||
+                        request()->is('daily-receipt-report-type-finance') ||
+                        request()->is('payment-summary-report-search') ||
+                        request()->is('claim-contribution-report-search') ? 'block' : 'none',
+                        'menu_active' => request()->is('new-assignment-approver') || 
+                        request()->is('daily-receipt-report-type-approver') || 
+                        request()->is('cash-book-report-approver') ||
+                        request()->is('report-list-all-application-contribution-ditch-search') ||
+                        request()->is('report-list-all-application-contribution-ditch') ||
+                        request()->is('report-collection-contribution-ditch-by-district-search') ||
+                        request()->is('report-collection-contribution-ditch-by-district') ||
+                        request()->is('daily-receipt-report-type-finance') ||
+                        request()->is('payment-summary-report-search') ||
+                        request()->is('claim-contribution-report-search') ? 'active' : '',
                         'permission' => 'reports.view-list',
                         'is_dropdown' => true,
                         'submenus' => [
@@ -453,7 +480,6 @@ if(! function_exists('getMenus')){
                                 'icon' => 'money',
                                 'text' => trans('app.collection_payment_report'),
                                 'route' => url('#'),
-                                //  Ensure parent menu stays open if child `new-assignment-approver` is active
                                 'active_dropdown' => request()->is('new-assignment-approver') ? 'menu-is-opening menu-open' : '',
                                 'active_dropdown_menu' => request()->is('new-assignment-approver') ? 'block' : 'none',
                                 'menu_active' => request()->is('new-assignment-approver') ? 'active' : '',
@@ -464,32 +490,48 @@ if(! function_exists('getMenus')){
                                         'icon' => 'file-text',
                                         'text' => trans('app.assignments_not_taken'),
                                         'route' => url('new-assignment-approver'),
-                                        //  Ensure this submenu is active when visiting this route
                                         'menu_active' => request()->is('new-assignment-approver') ? 'active' : '',
                                     ],
                                 ],
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_receipt_payment_report'),
-                                'route' => url('daily-receipt-report-type-approver'),
-                                'menu_active' => request()->is('daily-receipt-report-type-approver') ? 'active' : '',
+                                'text' => trans('app.report_list_application_ditch_contribution'),
+                                'route' =>  url('report-list-all-application-contribution-ditch-search'),
+                                'menu_active' => request()->is('report-list-all-application-contribution-ditch-search') || 
+                                                request()->is('report-list-all-application-contribution-ditch') ? 'active' : '',
+                                'permission'=> 'report.account.type'
+                            ],
+                            [
+                                'icon' => 'money',
+                                'text' => trans('app.report_collection_contribution_ditch_by_district'),
+                                'route' =>  url('report-collection-contribution-ditch-by-district-search'),
+                                'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search') ||
+                                                request()->is('report-collection-contribution-ditch-by-district') ? 'active' : '',
+                                'permission' => 'report.district'
+                            ],
+                            [
+                                'icon' => 'money',
+                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'route' =>  url('daily-receipt-report-type-finance'),
+                                'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.checkbook_cash_book_report_by_date'),
-                                'route' => url('cash-book-report-approver'),
-                                'menu_active' => request()->is('cash-book-report-approver') ? 'active' : '',
+                                'text' => trans('app.summary_of_overall_receipt_report'),
+                                'route' =>  url('payment-summary-report-search'),
+                                'menu_active' => request()->is('payment-summary-report-search') ? 'active' : '',
+                                'permission'  => 'payment.summary.report'
                             ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.contribution_payment_report'),
-                                'route' => url('#'),
-                                'menu_active' => '',
+                                'route' =>  url('claim-contribution-report-search'),
+                                'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
-                        ]
+                        ] 
                     ],
 
                     [
@@ -1597,66 +1639,101 @@ if(! function_exists('getMenus')){
                     ],
                   
                     
-                     [
-                            'icon' => 'line-chart',
-                            'text' => trans('app.reports'),
-                            'route' => url('#'),
-                            'active_dropdown' => request()->is('new-assignment-reviewer') || request()->is('daily-receipt-report-type-reviewer') || request()->is('cash-book-report-reviewer') ? 'menu-is-opening menu-open' : '',
-                            'active_dropdown_menu' => request()->is('new-assignment-reviewer') || request()->is('daily-receipt-report-type-reviewer') || request()->is('cash-book-report-reviewer') ? 'block' : 'none',
-                            'menu_active' => request()->is('new-assignment-reviewer') || request()->is('daily-receipt-report-type-reviewer') || request()->is('cash-book-report-reviewer')  ? 'active' : '',
-                            'permission' => 'reports.view-list',
-                            'is_dropdown' => true,
-                            'submenus' => [
+                    [
+                        'icon' => 'line-chart',
+                        'text' => trans('app.reports'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('new-assignment-reviewer') || 
+                        request()->is('daily-receipt-report-type-reviewer') || 
+                        request()->is('cash-book-report-reviewer') || 
+                        request()->is('report-list-all-application-contribution-ditch-search') ||
+                        request()->is('report-list-all-application-contribution-ditch') ||
+                        request()->is('report-collection-contribution-ditch-by-district-search') ||
+                        request()->is('report-collection-contribution-ditch-by-district') ||
+                        request()->is('daily-receipt-report-type-finance') ||
+                        request()->is('payment-summary-report-search') ||
+                        request()->is('claim-contribution-report-search') ? 'menu-is-opening menu-open' : '',
+                       'active_dropdown_menu' => request()->is('new-assignment-reviewer') || 
+                        request()->is('daily-receipt-report-type-reviewer') || 
+                        request()->is('cash-book-report-reviewer') ||
+                        request()->is('report-list-all-application-contribution-ditch-search') ||
+                        request()->is('report-list-all-application-contribution-ditch') ||
+                        request()->is('report-collection-contribution-ditch-by-district-search') ||
+                        request()->is('report-collection-contribution-ditch-by-district') ||
+                        request()->is('daily-receipt-report-type-finance') ||
+                        request()->is('payment-summary-report-search') ||
+                        request()->is('claim-contribution-report-search') ? 'block' : 'none',
+                       'menu_active' => request()->is('new-assignment-reviewer') || 
+                        request()->is('daily-receipt-report-type-reviewer') || 
+                        request()->is('cash-book-report-reviewer') ||
+                        request()->is('report-list-all-application-contribution-ditch-search') ||
+                        request()->is('report-list-all-application-contribution-ditch') ||
+                        request()->is('report-collection-contribution-ditch-by-district-search') ||
+                        request()->is('report-collection-contribution-ditch-by-district') ||
+                        request()->is('daily-receipt-report-type-finance') ||
+                        request()->is('payment-summary-report-search') ||
+                        request()->is('claim-contribution-report-search') ? 'active' : '',
+                        'permission' => 'reports.view-list',
+                        'is_dropdown' => true,
+                        'submenus' => [
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.collection_payment_report'),
                                 'route' =>  url('#'),
                                 'active_dropdown' => request()->is('new-assignment-reviewer') ? 'menu-is-opening menu-open' : '',
                                 'active_dropdown_menu' => request()->is('new-assignment-reviewer') ? 'block' : 'none',
-                                'menu_active' => request()->is('new-assignment-reviewer')  ? 'active' : '',
+                                'menu_active' => request()->is('new-assignment-reviewer') ? 'active' : '',
                                 'permission' => 'collection-payment.view-list',
-                                'submenus' => [ // Second-level submenu
-                                                [
-                                                    'icon' => 'file-text',
-                                                    'text' => trans('app.assignments_not_taken'),
-                                                    'route' =>  url('new-assignment-reviewer'),
-                                                    'menu_active' => request()->is('new-assignment-reviewer')  ? 'active' : '',
-                                                ],
-                                                // [
-                                                //     'icon' => 'file-text',
-                                                //     'text' => trans('app.approved_statement'),
-                                                //     'route' =>  url('approved-statement'),
-                                                //     'menu_active' => request()->is('approved-statement') ? 'active' : '',
-                                                // ]
-                                                
-                                            ],
-                                
-                                
+                                'is_dropdown' => true,
+                                'submenus' => [
+                                    [
+                                        'icon' => 'file-text',
+                                        'text' => trans('app.assignments_not_taken'),
+                                        'route' =>  url('new-assignment-reviewer'),
+                                        'menu_active' => request()->is('new-assignment-reviewer') ? 'active' : '',
+                                    ],
+                                ],
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_receipt_payment_report'),
-                                'route' =>  url('daily-receipt-report-type-reviewer'),
-                                'menu_active' => request()->is('daily-receipt-report-type-reviewer')  ? 'active' : '',
+                                'text' => trans('app.report_list_application_ditch_contribution'),
+                                'route' =>  url('report-list-all-application-contribution-ditch-search'),
+                                'menu_active' => request()->is('report-list-all-application-contribution-ditch-search') || 
+                                                request()->is('report-list-all-application-contribution-ditch') ? 'active' : '',
+                                'permission'=> 'report.account.type'
+                            ],
+                            [
+                                'icon' => 'money',
+                                'text' => trans('app.report_collection_contribution_ditch_by_district'),
+                                'route' =>  url('report-collection-contribution-ditch-by-district-search'),
+                                'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search') ||
+                                                request()->is('report-collection-contribution-ditch-by-district') ? 'active' : '',
+                                'permission' => 'report.district'
+                            ],
+                            [
+                                'icon' => 'money',
+                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'route' =>  url('daily-receipt-report-type-finance'),
+                                'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.checkbook_cash_book_report_by_date'),
-                                'route' =>  url('cash-book-report-reviewer'),
-                                'menu_active' => request()->is('cash-book-report-reviewer')  ? 'active' : '',
+                                'text' => trans('app.summary_of_overall_receipt_report'),
+                                'route' =>  url('payment-summary-report-search'),
+                                'menu_active' => request()->is('payment-summary-report-search') ? 'active' : '',
+                                'permission'  => 'payment.summary.report'
                             ],
-                            
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.contribution_payment_report'),
-                                'route' =>  url('#'),
-                                'menu_active' => request()->is('#')  ? 'active' : '',
+                                'route' =>  url('claim-contribution-report-search'),
+                                'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
-                            
                         ]
                     ],
+
                     [
                         'icon' => 'user-md',
                         'text' => trans('app.profile'),
