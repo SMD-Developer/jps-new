@@ -255,7 +255,15 @@
                         <tbody>
                             @forelse($reports as $index => $report)
                             @php
-                                $reportData = is_array($report->report_data) ? $report->report_data : json_decode($report->report_data, true);
+                                // Use report_reviews data for display in the list
+                                $reportData = null;
+                                if (isset($report->review_report_data) && is_array($report->review_report_data)) {
+                                    $reportData = $report->review_report_data;
+                                } elseif (isset($report->review_report_data)) {
+                                    $reportData = json_decode($report->review_report_data, true);
+                                } else {
+                                    $reportData = [];
+                                }
                             @endphp
                             <tr>
                                 <td>{{ $index + 1 }}</td>
@@ -285,36 +293,44 @@
                                 </td>
                                 <td>
                                     @php
+                                        // Show status from report_reviews or report_approvals
+                                        $displayStatus = $report->review_status ?? $report->approval_status;
                                         $statusClass = 'status-pending';
-                                        $statusText = ucfirst($report->status);
+                                        $statusText = ucfirst($displayStatus);
                                 
-                                        switch(strtolower($report->status)) {
+                                        switch(strtolower($displayStatus)) {
                                             case 'pending':
                                                 $statusClass = 'status-pending';
                                                 $statusText = 'Menunggu Semakan';
                                                 break;
+                                            case 'under_review':
+                                                $statusClass = 'status-under-review';
+                                                $statusText = 'Sedang Disemak';
+                                                break;
                                             case 'reviewed':
                                                 $statusClass = 'status-reviewed';
+                                                $statusText = 'Telah Disemak';
                                                 break;
                                             case 'approved':
                                                 $statusClass = 'status-approved';
                                                 $statusText = 'Diluluskan';
                                                 break;
                                             case 'rejected':
-                                                $statusClass = 'status-rejected'; // danger badge
+                                                $statusClass = 'status-rejected';
                                                 $statusText = 'Tolak';
                                                 break;
                                         }
                                     @endphp
                                     <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
                                 </td>
-
                                 <td>
-                                    {{ $report->original_submitter_name ?? 'Unknown' }}
+                                    {{-- Show original submitter from report_reviews --}}
+                                    {{ $report->review_submitter_name ?? 'Unknown' }}
                                 </td>
                                 <td>
                                     @php
-                                        $createdDate = $report->created_at ? \Carbon\Carbon::parse($report->created_at) : null;
+                                        // Show submission date from report_reviews table
+                                        $createdDate = $report->review_created_at ? \Carbon\Carbon::parse($report->review_created_at) : null;
                                     @endphp
                                     {{ $createdDate ? $createdDate->format('d/m/Y') : '-' }}
                                     <div class="report-period">
@@ -322,19 +338,20 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <!--<a href="{{ route('finance.view_report', ['report_id' => $report->id]) }}" -->
-                                    <!--   class="view-btn" -->
-                                    <!--   title="View Report Details">-->
-                                    <!--    <i class="fa fa-eye"></i>-->
-                                    <!--    View-->
-                                    <!--</a>-->
-                                    <a href="{{ route('finance.view_report', ['report_id' => $report->id]) }}" 
-                                       class="btn btn-primary btn-sm view-report"
-                                       title="View Report Details"
-                                       data-id="{{ $report->id }}">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-
+                                    @if($report->approval_id)
+                                        {{-- Show view button only if record exists in report_approvals --}}
+                                        <a href="{{ route('finance.view_report', ['report_id' => $report->approval_id]) }}" 
+                                        class="btn btn-primary btn-sm view-report"
+                                        title="View Report Details"
+                                        data-id="{{ $report->approval_id }}">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    @else
+                                        {{-- Show disabled button or different action for review-only records --}}
+                                        <span class="btn btn-secondary btn-sm disabled" title="Not yet submitted for approval">
+                                            <i class="fa fa-clock"></i>
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                             @empty
@@ -348,6 +365,21 @@
                             @endforelse
                         </tbody>
                     </table>
+                  
+            
+                    <!-- Add this pagination section after the table -->
+                    @if($reports->hasPages())
+                    <div class="pagination-container" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                        <div class="pagination-info">
+                            <small class="text-muted">
+                                Showing {{ $reports->firstItem() ?? 0 }} to {{ $reports->lastItem() ?? 0 }} of {{ $reports->total() }} results
+                            </small>
+                        </div>
+                        <div class="pagination-links">
+                            {{ $reports->links() }}
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 

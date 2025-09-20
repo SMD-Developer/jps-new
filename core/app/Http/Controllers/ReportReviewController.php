@@ -213,7 +213,7 @@ class ReportReviewController extends Controller
 
         // Update ReportReview status
         $report->update([
-            'status' => 'approved', // Or 'forwarded_to_approver'
+            'status' => 'pending', // Or 'forwarded_to_approver'
             'reviewed_at' => now(),
         ]);
 

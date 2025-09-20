@@ -331,8 +331,8 @@ th {
                                 </tr>
                                 <tr>
                                   <td>Nama</td>
-                                  <td>{{ $report->original_submitter_name }}</td>
-                                  <td>{{ $report->submitter_name }}</td>
+                                  <td>{{ strtoupper($report->original_submitter_name) }}</td>
+                                  <td>{{ strtoupper($report->submitter_name) }}</td>
                                   <td></td>
                                 </tr>
                                 <tr>
@@ -572,8 +572,8 @@ th {
                                 </tr>
                                 <tr>
                                   <td>Nama</td>
-                                  <td>{{ $report->original_submitter_name }}</td>
-                                  <td>{{ $report->submitter_name }}</td>
+                                  <td>{{ strtoupper($report->original_submitter_name) }}</td>
+                                  <td>{{ strtoupper($report->submitter_name) }}</td>
                                   <td></td>
                                 </tr>
                                 <tr>
@@ -742,8 +742,19 @@ th {
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
+                                  <td class="text-center">9</td>
+                                  <td>EFT</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td class="text-right">476.00</td>
+                                </tr>
+                                <tr>
                                   <td colspan="4" class="text-right" style="border-right: 0;">JUMLAH BERSIH</td>
-                                  <td style="border-left: 0;" class="text-right">63,512.00</td>
+                                  @php
+                                        $receiptAmount = $receipt['amount'] ?? '0';
+                                        $numericReceiptAmount = is_numeric($receiptAmount) ? (float)$receiptAmount : (float)preg_replace('/[^\d.-]/', '', $receiptAmount);
+                                    @endphp
+                                  <td style="border-left: 0;" class="text-right">{{ number_format($numericAmount, 2) }}</td>
                                 </tr>
                              </table>
                         </section>
@@ -758,8 +769,8 @@ th {
                                 </tr>
                                 <tr>
                                   <td>Nama</td>
-                                  <td>{{ $report->original_submitter_name }}</td>
-                                  <td>{{ $report->submitter_name }}</td>
+                                  <td>{{ strtoupper($report->original_submitter_name) }}</td>
+                                  <td>{{ strtoupper($report->submitter_name) }}</td>
                                   <td></td>
                                 </tr>
                                 <tr>

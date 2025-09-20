@@ -207,9 +207,21 @@ class ApproverController extends Controller
                     'updated_at' => now()
                 ]);
 
-            if ($updated) {
+             if ($updated) {
+            // If status is approved, also update report_reviews
+            if ($status === 'approved') {
+                DB::table('report_reviews')
+                    ->where('report_number', $reportNumber)
+                    ->update([
+                        'status' => 'approved',
+                        'updated_at' => now()
+                    ]);
+            }
+
+                DB::commit(); // Commit transaction
                 return response()->json(['success' => true, 'message' => 'Report status updated successfully']);
             } else {
+                DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Report not found or no changes made'], 404);
             }
         } catch (\Exception $e) {

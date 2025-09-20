@@ -328,6 +328,18 @@
                             @endforelse
                         </tbody>
                     </table>
+                    @if($reports->hasPages())
+                    <div class="pagination-container" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                        <div class="pagination-info">
+                            <small class="text-muted">
+                                Showing {{ $reports->firstItem() ?? 0 }} to {{ $reports->lastItem() ?? 0 }} of {{ $reports->total() }} results
+                            </small>
+                        </div>
+                        <div class="pagination-links">
+                            {{ $reports->links() }}
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 

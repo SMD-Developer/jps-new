@@ -106,42 +106,63 @@ class financeController extends Controller {
         return view('finance.collectors_receipt');
     }
 
-    public function approved_statement(){
-       $reports = DB::table('report_approvals')
-                ->select(
-                    'report_approvals.id',
-                    'report_approvals.report_number',
-                    'report_approvals.report_data',
-                    'report_approvals.submitted_by',
-                    'report_approvals.assigned_to',
-                    'report_approvals.status',
-                    'report_approvals.approver_comments',
-                    'report_approvals.submitted_at',
-                    'report_approvals.approved_at',
-                    'report_approvals.created_at',
-                    'report_approvals.updated_at',
-                    'submitter.username as submitter_name',
-                    'approver.username as approver_name',
-                    'report_reviews.submitted_by as original_submitter_id',
-                    'report_reviews.submitted_at as original_submitted_at',
-                    'original_submitter.username as original_submitter_name'
-                )
-                ->leftJoin('users as submitter', 'report_approvals.submitted_by', '=', 'submitter.uuid')
-                ->leftJoin('users as approver', 'report_approvals.assigned_to', '=', 'approver.uuid')
-                ->leftJoin('report_reviews', 'report_approvals.report_number', '=', 'report_reviews.report_number')
-                ->leftJoin('users as original_submitter', 'report_reviews.submitted_by', '=', 'original_submitter.uuid')
-                ->orderBy('report_approvals.approved_at', 'desc') // Order by approval date
-                ->whereIn('report_approvals.status', ['pending', 'approved'])
-                ->get();
+
+    public function approved_statement(){        
+        $reports = DB::table('report_reviews')
+            ->select(
+                // Report Reviews data (main table)
+                'report_reviews.id as review_id',
+                'report_reviews.report_number',
+                'report_reviews.report_data as review_report_data',
+                'report_reviews.submitted_by as review_submitted_by',
+                'report_reviews.assigned_to as review_assigned_to',
+                'report_reviews.status as review_status',
+                'report_reviews.reviewer_comments',
+                'report_reviews.submitted_at as review_submitted_at',
+                'report_reviews.reviewed_at',
+                'report_reviews.created_at as review_created_at',
+                'report_reviews.updated_at as review_updated_at',
+                
+                // Report Approvals data (joined table)
+                'report_approvals.id as approval_id',
+                'report_approvals.report_data as approval_report_data',
+                'report_approvals.submitted_by as approval_submitted_by',
+                'report_approvals.assigned_to as approval_assigned_to',
+                'report_approvals.status as approval_status',
+                'report_approvals.approver_comments',
+                'report_approvals.submitted_at as approval_submitted_at',
+                'report_approvals.approved_at',
+                'report_approvals.created_at as approval_created_at',
+                'report_approvals.updated_at as approval_updated_at',
+                
+                // User names
+                'review_submitter.username as review_submitter_name',
+                'review_assignee.username as review_assignee_name',
+                'approval_submitter.username as approval_submitter_name',
+                'approval_approver.username as approval_approver_name'
+            )
+            ->leftJoin('users as review_submitter', 'report_reviews.submitted_by', '=', 'review_submitter.uuid')
+            ->leftJoin('users as review_assignee', 'report_reviews.assigned_to', '=', 'review_assignee.uuid')
+            ->leftJoin('report_approvals', 'report_reviews.report_number', '=', 'report_approvals.report_number')
+            ->leftJoin('users as approval_submitter', 'report_approvals.submitted_by', '=', 'approval_submitter.uuid')
+            ->leftJoin('users as approval_approver', 'report_approvals.assigned_to', '=', 'approval_approver.uuid')
+            ->orderBy('report_reviews.created_at', 'desc') // Latest data first based on review creation date
+            ->paginate(10);
         
-            // Decode JSON data
-            $reports= $reports->map(function ($approval) {
-                $approval->report_data = json_decode($approval->report_data, true);
-                return $approval;
-            });
+        // Decode JSON data from both tables
+        $reports->getCollection()->transform(function ($report) {
+            if ($report->review_report_data) {
+                $report->review_report_data = json_decode($report->review_report_data, true);
+            }
+            if ($report->approval_report_data) {
+                $report->approval_report_data = json_decode($report->approval_report_data, true);
+            }
+            return $report;
+        });
         
-            $totalApprovals = $reports->count();
-            $approvedCount = $reports->where('status', 'approved')->count();
+        $totalApprovals = $reports->total();
+        $approvedCount = $reports->where('review_status', 'approved')->count();
+        
         return view('finance.approved_statement', compact('reports', 'totalApprovals', 'approvedCount'));
     }
     

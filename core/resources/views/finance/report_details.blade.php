@@ -331,15 +331,15 @@ th {
                                 </tr>
                                 <tr>
                                   <td>Nama</td>
-                                  <td>{{ $report->original_submitter_name }}</td>
-                                  <td>{{ $report->submitter_name }}</td>
-                                  <td>{{$report->approver_name}}</td>
+                                  <td>{{ strtoupper($report->original_submitter_name) }}</td>
+                                  <td>{{ strtoupper($report->submitter_name) }}</td>
+                                  <td>{{strtoupper($report->approver_name)}}</td>
                                 </tr>
                                 <tr>
                                   <td>Jawatan</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td>PEMBANTU TADBIR (KEWANGAN) GRED W19</td>
+                                  <td>PEMBANTU TADBIR (KEWANGAN) GRED W22</td>
+                                  <td>PENOLONG AKAUNTAN GRED W29</td>
                                 </tr>
                                 <tr>
                                   <td>Tarikh</td>
@@ -572,15 +572,15 @@ th {
                                 </tr>
                                 <tr>
                                   <td>Nama</td>
-                                  <td>{{ $report->original_submitter_name }}</td>
-                                  <td>{{ $report->submitter_name }}</td>
-                                  <td>{{$report->approver_name}}</td>
+                                 <td>{{ strtoupper($report->original_submitter_name) }}</td>
+                                  <td>{{ strtoupper($report->submitter_name) }}</td>
+                                  <td>{{strtoupper($report->approver_name)}}</td>
                                 </tr>
                                 <tr>
                                   <td>Jawatan</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td>PEMBANTU TADBIR (KEWANGAN) GRED W19</td>
+                                  <td>PEMBANTU TADBIR (KEWANGAN) GRED W22</td>
+                                  <td>PENOLONG AKAUNTAN GRED W29</td>
                                 </tr>
                                 <tr>
                                   <td>Tarikh</td>
@@ -741,9 +741,20 @@ th {
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
+                                 <tr>
+                                  <td class="text-center">9</td>
+                                  <td>EFT</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td class="text-right">476.00</td>
+                                </tr>
                                 <tr>
                                   <td colspan="4" class="text-right" style="border-right: 0;">JUMLAH BERSIH</td>
-                                  <td style="border-left: 0;" class="text-right">63,512.00</td>
+                                  @php
+                                        $receiptAmount = $receipt['amount'] ?? '0';
+                                        $numericReceiptAmount = is_numeric($receiptAmount) ? (float)$receiptAmount : (float)preg_replace('/[^\d.-]/', '', $receiptAmount);
+                                    @endphp
+                                  <td style="border-left: 0;" class="text-right">{{ number_format($numericReceiptAmount, 2) }}</td>
                                 </tr>
                              </table>
                         </section>
@@ -758,15 +769,15 @@ th {
                                 </tr>
                                 <tr>
                                   <td>Nama</td>
-                                  <td>{{ $report->original_submitter_name }}</td>
-                                  <td>{{ $report->submitter_name }}</td>
-                                  <td>{{$report->approver_name}}</td>
+                                 <td>{{ strtoupper($report->original_submitter_name) }}</td>
+                                  <td>{{ strtoupper($report->submitter_name) }}</td>
+                                  <td>{{strtoupper($report->approver_name)}}</td>
                                 </tr>
                                 <tr>
                                   <td>Jawatan</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td>PEMBANTU TADBIR (KEWANGAN) GRED W19</td>
+                                  <td>PEMBANTU TADBIR (KEWANGAN) GRED W22</td>
+                                  <td>PENOLONG AKAUNTAN GRED W29</td>
                                 </tr>
                                 <tr>
                                   <td>Tarikh</td>

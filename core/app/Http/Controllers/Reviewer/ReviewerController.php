@@ -109,16 +109,16 @@ class ReviewerController extends Controller
             ->leftJoin('users as submitter', 'report_reviews.submitted_by', '=', 'submitter.uuid')
             ->leftJoin('users as reviewer', 'report_reviews.assigned_to', '=', 'reviewer.uuid')
             ->orderBy('report_reviews.created_at', 'desc')
-            ->get();
+            ->paginate(10); 
     
         // Decode JSON data
-        $reports = $reports->map(function ($report) {
+        $reports->getCollection()->transform(function ($report) {
             $report->report_data = json_decode($report->report_data, true);
             return $report;
         });
         
     
-        $totalReports = $reports->count();
+        $totalReports = $reports->total();
         $pendingCount = $reports->where('status', 'pending')->count();
     
         return view('reviewer.payment-to-review', compact('reports', 'totalReports', 'pendingCount'));
