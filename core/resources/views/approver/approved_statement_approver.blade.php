@@ -105,23 +105,39 @@
     .status-approved {
         background: #d4edda;  /* light green */
         color: #155724;       /* dark green */
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
     
     /* Pending */
     .status-pending {
         background: #fff3cd;  /* light yellow */
         color: #856404;       /* dark yellow/brown */
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
 
     .status-under_approval{
-         background: #259ca5ff;  /* light yellow */
+        background: #259ca5ff;  /* light yellow */
         color: #fff; 
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
     
     /* Rejected */
     .status-rejected {
-        background: #f8d7da;  /* light red */
-        color: #721c24;       /* dark red */
+        background-color: #dc3545; 
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
 
     /* Action Button */

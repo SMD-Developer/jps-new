@@ -108,7 +108,6 @@ class ApproverController extends Controller
                     'report_approvals.created_at',
                     'report_approvals.updated_at',
                     'submitter.username as submitter_name',
-                    'approver.username as approver_name'
                 )
                 ->leftJoin('report_reviews', 'report_approvals.report_number', '=', 'report_reviews.report_number')
                 ->leftJoin('users as submitter', 'report_reviews.submitted_by', '=', 'submitter.uuid')
@@ -270,31 +269,18 @@ class ApproverController extends Controller
                 ]);
             }
 
-            // ✅ Update report_reviews (send back to reviewer)
-            $reportReview = DB::table('report_reviews')
-                ->where('id', $report_id)
-                ->first();
-
-            if ($reportReview) {
-                DB::table('report_reviews')
-                    ->where('id', $report_id)
-                    ->update([
-                        'status' => 'rejected',  
-                        'reviewer_comments' => $request->reason, 
-                        'updated_at' => now()
-                    ]);
-            } else {
-                $originalReport = DB::table('report_approvals')->where('id', $report_id)->first();
-                DB::table('report_reviews')->insert([
-                    'id' => $report_id,
+            $originalReport = DB::table('report_approvals')->where('id', $report_id)->first();
+        
+            DB::table('report_reviews')->updateOrInsert(
+                ['id' => $report_id], 
+                [
                     'status' => 'rejected',
                     'reviewer_comments' => $request->reason,
                     'report_data' => $originalReport->report_data ?? '{}',
-                    'submitted_by' => $originalReport->submitted_by ?? auth('admin')->id(),
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+                    'updated_at' => now(),
+                    'created_at' => now()
+                ]
+            );
 
             return response()->json([
                 'success' => true,

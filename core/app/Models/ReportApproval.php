@@ -40,10 +40,9 @@ class ReportApproval extends Model
     // Get next available approver
     public static function getNextApprover()
     {
-        // Get users with 'approver' role
-        $approvers = User::whereHas('role', function($query) {
-            $query->where('name', 'approver');
-        })->get();
+
+        $approverRoleId = '27f41653-a968-4885-8000-7aaf4efc385d';
+        $approvers = User::where('role_id', $approverRoleId)->get();
     
         if ($approvers->isEmpty()) {
             return null;

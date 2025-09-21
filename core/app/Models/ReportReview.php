@@ -38,9 +38,8 @@ class ReportReview extends Model
     public static function getNextReviewer()
     {
         // Get users with 'reviewer' role
-        $reviewers = User::whereHas('role', function($query) {
-            $query->where('name', 'reviewer');
-        })->get();
+        $reviewerRoleId = '9e032769-7342-46ba-b7c9-4f6f70570c98';
+        $reviewers = User::where('role_id', $reviewerRoleId)->get();
 
         if ($reviewers->isEmpty()) {
             return null;

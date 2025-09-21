@@ -108,6 +108,7 @@ class ReviewerController extends Controller
             )
             ->leftJoin('users as submitter', 'report_reviews.submitted_by', '=', 'submitter.uuid')
             ->leftJoin('users as reviewer', 'report_reviews.assigned_to', '=', 'reviewer.uuid')
+            ->where('report_reviews.assigned_to', auth('admin')->user()->uuid)
             ->orderBy('report_reviews.created_at', 'desc')
             ->paginate(10); 
     

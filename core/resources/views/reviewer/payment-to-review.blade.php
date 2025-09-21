@@ -104,16 +104,28 @@
     .status-pending {
         background: #fff3cd;
         color: #856404;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
 
     .status-reviewed {
         background: #e2582eff;
         color: #fff;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
 
     .status-approved {
         background: #d4edda;
         color: #155724;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
     }
 
     /* Action Button */
