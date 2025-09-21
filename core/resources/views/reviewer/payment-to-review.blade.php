@@ -107,8 +107,8 @@
     }
 
     .status-reviewed {
-        background: #d1ecf1;
-        color: #0c5460;
+        background: #e2582eff;
+        color: #fff;
     }
 
     .status-approved {

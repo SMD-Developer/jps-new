@@ -329,6 +329,17 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <p class="text-muted small">
+                                        Showing {{ $applications->firstItem() ?? 0 }} to {{ $applications->lastItem() ?? 0 }} 
+                                        of {{ $applications->total() }} results
+                                    </p>
+                                </div>
+                                <div>
+                                    {{ $applications->links() }}
+                                </div>
+                            </div>
                         </div>
                         <!-- End Table Responsive -->
                     </div>

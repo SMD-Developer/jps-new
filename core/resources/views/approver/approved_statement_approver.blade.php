@@ -238,7 +238,7 @@
                                 <th style="width: 150px;">Tempoh Laporan</th>
                                 <th style="width: 100px;">Jumlah (RM)</th>
                                 <th style="width: 100px;">Status</th>
-                                <!--<th style="width: 150px;">Approved By</th>-->
+                                <th style="width: 150px;">Prepared By</th>
                                 <th style="width: 100px;">Tarikh Hantar</th>
                                 <th style="width: 100px;">Untuk Tindakan</th>
                             </tr>
@@ -290,9 +290,9 @@
                                     </span>
                                 </td>
 
-                                <!--<td>-->
-                                    <!--{{ $approval->approver_name ?? 'Unknown' }}-->
-                                <!--</td>-->
+                                <td>
+                                    {{ $approval->submitter_name ?? 'Unknown' }}
+                                </td>
                                 <td>
                                     @php
                                         $approvedDate = $approval->approved_at ? \Carbon\Carbon::parse($approval->approved_at) : null;

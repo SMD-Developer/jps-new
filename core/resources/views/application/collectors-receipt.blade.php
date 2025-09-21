@@ -885,8 +885,22 @@ document.addEventListener('DOMContentLoaded', function () {
         cancelButtonText: '{{ __("app.no") }}'
     }).then((result) => {
         if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Please wait...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             sendReportToReviewer();
-            window.location.href = "{{ route('approved-statement') }}";
+            
+            // Wait a bit for the AJAX to complete, then redirect
+            setTimeout(() => {
+                window.location.href = "{{ route('approved-statement') }}";
+            }, 2000); // Wait 2 seconds - adjust as needed
         }
     });
 });

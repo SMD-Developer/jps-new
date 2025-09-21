@@ -88,7 +88,7 @@ class ApproverController extends Controller
         $canFinanceApproverApplicationDetails = auth('admin')->user()->hasPermission('applications.view-details');
         $applications = Application::with('client')
         ->orderBy('created_at', 'desc')
-        ->get();
+        ->paginate(10);
         return view('approver.approve', compact('applications', 'canFinanceApproverApplicationDetails'));
     }
     
@@ -110,7 +110,8 @@ class ApproverController extends Controller
                     'submitter.username as submitter_name',
                     'approver.username as approver_name'
                 )
-                ->leftJoin('users as submitter', 'report_approvals.submitted_by', '=', 'submitter.uuid')
+                ->leftJoin('report_reviews', 'report_approvals.report_number', '=', 'report_reviews.report_number')
+                ->leftJoin('users as submitter', 'report_reviews.submitted_by', '=', 'submitter.uuid')
                 ->leftJoin('users as approver', 'report_approvals.assigned_to', '=', 'approver.uuid')
                 ->orderBy('report_approvals.created_at', 'desc') // Order by approval date
                 ->paginate(10); 
@@ -232,87 +233,90 @@ class ApproverController extends Controller
     
     
     public function rejectReport(Request $request, $report_id)
-{
-    try {
-        $request->validate([
-            'report_id' => 'required',
-            'reason' => 'required|string|max:1000' // ✅ Validate rejection reason
-        ]);
+    {
+        try {
+            $request->validate([
+                'report_id' => 'required',
+                'reason' => 'required|string|max:1000' // ✅ Validate rejection reason
+            ]);
 
-        // Ensure report exists
-        $report = ReportApproval::findOrFail($report_id);
+            // Ensure report exists
+            $report = ReportApproval::findOrFail($report_id);
 
-        // ✅ Update report_approvals
-        $reportApproval = DB::table('report_approvals')
-            ->where('id', $report_id)
-            ->first();
-
-        if ($reportApproval) {
-            DB::table('report_approvals')
+            // ✅ Update report_approvals
+            $reportApproval = DB::table('report_approvals')
                 ->where('id', $report_id)
-                ->update([
+                ->first();
+
+            if ($reportApproval) {
+                DB::table('report_approvals')
+                    ->where('id', $report_id)
+                    ->update([
+                        'status' => 'rejected',
+                        'approver_comments' => $request->reason,
+                        'submitted_by' => auth('admin')->id(),
+                        'approved_at' => now(),
+                        'updated_at' => now()
+                    ]);
+            } else {
+                DB::table('report_approvals')->insert([
+                    'id' => $report_id,
                     'status' => 'rejected',
                     'approver_comments' => $request->reason,
                     'submitted_by' => auth('admin')->id(),
                     'approved_at' => now(),
+                    'created_at' => now(),
                     'updated_at' => now()
                 ]);
-        } else {
-            DB::table('report_approvals')->insert([
-                'id' => $report_id,
-                'status' => 'rejected',
-                'approver_comments' => $request->reason,
-                'submitted_by' => auth('admin')->id(),
-                'approved_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
+            }
 
-        // ✅ Update report_reviews (send back to reviewer)
-        $reportReview = DB::table('report_reviews')
-            ->where('id', $report_id)
-            ->first();
-
-        if ($reportReview) {
-            DB::table('report_reviews')
+            // ✅ Update report_reviews (send back to reviewer)
+            $reportReview = DB::table('report_reviews')
                 ->where('id', $report_id)
-                ->update([
-                    'status' => 'rejected',  
-                    'reviewer_comments' => $request->reason, 
+                ->first();
+
+            if ($reportReview) {
+                DB::table('report_reviews')
+                    ->where('id', $report_id)
+                    ->update([
+                        'status' => 'rejected',  
+                        'reviewer_comments' => $request->reason, 
+                        'updated_at' => now()
+                    ]);
+            } else {
+                $originalReport = DB::table('report_approvals')->where('id', $report_id)->first();
+                DB::table('report_reviews')->insert([
+                    'id' => $report_id,
+                    'status' => 'rejected',
+                    'reviewer_comments' => $request->reason,
+                    'report_data' => $originalReport->report_data ?? '{}',
+                    'submitted_by' => $originalReport->submitted_by ?? auth('admin')->id(),
+                    'created_at' => now(),
                     'updated_at' => now()
                 ]);
-        } else {
-            DB::table('report_reviews')->insert([
-                'id' => $report_id,
-                'status' => 'rejected',
-                'reviewer_comments' => $request->reason,
-                'created_at' => now(),
-                'updated_at' => now()
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Report has been rejected and sent back to reviewer with reason.',
+                'report_id' => $report_id
             ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error: ' . implode(', ', $e->errors())
+            ], 422);
+
+        } catch (\Exception $e) {
+            \Log::error('Report rejection failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject report. Please try again.'
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Report has been rejected and sent back to reviewer with reason.',
-            'report_id' => $report_id
-        ]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Validation error: ' . implode(', ', $e->errors())
-        ], 422);
-
-    } catch (\Exception $e) {
-        \Log::error('Report rejection failed: ' . $e->getMessage());
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to reject report. Please try again.'
-        ], 500);
     }
-}
 
 
 

@@ -992,21 +992,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Reject Button (with reason input)
     attachClickEvent('#demo', function () {
         Swal.fire({
-            title: '{{ __("app.are_you_sure_reviewer") }}',
+            title: 'Adakah anda pasti',
             input: 'textarea', // ✅ Reason input
-            inputLabel: 'Please provide a reason for rejection:',
-            inputPlaceholder: 'Enter your reason here...',
+            inputLabel: 'Sebab Penolakan',
+            inputPlaceholder: '',
             inputAttributes: {
                 'aria-label': 'Enter your reason here'
             },
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: '{{ __("app.yes") }}',
-            cancelButtonText: '{{ __("app.no") }}',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak',
             preConfirm: (reason) => {
                 if (!reason) {
-                    Swal.showValidationMessage('Reason is required');
+                    Swal.showValidationMessage('Alasan diperlukan');
                 }
                 return reason;
             }
@@ -1021,13 +1021,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Send to Approver Button
     attachClickEvent('#demo2', function () {
         Swal.fire({
-            title: '{{ __("app.are_you_sure_reviewer") }}',
+            title: 'Adakah anda pasti',
             icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: '{{ __("app.yes") }}',
-            cancelButtonText: '{{ __("app.no") }}'
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
                 sendReportToApprover();

@@ -841,9 +841,9 @@ th {
         // Reject Button with Reason
         attachClickEvent('#demo', function () {
             Swal.fire({
-                title: '{{ __("app.are_you_sure_reviewer") }}',
+                title: 'Adakah anda pasti',
                 input: 'textarea',
-                inputPlaceholder: '{{ __("app.enter_reason_for_rejection") }}',
+                inputPlaceholder: '',
                 inputAttributes: {
                     'aria-label': '{{ __("app.enter_reason_for_rejection") }}'
                 },
@@ -851,11 +851,11 @@ th {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: '{{ __("app.yes") }}',
-                cancelButtonText: '{{ __("app.no") }}',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak',
                 inputValidator: (value) => {
                     if (!value) {
-                        return '{{ __("app.please_provide_rejection_reason") }}';
+                        return 'Sila Berikan Sebab Penolakan';
                     }
                 }
             }).then((result) => {
@@ -954,13 +954,13 @@ th {
         const reportNumber = '{{ $report->report_number }}';
 
         Swal.fire({
-            title: '{{ __("app.are_you_sure_approver") }}',
+            title: 'Adakah anda pasti',
             icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: '{{ __("app.yes") }}',
-            cancelButtonText: '{{ __("app.no") }}'
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
                 // Send AJAX request to update status
