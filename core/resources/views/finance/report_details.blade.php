@@ -231,14 +231,16 @@ th {
                                 </tr>
                                 <tr>
                                   <td class="text-center">RINGGIT MALAYSIA</td>
-                                  <td>ENAM PULUH TIGA RIBU LIMA RATUS DUA BELAS <br> SAHAJA</td>
-                                  <td class="text-center">
-                                      @php
+                                  <td>
+                                    @php
                                         $amount = $report->report_data['totalAmount'] ?? '0';
                                         $numericAmount = is_numeric($amount) ? (float)$amount : (float)preg_replace('/[^\d.-]/', '', $amount);
                                     @endphp
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($numericAmount)) }} <br> SAHAJA
+                                </td>
+                                <td class="text-center">
                                     {{ number_format($numericAmount, 2) }}
-                                  </td>
+                                </td>
                                 </tr>
                                 <tr>
                                   <td class="text-center" colspan="2"></td>
@@ -694,56 +696,56 @@ th {
                                 <tr>
                                   <td class="text-center">1</td>
                                   <td>MALAYAN BANKING BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">2</td>
                                   <td>PUBLIC BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">3</td>
-                                  <td>HONG LEONG BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">4</td>
                                   <td>HONG LEONG BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">5</td>
                                   <td>MALAYAN BANKING BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">6</td>
                                   <td>RHB BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">7</td>
                                   <td>PUBLIC BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">8</td>
                                   <td>MALAYAN BANKING BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
@@ -757,10 +759,10 @@ th {
                                 <tr>
                                   <td colspan="4" class="text-right" style="border-right: 0;">JUMLAH BERSIH</td>
                                   @php
-                                        $receiptAmount = $receipt['amount'] ?? '0';
-                                        $numericReceiptAmount = is_numeric($receiptAmount) ? (float)$receiptAmount : (float)preg_replace('/[^\d.-]/', '', $receiptAmount);
+                                        $amount = $report->report_data['totalAmount'] ?? '0';
+                                        $numericAmount = is_numeric($amount) ? (float)$amount : (float)preg_replace('/[^\d.-]/', '', $amount);
                                     @endphp
-                                  <td style="border-left: 0;" class="text-right">{{ number_format($numericReceiptAmount, 2) }}</td>
+                                  <td style="border-left: 0;" class="text-right">{{ number_format($numericAmount, 2) }}</td>
                                 </tr>
                              </table>
                         </section>
@@ -814,7 +816,7 @@ th {
                                 </button>
                                 <button class="btn btn-info mx-2"
                                         onclick="window.location.href='{{ route('approved-statement') }}'">  
-                                  Back
+                                  kembali
                                 </button>
                             </div>
                         </div>
