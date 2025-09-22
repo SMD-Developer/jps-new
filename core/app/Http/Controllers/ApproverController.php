@@ -272,12 +272,11 @@ class ApproverController extends Controller
             $originalReport = DB::table('report_approvals')->where('id', $report_id)->first();
         
             DB::table('report_reviews')->updateOrInsert(
-                ['id' => $report_id], 
+                ['report_number' => $originalReport->report_number], 
                 [
                     'status' => 'rejected',
                     'reviewer_comments' => $request->reason,
                     'report_data' => $originalReport->report_data ?? '{}',
-                    'submitted_by' => $originalReport->submitted_by ?? auth('admin')->id(),
                     'updated_at' => now(),
                     'created_at' => now()
                 ]
