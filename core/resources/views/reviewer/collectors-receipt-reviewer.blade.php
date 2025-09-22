@@ -233,15 +233,16 @@ th {
                             </tr>
                             <tr>
                               <td class="text-center">RINGGIT MALAYSIA</td>
-                              <td>ENAM PULUH TIGA RIBU LIMA RATUS DUA BELAS <br> SAHAJA</td>
-                            
-                                <td class="text-center">
-                                     @php
-                                        $amount = $report->report_data['totalAmount'] ?? '0';
-                                        $numericAmount = is_numeric($amount) ? (float)$amount : (float)preg_replace('/[^\d.-]/', '', $amount);
-                                    @endphp
-                                    {{ number_format($numericAmount, 2) }}
-                                </td>
+                             <td>
+                                  @php
+                                      $amount = $report->report_data['totalAmount'] ?? '0';
+                                      $numericAmount = is_numeric($amount) ? (float)$amount : (float)preg_replace('/[^\d.-]/', '', $amount);
+                                  @endphp
+                                  {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($numericAmount)) }} <br> SAHAJA
+                              </td>
+                              <td class="text-center">
+                                  {{ number_format($numericAmount, 2) }}
+                              </td>
                             </tr>
                             <tr>
                               <td class="text-center" colspan="2"></td>
@@ -695,56 +696,56 @@ th {
                             <tr>
                               <td class="text-center">1</td>
                               <td>MALAYAN BANKING BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">2</td>
                               <td>PUBLIC BANK BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">3</td>
                               <td>HONG LEONG BANK BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">4</td>
                               <td>HONG LEONG BANK BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">5</td>
                               <td>MALAYAN BANKING BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">6</td>
                               <td>RHB BANK BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">7</td>
                               <td>PUBLIC BANK BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
                             <tr>
                               <td class="text-center">8</td>
                               <td>MALAYAN BANKING BERHAD</td>
-                              <td>063151</td>
+                              <td></td>
                               <td></td>
                               <td class="text-right">476.00</td>
                             </tr>
@@ -895,7 +896,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Success response:', data);
             if (data.success) {
                 Swal.fire({
-                    title: 'Success!',
+                    title: 'Berjaya!',
                     text: `${data.message} Report Number: ${reportData.report_number}`,
                     icon: 'success',
                     confirmButtonText: 'OK'
@@ -962,9 +963,9 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Success response:', data);
             if (data.success) {
                 Swal.fire({
-                    title: 'Success!',
-                    text: data.message || 'Report has been rejected successfully.',
-                    icon: 'success',
+                    title: 'Tolak!',
+                    text: data.message || 'Laporan telah ditolak.',
+                    icon: 'error', 
                     confirmButtonText: 'OK'
                 }).then(() => {
                     window.location.href = '{{ route("collectors_receipt_review") }}';

@@ -99,7 +99,7 @@ class ReportReviewController extends Controller
     
             return response()->json([
                 'success' => true,
-                'message' => "Report successfully sent to reviewer: {$reviewer->name}",
+                'message' => "Laporan dihantar ke penyemak: {$reviewer->name}",
                 'reviewer_name' => $reviewer->name,
                 'report_id' => $reportReview->id,
                 'period' => $request->start_date . ' to ' . $request->end_date
@@ -235,7 +235,7 @@ class ReportReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Report forwarded to approver successfully',
+            'message' => 'Laporan dihantar ke pelulus',
         ]);
     }
 

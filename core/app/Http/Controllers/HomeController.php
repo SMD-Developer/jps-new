@@ -2031,6 +2031,7 @@ class HomeController extends Controller {
                 'currentDate' => $currentDate,
                 'currentTime' => $currentTime,
                 'totalAmount' => number_format($totalAmount, 2, '.', ','),
+                'totalAmountRaw' => $totalAmount,
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'formattedStartDate' => $formattedStartDate,

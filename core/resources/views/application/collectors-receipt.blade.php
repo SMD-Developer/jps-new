@@ -251,7 +251,7 @@ th {
                                 </tr>
                                 <tr>
                                   <td class="text-center">RINGGIT MALAYSIA</td>
-                                  <td>ENAM PULUH TIGA RIBU LIMA RATUS DUA BELAS SAHAJA</td>
+                                  <td>{{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($totalAmountRaw)) }} SAHAJA</td>
                                   <td class="text-center">{{ $totalAmount }}</td>
                                 </tr>
                                 <tr>
@@ -719,62 +719,69 @@ th {
                                 <tr>
                                   <td class="text-center">1</td>
                                   <td>MALAYAN BANKING BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">2</td>
                                   <td>PUBLIC BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">3</td>
                                   <td>HONG LEONG BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">4</td>
                                   <td>HONG LEONG BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">5</td>
                                   <td>MALAYAN BANKING BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">6</td>
                                   <td>RHB BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">7</td>
                                   <td>PUBLIC BANK BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">8</td>
                                   <td>MALAYAN BANKING BERHAD</td>
-                                  <td>063151</td>
+                                  <td></td>
                                   <td></td>
                                   <td class="text-right">476.00</td>
                                 </tr>
                                 <tr>
+                                  <td class="text-center">9</td>
+                                  <td>EFT</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td class="text-right"></td>
+                                </tr>
+                                <tr>
                                   <td colspan="4" class="text-right" style="border-right: 0;">JUMLAH BERSIH</td>
-                                  <td style="border-left: 0;" class="text-right">63,512.00</td>
+                                  <td style="border-left: 0;" class="text-right">{{$totalAmount}}</td>
                                 </tr>
                              </table>
                         </section>
@@ -976,7 +983,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             if (data.success) {
                 Swal.fire({
-                    title: 'Success!',
+                    title: 'Berjaya!',
                     text: `${data.message} Report Number: ${reportNumber}`,
                     icon: 'success',
                     confirmButtonText: 'OK'

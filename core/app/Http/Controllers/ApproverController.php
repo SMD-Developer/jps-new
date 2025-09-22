@@ -290,7 +290,7 @@ class ApproverController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Report has been rejected and sent back to reviewer with reason.',
+                'message' => 'Laporan ditolak dan dihantar sumula kepada penyedia.',
                 'report_id' => $report_id
             ]);
 

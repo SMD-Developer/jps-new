@@ -254,7 +254,7 @@
                                 <th style="width: 150px;">Tempoh Laporan</th>
                                 <th style="width: 100px;">Jumlah (RM)</th>
                                 <th style="width: 100px;">Status</th>
-                                <th style="width: 150px;">Prepared By</th>
+                                <th style="width: 150px;">Disediakan Oleh</th>
                                 <th style="width: 100px;">Tarikh Hantar</th>
                                 <th style="width: 100px;">Untuk Tindakan</th>
                             </tr>

@@ -204,7 +204,6 @@ class ReviewerController extends Controller
                 ->update([
                     'status'            => 'rejected',
                     'reviewer_comments' => $request->reason, // ✅ save reason
-                    'submitted_by'      => auth('admin')->id(),
                     'reviewed_at'       => now(),
                     'updated_at'        => now()
                 ]);
@@ -214,7 +213,6 @@ class ReviewerController extends Controller
                 'id'                => $report_id,
                 'status'            => 'rejected',
                 'reviewer_comments' => $request->reason, // ✅ save reason
-                'submitted_by'      => auth('admin')->id(),
                 'reviewed_at'       => now(),
                 'created_at'        => now(),
                 'updated_at'        => now()
@@ -223,7 +221,7 @@ class ReviewerController extends Controller
 
         return response()->json([
             'success'   => true,
-            'message'   => 'Report has been rejected successfully with reason.',
+            'message'   => 'Laporan telah ditolak',
             'report_id' => $report_id
         ]);
 
