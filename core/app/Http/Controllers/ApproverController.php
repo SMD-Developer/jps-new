@@ -277,6 +277,7 @@ class ApproverController extends Controller
                     'status' => 'rejected',
                     'reviewer_comments' => $request->reason,
                     'report_data' => $originalReport->report_data ?? '{}',
+                    'submitted_by' => $originalReport->submitted_by ?? auth('admin')->id(),
                     'updated_at' => now(),
                     'created_at' => now()
                 ]
