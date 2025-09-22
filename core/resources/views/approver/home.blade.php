@@ -322,7 +322,7 @@
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">
                                 <span class="info-box-text text3 text-left text2">@lang('app.your_assignment')</span>
-                                <span class="info-box-number">0</span>
+                                <span class="info-box-number">{{$assignmentcount}}</span>
                             </div>
                         </div>
                     </a>
@@ -332,7 +332,7 @@
                         <i class="fa fa-list-alt bg-yellow"></i>
                         <div class="info-box-content pr-0" rowspan="2">
                             <span class="info-box-text text3 text-left text2">@lang('app.assignments_not_taken')</span>
-                            <span class="info-box-number">0</span>
+                            <span class="info-box-number">{{$assignmentnotTakencount}}</span>
                         </div>
                     </div>
                 </div>

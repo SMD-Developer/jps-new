@@ -49,6 +49,10 @@ class ApproverController extends Controller
         $approvedapplication = DB::table('applications')->where('status', 'approved')->count(); 
         $passed = DB::table('applications')->where('status', 'approved')->count();
         $rejected = DB::table('applications')->where('status', 'rejected')->count();
+        $assignmentcount=DB::table('report_approvals')->count();
+        $assignmentnotTakencount=DB::table('report_approvals')
+        ->where('status', 'rejected')
+        ->count();
         
         $applicationsByDistrict = DB::table('applications')
             ->select('land_district', DB::raw('count(*) as total'))
@@ -76,6 +80,8 @@ class ApproverController extends Controller
             }
         return view('approver.home', compact( 'totalAgencyApplication', 
         'newapplication', 
+        'assignmentcount',
+        'assignmentnotTakencount',
         'monthapplication', 
         'approvedapplication', 
         'passed',
