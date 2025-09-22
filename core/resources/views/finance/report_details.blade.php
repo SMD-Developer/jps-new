@@ -236,7 +236,7 @@ th {
                                         $amount = $report->report_data['totalAmount'] ?? '0';
                                         $numericAmount = is_numeric($amount) ? (float)$amount : (float)preg_replace('/[^\d.-]/', '', $amount);
                                     @endphp
-                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($numericAmount)) }} <br> SAHAJA
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($numericAmount)) }} SAHAJA
                                 </td>
                                 <td class="text-center">
                                     {{ number_format($numericAmount, 2) }}
@@ -270,7 +270,7 @@ th {
                                     <h5><b>KERAJAAN NEGERI SELANGOR</b></h5>
                                     <h5 class="pr-5"><b>PENYATA PEMUNGUT</b></h5>
                                   </td>
-                                  <td style="text-align: right; border-left: 0; border-start: red;">(Kew. 305E-Pind. 1/2015)<br>Muka surat 2/4</td>
+                                  <td style="text-align: right; border-left: 0; border-start: red;">(Kew. 305E-Pind. 1/2015)<br>Muka surat 1/4</td>
                                 </tr>
                             </table>
                             <table>
@@ -619,7 +619,7 @@ th {
                                     <h5><b>KERAJAAN NEGERI SELANGOR</b></h5>
                                     <h5 class="pr-5"><b>PENYATA PEMUNGUT</b></h5>
                                   </td>
-                                  <td style="text-align: right; border-left: 0; border-start: red;">(Kew. 305E-Pind. 1/2015)<br>Muka surat 1/4</td>
+                                  <td style="text-align: right; border-left: 0; border-start: red;">(Kew. 305E-Pind. 1/2015)<br>Muka surat 3/4</td>
                                 </tr>
                             </table>
                             
