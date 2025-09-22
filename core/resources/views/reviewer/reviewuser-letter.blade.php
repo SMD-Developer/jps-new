@@ -121,8 +121,8 @@
                 <div class="col-md-2 text-left p-0">
                     <p class="mb-0" style="white-space: nowrap;">: {{ $application->refference_no ?? 'SF/CV/1891/24' }}</p>
                     <!--<p class="mb-0">: Bil</p>-->
-                    <p class="mb-0">:
-                        {{ $application->created_at ? $application->created_at->format('d M Y') : '10 hb September 2024' }}
+                    <p class="mb-0">
+                        : {{ App\Helpers\DateHelper::formatMalayDate($application->created_at) }}
                     </p>
                 </div>
                 <div class="col-md-2"></div>
