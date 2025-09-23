@@ -94,13 +94,12 @@
                     <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">View Application</a>
                 </p>
                 
-                <p style="margin-top: 20px;">Thank you for your patience.</p>
+                <p style="margin-top: 20px;">Yang benar,</p>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
+                <strong>Portal e-CP Caruman Parit</strong>
             </td>
         </tr>
         <tr>
