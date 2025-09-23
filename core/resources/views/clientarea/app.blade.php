@@ -108,7 +108,7 @@
                                             data-id="{{ $notification->id }}"
                                             style="padding: 10px; border-bottom: 1px solid #ddd; cursor: pointer;">
 
-                                            <a href="{{ route('application_list') }}?id={{ $notification->data['application_id'] }}"
+                                            <a href="#"
                                                 style="text-decoration: none; color: inherit;">
                                                 <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
                                                 <p style="font-size: 12px; margin: 5px 0;">
