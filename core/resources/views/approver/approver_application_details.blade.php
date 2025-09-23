@@ -482,7 +482,7 @@
                             <div class="col-9 text-center">
                                 @if ($application->land_grant)
                                     <small class="text-info">Current file:
-                                        <a href="{{ url('core/public/pdf/' . basename($application->land_grant)) }}"
+                                        <a href="{{ url('pdf/' . basename($application->land_grant)) }}"
                                             target="_blank"><i class="fa fa-file-pdf-o"></i>
                                             {{ basename($application->land_grant) }}
                                         </a></small>
@@ -503,7 +503,7 @@
                             <div class="col-9 text-center">
                                 @if ($application->permission_plan)
                                     <small class="text-info">Current file:
-                                        <a href="{{ url('core/public/pdf/' . basename($application->permission_plan)) }}"
+                                        <a href="{{ url('pdf/' . basename($application->permission_plan)) }}"
                                             target="_blank"><i class="fa fa-file-pdf-o"></i>
                                             {{ basename($application->permission_plan) }}
                                         </a></small>
@@ -524,7 +524,7 @@
                             <div class="col-9 text-center">
                                 @if ($application->letter_of_support)
                                     <small class="text-info">Current file:
-                                        <a href="{{ url('core/public/pdf/' . basename($application->letter_of_support)) }}"
+                                        <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}"
                                             target="_blank"><i class="fa fa-file-pdf-o"></i>
                                             {{ basename($application->letter_of_support) }}
                                         </a></small>
