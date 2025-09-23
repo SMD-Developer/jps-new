@@ -37,8 +37,9 @@ class PaymentApprovedNotification extends Notification
     {
         return [
             'application_id' => $this->application->id,
+            'applicant' => $this->application->applicant,
             'receipt_number' => $this->application->reciept_number,
-            'message' => 'Your payment has been approved.',
+            'message' => 'Pembayaran anda telah diluluskan.',
         ];
     }
 
