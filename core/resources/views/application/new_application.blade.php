@@ -293,7 +293,7 @@
                             <div class="form-group">
                                 <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
                                 @if ($application->land_grant)
-                                    <a href="{{ url('core/public/pdf/' . basename($application->land_grant)) }}"
+                                    <a href="{{ url('pdf/' . basename($application->land_grant)) }}"
                                         target="_blank"><i class="fa fa-file-pdf-o"></i>
                                         {{ basename($application->land_grant) }}
                                     </a>
@@ -305,7 +305,7 @@
                             <div class="form-group">
                                 <label for="pelan">@lang('app.planning_permission_plan')</label>
                                 @if ($application->permission_plan)
-                                    <a href="{{ url('core/public/pdf/' . basename($application->permission_plan)) }}"
+                                    <a href="{{ url('pdf/' . basename($application->permission_plan)) }}"
                                         target="_blank"><i class="fa fa-file-pdf-o"></i>
                                         {{ basename($application->permission_plan) }}
                                     </a>
@@ -317,7 +317,7 @@
                             <div class="form-group">
                                 <label for="sokongan">@lang('app.letter_of_support')</label>
                                 @if ($application->letter_of_support)
-                                    <a href="{{ url('core/public/pdf/' . basename($application->letter_of_support)) }}"
+                                    <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}"
                                         target="_blank"><i class="fa fa-file-pdf-o"></i>
                                         {{ basename($application->letter_of_support) }}
                                     </a>
