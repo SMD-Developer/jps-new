@@ -247,7 +247,7 @@
                                 @if($application->receipt_path)
                                     <div class="col-9 text-center mt-2">
                                         <small class="text-info">Current file:
-                                            <a href="{{ url('core/public/' . $application->receipt_path) }}" target="_blank">
+                                            <a href="{{ url($application->receipt_path) }}" target="_blank">
                                                 <i class="fa fa-file-pdf-o"></i>
                                                 {{ basename($application->receipt_path) }}
                                             </a>
