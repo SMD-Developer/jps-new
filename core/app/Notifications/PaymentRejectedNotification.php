@@ -26,7 +26,7 @@ class PaymentRejectedNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Your payment has been rejected!.',
+            'message' => 'Bayaran anda telah ditolak!.',
             'applicant' => $this->application->applicant,
             'application_id' => $this->application->id,
             'receipt_number' => $this->application->reciept_number,
