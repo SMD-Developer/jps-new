@@ -841,7 +841,7 @@
                             title: '@lang('app.success')',
                             text: response.message || '@lang('app.claim_status_updated_successfully')',
                         }).then(() => {
-                            location.reload(); // Optional: reload page to see changes
+                            window.location.href = "{{ route('claim.list') }}";  
                         });
                     },
                     error: function(xhr) {
