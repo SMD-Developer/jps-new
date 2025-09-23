@@ -549,12 +549,12 @@ if(! function_exists('getMenus')){
                             'route' => url('profile'),
                             'menu_active' => request()->is('profile') ? 'active' : '',
                             ],
-                            [
-                            'icon' => 'user',
-                            'text' => trans('app.update_profile'),
-                            'route' => url('#'),
-                             'menu_active' => '',
-                            ],
+                            // [
+                            // 'icon' => 'user',
+                            // 'text' => trans('app.update_profile'),
+                            // 'route' => url('#'),
+                            //  'menu_active' => '',
+                            // ],
                             [
                                 'icon' => 'user',
                                 'text' => trans('app.security_settings'),
@@ -1476,12 +1476,12 @@ if(! function_exists('getMenus')){
                             // 'route' => url('#'),
                             // 'menu_active' => request()->is('profile')  ? 'active' : '',
                             // ],
-                        //      [
-                        //         'icon' => 'user',
-                        //         'text' => trans('app.security_settings'),
-                        //         'route' => url('change-password/' . auth('admin')->user()->uuid),
-                        //         'menu_active' => ''
-                        //   ],
+                             [
+                                'icon' => 'user',
+                                'text' => trans('app.security_settings'),
+                                'route' => url('change-password/' . auth('admin')->user()->uuid),
+                                'menu_active' => ''
+                          ],
                         ]
                     ],
                     [
@@ -1749,12 +1749,12 @@ if(! function_exists('getMenus')){
                             'route' => url('profile'),
                             'menu_active' => request()->is('profile')  ? 'active' : '',
                             ],
-                            [
-                            'icon' => 'user-md',
-                            'text' => trans('app.update_profile'),
-                            'route' => url('#'),
-                            'menu_active' => request()->is('#')  ? 'active' : '',
-                            ],
+                            // [
+                            // 'icon' => 'user-md',
+                            // 'text' => trans('app.update_profile'),
+                            // 'route' => url('#'),
+                            // 'menu_active' => request()->is('#')  ? 'active' : '',
+                            // ],
                             [
                                 'icon' => 'user',
                                 'text' => trans('app.security_settings'),
