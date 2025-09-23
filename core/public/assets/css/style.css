@@ -130,9 +130,7 @@ button.close {
     border-radius: 0;
 }
 
-label {
-    /*font-weight: 700;*/
-}
+
 
 textarea {
     resize: none;
@@ -199,11 +197,6 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield;
-    padding-right: 0.2em;
 }
 
 .chosen-container {
@@ -721,6 +714,14 @@ button.btn.btn-danger.float-right{
         margin-left: 322px !important;
     }
 }
+
+@media (min-width: 1700px) {
+    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
+        transition: margin-left 0.3s ease-in-out;
+        margin-left: 410px !important;
+    }
+}
+
 body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-mini) .content-wrapper, body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-mini) .content-wrapper::before, body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-mini) .main-footer, body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-mini) .main-footer::before, body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-mini) .main-header, body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-mini) .main-header::before {
     margin-left: 0px !important;
 }
@@ -729,6 +730,8 @@ body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-m
     justify-content: space-evenly;
     align-items: baseline;
 }
+
+
 /*Pages start*/
 /* user login css */
 /* Style the eye icon properly */
@@ -915,9 +918,4 @@ div#contactModal {
 }
 
 
-@media (min-width: 1700px) {
-    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
-        transition: margin-left 0.3s ease-in-out;
-        margin-left: 410px !important;
-    }
-}
+
