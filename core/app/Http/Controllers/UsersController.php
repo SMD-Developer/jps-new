@@ -11,6 +11,7 @@ use App\Models\Department;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use DB;
 
 class UsersController extends CrudController {
@@ -88,7 +89,7 @@ class UsersController extends CrudController {
     //     return view('roles_and_permissions.staff', compact('title', 'staffUsers' , 'roles', 'canAdminStaffEditStaff', 'canAdminStaffAddStaff'));
     // }
     
-    public function staff()
+    public function staff(Request $request)
     {
         $title = __('app.staff');
         $canAdminStaffEditStaff = auth('admin')->user()->hasPermission('staff.edit');
@@ -96,8 +97,10 @@ class UsersController extends CrudController {
         $roles = Role::all();
         $roleIds = Role::pluck('uuid'); 
         
-       
-        $staffUsers = DB::table('users')
+        // Add search parameter - ONLY NEW LINE
+        $search = $request->get('search');
+        
+        $staffUsersQuery = DB::table('users')
             ->leftJoin(DB::raw('(
                 SELECT admin_id, is_admin_locked, created_at 
                 FROM password_attempts pa1
@@ -114,7 +117,17 @@ class UsersController extends CrudController {
                 'roles.uuid as role_uuid',
                 'password_attempts.is_admin_locked as is_blocked'
             )
-            ->whereNotNull('users.role_id')
+            ->whereNotNull('users.role_id');
+        
+        // Add search condition - ONLY NEW BLOCK
+        if (!empty($search)) {
+            $staffUsersQuery->where(function($q) use ($search) {
+                $q->where('users.username', 'LIKE', '%' . $search . '%')
+                ->orWhere('users.email', 'LIKE', '%' . $search . '%');
+            });
+        }
+        
+        $staffUsers = $staffUsersQuery
             ->orderBy('users.created_at', 'desc')
             ->get()
             ->map(function($user) {
@@ -134,7 +147,8 @@ class UsersController extends CrudController {
             'staffUsers', 
             'roles', 
             'canAdminStaffEditStaff', 
-            'canAdminStaffAddStaff'
+            'canAdminStaffAddStaff',
+            'search' // Add search to compact - ONLY CHANGE HERE
         ));
     }
 

@@ -106,11 +106,21 @@
                     <!-- Search Section Aligned to Right -->
                     <div class="row">
                         <div class="col-lg-12 d-flex justify-content-end align-items-baseline">
-                            <label for="search" class="form-label me-2">{{ trans('app.search') }} : &nbsp;&nbsp;&nbsp;</label>
-                            <input type="text" id="search" class="form-control form-control-sm w-auto" placeholder="{{ trans('app.search') }}">
-                            <a href="#" class="btn btn-primary btn-sm ms-2" id="search-results">
-                                <strong>{{ trans('app.search_b') }}</strong>
-                            </a>
+                            <form method="GET" class="d-flex align-items-baseline">
+                                <label for="search" class="form-label me-2">{{ trans('app.search') }} : &nbsp;&nbsp;&nbsp;</label>
+                                <input type="text" 
+                                    id="search" 
+                                    name="search" 
+                                    class="form-control form-control-sm w-auto" 
+                                    placeholder="{{ trans('app.search') }}"
+                                    value="{{ $search ?? '' }}">
+                                <button type="submit" class="btn btn-primary btn-sm ms-2" id="search-results">
+                                    <strong>{{ trans('app.search_b') }}</strong>
+                                </button>
+                                <a href="{{ request()->url() }}" class="btn btn-secondary btn-sm ms-1" title="Reset">
+                                    <i class="fas fa-undo"></i> Reset
+                                </a>
+                            </form>
                         </div>
                     </div>
                     <div class="row">
