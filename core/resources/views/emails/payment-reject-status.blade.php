@@ -83,15 +83,15 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Dear Client,</p>
-                <p><strong>Sorry! Your payment has been rejected!</strong></p>
-                <p><strong>Application ID: {{ $application->id }}</strong></p>
-                <p><strong>Transaction Reference: {{ $application->transaction }}</strong></p>
-                <p><strong>Rejection Reason: {{ $application->payment_rejection_reason }}</strong></p>
-                <p><strong>Payment Status: <span style="color: #eb231f;">{{ $application->payment_status }}</span></strong></p>
+                <p>Pelanggan yang dihormati,</p>
+                <p><strong>Maaf! Bayaran anda telah ditolak!</strong></p>
+                <p><strong>ID Permohonan: {{ $application->id }}</strong></p>
+                <p><strong>Nombor Resit: {{ $application->transaction }}</strong></p>
+                <p><strong>Sebab Penolakan: {{ $application->payment_rejection_reason }}</strong></p>
+                <p><strong>Status Pembayaran: <span style="color: #eb231f;">{{ $application->payment_status }}</span></strong></p>
                 
                 <p style="margin-top: 20px;">
-                    <a href="{{ url('/client/applications/' . $application->id) }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">View Application</a>
+                    <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">View Application</a>
                 </p>
                 
                 <p style="margin-top: 20px;">Thank you for your patience.</p>

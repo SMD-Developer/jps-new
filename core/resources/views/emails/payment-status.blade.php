@@ -92,7 +92,7 @@
                 <p>Permohonan anda kini sedang diproses ke peringkat seterusnya. Anda boleh menyemak status permohonan anda pada bila-bila masa dengan log masuk ke akaun anda.</p>
                 
                 <p style="margin-top: 20px;">
-                    <a href="{{ url('/client/applications/' . $application->id) }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">Lihat Permohonan</a>
+                    <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">Lihat Permohonan</a>
                 </p>
                 
                 <p style="margin-top: 20px;">Yang benar,</p>
