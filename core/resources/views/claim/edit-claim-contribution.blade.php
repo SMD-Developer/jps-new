@@ -462,7 +462,7 @@
                         <div class="col-9 text-center">
                             @if ($claim->land_grant)
                                 <small class="text-info">Current file:
-                                    <a href="{{ url('core/public/pdf/' . basename($claim->land_grant)) }}"
+                                    <a href="{{ url('pdf/' . basename($claim->land_grant)) }}"
                                         target="_blank"><i class="fa fa-file-pdf-o"></i>
                                         {{ basename($claim->land_grant) }}
                                     </a></small>
