@@ -213,7 +213,15 @@ class HomeController extends Controller {
                 $roleId = auth('admin')->user()->role_id;             
                 $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
             }                  
-            $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);              
+            $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);      
+            
+            $query->whereIn('status', ['rejected', 'pending']);
+            
+            if ($request->has('status') && $request->status && $request->status !== '') {             
+                if (in_array($request->status, ['rejected', 'pending'])) {
+                    $query->where('status', $request->status);         
+                }
+            }
             
             if ($request->has('status') && $request->status && $request->status !== '') {             
                 $query->where('status', $request->status);         
