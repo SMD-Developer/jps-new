@@ -773,10 +773,6 @@
                                                         <a href="{{ route('updateApplicationForm', ['id' => $application->id]) }}"
                                                             class="btn btn-danger btn-sm"><strong>{{ trans('app.rejected') }}</strong></a>
                                                     </div>
-                                                    @if ($application->rejection_reason)
-                                                        <p style="padding-top: 5px;">{{ trans('app.reason') }} :
-                                                            {{ $application->rejection_reason }}</p>
-                                                    @endif
                                                 @else
                                                     <div class="sbtn">
                                                         <a href="{{ route('updateApplicationForm', ['id' => $application->id]) }}"
