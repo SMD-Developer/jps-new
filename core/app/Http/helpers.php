@@ -94,9 +94,9 @@ if(! function_exists('getMenus')){
                         'icon' => 'line-chart',
                         'text' => trans('app.new_applications'),
                         'route' => url('#'),
-                        'active_dropdown' => request()->is('application-list') || request()->is('application-status') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('application-list') || request()->is('application-status') ? 'block' : 'none',
-                        'menu_active' => request()->is('application-list') || request()->is('application-status') ? 'active' : '',
+                        'active_dropdown' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
+                        'menu_active' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list') ? 'active' : '',
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -104,6 +104,13 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.list_of_application'),
                                 'route' =>  url('application-list'),
                                 'menu_active' => request()->is('application-list') ? 'active' : ''
+                            ],
+                            [
+                                'icon' => 'list',
+                                'text' => trans('app.approved_application'),
+                                'route' => url('approved-application-list'),
+                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                                'permission' => 'applications.view-list' 
                             ],
                             [
                                 'icon' => 'line-chart',
@@ -387,8 +394,8 @@ if(! function_exists('getMenus')){
                         'icon' => 'line-chart',
                         'text' => trans('app.application'),
                         'route' => url('#'),
-                        'active_dropdown' => request()->is('user-approve') || request()->is('application-status') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('user-approve') || request()->is('application-status') ? 'block' : 'none',
+                        'active_dropdown' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
                         'menu_active' => '',
                         'is_dropdown' => true,
                         'submenus' => [
@@ -398,6 +405,13 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('user-approve'),
                                 'menu_active' => request()->is('user-approve') ? 'active' : '',
                                 'permission' => 'applications.view-list',
+                            ],
+                            [
+                                'icon' => 'list',
+                                'text' => trans('app.approved_application'),
+                                'route' => url('approved-application-list'),
+                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                                'permission' => 'applications.view-list' 
                             ],
                             [
                                 'icon' => 'line-chart',
@@ -660,9 +674,9 @@ if(! function_exists('getMenus')){
                         'icon' => 'line-chart',
                         'text' => trans('app.new_applications'),
                         'route' => url('#'),
-                        'active_dropdown' => request()->is('application-list') || request()->is('application-status') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('application-list') || request()->is('application-status') ? 'block' : 'none',
-                        'menu_active' => request()->is('application-list') || request()->is('application-status') ? 'active' : '',
+                        'active_dropdown' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
+                        'menu_active' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list')? 'active' : '',
                         'badge_count' => $applicationCount, // Add badge count here
                         'badge_class' => 'badge bg-danger text-secondary',
                         'is_dropdown' => true,
@@ -988,9 +1002,9 @@ if(! function_exists('getMenus')){
                         'icon' => 'line-chart',
                         'text' => trans('app.new_applications'),
                         'route' => url('#'),
-                        'active_dropdown' =>request()->is('application-list') || request()->is('application-status') || request()->is('claim-contribution') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('application-list') || request()->is('application-status') || request()->is('claim-contribution') ? 'block' : 'none',
-                        'menu_active' => request()->is('developer-list') ? 'active' : '',
+                        'active_dropdown' =>request()->is('application-list') || request()->is('application-status') || request()->is('claim-contribution') || request()->is('approved-application-list') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('application-list') || request()->is('application-status') || request()->is('claim-contribution') || request()->is('approved-application-list') ? 'block' : 'none',
+                        'menu_active' => request()->is('developer-list') || request()->is('approved-application-list') ? 'active' : '',
                         'badge_count' => $applicationCount, // Add badge count here
                         'badge_class' => 'badge bg-danger text-secondary',
                         'is_dropdown' => true,
@@ -1001,6 +1015,13 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('approver-application-list'),
                                 'menu_active' => request()->is('approver-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list'
+                            ],
+                            [
+                                'icon' => 'list',
+                                'text' => trans('app.approved_application'),
+                                'route' => url('approved-application-list'),
+                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                                'permission' => 'applications.view-list' 
                             ],
                             [
                                 'icon' => 'line-chart',
@@ -1301,9 +1322,9 @@ if(! function_exists('getMenus')){
                         'icon' => 'line-chart',
                         'text' => trans('app.application'),
                         'route' => url('#'),
-                        'active_dropdown' => request()->is('finance-user-approve') || request()->is('application-status') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('finance-user-approve') || request()->is('application-status') ? 'block' : 'none',
-                        'menu_active' => request()->is('finance-user-approve') || request()->is('application-status') ? 'active' : '',
+                        'active_dropdown' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
+                        'menu_active' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'active' : '',
                         // 'badge_count' => $applicationCount,
                         'is_dropdown' => true,
                         'submenus' => [
@@ -1314,6 +1335,13 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
                                 'permission' => 'applications.view-list'
 
+                            ],
+                            [
+                                'icon' => 'list',
+                                'text' => trans('app.approved_application'),
+                                'route' => url('approved-application-list'),
+                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                                'permission' => 'applications.view-list' 
                             ],
                             [
                                 'icon' => 'line-chart',
@@ -1595,9 +1623,9 @@ if(! function_exists('getMenus')){
                         'icon' => 'line-chart',
                         'text' => trans('app.application'),
                         'route' => url('#'),
-                        'active_dropdown' => request()->is('user-approve') || request()->is('application-status')  ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('user-approve') || request()->is('application-status')  ? 'block' : 'none',
-                        'menu_active' => request()->is('user-approve') || request()->is('application-status')  ? 'active' : '',
+                        'active_dropdown' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'block' : 'none',
+                        'menu_active' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'active' : '',
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -1606,6 +1634,13 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('user-approve'),
                                 'menu_active' =>  request()->is('user-approve') || request()->is('user-approve/*') ? 'active' : '',
                                 'permission' => 'applications.view-list',
+                            ],
+                            [
+                                'icon' => 'list',
+                                'text' => trans('app.approved_application'),
+                                'route' => url('approved-application-list'),
+                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                                'permission' => 'applications.view-list' 
                             ],
                             [
                                 'icon' => 'line-chart',

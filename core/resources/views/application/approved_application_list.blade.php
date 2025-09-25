@@ -104,17 +104,14 @@
                                                     <i class="fa fa-eye"></i>
                                                 </a>
 
-                                                <a href="{{ route('updateApplication', ['id' => $item->id]) }}"
-                                                    class="btn btn-warning btn-sm edit-application {{ $hasBeenEdited ? 'btn-edited' : '' }}"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-
-                                                @if ($item->status == 'rejected')
-                                                    <span class="btn btn-danger btn-sm" style="cursor: default;" title="Application Rejected">
-                                                        <i class="fa fa-times"></i>
-                                                    </span>
+                                                @if($isAdminOrStaff)
+                                                    <a href="{{ route('updateApplication', ['id' => $item->id]) }}"
+                                                        class="btn btn-warning btn-sm edit-application {{ $hasBeenEdited ? 'btn-edited' : '' }}"
+                                                        data-id="{{ $item->id }}">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
                                                 @endif
+
                                             </div>
                                         </td>
 

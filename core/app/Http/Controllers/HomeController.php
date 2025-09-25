@@ -296,13 +296,19 @@ class HomeController extends Controller {
 
     public function approvedApplicationList()
     {
-        
+
+        $isAuthenticated = auth('admin')->check();  
+        $isAdminOrStaff = false;         
+        if ($isAuthenticated) {             
+            $roleId = auth('admin')->user()->role_id;             
+            $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
+        } 
         $approvedApplications = Application::with('client')
                                     ->where('status', 'approved')
                                     ->orderBy('created_at', 'desc') 
                                     ->paginate(10); 
 
-        return view('application.approved_application_list', compact('approvedApplications'));
+        return view('application.approved_application_list', compact('approvedApplications', 'isAdminOrStaff'));
     }
     
 
