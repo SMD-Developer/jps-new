@@ -9,3 +9,4 @@ assets/images
 core/storage/logs/laravel.log
 core/error_log
 error_log
+core/public/assets/images/uploads/client_images/*
