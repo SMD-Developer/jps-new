@@ -371,11 +371,13 @@
                                     <tr>
                                         <th><strong>{{ trans('app.bil') }}</strong></th>
                                         <th><strong>{{ trans('app.date') }}</strong></th>
+                                        <th><strong>{{ trans('app.reference _no ')}}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
+                                        <th><strong>{{ trans('app.remarks') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -384,6 +386,7 @@
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
+                                            <td>{{$item->refference_no ?? '-'}}</td>
                                             <td>
                                                 {{ $item->client ? ($item->client->accountType == 1 ? 'Individu' : ($item->client->accountType == 2 ? 'Pemaju' : ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 'Unknown'))) : '' }}
                                             </td>
@@ -426,6 +429,10 @@
                                                         <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
                                                 @endswitch
                                             </td>
+                                            <td>
+                                                {{ $item->rejection_reason ?? '-' }}
+                                            </td>
+
                                             <!--<td>-->
                                             <!--    <div class="sbtn">-->
                                             <!--        @if ($canAdminStaffViewApplication)-->
@@ -481,12 +488,12 @@
                                                         </a>
                                                     @endif
                                             
-                                                    @if ($item->status == 'rejected')
+                                                    <!-- @if ($item->status == 'rejected')
                                                         <span class="btn btn-danger btn-sm" style="cursor: default;"
                                                             title="Application Rejected">
                                                             <i class="fa fa-times"></i>
                                                         </span>
-                                                    @endif
+                                                    @endif -->
                                                 </div>
                                             </td>
                                         </tr>

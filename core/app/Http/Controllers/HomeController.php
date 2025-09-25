@@ -232,7 +232,8 @@ class HomeController extends Controller {
             }                  
             
 
-            $list = $query->latest()
+            $list = $query->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->paginate($perPage)
                 ->appends($request->except('page'));
             
