@@ -143,21 +143,21 @@ i.right.fa.fa-angle-right.mt-2 {
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="font-family: poppins;">
     <div class="card">
         @php
-        $user = auth('admin')->user(); // Use the correct guard if needed
-        $dashboardRoute = route('home'); // Default route
+        $user = auth('admin')->user(); 
+        $dashboardRoute = route('home'); 
     
         if ($user) {
-            if ($user->username == 'admin') {
+            if ($user->role_id == '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76') {
                 $dashboardRoute = route('home');
-            } elseif ($user->username == 'finance') {
+            } elseif ($user->role_id == '9e032970-5f48-4d2b-b88e-abb9da79140f') {
                 $dashboardRoute = route('home-finance');
-            } elseif ($user->username == 'reviewer') {
+            } elseif ($user->role_id == '9e032769-7342-46ba-b7c9-4f6f70570c98') {
                 $dashboardRoute = route('home-reviewer'); 
-            } elseif ($user->username == 'approver') {
+            } elseif ($user->role_id == '27f41653-a968-4885-8000-7aaf4efc385d') {
                 $dashboardRoute = route('approver-home');
-            } elseif ($user->username == 'adminstaff') {
+            } elseif ($user->role_id == '9e032984-8ef0-4e00-b7b9-439679a4d1aa') {
                 $dashboardRoute = route('home_admin_staff');
-            } elseif ($user->username == 'applicationapprover') {
+            } elseif ($user->role_id == '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d') {
                 $dashboardRoute = route('home_adminapprover');
             }
         }

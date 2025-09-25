@@ -132,5 +132,8 @@ class Application extends Model
     {
         return $this->belongsTo(District::class, 'district', 'iddaerah');
     }
+
+
+     
     
 }

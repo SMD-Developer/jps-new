@@ -353,22 +353,26 @@
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #f5f3f3;">
-                        <i class="fa fa-puzzle-piece bg-green"></i>
-                        <div class="info-box-content pr-0">
-                            <span class="info-box-text text3">@lang('app.number_of_approved')</span>
-                            <span class="info-box-number">{{ $approvedapplication }}</span>
+                    <a href="{{ route('approved_application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #f5f3f3;">
+                            <i class="fa fa-puzzle-piece bg-green"></i>
+                            <div class="info-box-content pr-0">
+                                <span class="info-box-text text3">@lang('app.number_of_approved')</span>
+                                <span class="info-box-number">{{ $approvedapplication }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #FFEFEF;">
-                        <i class="fa fa-close bg-red"></i>
-                        <div class="info-box-content pr-0">
-                            <span class="info-box-text text3">@lang('app.number_of_rejected_application')</span>
-                            <span class="info-box-number">{{ $rejected }}</span>
+                    <a href="{{ route('application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #FFEFEF;">
+                            <i class="fa fa-close bg-red"></i>
+                            <div class="info-box-content pr-0">
+                                <span class="info-box-text text3">@lang('app.number_of_rejected_application')</span>
+                                <span class="info-box-number">{{ $rejected }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 

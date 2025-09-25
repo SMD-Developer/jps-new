@@ -213,7 +213,7 @@ class HomeController extends Controller {
                 $roleId = auth('admin')->user()->role_id;             
                 $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
             }                  
-            $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);                  
+            $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);              
             
             if ($request->has('status') && $request->status && $request->status !== '') {             
                 $query->where('status', $request->status);         
@@ -282,7 +282,22 @@ class HomeController extends Controller {
                 'canAdminStaffEditApplication',
                 'currentUserId'
             ));     
-        }
+    }
+
+
+    public function approvedApplicationList()
+    {
+        
+        $approvedApplications = Application::with('client')
+                                    ->where('status', 'approved')
+                                    ->orderBy('created_at', 'desc') 
+                                    ->paginate(10); 
+
+        return view('application.approved_application_list', compact('approvedApplications'));
+    }
+    
+
+
     
      public function claimList(Request $request){
         $perPage = $request->input('per_page', 10);         

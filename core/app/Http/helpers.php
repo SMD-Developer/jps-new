@@ -675,6 +675,13 @@ if(! function_exists('getMenus')){
                                 'permission' => 'applications.view-list' 
                             ],
                             [
+                                'icon' => 'list',
+                                'text' => trans('app.approved_application'),
+                                'route' => url('approved-application-list'),
+                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                                'permission' => 'applications.view-list' 
+                            ],
+                            [
                                 'icon' => 'line-chart',
                                 'text' => trans('app.application_status'),
                                 'route' => url('application-status'),

@@ -201,6 +201,7 @@ Route::group(['middleware' => 'install'], function(){
          Route::post('update-permission-group-status', 'RolesController@updateGroupStatus')
         ->name('update.permission.group.status');
         Route::get('application-list','HomeController@applicationList')->name('application_list');
+        Route::get('approved-application-list','HomeController@approvedapplicationList')->name('approved_application_list');
         Route::get('change-password/{uuid}', 'HomeController@changePassword')->name('admin.change-password');
         Route::post('update-password/{uuid}', 'HomeController@updatePassword')->name('admin.update-password');
         Route::post('toggle-user-block-status/{id}', 'HomeController@toggleBlockStatus')->name('toggle_user_block_status');
