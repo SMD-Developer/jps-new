@@ -226,7 +226,18 @@
                             <tr>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                                     1</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">{{$application->payment_method}}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                    @if($application->payment_method === 'cheque')
+                                        Cek<br>
+                                        @if(!empty($application->transaction_id))
+                                            <small>{{ $application->transaction_id }}</small>
+                                        @endif
+                                    @else
+                                        {{ $application->payment_method }}
+                                    @endif
+                                </td>
+
+
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                                     {{ $application->refference_no }}<br>
                                     {{ $application->created_at->format('d/m/Y') }}
