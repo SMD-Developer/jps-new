@@ -208,6 +208,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary float-right">{{ __('app.search') }}</button>
+                                <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">{{ __('app.reset') }}</button>
                             </form>
                         </div>
 
@@ -216,12 +217,12 @@
                                 <tr>
                                     <th>Bil</th>
                                     <th>Nama Pemohon</th>
-                                    <th>{{ __('app.land_lot') }}</th>
+                                    <th>Lot/PT</th>
                                     <th>Daerah</th>
                                     <th>Mukim</th>
-                                    <th>{{ __('app.date') }}</th>
+                                    <th>Tarikh Permohonan</th>
                                     <th>{{ __('app.reference_number') }}</th>
-                                    <th>status</th>
+                                    <th>Status</th>
                                     {{-- <th>{{ __('app.actions') }}</th> --}}
                                 </tr>
                             </thead>
@@ -232,7 +233,7 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $result->applicant ?? 'N/A' }}</td>
                                             <td>{{ $result->land_lot ?? 'N/A' }}</td>
-                                            <td>{{ $result->district->daerah ?? 'N/A' }}</td>
+                                           <td>{{ $result->districts->daerah ?? 'N/A' }}</td>
                                             <td>{{ $result->division->mukim ?? 'N/A' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
                                             <td>
@@ -304,23 +305,6 @@
                     link.setAttribute('data-id', lotId[2]);
                 }
             });
-
-            // Add form submission handler to reset form after search
-            const searchForm = document.getElementById('searchForm');
-            if (searchForm) {
-                searchForm.addEventListener('submit', function() {
-                    // Store the form submission action - will reset after results are shown
-                    localStorage.setItem('formSubmitted', 'true');
-                });
-            }
-
-            // Check if form was just submitted and results are now showing
-            if (localStorage.getItem('formSubmitted') === 'true') {
-                // Reset all form fields
-                resetSearchForm();
-                // Clear the flag
-                localStorage.removeItem('formSubmitted');
-            }
         });
 
         function loadDivisions() {
@@ -347,40 +331,7 @@
             }
         }
 
-        function resetSearchForm() {
-            // Reset dropdown text displays
-            const lotPtText = document.getElementById("selectedLotPtText");
-            if (lotPtText) lotPtText.innerText = lotPtText.getAttribute('data-default') || document.querySelector(
-                'label[for="selectedLotPtText"]')?.innerText || "Select Lot/PT";
-
-            const applicantText = document.getElementById("selectedApplicantText");
-            if (applicantText) applicantText.innerText = applicantText.getAttribute('data-default') || document
-                .querySelector('label[for="selectedApplicantText"]')?.innerText || "Select Applicant";
-
-            // Reset hidden fields
-            const lotPtField = document.getElementById("lot_pt_grant");
-            if (lotPtField) lotPtField.value = "";
-
-            const applicantIdField = document.getElementById("applicant_id");
-            if (applicantIdField) applicantIdField.value = "";
-
-            // Reset date and text inputs
-            const dateField = document.getElementById("application_date");
-            if (dateField) dateField.value = "";
-
-            const refField = document.getElementById("reference_number");
-            if (refField) refField.value = "";
-
-            // Reset district dropdown
-            const districtField = document.getElementById("district");
-            if (districtField) districtField.selectedIndex = 0;
-
-            // Reset division dropdown
-            const divisionField = document.getElementById("division");
-            if (divisionField) {
-                divisionField.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
-            }
-        }
+        
 
         function toggleDropdown(dropdownId) {
             const dropdowns = document.getElementsByClassName("dropdown-content");
@@ -469,6 +420,52 @@
             if (dropdown) dropdown.classList.remove("show");
         }
 
+
+        function resetSearchForm() {
+            // Reset dropdown text displays
+            const lotPtText = document.getElementById("selectedLotPtText");
+            if (lotPtText) lotPtText.innerText = "{{ __('app.select_lot_pt') }}";
+
+            const applicantText = document.getElementById("selectedApplicantText");
+            if (applicantText) applicantText.innerText = "{{ __('app.select_applicant_list') }}";
+
+            // Reset hidden fields
+            const lotPtField = document.getElementById("lot_pt_grant");
+            if (lotPtField) lotPtField.value = "";
+
+            const applicantIdField = document.getElementById("applicant_id");
+            if (applicantIdField) applicantIdField.value = "";
+
+            // Reset date and text inputs
+            const dateField = document.getElementById("application_date");
+            if (dateField) dateField.value = "";
+
+            const refField = document.getElementById("reference_number");
+            if (refField) refField.value = "";
+
+            // Reset district dropdown
+            const districtField = document.getElementById("district");
+            if (districtField) districtField.selectedIndex = 0;
+
+            // Reset division dropdown
+            const divisionField = document.getElementById("division");
+            if (divisionField) {
+                divisionField.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
+            }
+
+            // Close any open dropdowns
+            const dropdowns = document.getElementsByClassName("dropdown-content");
+            for (let i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].classList.remove('show');
+            }
+
+            // Redirect to fresh page to clear search results
+            window.location.href = "{{ route('search-filter') }}";
+        }
+
+
+        
+
         document.addEventListener('click', function(event) {
             if (!event.target.matches('.dropdown-btn') &&
                 !event.target.matches('.dropdown-content') &&
@@ -482,5 +479,7 @@
                 }
             }
         });
+
+
     </script>
 @endsection

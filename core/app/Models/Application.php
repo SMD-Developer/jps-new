@@ -133,6 +133,11 @@ class Application extends Model
         return $this->belongsTo(District::class, 'district', 'iddaerah');
     }
 
+    public function districts()
+    {
+        return $this->belongsTo(District::class, 'land_district', 'iddaerah');
+    }
+
 
      
     

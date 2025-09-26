@@ -2161,7 +2161,7 @@ class HomeController extends Controller {
             }
             
             // Eager load both relationships
-            $results = $query->with(['applicant', 'division', 'district'])->get();
+            $results = $query->with(['applicant', 'division', 'districts'])->get();
             
         }
         
