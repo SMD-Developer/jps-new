@@ -610,8 +610,12 @@ class AuthController extends Controller {
                             }
                         },
                     ],
-                    'password'          => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
-                    'setPassword'       => 'required|min:8|same:password',
+                    'password' => [
+                            'required',
+                            'string',
+                            'min:8',
+                            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#+\-_={}[\]|\\:";\'<>,.\/])[A-Za-z\d@$!%*?&#+\-_={}[\]|\\:";\'<>,.\/]{8,}$/'
+                    ],
                     'userName'          => 'required|string|max:255',
                     'idCardNumber'      => 'required|string|max:50',
                     'registeredAddress' => 'required|string|max:255',
@@ -619,7 +623,7 @@ class AuthController extends Controller {
                     'state'             => 'required',  
                     'district'          => 'required',  
                     'city'              => 'required|string|max:255',
-                    'mobileNumber'      => 'required|string|min:10|unique:client_register,mobileNumber',
+                    'mobileNumber'      => 'required|string|size:10|regex:/^[0-9]{10}$/|unique:client_register,mobileNumber',
                     'landline'          => 'string|min:10|unique:client_register,landline',
                     'securityQuestion1' => 'required',  
                     'securityAnswers1'  => 'required|string|max:255',

@@ -584,6 +584,7 @@ background-color: red;
                                 <div class="col-md-3 col-6">
                                     <div class="form-group">
                                         <label for="city">@lang('app.city')</label>
+                                        <span class="star">*</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
@@ -904,15 +905,29 @@ background-color: red;
     
     // Validate District
     if (!$('select[name="district"]').val()) {
-        $('#district').text('Bandar diperlukan');
+        $('#district').text('Daerah diperlukan');
         isValid = false;
     }
+
+
+    if (!$('input[name="city"]').val()) {
+        $('#city').text('Bandar diperlukan');
+        isValid = false;
+    }
+
+
+    const mobileNumber = $('input[name="mobileNumber"]').val().trim();
+        if (!mobileNumber) {
+            $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan').removeClass('text-info text-success').addClass('text-dangerr').show();
+            $('input[name="mobileNumber"]').addClass('border-danger');
+            isValid = false;
+        } else if (!/^[0-9]{10}$/.test(mobileNumber)) {
+            $('#mobileNumber-error').text('Nombor telefon bimbit mesti tepat 10 digit').removeClass('text-info text-success').addClass('text-dangerr').show();
+            $('input[name="mobileNumber"]').addClass('border-danger');
+            isValid = false;
+        }
     
-    // Validate Mobile Number
-    if (!$('input[name="mobileNumber"]').val()) {
-        $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan');
-        isValid = false;
-    }
+    
     
     // Validate Landline
     // if (!$('input[name="landline"]').val()) {
@@ -1019,6 +1034,88 @@ background-color: red;
     //     });
     // });
 
+
+    $('input[name="mobileNumber"]').off('input blur focus keypress');
+    
+    // Input event - real-time typing
+    $('input[name="mobileNumber"]').on('input', function(e) {
+        let value = $(this).val();
+        
+        // Remove any non-numeric characters
+        value = value.replace(/[^0-9]/g, '');
+        
+        // Limit to 10 digits maximum
+        if (value.length > 10) {
+            value = value.substring(0, 10);
+        }
+        
+        // Update the input value
+        $(this).val(value);
+        
+        // Clear error styling and message when user is typing correctly
+        $('#mobileNumber-error').removeClass('text-info text-success').addClass('text-dangerr');
+        $(this).removeClass('border-danger border-success');
+        
+        // Show real-time validation feedback
+        if (value.length > 0 && value.length < 10) {
+            $('#mobileNumber-error').text(`${value.length}/10 digits entered`).removeClass('text-dangerr').addClass('text-info').show();
+        } else if (value.length === 10) {
+            $('#mobileNumber-error').text('✓ Valid mobile number').removeClass('text-dangerr text-info').addClass('text-success').show();
+            $(this).addClass('border-success');
+        } else if (value.length === 0) {
+            $('#mobileNumber-error').text('').hide();
+            $(this).removeClass('border-success border-danger');
+        }
+    });
+
+    // 4. Keypress event - prevent non-numeric input
+    $('input[name="mobileNumber"]').on('blur', function() {
+        const mobileValue = $(this).val().trim();
+        const errorElement = $('#mobileNumber-error');
+        
+        $(this).removeClass('border-success');
+        errorElement.removeClass('text-info text-success').addClass('text-dangerr');
+        
+        if (!mobileValue) {
+            errorElement.text('Nombor Telefon Bimbit diperlukan').show();
+            $(this).addClass('border-danger');
+        } else if (!/^[0-9]{10}$/.test(mobileValue)) {
+            errorElement.text('Nombor telefon bimbit mesti tepat 10 digit').show();
+            $(this).addClass('border-danger');
+        } else {
+            errorElement.text('').hide();
+            $(this).removeClass('border-danger').addClass('border-success');
+        }
+    });
+    
+    // Focus event - clear errors when focusing
+    $('input[name="mobileNumber"]').on('focus', function() {
+        $(this).removeClass('border-danger');
+        const errorElement = $('#mobileNumber-error');
+        if (errorElement.hasClass('text-dangerr') && errorElement.is(':visible')) {
+            errorElement.text('').hide();
+        }
+    });
+    
+    // Keypress event - prevent non-numeric input
+    $('input[name="mobileNumber"]').on('keypress', function(e) {
+        if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+            (e.keyCode === 65 && e.ctrlKey === true) ||
+            (e.keyCode === 67 && e.ctrlKey === true) ||
+            (e.keyCode === 86 && e.ctrlKey === true) ||
+            (e.keyCode === 88 && e.ctrlKey === true)) {
+            return;
+        }
+        
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+        
+        if ($(this).val().length >= 10) {
+            e.preventDefault();
+        }
+    });
+
     
     // Add real-time validation for specific fields
     $('input[name="email"]').on('blur', function() {
@@ -1030,12 +1127,6 @@ background-color: red;
     $('input[name="userName"]').on('blur', function() {
         if (!$(this).val()) {
             $('#userName-error').text('Username is required');
-        }
-    });
-    
-    $('input[name="mobileNumber"]').on('blur', function() {
-        if (!$(this).val()) {
-            $('#mobileNumber-error').text('Mobile Number is required');
         }
     });
     
@@ -1053,48 +1144,48 @@ background-color: red;
 </script>
 <script>
     let formData = $('#registrationForm').serializeArray();
-if (!formData.some(field => field.name === 'terms')) {
-    formData.push({ name: 'terms', value: 0 });
-}
+    if (!formData.some(field => field.name === 'terms')) {
+        formData.push({ name: 'terms', value: 0 });
+    }
 
 </script> 
 <script>
-$(document).ready(function () {
-    // Function to validate fields in real time
-    function validateField(fieldName, fieldValue) {
-        $.ajax({
-            url: "{{ route('validate.field') }}",
-            type: "POST",
-            data: {
-                field: fieldName,
-                value: fieldValue,
-                _token: "{{ csrf_token() }}",
-            },
-            success: function (response) {
-                let errorSpan = $("#" + fieldName + "-error");
+    $(document).ready(function () {
+        // Function to validate fields in real time
+        function validateField(fieldName, fieldValue) {
+            $.ajax({
+                url: "{{ route('validate.field') }}",
+                type: "POST",
+                data: {
+                    field: fieldName,
+                    value: fieldValue,
+                    _token: "{{ csrf_token() }}",
+                },
+                success: function (response) {
+                    let errorSpan = $("#" + fieldName + "-error");
 
-                if (!response.valid) {
-                    errorSpan.text(response.message).show();
-                } else {
-                    errorSpan.text("").hide();
-                }
-            },
-            error: function () {
-                console.error("An error occurred during validation.");
-            },
-        });
-    }
-
-    // Attach event listeners to specific fields
-    $("input[name='email'], input[name='mobileNumber'], input[name='landline']").on('blur', function () {
-        let fieldName = $(this).attr("name");
-        let fieldValue = $(this).val();
-
-        if (fieldValue) {
-            validateField(fieldName, fieldValue);
+                    if (!response.valid) {
+                        errorSpan.text(response.message).show();
+                    } else {
+                        errorSpan.text("").hide();
+                    }
+                },
+                error: function () {
+                    console.error("An error occurred during validation.");
+                },
+            });
         }
+
+        // Attach event listeners to specific fields
+        $("input[name='email'], input[name='mobileNumber'], input[name='landline']").on('blur', function () {
+            let fieldName = $(this).attr("name");
+            let fieldValue = $(this).val();
+
+            if (fieldValue) {
+                validateField(fieldName, fieldValue);
+            }
+        });
     });
-});
 </script>    
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -1450,7 +1541,13 @@ $(document).ready(function () {
         
         // Validate District
         if (!$('select[name="district"]').val()) {
-            $('#district').text('Bandar diperlukan');
+            $('#district').text('Daerah diperlukan');
+            isValid = false;
+        }
+
+
+        if (!$('input[name="city"]').val()) {
+            $('#city').text('Bandar diperlukan');
             isValid = false;
         }
         
