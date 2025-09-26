@@ -126,10 +126,12 @@
                                                 <td>{{ $notification->created_at->format('d/m/Y h:i A') }}</td>
                                                 <td>
                                                     @if (!$notification->read_at)
-                                                        <button class="btn btn-mark-read btn-sm mark-as-read"
-                                                            data-id="{{ $notification->id }}">
-                                                            @lang('app.mark_as_read')
+                                                        <button class="btn btn-mark-read btn-sm mark-as-read" 
+                                                                data-id="{{ $notification->id }}" 
+                                                                title="@lang('app.mark_as_read')">
+                                                            <i class="fa fa-eye"></i>
                                                         </button>
+
                                                     @else
                                                         <span style="color: gray;">@lang('app.read')</span>
                                                     @endif

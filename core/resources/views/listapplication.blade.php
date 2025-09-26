@@ -371,7 +371,7 @@
                                     <tr>
                                         <th><strong>{{ trans('app.bil') }}</strong></th>
                                         <th><strong>{{ trans('app.date') }}</strong></th>
-                                        <th><strong>{{ trans('app.reference _no ')}}</strong></th>
+                                        <th><strong>{{ trans('app.reference _no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
@@ -429,9 +429,10 @@
                                                         <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
                                                 @endswitch
                                             </td>
-                                            <td>
-                                                {{ $item->rejection_reason ?? '-' }}
+                                           <td>
+                                                {{ $item->status === 'rejected' ? ($item->rejection_reason ?? '-') : '-' }}
                                             </td>
+
 
                                             <!--<td>-->
                                             <!--    <div class="sbtn">-->

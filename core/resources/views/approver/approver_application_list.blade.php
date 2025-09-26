@@ -189,6 +189,7 @@
                                     <tr>
                                         <th><strong>{{ trans('app.bil') }}</strong></th>
                                         <th><strong>{{ trans('app.date') }}</strong></th>
+                                        <th><strong>{{ trans('app.reference _no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                          <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_list') }}</strong></th>
@@ -205,6 +206,7 @@
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
+                                            <td>{{$item->refference_no ?? '-'}}</td>
                                             <td>
                                                 {{ $item->client ? ($item->client->accountType == 1 ? 'Individu' : ($item->client->accountType == 2 ? 'Pemaju' : ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 'Unknown'))) : '' }}
                                             </td>

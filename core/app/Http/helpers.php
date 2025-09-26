@@ -702,12 +702,26 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('application-status') ? 'active' : '',
                                 'permission' => 'application-status.view-list'
                             ],
+                            
+                        ]
+                    ],
+
+
+                    [
+                        'icon' => 'money',
+                        'text' => trans('app.claim_contribution'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('claim-list') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('claim-list') ? 'block' : 'none',
+                        'menu_active' => request()->is('claim-list') ? 'active' : '',
+                        'badge_count' => $claimCount,
+                        'is_dropdown' => true,
+                        'submenus' => [
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.claim_contribution'),
                                 'route' => url('claim-list'),
                                 'menu_active' => '',
-                                'badge_count' => $claimCount,
                                 'badge_class' => 'badge bg-danger text-secondary',
                                 'permission' => 'claim-contribution.view-list'
                             ]

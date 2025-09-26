@@ -19,7 +19,16 @@
     .status-rejected { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .status-pending { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
 
-    .sbtn a { margin: 0 2px; }
+    .sbtn {
+        display: flex;
+        gap: 5px; /* space between buttons */
+        justify-content: center; /* center align */
+        align-items: center;
+    }
+    .sbtn a {
+        margin: 0; /* remove vertical spacing */
+    }
+
 </style>
 
 <div class="col-md-12 content-header">
@@ -111,6 +120,13 @@
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                 @endif
+
+                                                  <!-- Bill Icon (redirects to approver-letter) -->
+                                                    <a href="{{ route('user_letter', ['application_id' => $item->id]) }}"
+                                                        class="btn btn-info btn-sm"
+                                                        title="View Bill">
+                                                        <i class="fa fa-file-invoice"></i>
+                                                    </a>
 
                                             </div>
                                         </td>
