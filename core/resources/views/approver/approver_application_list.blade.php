@@ -177,6 +177,12 @@
                                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
                                         {{ trans('app.pending') }}
                                     </option>
+                                     <option value="appeal" {{ request('status') == 'appeal' ? 'selected' : '' }}>
+                                            {{ trans('app.appeal') }}
+                                     </option>
+                                    <option value="resubmitted" {{ request('status') == 'resubmitted' ? 'selected' : '' }}>
+                                            {{ trans('app.resubmitted') }}
+                                    </option>
                                 </select>
                             </div>
                             </div>
@@ -195,6 +201,7 @@
                                         <th><strong>{{ trans('app.applicant_list') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
+                                        <th><strong>{{ trans('app.remarks') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -277,6 +284,18 @@
                                                 @endswitch
                                             </td>
                                             <td>
+                                                                                           
+                                                @if($isResubmitted)
+                                                    Permohonan Diserahkan Semula
+                                                @elseif($item->appeal === 'yes' && $item->appeal_status === 'approved')
+                                                    Rayuan Diluluskan
+                                                @elseif($item->appeal === 'yes' && $item->appeal_status === 'rejected')
+                                                    Rayuan Ditolak
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
                                                 <div class="sbtn">
                                                     @if($canApproverViewApplicationDetails)
                                                     <a href="{{ route('approvernewApplication', ['id' => $item->id]) }}"
@@ -293,32 +312,6 @@
                                                         </a>
                                                     @endif
                                                     
-                                                    @if($isResubmitted)
-                                                        <span class="btn btn-info btn-sm" style="cursor: default;" data-bs-toggle="tooltip" title="Resubmitted Application">
-                                                            <i class="fa-solid fa-rotate"></i>
-                                                        </span>
-                                                    @endif
-                                                    
-                                                    @if($item->status == 'approved')
-                                                        <!--<span class="btn btn-success btn-sm" style="cursor: default;" data-bs-toggle="tooltip" title="Approved Application">-->
-                                                        <!--    <i class="fa-solid fa-check"></i>-->
-                                                        <!--</span>-->
-                                                    @elseif($item->status == 'rejected')
-                                                        <span class="btn btn-danger btn-sm" style="cursor: default;" data-bs-toggle="tooltip" title="Rejected Application">
-                                                            <i class="fa-solid fa-xmark"></i>
-                                                        </span>
-                                                    @endif
-
-                                                    {{-- Appeal Status --}}
-                                                    @if($item->appeal === 'yes' && $item->appeal_status === 'approved')
-                                                        <span class="btn btn-success btn-sm" style="cursor: default; background-color:#e2b74a !important; border:none;" data-bs-toggle="tooltip" title="Appeal Approved">
-                                                            <i class="fa-solid fa-repeat"></i>
-                                                        </span>
-                                                    @elseif($item->appeal === 'yes' && $item->appeal_status === 'rejected')
-                                                        <span class="btn btn-danger btn-sm" style="cursor: default;" data-bs-toggle="tooltip" title="Appeal Rejected">
-                                                            <i class="fa-solid fa-repeat"></i>
-                                                        </span>
-                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>

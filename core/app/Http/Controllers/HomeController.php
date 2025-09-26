@@ -511,7 +511,7 @@ class HomeController extends Controller {
 //     }
 
 
-   public function approverapplicationList(Request $request)
+    public function approverapplicationList(Request $request)
     {
         $perPage = $request->input('per_page', 10);
         $canApproverViewApplicationDetails = auth('admin')->user()->hasPermission('applications.view-details');
@@ -527,9 +527,17 @@ class HomeController extends Controller {
             ->where('forwarded_by_admin_staff', 1);
     
         // Add status filter
-        if ($request->has('status') && $request->status && $request->status !== '') {             
-            $query->where('status', $request->status);         
+        if ($request->has('status') && $request->status && $request->status !== '') {
+            if (in_array($request->status, ['approved', 'rejected', 'pending'])) {
+                $query->where('status', $request->status);
+            } elseif ($request->status === 'appeal') {
+                $query->where('appeal', 'yes')
+                    ->where('appeal_status', 'approved');
+            } elseif ($request->status === 'resubmitted') {
+                $query->whereNotNull('resubmitted_at');
+            }
         }
+
         
         // Add district filter
         if ($request->has('district') && $request->district) {             
@@ -540,15 +548,17 @@ class HomeController extends Controller {
         if ($request->has('division') && $request->division) {             
             $query->where('land_state', $request->division);         
         }
+
         
         // Add lot filter
         if ($request->has('lot') && $request->lot) {             
             $query->where('land_lot', 'LIKE', '%' . $request->lot . '%');         
         }
     
-        $list = $query->latest()
-            ->paginate($perPage)
-            ->appends($request->except('page'));
+        $list = $query->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage)
+                ->appends($request->except('page'));
             
         $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
         
