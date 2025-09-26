@@ -283,18 +283,26 @@
                                                         <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
                                                 @endswitch
                                             </td>
-                                            <td>
-                                                                                           
-                                                @if($isResubmitted)
-                                                    Permohonan Diserahkan Semula
-                                                @elseif($item->appeal === 'yes' && $item->appeal_status === 'approved')
-                                                    Rayuan Diluluskan
-                                                @elseif($item->appeal === 'yes' && $item->appeal_status === 'rejected')
-                                                    Rayuan Ditolak
-                                                @else
-                                                    -
-                                                @endif
+                                           <td>
+                                                @php
+                                                    $messages = [];
+
+                                                    if ($isResubmitted) {
+                                                        $messages[] = 'Permohonan Diserahkan Semula';
+                                                    }
+
+                                                    if ($item->appeal === 'yes' && $item->appeal_status === 'approved') {
+                                                        $messages[] = 'Rayuan Diluluskan';
+                                                    }
+
+                                                    if ($item->appeal === 'yes' && $item->appeal_status === 'rejected') {
+                                                        $messages[] = 'Rayuan Ditolak';
+                                                    }
+                                                @endphp
+
+                                                {{ !empty($messages) ? implode(' | ', $messages) : '-' }}
                                             </td>
+
                                             <td>
                                                 <div class="sbtn">
                                                     @if($canApproverViewApplicationDetails)
