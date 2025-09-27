@@ -369,7 +369,7 @@
                 success: 'Kata laluan berjaya dikemas kini',
                 wrongOldPassword: 'Kata laluan lama salah',
                 validationTitle: 'Medan kosong',
-                defaultError: 'Anda telah menggunakan kata laluan yang lama. Sila maukkan kata laluan baharu.',
+                defaultError: 'Anda telah menggunakan kata laluan yang lama. Sila masukkan kata laluan baharu.',
                 passwordsNotMatch: 'Kata laluan tidak sepadan',
                 fillRequiredFields: 'Isi medan yang diperlukan',
                 confirmTitle: 'Adakah anda pasti',
