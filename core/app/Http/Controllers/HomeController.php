@@ -294,7 +294,7 @@ class HomeController extends Controller {
     }
 
 
-    public function approvedApplicationList()
+    public function approvedApplicationList( Request $request)
     {
 
         $isAuthenticated = auth('admin')->check();  
@@ -304,10 +304,41 @@ class HomeController extends Controller {
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
         } 
         $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
-        $approvedApplications = Application::with('client')
-                                    ->where('status', 'approved')
-                                    ->orderBy('created_at', 'desc') 
-                                    ->paginate(10); 
+        $query = Application::with('client')->where('status', 'approved');
+        if ($request->filled('search')) {
+        $searchTerm = $request->get('search');
+        $query->where(function($q) use ($searchTerm) {
+                $q->where('refference_no', 'like', '%' . $searchTerm . '%')
+                ->orWhere('applicant', 'like', '%' . $searchTerm . '%')
+                ->orWhereHas('client', function($clientQuery) use ($searchTerm) {
+                    $clientQuery->where('name', 'like', '%' . $searchTerm . '%');
+                });
+            });
+        }
+
+
+            // District filter
+        if ($request->filled('district')) {
+            $query->where('land_district', $request->get('district'));
+        }
+        
+        // Division filter  
+        if ($request->filled('division')) {
+            $query->where('land_state', $request->get('division'));
+        }
+        
+        // Lot/PT filter
+        if ($request->filled('lot')) {
+            $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
+        }
+        
+        $approvedApplications = $query->orderBy('created_at', 'desc')
+                                    ->paginate(10)
+                                    ->appends($request->query());
+        // $approvedApplications = Application::with('client')
+        //                             ->where('status', 'approved')
+        //                             ->orderBy('created_at', 'desc') 
+        //                             ->paginate(10); 
 
         return view('application.approved_application_list', compact('approvedApplications', 'isAdminOrStaff', 'district'));
     }
