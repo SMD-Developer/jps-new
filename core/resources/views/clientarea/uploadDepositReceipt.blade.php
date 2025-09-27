@@ -333,7 +333,7 @@
                             }
                         }).then(() => {
                             // Optionally redirect
-                            window.location.href = data.redirect || window.location.href;
+                            window.location.href = "{{ route('client_application_status') }}";
                         });
                     } else {
                         Swal.fire({
