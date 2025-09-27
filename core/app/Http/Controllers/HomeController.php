@@ -2537,7 +2537,7 @@ public function updateUserDetails(Request $request, $id)
         }
         
         // Reset failed attempts since password was correct
-       $this->resetFailedAttempts($uuid);
+    //    $this->resetFailedAttempts($uuid);
         
         $user->password = Hash::make($request->new_password);
         $user->save();

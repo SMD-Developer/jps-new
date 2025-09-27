@@ -56,7 +56,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link sidebar-toggle" data-widget="pushmenu" href="#" role="button">
-                            <i class="fa fa-bars"></i>
+                            <i class="fa fa-home " style="font-size:20px;"></i>
                         </a>
                     </li>
                 </ul>
