@@ -303,12 +303,13 @@ class HomeController extends Controller {
             $roleId = auth('admin')->user()->role_id;             
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
         } 
+        $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
         $approvedApplications = Application::with('client')
                                     ->where('status', 'approved')
                                     ->orderBy('created_at', 'desc') 
                                     ->paginate(10); 
 
-        return view('application.approved_application_list', compact('approvedApplications', 'isAdminOrStaff'));
+        return view('application.approved_application_list', compact('approvedApplications', 'isAdminOrStaff', 'district'));
     }
     
 
@@ -524,11 +525,12 @@ class HomeController extends Controller {
         }
     
         $query = Application::with(['state', 'landDistrict', 'landDivision', 'client'])
-            ->where('forwarded_by_admin_staff', 1);
+            ->where('forwarded_by_admin_staff', 1)
+            ->whereIn('status', ['pending', 'rejected']);
     
         // Add status filter
         if ($request->has('status') && $request->status && $request->status !== '') {
-            if (in_array($request->status, ['approved', 'rejected', 'pending'])) {
+            if (in_array($request->status, [ 'rejected', 'pending'])) {
                 $query->where('status', $request->status);
             } elseif ($request->status === 'appeal') {
                 $query->where('appeal', 'yes')

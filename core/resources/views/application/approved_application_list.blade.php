@@ -29,6 +29,24 @@
         margin: 0; /* remove vertical spacing */
     }
 
+/* Add this improved CSS instead: */
+.search-row .form-label {
+    font-weight: 500;
+    min-width: fit-content;
+}
+
+.search-row .col-md-2 {
+    min-width: 200px;
+}
+
+.search-row .d-flex {
+    height: 31px; /* Match the height of form controls */
+}
+
+.search-row .btn {
+    height: 31px;
+    line-height: 1.2;
+}
 </style>
 
 <div class="col-md-12 content-header">
@@ -41,11 +59,58 @@
             <div class="card mb-3">
                 <div class="card-body">
 
-                    <!-- Filters -->
-                    <div class="row mb-3">
-                        <div class="col-md-2">
-                            <input type="text" id="search" class="form-control form-control-sm"
-                                   placeholder="{{ trans('app.search') }}">
+                    <div class="row search-row align-items-end mt-3 mx-1">
+                        <!-- Search Input -->
+                        <div class="col-md-2 col-sm-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <label for="search" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.search') }} -</label>
+                                <input type="text" id="search" class="form-control form-control-sm"
+                                    placeholder="{{ trans('app.search') }}">
+                            </div>
+                        </div>
+
+                        <!-- District Dropdown -->
+                        <div class="col-md-2 col-sm-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <label for="district" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.district') }} -</label>
+                                <select id="district" class="form-select form-select-sm form-control form-control-sm">
+                                    <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                    @foreach ($district as $value)
+                                        <option value="{{ $value->iddaerah }}"
+                                            {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                            {{ $value->daerah_code }} - {{ $value->daerah }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Division Dropdown -->
+                        <div class="col-md-2 col-sm-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <label for="division" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.division') }} -</label>
+                                <select id="division" class="form-select form-select-sm form-control form-control-sm">
+                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
+                                    <!-- Divisions are dynamically populated -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Lot/PT Input -->
+                        <div class="col-md-2 col-sm-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <label for="lot" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.lot_pt') }} -</label>
+                                <input type="text" id="lot" class="form-control form-control-sm"
+                                    placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                            </div>
+                        </div>
+
+                        <!-- Search Button -->
+                        <div class="col-md-2 col-sm-6 mb-2 ms-auto">
+                            <a href="#" class="btn btn-primary btn-sm search-btn"
+                                style="background:#3c8dbc !important; border:solid 1px #3c8dbc; float: right;">
+                                <strong>{{ trans('app.search_b') }}</strong>
+                            </a>
                         </div>
                     </div>
 
@@ -151,12 +216,24 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Live search
-    $("#search").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".table tbody tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(value));
-        });
+   // Search button click handler
+    $('.search-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        var searchTerm = $('#search').val();
+        var district = $('#district').val();
+        var division = $('#division').val();
+        var lot = $('#lot').val();
+        
+        var queryParams = [];
+        
+        if (searchTerm) queryParams.push('search=' + encodeURIComponent(searchTerm));
+        if (district) queryParams.push('district=' + district);
+        if (division) queryParams.push('division=' + division);
+        if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
+        
+        // Redirect with all filters
+        window.location.href = window.location.pathname + '?' + queryParams.join('&');
     });
 
     // Status filter
@@ -208,5 +285,48 @@ $(document).ready(function() {
             });
         }
     });
+</script>
+<script>
+    $(document).ready(function() {
+
+            // District change handler for loading divisions
+            $('#district').on('change', function() {
+                const distId = $(this).val();
+                $('#division').html('<option value="">Loading...</option>');
+
+                if (distId) {
+                    $.ajax({
+                        url: `/division/${distId}`,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Sila Pilih</option>';
+                            data.forEach(mukin => {
+                                options +=
+                                    `<option value="${mukin.idmukim}">${ mukin.mukim_code +' - '+mukin.mukim}</option>`;
+                            });
+                            $('#division').html(options);
+                        },
+                        error: function() {
+                            $('#division').html(
+                                '<option value="">Error loading mukin</option>');
+                        }
+                    });
+                } else {
+                    $('#division').html('<option value="">Sila Pilih</option>');
+                }
+            });
+
+            // Auto-filter for status dropdown
+            $('#status').on('change', function() {
+                var status = $(this).val();
+                var queryParams = [];
+
+                if (status) queryParams.push('status=' + status);
+
+                // Redirect with status filter
+                window.location.href = window.location.pathname + '?' + queryParams.join('&');
+            });
+
+        });
 </script>
 @endsection
