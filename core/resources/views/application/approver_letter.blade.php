@@ -520,7 +520,7 @@
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    window.location.href = "{{ route('application_status') }}";
+                    window.location.href = "{{ route('approved_application_list') }}";
                 });
             })
             .catch(error => {

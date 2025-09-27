@@ -194,6 +194,11 @@
                                                         ->where('application_id', $item->id)
                                                         ->where('action_type', 'edit')
                                                         ->exists();
+
+                                                    $paymentCompleted = DB::table('payments')
+                                                    ->where('application_id', $item->id)
+                                                    ->where('payment_status', 'completed')
+                                                    ->exists();
                                                 @endphp
 
                                                 <a href="{{ route('newApplication', ['id' => $item->id]) }}"
@@ -202,12 +207,19 @@
                                                     <i class="fa fa-eye"></i>
                                                 </a>
 
-                                                @if($isAdminOrStaff)
-                                                    <a href="{{ route('updateApplication', ['id' => $item->id]) }}"
-                                                        class="btn btn-warning btn-sm edit-application {{ $hasBeenEdited ? 'btn-edited' : '' }}"
-                                                        data-id="{{ $item->id }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                               @if($isAdminOrStaff && !$paymentCompleted)
+                                                        <a href="{{ route('updateApplication', ['id' => $item->id]) }}"
+                                                            class="btn btn-warning btn-sm edit-application {{ $hasBeenEdited ? 'btn-edited' : '' }}"
+                                                            data-id="{{ $item->id }}">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                @elseif($isAdminOrStaff && $paymentCompleted)
+                                                        <button class="btn btn-secondary btn-sm disabled" 
+                                                                disabled
+                                                                title="Cannot edit - Payment completed"
+                                                                data-id="{{ $item->id }}">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
                                                 @endif
 
                                                   <!-- Bill Icon (redirects to approver-letter) -->

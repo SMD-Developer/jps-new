@@ -292,7 +292,7 @@
                                                     }
 
                                                     if ($item->appeal === 'yes' && $item->appeal_status === 'approved') {
-                                                        $messages[] = 'Rayuan Diluluskan';
+                                                        $messages[] = 'Rayuan';
                                                     }
 
                                                     if ($item->appeal === 'yes' && $item->appeal_status === 'rejected') {
