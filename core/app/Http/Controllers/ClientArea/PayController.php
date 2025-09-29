@@ -588,12 +588,39 @@ class PayController extends Controller
         $fpx_msgType = $msgType;
         $fpx_sellerExId = "EX00014529";
         $fpx_version = "6.0";
-    
+
         $data = $fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_version;
-        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
-        $pkeyid = openssl_get_privatekey($priv_key);
-        openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
-        $fpx_checkSum = strtoupper(bin2hex($binary_signature));
+        
+        try {
+            $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
+            
+            if (!$priv_key) {
+                throw new \Exception("Private key file not found or not readable");
+            }
+            
+            $pkeyid = openssl_get_privatekey($priv_key);
+            
+            if (!$pkeyid) {
+                throw new \Exception("Invalid private key format");
+            }
+            
+            openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
+            $fpx_checkSum = strtoupper(bin2hex($binary_signature));
+            
+        } catch (\Exception $e) {
+            \Log::error('FPX Private Key Error', [
+                'error' => $e->getMessage(),
+                'msg_token' => $msgToken
+            ]);
+            
+            return [
+                'success' => false,
+                'error' => 'Private key error: ' . $e->getMessage(),
+                'error_type' => 'PRIVATE_KEY_ERROR',
+                'banks' => [],
+                'test_cases' => []
+            ];
+        }
         
         $url = 'https://www.mepsfpx.com.my/FPXMain/RetrieveBankList';
         
@@ -611,6 +638,13 @@ class PayController extends Controller
         try {
             $fields_string = http_build_query($fields);
             
+            \Log::info('FPX Bank List Request', [
+                'url' => $url,
+                'seller_id' => $fpx_sellerExId,
+                'msg_token' => $msgToken,
+                'msg_type' => $msgType
+            ]);
+            
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -618,31 +652,109 @@ class PayController extends Controller
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
             
             $result = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curl_error = curl_error($ch);
+            $curl_errno = curl_errno($ch);
+            
             curl_close($ch);
+            
+            // Check for CURL errors
+            if ($curl_errno) {
+                \Log::error('FPX CURL Error', [
+                    'error_code' => $curl_errno,
+                    'error_message' => $curl_error,
+                    'url' => $url
+                ]);
+                
+                throw new \Exception("Connection error: " . $curl_error . " (Code: " . $curl_errno . ")");
+            }
+            
+            // Check HTTP response code
+            if ($http_code !== 200) {
+                \Log::error('FPX HTTP Error', [
+                    'http_code' => $http_code,
+                    'response' => $result
+                ]);
+                
+                throw new \Exception("HTTP Error: " . $http_code);
+            }
+            
+            // Check if response is empty
+            if (empty($result)) {
+                \Log::error('FPX Empty Response', [
+                    'url' => $url,
+                    'http_code' => $http_code
+                ]);
+                
+                throw new \Exception("Empty response from FPX server");
+            }
+            
+            \Log::info('FPX Raw Response', [
+                'response_length' => strlen($result),
+                'response_preview' => substr($result, 0, 200)
+            ]);
             
             // Parse the response
             $token = strtok($result, "&");
             while ($token !== false) {
-                list($key1, $value1) = explode("=", $token);
-                $value1 = urldecode($value1);
-                $response_value[$key1] = $value1;
+                if (strpos($token, '=') !== false) {
+                    list($key1, $value1) = explode("=", $token, 2);
+                    $value1 = urldecode($value1);
+                    $response_value[$key1] = $value1;
+                }
                 $token = strtok("&");
+            }
+            
+            // Check if required fields exist
+            if (!isset($response_value['fpx_bankList']) || 
+                !isset($response_value['fpx_checkSum']) ||
+                !isset($response_value['fpx_msgToken'])) {
+                
+                \Log::error('FPX Invalid Response Structure', [
+                    'response_keys' => array_keys($response_value),
+                    'full_response' => $response_value
+                ]);
+                
+                throw new \Exception("Invalid response structure from FPX. Missing required fields.");
             }
             
             // Verify the signature
             $data = $response_value['fpx_bankList']."|".$response_value['fpx_msgToken']."|".$response_value['fpx_msgType']."|".$response_value['fpx_sellerExId'];
             $val = $this->verifySign_fpx($response_value['fpx_checkSum'], $data);
             
+            if (!$val) {
+                \Log::warning('FPX Signature Verification Failed', [
+                    'checksum' => $response_value['fpx_checkSum']
+                ]);
+            }
+            
             // Process bank list with status from API
             $token = strtok($response_value['fpx_bankList'], ",");
             while ($token !== false) {
-                list($bank_code, $api_status) = explode("~", $token);
-                $api_status = urldecode($api_status); // This will be "A" or "B"
-                $bank_list[$bank_code] = $api_status; 
+                if (strpos($token, '~') !== false) {
+                    list($bank_code, $api_status) = explode("~", $token);
+                    $api_status = urldecode($api_status);
+                    $bank_list[$bank_code] = $api_status;
+                }
                 $token = strtok(",");
             }
+            
+            if (empty($bank_list)) {
+                \Log::warning('FPX No Banks Found', [
+                    'bank_list_string' => $response_value['fpx_bankList']
+                ]);
+                
+                throw new \Exception("No banks found in response");
+            }
+            
+            \Log::info('FPX Banks Retrieved', [
+                'bank_count' => count($bank_list),
+                'msg_token' => $msgToken
+            ]);
             
             // Format the bank list with proper bank data and status
             $enhanced_bank_list = [];
@@ -653,7 +765,7 @@ class PayController extends Controller
                     'bank_code' => $bank_code,
                     'bank_name' => $bank_data['bank_name'],
                     'display_name' => $bank_data['display_name'],
-                    'status' => ($api_status == 'A') ? 'active' : 'inactive', 
+                    'status' => ($api_status == 'A') ? 'active' : 'inactive',
                     'test_scenario' => $this->getTestScenario($bank_code),
                     'type' => ($msgToken == '01') ? 'B2C' : 'B2B'
                 ];
@@ -661,7 +773,7 @@ class PayController extends Controller
             
             return [
                 'success' => true,
-                'banks' => $enhanced_bank_list, // Return all banks (active + inactive)
+                'banks' => $enhanced_bank_list,
                 'test_cases' => [
                     ($msgToken == '01' ? '1.1' : '2.1') => ($msgToken == '01' ? 'B2C Positive Scenario - Valid Account' : 'B2B Positive Scenario - Valid Account'),
                     ($msgToken == '01' ? '1.2' : '2.2') => ($msgToken == '01' ? 'B2C Maximum Scenario - Exceeded Amount' : 'B2B Maximum Scenario - Exceeded Amount'),
@@ -672,10 +784,17 @@ class PayController extends Controller
                 ]
             ];
             
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
+            \Log::error('FPX Bank List Fetch Failed', [
+                'error' => $e->getMessage(),
+                'msg_token' => $msgToken,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
+                'error_type' => 'API_ERROR',
                 'banks' => [],
                 'test_cases' => []
             ];
