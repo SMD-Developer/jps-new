@@ -592,6 +592,9 @@ class PayController extends Controller
         $data = $fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_version;
         $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
         $pkeyid = openssl_get_privatekey($priv_key);
+        if ($pkeyid === false) {
+            throw new \Exception("Private key is invalid or cannot be loaded");
+        }
         openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
         $fpx_checkSum = strtoupper(bin2hex($binary_signature));
         
