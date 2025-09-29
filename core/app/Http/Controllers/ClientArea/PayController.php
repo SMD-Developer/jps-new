@@ -158,11 +158,11 @@ class PayController extends Controller
         
         $fpx_msgType = "AR";
         $fpx_msgToken = "01";
-        $fpx_sellerExId = "EX00026203";
+        $fpx_sellerExId = "EX00014529";
         $fpx_sellerExOrderNo=date('YmdHis');
         $fpx_sellerTxnTime = date('YmdHis');
         $fpx_sellerOrderNo=date('YmdHis');
-        $fpx_sellerId = "SE00101283";
+        $fpx_sellerId = "SE00110559";
         $fpx_sellerBankCode = "01";
         $fpx_txnCurrency = "MYR";
         $fpx_txnAmount = number_format($amount, 2, '.', '');
@@ -195,12 +195,12 @@ class PayController extends Controller
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
     
-        $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
+        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
         $pkeyid = openssl_get_privatekey($priv_key);
         openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
         $fpx_checkSum = strtoupper(bin2hex($binary_signature));
         
-        $actionUrl = 'https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
+        $actionUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
         
         $receiptNumber = $this->generateReceiptNumber();
         
@@ -586,16 +586,16 @@ class PayController extends Controller
     {
         $fpx_msgToken = $msgToken;
         $fpx_msgType = $msgType;
-        $fpx_sellerExId = "EX00026203";
+        $fpx_sellerExId = "EX00014529";
         $fpx_version = "6.0";
     
         $data = $fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_version;
-        $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
+        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
         $pkeyid = openssl_get_privatekey($priv_key);
         openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
         $fpx_checkSum = strtoupper(bin2hex($binary_signature));
         
-        $url = 'https://uat.mepsfpx.com.my/FPXMain/RetrieveBankList';
+        $url = 'https://www.mepsfpx.com.my/FPXMain/RetrieveBankList';
         
         $fields = array(
             'fpx_msgToken' => urlencode($fpx_msgToken),
@@ -999,7 +999,7 @@ class PayController extends Controller
 
    private function getActionUrl($testCase, $bankCode)
     {
-        $baseUrl = 'https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
+        $baseUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
     
         if (strpos($testCase, '2.1') !== false) {
             return $baseUrl . '?testcase=maximum';
@@ -1225,10 +1225,10 @@ class PayController extends Controller
 	
 	public function verifySign_fpx($sign,$toSign) 
     {
-        $path = '/home/wwwsmddeveloper/public_html/jpsmy/core/public/';
+        $path = '/var/www/html/core/public/';
 
     	$d_ate = date("Y");
-    	$fpxcert = array($path."fpxuat_smi_20241015.cer");
+    	$fpxcert = array($path."fpxprod_smi_20241219.cer");
     	$certs = $this->checkCertExpiry($fpxcert);
     	$signdata = $this->hextobin($sign);
     	
@@ -1386,11 +1386,11 @@ class PayController extends Controller
         }
         
         $fpx_msgToken = $isB2B ? "02" : "01";
-        $fpx_sellerExId = $paymentRecord->seller_ex_id ?? "EX00026203"; 
+        $fpx_sellerExId = $paymentRecord->seller_ex_id ?? "EX00014529"; 
         $fpx_sellerExOrderNo = $paymentRecord->seller_order_no;
         $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
         $fpx_sellerOrderNo = $paymentRecord->seller_order_no;
-        $fpx_sellerId = $paymentRecord->seller_id ?? "SE00101283"; 
+        $fpx_sellerId = $paymentRecord->seller_id ?? "SE00110559"; 
         $fpx_sellerBankCode = "01";
         $fpx_txnCurrency = $paymentRecord->currency ?? "MYR";
         
@@ -1428,7 +1428,7 @@ class PayController extends Controller
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
         
-        $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
+        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
         $pkeyid = openssl_get_privatekey($priv_key);
         openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
         $fpx_checkSum = strtoupper(bin2hex($binary_signature));
@@ -1438,7 +1438,7 @@ class PayController extends Controller
         $ErrorCode = '';
         
         // Set POST variables
-        $url = 'https://uat.mepsfpx.com.my/FPXMain/sellerNVPTxnStatus.jsp';
+        $url = 'https://www.mepsfpx.com.my/FPXMain/sellerNVPTxnStatus.jsp';
         
         $fields = array(
             'fpx_msgType' => urlencode($fpx_msgType),
@@ -1874,11 +1874,11 @@ class PayController extends Controller
         
         $fpx_msgType = "AR";
         $fpx_msgToken = "02"; 
-        $fpx_sellerExId = "EX00026203";
+        $fpx_sellerExId = "EX00014529";
         $fpx_sellerExOrderNo = date('YmdHis');
         $fpx_sellerTxnTime = date('YmdHis');
         $fpx_sellerOrderNo = date('YmdHis');
-        $fpx_sellerId = "SE00101283";
+        $fpx_sellerId = "SE00110559";
         $fpx_sellerBankCode = "01";
         $fpx_txnCurrency = "MYR";
         $fpx_txnAmount = number_format($amount, 2, '.', '');
@@ -1900,12 +1900,12 @@ class PayController extends Controller
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
 
-        $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
+        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
         $pkeyid = openssl_get_privatekey($priv_key);
         openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
         $fpx_checkSum = strtoupper(bin2hex( $binary_signature ) );
         
-        $actionUrl = 'https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
+        $actionUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
         
         // Store payment data with B2B specific details
         $this->storePaymentData([
