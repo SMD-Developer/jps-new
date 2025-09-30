@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\PaymentSuccessful;
 
 class PayController extends Controller 
 {
@@ -1271,6 +1272,23 @@ class PayController extends Controller
                         ]),
                         'updated_at' => now()
                     ]);
+
+                if ($paymentStatus === 'completed' && $paymentRecord->user_id) {
+                        $client = \App\Models\Client::where('uuid', $paymentRecord->user_id)->first();
+                        
+                        if ($client) {
+                            $client->notify(new \App\Notifications\PaymentSuccessful([
+                                'order_no' => $fpx_sellerOrderNo,
+                                'transaction_id' => $fpx_fpxTxnId,
+                                'amount' => $fpx_txnAmount,
+                                'currency' => $fpx_txnCurrency,
+                                'buyer_name' => $fpx_buyerName,
+                                'bank_name' => $fpx_buyerBankBranch,
+                                'payment_date' => now()->format('Y-m-d H:i:s')
+                            ]));
+                        
+                        }
+                }
                     
                     
                     
