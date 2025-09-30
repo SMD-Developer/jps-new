@@ -667,8 +667,12 @@
                     const value = $(`[name="${field}"]`).val();
                     if (!value) {
                         $(`[name="${field}"]`).addClass('is-invalid');
+                        
+                        // Check if it's a file field
+                        const errorMessage = field === 'land_grant' ? 'Fail wajib dimuatnaik' : 'Medan ini wajib diisi';
+                        
                         $(`[name="${field}"]`).after(
-                            `<div class="invalid-feedback d-flex justify-content-end">Medan ini wajib diisi</div>`
+                            `<div class="invalid-feedback d-flex justify-content-end">${errorMessage}</div>`
                         );
                         isValid = false;
                         
