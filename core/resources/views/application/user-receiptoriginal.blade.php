@@ -120,6 +120,10 @@
     button.btn.btn-primary.float-right {
         width: max-content;
     }
+
+    .custome-text{
+        font-size:14px;
+    }
     
     @media print {
         #printButton, #downloadButton {
@@ -208,7 +212,8 @@
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
                                     MUKIM {{ strtoupper($application->negeri ?? 'N/A') }}, DAERAH
-                                    {{ strtoupper($application->daerah ?? 'N/A') }}
+                                    {{ strtoupper($application->daerah ?? 'N/A') }}<br>
+                                    ({{ $application->refference_no ?? 'N/A'}})
                                 </div>
                             </div>
                         </div>
@@ -224,9 +229,9 @@
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">AMAUN (RM)</th>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
                                     1</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
                                     @if($application->payment_method === 'cheque')
                                         Cek<br>
                                         @if(!empty($application->transaction_id))
@@ -236,28 +241,26 @@
                                         {{ $application->payment_method }}
                                     @endif
                                 </td>
-
-
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    {{ $application->refference_no }}<br>
-                                    {{ $application->created_at->format('d/m/Y') }}
+                               <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
+                                    {{ $application->transaction_id ?? 'N/A' }}<br>
+                                    {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    L453<br><br>G001
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    L453<br>G001
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    H0161304<br><br>H0161304
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    H0161304<br>H0161304
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                                    {{ number_format($application->payment_amount / 2, 2) }}<br><br>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
+                                    {{ number_format($application->payment_amount / 2, 2) }}<br>
                                     {{ number_format($application->payment_amount / 2, 2) }}
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="5"
-                                    style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;">
+                                    style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">
                                     JUMLAH KESELURUHAN </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;" class="custome-text">
                                     {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
