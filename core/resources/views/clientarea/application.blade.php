@@ -213,6 +213,39 @@
                             @csrf
                             
                             <div class="container">
+
+                                <!-- Application Type Selection - New Field -->
+                                @if($client->accountType == 1 || $client->accountType == 2)
+                                    <!-- Application Type Selection - Only for Individu and Pemaju -->
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                            <label for="applicant_type">@lang('Jenis Permohonan') <b class="starr"></b></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select id="applicant_type" name="applicant_type" class="form-control form-select" required>
+                                                    @php
+                                                        $userAccountType = $client->accountType ?? null;
+                                                        // Only show account types 1 and 2
+                                                        $allowedAccountTypes = $accountTypes->whereIn('id', [1, 2]);
+                                                    @endphp
+                                                    
+                                                    @foreach($allowedAccountTypes as $accountType)
+                                                        <option value="{{ $accountType->id }}" 
+                                                            {{ $userAccountType == $accountType->id ? 'selected' : '' }}>
+                                                            {{ $accountType->name }}
+                                                            {{ $userAccountType == $accountType->id ? ' ' : '' }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <!-- Hidden field for Agency users - store their account type -->
+                                    <input type="hidden" name="applicant_type" value="{{ $client->accountType }}">
+                                @endif
+
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">

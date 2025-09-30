@@ -621,18 +621,26 @@
                                                   {{ $application->refference_no ?? '-' }}
                                             </td>
                                             <td>
-                                                @if ($application->client)
-                                                    @php
-                                                        $accountTypes = [
-                                                            1 => 'Individu',
-                                                            2 => 'Pemaju',
-                                                            3 => 'Agensi Kerajaan',
-                                                        ];
-                                                    @endphp
-                                                    {{ $accountTypes[$application->client->accountType] ?? 'N/A' }}
-                                                @else
-                                                    N/A
-                                                @endif
+                                                    @if ($application->client)
+                                                        @php
+                                                            $accountTypes = [
+                                                                1 => 'Individu',
+                                                                2 => 'Pemaju',
+                                                                3 => 'Agensi Kerajaan',
+                                                            ];
+                                                            
+                                                            $clientType = $accountTypes[$application->client->accountType] ?? 'N/A';
+                                                            $applicantType = $accountTypes[$application->applicant_type] ?? null;
+                                                            
+                                                            if ($applicantType && $applicantType != $clientType) {
+                                                                echo $clientType . '-' . $applicantType;
+                                                            } else {
+                                                                echo $clientType;
+                                                            }
+                                                        @endphp
+                                                    @else
+                                                        N/A
+                                                    @endif
                                             </td>
                                              <td>
                                                 @switch($application->application_type)
