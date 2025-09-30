@@ -215,7 +215,47 @@
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
                                             <td>{{$item->refference_no ?? '-'}}</td>
                                             <td>
-                                                {{ $item->client ? ($item->client->accountType == 1 ? 'Individu' : ($item->client->accountType == 2 ? 'Pemaju' : ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 'Unknown'))) : '' }}
+                                                @php
+                                                    $clientType = '';
+                                                    $applicantType = '';
+                                                    
+                                                    if ($item->client) {
+                                                        // Get client account type
+                                                        switch ($item->client->accountType) {
+                                                            case 1:
+                                                                $clientType = 'Individu';
+                                                                break;
+                                                            case 2:
+                                                                $clientType = 'Pemaju';
+                                                                break;
+                                                            case 3:
+                                                                $clientType = 'Agensi Kerajaan';
+                                                                break;
+                                                            default:
+                                                                $clientType = 'Unknown';
+                                                        }
+                                                        
+                                                        // Get applicant type from application
+                                                        switch ($item->applicant_type) {
+                                                            case 1:
+                                                                $applicantType = 'Individu';
+                                                                break;
+                                                            case 2:
+                                                                $applicantType = 'Pemaju';
+                                                                break;
+                                                            case 3:
+                                                                $applicantType = 'Agensi Kerajaan';
+                                                                break;
+                                                        }
+                                                        
+                                                        // Display logic
+                                                        if ($applicantType && $applicantType != $clientType) {
+                                                            echo $clientType . '-' . $applicantType;
+                                                        } else {
+                                                            echo $clientType;
+                                                        }
+                                                    }
+                                                @endphp
                                             </td>
                                             <td>
                                                 @switch($item->application_type)
