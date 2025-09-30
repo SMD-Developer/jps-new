@@ -245,8 +245,16 @@
                                                             2 => 'Pemaju',
                                                             3 => 'Agensi Kerajaan',
                                                         ];
+                                                        
+                                                        $clientType = $accountTypes[$application->client->accountType] ?? 'N/A';
+                                                        $applicantType = isset($application->applicant_type) ? ($accountTypes[$application->applicant_type] ?? null) : null;
                                                     @endphp
-                                                    {{ $accountTypes[$application->client->accountType] ?? 'N/A' }}
+                                                    
+                                                    @if($applicantType && $applicantType != $clientType)
+                                                        {{ $clientType }}-{{ $applicantType }}
+                                                    @else
+                                                        {{ $clientType }}
+                                                    @endif
                                                 @else
                                                     N/A
                                                 @endif

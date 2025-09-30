@@ -328,7 +328,7 @@
                                                     $messages = [];
 
                                                     if ($isResubmitted) {
-                                                        $messages[] = 'Permohonan Diserahkan Semula';
+                                                        $messages[] = 'Permohonan Dihantar Semula';
                                                     }
 
                                                     if ($item->appeal === 'yes' && $item->appeal_status === 'approved') {
@@ -337,6 +337,9 @@
 
                                                     if ($item->appeal === 'yes' && $item->appeal_status === 'rejected') {
                                                         $messages[] = 'Rayuan Ditolak';
+                                                    }
+                                                    if ($item->status === 'rejected' && !empty($item->rejection_reason)) {
+                                                            $messages[] = 'Sebab Penolakan: ' . $item->rejection_reason;
                                                     }
                                                 @endphp
 

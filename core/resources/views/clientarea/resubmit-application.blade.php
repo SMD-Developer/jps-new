@@ -562,11 +562,19 @@
                             <div id="permission_planfileName" class="file-name"></div>
                             <div class="col-9 text-center">
                                 @if ($application->permission_plan)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->permission_plan)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->permission_plan) }}
-                                        </a></small>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <small class="text-info">
+                                            <a href="{{ url('pdf/' . basename($application->permission_plan)) }}" 
+                                            target="_blank">
+                                            <i class="fa fa-file-pdf-o"></i> {{ basename($application->permission_plan) }}
+                                            </a>
+                                        </small>
+                                        <button type="button" class="btn btn-link text-danger remove-file-btn" 
+                                                data-target="permission_plan" style="font-size: larger;">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                        <input type="hidden" name="remove_permission_plan" id="remove_permission_plan" value="0">
+                                    </div>
                                 @endif
                                 @error('permission_plan')
                                     <span class="text-danger">{{ $message }}</span>
@@ -583,11 +591,19 @@
                             <div id="letter_of_supportfileName" class="file-name"></div>
                             <div class="col-9 text-center">
                                 @if ($application->letter_of_support)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->letter_of_support) }}
-                                        </a></small>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <small class="text-info">
+                                            <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}" 
+                                            target="_blank">
+                                            <i class="fa fa-file-pdf-o"></i> {{ basename($application->letter_of_support) }}
+                                            </a>
+                                        </small>
+                                        <button type="button" class="btn btn-link text-danger remove-file-btn" 
+                                                data-target="letter_of_support" style="font-size: larger;">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                        <input type="hidden" name="remove_letter_of_support" id="remove_letter_of_support" value="0">
+                                    </div>
                                 @endif
                                 @error('letter_of_support')
                                     <span class="text-danger">{{ $message }}</span>
