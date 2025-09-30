@@ -183,12 +183,12 @@
         </a>
       @elseif($transactionStatus == 'PENDING')
         <a href="{{ route('pay.status') }}" class="btn btn-warning me-2">Check Status</a>
-        <a href="{{ route('clients.home') }}" class="btn btn-primary rounded-pill px-5">
+        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
       @else
         <!-- Unsuccessful - Show retry options -->
-        <a href="{{ route('clients.home') }}" class="btn btn-outline-primary rounded-pill px-5">
+        <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
       @endif
