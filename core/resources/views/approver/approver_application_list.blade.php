@@ -339,7 +339,7 @@
                                                         $messages[] = 'Rayuan Ditolak';
                                                     }
                                                     if ($item->status === 'rejected' && !empty($item->rejection_reason)) {
-                                                            $messages[] = 'Sebab Penolakan: ' . $item->rejection_reason;
+                                                        $messages[] = $item->rejection_reason;
                                                     }
                                                 @endphp
 
