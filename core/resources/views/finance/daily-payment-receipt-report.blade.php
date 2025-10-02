@@ -380,6 +380,20 @@
         color: #333;
     }
 
+
+    .btn-prints {
+        background: linear-gradient(135deg, #e6e33eff 0%, #bbb121ff 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+        transition: all 0.2s ease;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
         .report-container {
@@ -705,6 +719,9 @@
 
             <!-- Print Button -->
             <div class="action-section" id="btn-section">
+                <button class="btn-prints" onclick="window.location.href='{{ route('daily_receipt_report_type_finance') }}'">
+                    Kembali
+                </button>
                 <button onclick="window.print()" class="btn-print">{{ trans('app.print') }}</button>
             </div>
         </div>
