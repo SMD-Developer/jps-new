@@ -28,7 +28,7 @@ class AdminNewClaimNotification extends Notification
     public function toMail($notifiable)
     {
        return (new MailMessage)
-            ->subject('Permohonan Tuntutan Caruman Diterima Untuk Semakan')
+            ->subject('Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan')
             ->view('emails.admin-new-claim', [
                 'claim' => $this->claim,
             ]);
@@ -41,7 +41,7 @@ class AdminNewClaimNotification extends Notification
             'claim_id' => $this->claim->id,
             'applicant' => $this->claim->applicant,
             'district' => $this->claim->district,
-            'message' => 'Permohonan Tuntutan Caruman Diterima Untuk Semakan',
+            'message' => 'Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan',
             'type' => 'new_claim'
         ];
     }

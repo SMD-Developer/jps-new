@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permohonan Tuntutan Caruman Diterima Untuk Semakan</title>
+    <title>Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan</title>
     <style>
         body {
             font-family: "Poppins", sans-serif !important;
@@ -78,13 +78,13 @@
         </tr>
         <tr>
             <td class="title">
-                Permohonan Tuntutan Caruman Diterima Untuk Semakan
+                Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan
             </td>
         </tr>
         <tr>
             <td class="content">
                 <p>Kepada Adminastaff,</p>
-                <p><strong>Permohonan Tuntutan Caruman Diterima Untuk Semakan</strong></p>
+                <p><strong>Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan</strong></p>
             </td>
         </tr>
         <tr>

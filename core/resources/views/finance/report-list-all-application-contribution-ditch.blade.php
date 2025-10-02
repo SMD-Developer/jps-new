@@ -263,6 +263,19 @@
         transition: all 0.2s ease;
     }
 
+    .btn-prints {
+        background: linear-gradient(135deg, #e6e33eff 0%, #bbb121ff 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+        transition: all 0.2s ease;
+    }
+
     .btn-print:hover {
         background: linear-gradient(135deg, #0550ae 0%, #368ce7 100%);
         box-shadow: 0 3px 6px rgba(16, 24, 40, 0.15);
@@ -585,6 +598,9 @@
 
             <!-- Print Button -->
             <div class="action-section" id="btn-section">
+                <button class="btn-prints" onclick="window.location.href='{{ route('report-list-all-application-contribution-ditch-search') }}'">
+                    Back
+                </button>
                 <button onclick="window.print()" class="btn-print">{{ trans('app.print') }}</button>
             </div>
         </div>
