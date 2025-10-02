@@ -499,7 +499,7 @@ class HomeController extends Controller {
                 'updated_at' => now()
             ]);
     
-            return response()->json(['message' => __('status updated successfully')]);
+            return response()->json(['message' => __('Status Pemohonan berjaya dikemaskini')]);
     
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Log specific validation errors

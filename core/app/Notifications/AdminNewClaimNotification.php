@@ -27,15 +27,12 @@ class AdminNewClaimNotification extends Notification
 
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject('New Claim Contribution Submitted')
-            ->greeting('Hello Admin,')
-            ->line('A new claim contribution has been submitted.')
-            ->line('Applicant: ' . $this->claim->applicant)
-            ->line('District: ' . $this->claim->district)
-            ->line('Land Area: ' . $this->claim->land_area . ' ' . $this->claim->land_unit)
-            ->action('View Claim', url('/admin/claims/' . $this->claim->id))
-            ->line('Please review and process this claim at your earliest convenience.');
+       return (new MailMessage)
+            ->subject('Permohonan Tuntutan Caruman Diterima Untuk Semakan')
+            ->view('emails.admin-new-claim', [
+                'claim' => $this->claim,
+            ]);
+        
     }
 
     public function toDatabase($notifiable)
@@ -44,7 +41,7 @@ class AdminNewClaimNotification extends Notification
             'claim_id' => $this->claim->id,
             'applicant' => $this->claim->applicant,
             'district' => $this->claim->district,
-            'message' => 'New claim contribution submitted by ' . $this->claim->applicant,
+            'message' => 'Permohonan Tuntutan Caruman Diterima Untuk Semakan',
             'type' => 'new_claim'
         ];
     }

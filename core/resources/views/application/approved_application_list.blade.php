@@ -69,7 +69,7 @@
 
                     <div class="row search-row align-items-end mt-3 mx-1">
                         <!-- Search Input -->
-                        <div class="col-md-2 col-sm-6 mb-2">
+                        <div class="col-md-3 col-sm-6 mb-2">
                             <div class="d-flex align-items-center">
                                 <label for="search" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.search') }} -</label>
                                 <input type="text" id="search" class="form-control form-control-sm"
@@ -78,7 +78,7 @@
                         </div>
 
                         <!-- District Dropdown -->
-                        <div class="col-md-2 col-sm-6 mb-2">
+                        <div class="col-md-3 col-sm-6 mb-2">
                             <div class="d-flex align-items-center">
                                 <label for="district" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.district') }} -</label>
                                 <select id="district" class="form-select form-select-sm form-control form-control-sm">
@@ -94,7 +94,7 @@
                         </div>
 
                         <!-- Division Dropdown -->
-                        <div class="col-md-2 col-sm-6 mb-2">
+                        <div class="col-md-3 col-sm-6 mb-2">
                             <div class="d-flex align-items-center">
                                 <label for="division" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.division') }} -</label>
                                 <select id="division" class="form-select form-select-sm form-control form-control-sm">
@@ -113,20 +113,21 @@
                             </div>
                         </div>
 
-
                         <!-- Lot/PT Input -->
-                        <div class="col-md-2 col-sm-6 mb-2">
+                        <div class="col-md-3 col-sm-6 mb-2">
                             <div class="d-flex align-items-center">
                                 <label for="lot" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.lot_pt') }} -</label>
                                 <input type="text" id="lot" class="form-control form-control-sm"
                                     placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Search Button -->
-                        <div class="col-md-3 col-sm-12 mb-2 d-flex justify-content-md-end justify-content-sm-end justify-content-center gap-2">
+                    <!-- Second Row for Buttons -->
+                    <div class="row mt-2 mx-1 mb-2">
+                        <div class="col-12 d-flex justify-content-end gap-2">
                             <a href="#" class="btn btn-primary btn-sm search-btn"
-                            style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
+                                style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
                                 <strong>{{ trans('app.search_b') }}</strong>
                             </a>
 
@@ -134,8 +135,6 @@
                                 <strong>{{ trans('app.reset') }}</strong>
                             </a>
                         </div>
-
-
                     </div>
 
                     <!-- Table -->
