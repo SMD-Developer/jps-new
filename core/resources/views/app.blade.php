@@ -117,7 +117,10 @@
                                         if ($user->role_id === '9e032984-8ef0-4e00-b7b9-439679a4d1aa') {
                                             $notifications = $user
                                                 ->notifications()
-                                                ->where('type', 'App\Notifications\AdminNewApplicationNotification')
+                                                ->whereIn('type', [
+                                                    'App\Notifications\AdminNewApplicationNotification',
+                                                    'App\Notifications\AdminNewClaimNotification'
+                                                ])
                                                 ->where('notifiable_type', 'App\Models\User')
                                                 ->take(5)
                                                 ->get();
@@ -135,7 +138,7 @@
                                             data-id="{{ $notification->id }}"
                                             style="padding: 10px; border-bottom: 1px solid #ddd; cursor: pointer;">
 
-                                            <a href="{{ route('application_list') }}?id={{ $notification->data['application_id'] }}"
+                                            <a href="{{ isset($notification->data['application_id']) ? route('application_list') . '?id=' . $notification->data['application_id'] : '#' }}"
                                                 style="text-decoration: none; color: inherit;">
                                                 <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
                                                 <p style="font-size: 12px; margin: 5px 0;">
@@ -231,7 +234,7 @@
                             @forelse ($notifications as $notification)
                                 <div class="dropdown-item" data-notification-id="{{ $notification->id }}"
                                     style="padding: 10px; border-bottom: 1px solid #eee;">
-                                    <a href="{{ route('application_list') }}?id={{ $notification->data['application_id'] }}"
+                                    <a href="{{ isset($notification->data['application_id']) ? route('application_list') . '?id=' . $notification->data['application_id'] : '#' }}"
                                         style="color: #333; text-decoration: none; display: block;">
                                         {{ $notification->data['message'] ?? 'No message' }} <br>
                                         <small style="color: #666;">

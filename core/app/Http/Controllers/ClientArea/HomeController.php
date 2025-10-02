@@ -22,6 +22,7 @@ use App\Models\Division;
 use Illuminate\Support\Str;
 use App\Models\Payment;
 use App\Models\ClaimContribution;
+use App\Notifications\AdminNewClaimNotification;
 
 class HomeController extends Controller {
     protected $invoice, $product, $client, $estimate, $payment, $expense;
@@ -309,23 +310,53 @@ class HomeController extends Controller {
             $requestData = array_merge($request->except('_token'), $uploadedFiles, ['status' => 'pending']);
     
             $applicationId = DB::table('claim_contribution')->insertGetId($requestData);
-    
-            return response()->json([
-                'success' => true,
-                'message' => __('app.the_application_has_been_sent'),
-                'application_id' => $applicationId
-            ]);
+
+
+            try {
+                $claim = DB::table('claim_contribution')->where('id', $applicationId)->first();
+                
+                $admins = User::where('role_id', '9e032984-8ef0-4e00-b7b9-439679a4d1aa')->get();
+                
+                if ($admins->isNotEmpty()) {
+                        foreach ($admins as $admin) {
+                            // Check if notification already exists for this admin and claim
+                            $existingNotification = $admin->notifications()
+                                ->where('type', 'App\Notifications\AdminNewClaimNotification')
+                                ->where('data->claim_id', $applicationId)
+                                ->first();
+                            
+                            if (!$existingNotification) {
+                                $admin->notify(new AdminNewClaimNotification($claim));
+                            }
+                        }
+
+                } else {
+                        Log::warning('No admin staff found to notify', ['claim_id' => $applicationId]);
+                }
+            } catch (\Exception $notificationError) {
+                    // Log notification error but don't fail the claim submission
+                    Log::error('Error notifying admin staff about claim: ', [
+                        'claim_id' => $applicationId,
+                        'message' => $notificationError->getMessage()
+                    ]);
+            }
+        
+                return response()->json([
+                    'success' => true,
+                    'message' => __('app.the_application_has_been_sent'),
+                    'application_id' => $applicationId
+                ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->validator->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->validator->errors()
+                ], 422);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
     }
 		
     

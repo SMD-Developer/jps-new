@@ -601,30 +601,6 @@
                             success: function(response) {
                                 Swal.close();
                                 if (response.success) {
-                                    // Send notification to admin staff
-                                    $.ajax({
-                                        url: "{{ route('notify-admin-new-application') }}", // Define this route in your Laravel routes
-                                        type: "POST",
-                                        data: {
-                                            application_id: response
-                                                .application_id,
-                                            _token: $('meta[name="csrf-token"]')
-                                                .attr(
-                                                    'content'
-                                                ) // CSRF token for Laravel
-                                        },
-                                        success: function(
-                                            notificationResponse) {
-                                            console.log(
-                                                'Admin notification sent:',
-                                                notificationResponse);
-                                        },
-                                        error: function(xhr) {
-                                            console.error(
-                                                'Error sending admin notification:',
-                                                xhr);
-                                        }
-                                    });
 
                                     Swal.fire({
                                         title: "@lang('app.success')",
