@@ -78,12 +78,12 @@
         </tr>
         <tr>
             <td class="title">
-                Selamat datang ke JPS
+                Selamat Datang Ke Laman Portal e-CP
             </td>
         </tr>
         <tr>
             <td class="content">
-                <p>Assalamualaikum / Salam Sejahtera, {{ $userName }}!,</p>
+                <p>Assalamualaikum / Salam Sejahtera, {{ $userName }},</p>
                 <h3 style="color: blue;">Tahniah! Pendaftaran anda telah berjaya.</h3>
                <p>Anda kini boleh log masuk ke laman web Caruman Parit untuk mengakses akaun anda dan memulakan urusan seterusnya.</p>
                 <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
@@ -91,18 +91,6 @@
                 <p>Terima kasih atas kerjasama anda.</p>
                 <p>Yang benar,</p>
                 <p>Portal e-CP Caruman Parit</p>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer-container">
-                <h3>JOM BERHUBUNG </h3>
-                <p>Jika anda mempunyai sebarang soalan, lawati tapak sokongan kami di <a href="https://www.jps.com">https://www.jps.com</a>,<br>
-                    hubungi kami di <a href="mailto:support@jps.com">support@jps.com</a>
-                </p>
-                <p>E-mel ini adalah sulit. Ia juga mungkin mendapat keistimewaan dari segi undang-undang. Jika anda bukan penerima, anda tidak boleh menyalin, memajukan, mendedahkan atau menggunakan mana-mana bahagian daripadanya. Jika anda tersilap menerima mesej ini, sila padamkannya dan maklumkan kepada penghantar dengan segera melalui e-mel balasan. Komunikasi Internet tidak boleh dijamin tepat pada masanya, selamat, bebas ralat atau bebas virus. Pengirim tidak menerima liabiliti untuk sebarang kesilapan atau ketinggalan.
-                </p>
-                <p>"JIMAT KERTAS - FIKIRKAN SEBELUM ANDA CETAK"</p>
-                <p>Ã‚Â© Hak Cipta 2025. Hak Cipta Terpelihara</p>
             </td>
         </tr>
     </table>

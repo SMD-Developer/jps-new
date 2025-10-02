@@ -16,7 +16,7 @@
             <div class="title">Tetapkan Semula Kata Laluan Anda</div>
         </div>
         <div class="content">
-            <p>sayang {{ $notifiable->name ?? 'User' }},</p>
+            <p>Kepada {{ $notifiable->name ?? 'User' }},</p>
             <p>Anda menerima e-mel ini kerana kami menerima permintaan tetapan semula kata laluan untuk akaun anda.</p>            <p>
                 <a href="{{ $actionUrl }}"
                     style="background-color: #3490dc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">

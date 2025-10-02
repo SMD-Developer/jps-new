@@ -24,7 +24,7 @@ use Illuminate\Queue\SerializesModels;
          */
         public function build()
         {
-           return $this->subject('Selamat Dantang ke JPS')
+           return $this->subject('Selamat Datang Ke Laman Portal e-CP')
                 ->view('emails.welcome');
         }
     }
