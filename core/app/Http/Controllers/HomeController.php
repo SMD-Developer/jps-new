@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Log;
 use App\Traits\TracksApplicationViews;
 use App\Traits\LogsActivity;
 use App\Models\ActivityLog;
+use Illuminate\Validation\Rule;
 
 class HomeController extends Controller {
     use TracksApplicationViews;
@@ -3189,7 +3190,7 @@ public function updateUserDetails(Request $request, $id)
             $validator = Validator::make($request->all(), [
                 'daerah_id' => 'required|integer|exists:district,iddaerah',
                 'mukim' => 'required|string|max:255',
-                'mukim_code' => 'required|string|max:255|unique:division,mukim_code,' . $id . ',idmukim',
+                'mukim_code' => 'required|string|max:255',
                 'status' => 'required|in:0,1'
             ], [
                 'daerah_id.required' => 'District is required',
@@ -3198,7 +3199,6 @@ public function updateUserDetails(Request $request, $id)
                 'mukim.max' => 'Division name cannot exceed 255 characters',
                 'mukim_code.required' => 'Division code is required',
                 'mukim_code.max' => 'Division code cannot exceed 255 characters',
-                'mukim_code.unique' => 'Division code already exists',
                 'status.required' => 'Status is required',
                 'status.in' => 'Status must be Active or Inactive'
             ]);
@@ -3211,13 +3211,14 @@ public function updateUserDetails(Request $request, $id)
                 ], 422);
             }
 
-            $exists = DB::table('division')
+            // Check for duplicate division name in the same district
+            $nameExists = DB::table('division')
                 ->where('daerah_id', $request->daerah_id)
-                ->where('mukim', $request->mukim)
+                ->where('mukim', trim($request->mukim))
                 ->where('idmukim', '!=', $id)
                 ->exists();
 
-            if ($exists) {
+            if ($nameExists) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Division name already exists in this district',
@@ -3234,7 +3235,6 @@ public function updateUserDetails(Request $request, $id)
                     'mukim' => trim($request->mukim),
                     'mukim_code' => trim($request->mukim_code),
                     'status' => $request->status,
-                    // 'updated_at' => now()
                 ]);
 
             return response()->json([

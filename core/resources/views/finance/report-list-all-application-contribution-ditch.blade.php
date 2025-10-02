@@ -599,7 +599,7 @@
             <!-- Print Button -->
             <div class="action-section" id="btn-section">
                 <button class="btn-prints" onclick="window.location.href='{{ route('report-list-all-application-contribution-ditch-search') }}'">
-                    Back
+                    Kembali
                 </button>
                 <button onclick="window.print()" class="btn-print">{{ trans('app.print') }}</button>
             </div>
