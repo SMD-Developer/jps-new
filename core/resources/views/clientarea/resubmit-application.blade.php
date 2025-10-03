@@ -795,7 +795,7 @@
                 
                 // Check file size
                 if (file.size > maxFileSize) {
-                    errors.push(`File size (${formatFileSize(file.size)}) exceeds the maximum limit of 15MB.`);
+                    errors.push(`Saiz fail melebihi had 15mb.Sila pilih fail yang lebih kecil.`);
                 }
                 
                 return errors;
