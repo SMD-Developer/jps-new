@@ -394,26 +394,44 @@
         transition: all 0.2s ease;
     }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .report-container {
-            margin: 10px;
-        }
 
-        .header-row {
-            flex-direction: column;
-            text-align: center;
+   @media print {
+        .main-data-table,
+        .main-data-table th,
+        .main-data-table td {
+            border-collapse: collapse !important;
+            border: 1px solid #000 !important;
+            word-wrap: break-word !important;
+            white-space: normal !important;
         }
 
         .main-data-table {
-            font-size: 11px; /* Increased from 9px */
+            width: 100% !important;
+            table-layout: auto !important; /* Allow browser to calculate widths */
         }
 
         .main-data-table th,
         .main-data-table td {
-            padding: 6px 4px;
+            padding: 6px 4px !important;
+            font-size: 11px !important;
+        }
+
+        .header-row {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100% !important;
+        }
+
+        /* Remove fixed layout from department table too */
+        .department-info-table {
+            width: 100% !important;
+            table-layout: auto !important;
         }
     }
+
+    
 </style>
 
 <title>{{ trans('app.daily_payment_receipt_report') }} | JPS</title>
@@ -486,13 +504,13 @@
                                         <tr>
                                             <th>BIL.</th>
                                             <th>NOMBOR RESIT</th>
+                                            <th>TARIKH URUSNIAGA</th>
+                                            <th>MASA URUSNIAGA</th>
                                             <th>PERIHAL</th>
                                             <th>NAMA PEMBAYAR</th>
                                             <th>KATEGORI PEMBAYAR</th>
                                             <th>VOT DANA</th>
                                             <th>KOD HASIL</th>
-                                            <th>TARIKH URUSNIAGA</th>
-                                            <th>MASA URUSNIAGA</th>
                                             <th>Amaun (RM)</th>
                                             <th>MOD TERIMAAN</th>
                                             <th>JENIS KAD</th>
@@ -506,20 +524,31 @@
                                             @php
                                                 $grandTotal += $application->payment_amount;
                                                 $amount = $application->payment_amount / 2;
+                                                $method = $application->methods ?? '';
+                                                if (stripos($method, 'FPX_B2B') !== false) {
+                                                    $transactionCategory = 'B2B';
+                                                    $charge = 1.0;
+                                                } elseif (stripos($method, 'FPX_B2C') !== false) {
+                                                    $transactionCategory = 'B2C';
+                                                    $charge = 0.5;
+                                                } else {
+                                                    $transactionCategory = 'N/A';
+                                                    $charge = 0;
+                                                }
                                             @endphp
                                             <tr>
                                                 <td rowspan="2">{{ $index + 1 }}</td>
                                                 <td rowspan="2">{{ $application->receipt_numbers ?? 'N/A' }}</td>
-                                                <td rowspan="2">{{ $application->land_lot }}, MUKIM
-                                                    {{ $application->state_name }}
+                                                <td rowspan="2">{{ $application->payment_date ? date('d/m/Y', strtotime($application->payment_date)) : 'N/A' }}</td>
+                                                <td rowspan="2">{{ $application->payment_created_at ? date('H:i:s', strtotime($application->payment_created_at)) : 'N/A' }}</td>
+                                                <td rowspan="2">{{ $application->land_lot }},
+                                                    {{ $application->division_name }},
                                                     DAERAH {{ $application->district_name }}, SELANGOR
                                                 </td>
                                                 <td rowspan="2">{{ $application->applicant ?? 'N/A' }}</td>
                                                 <td rowspan="2">{{ $application->account_type_name }}</td>
                                                 <td>G001</td>
                                                 <td>H0161304</td>
-                                                <td rowspan="2">{{ $application->payment_date ? date('d/m/Y', strtotime($application->payment_date)) : 'N/A' }}</td>
-                                                <td rowspan="2">{{ $application->payment_created_at ? date('H:i:s', strtotime($application->payment_created_at)) : 'N/A' }}</td>
                                                 <td>{{ number_format($amount, 2) }}</td>
                                                 <td rowspan="2">
                                                     @php
@@ -532,15 +561,8 @@
                                                     @endphp
                                                 </td>
                                                 <td rowspan="2">N/A</td>
-                                                <td rowspan="2">
-                                                    @php
-                                                        $method = $application->methods ?? '';
-                                                        if (stripos($method, 'FPX_B2B') !== false) echo 'B2B';
-                                                        elseif (stripos($method, 'FPX_B2C') !== false) echo 'B2C';
-                                                        else echo 'N/A';
-                                                    @endphp
-                                                </td>
-                                                <td rowspan="2">N/A</td>
+                                                <td rowspan="2">{{ $transactionCategory }}</td>
+                                                <td rowspan="2">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td>
                                             </tr>
                                             <tr>
                                                 <td>L453</td>
@@ -589,9 +611,7 @@
                             <td>{{ number_format($grandTotal / 2, 2) }}</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td>JUMLAH</td>
+                            <td colspan="3" style="text-align:end;">JUMLAH</td>
                             <td>{{ number_format($grandTotal , 2) }}</td>
                         </tr>
                     </tbody>
@@ -646,8 +666,7 @@
                             <td>N/A</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td>JUMLAH</td>
+                            <td colspan="2" style="text-align:end;">JUMLAH</td>
                             <td>{{ $eftCount }}</td>
                             <td>RM {{ number_format($eftAmount, 2) }}</td>
                         </tr>
@@ -709,7 +728,7 @@
                         </tr>
                         
                         <tr style="background-color: #f0f0f0; font-weight: bold;">
-                            <td colspan="2">JUMLAH</td>
+                            <td colspan="2" style="text-align:end;">JUMLAH</td>
                             <td>{{ $totalCount }}</td>
                             <td>RM {{ number_format($totalAmount, 2) }}</td>
                         </tr>

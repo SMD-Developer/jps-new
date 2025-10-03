@@ -617,7 +617,7 @@
                                                 </td>
                                                 <td>{{ $application->account_type_name ?? 'N/A' }}</td>
                                                 <td>{{ $application->applicant ?? 'N/A' }}</td>
-                                                <td>{{ $application->land_lot ?? 'N/A' }}</td>
+                                                <td>{{ $application->land_lot ?? 'N/A' }},{{ $application->division_name }}, DAERAH {{ $application->district_name }}, SELANGOR</td>
                                                 <td style="text-align: right;">{{ number_format($application->final_amount, 2) }}</td>
                                             </tr>
                                         @endforeach

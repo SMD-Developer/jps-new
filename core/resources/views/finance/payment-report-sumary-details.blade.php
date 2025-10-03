@@ -477,9 +477,13 @@
                                     </div>
                                     <div class="main-title">
                                         <h1>KERAJAAN NEGERI SELANGOR DARUL EHSAN</h1>
-                                        <strong>LAPORAN RINGKASAN PEMBAYARAN MENGIKUT TARIKH</strong><br>
-                                        <p><strong>{{ \Carbon\Carbon::parse($reportData['start_date'])->format('d/m/Y') }} HINGGA
-                                         {{ \Carbon\Carbon::parse($reportData['end_date'])->format('d/m/Y') }}</strong></p>
+                                        <p class="report-title">
+                                            <strong>
+                                                LAPORAN RINGKASAN PEMBAYARAN MENGIKUT TARIKH 
+                                                {{ \Carbon\Carbon::parse($reportData['start_date'])->format('d/m/Y') }} HINGGA
+                                                {{ \Carbon\Carbon::parse($reportData['end_date'])->format('d/m/Y') }}
+                                            </strong>
+                                        </p>
                                     </div>
                                     <div class="page-info">
                                         <p><strong>MUKA SURAT : 1/1</strong></p>
