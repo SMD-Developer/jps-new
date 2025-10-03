@@ -589,9 +589,9 @@
                             <td>{{ number_format($grandTotal / 2, 2) }}</td>
                         </tr>
                         <tr>
+                            <td></td>
+                            <td></td>
                             <td>JUMLAH</td>
-                            <td></td>
-                            <td></td>
                             <td>{{ number_format($grandTotal , 2) }}</td>
                         </tr>
                     </tbody>
@@ -646,8 +646,8 @@
                             <td>N/A</td>
                         </tr>
                         <tr>
-                            <td>JUMLAH</td>
                             <td></td>
+                            <td>JUMLAH</td>
                             <td>{{ $eftCount }}</td>
                             <td>RM {{ number_format($eftAmount, 2) }}</td>
                         </tr>

@@ -472,24 +472,60 @@
         color: #333;
     }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .report-container {
-            margin: 10px;
+     @media print {
+        @page {
+            margin: 20mm;
+            size: A4 portrait;
+
+            /* Add page numbering in bottom-right */
+            @bottom-right {
+                content: "MUKA SURAT " counter(page) " / " counter(pages);
+                font-size: 12px;
+                font-weight: bold;
+            }
         }
 
+        body {
+            background: #fff !important;   /* White background */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            margin: 0 !important;
+            color: #000 !important;        /* Force black text */
+        }
+
+        /* Remove any background colors */
+        * {
+            background: #fff !important;
+            box-shadow: none !important;
+        }
+
+        .report-header {
+            padding: 10px 0 !important;
+            background: white !important;
+            border: none !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Fix header row alignment */
         .header-row {
-            flex-direction: column;
-            text-align: center;
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100% !important;
         }
 
-        .main-data-table {
-            font-size: 11px;
+        /* Prevent date & time breaking into two lines */
+        .date-time-info p {
+            white-space: nowrap !important;
+            margin: 0 !important;
         }
 
-        .main-data-table th,
-        .main-data-table td {
-            padding: 6px 4px;
+        /* Make department info table same width as header */
+        .department-info-table {
+            width: 100% !important;
+            table-layout: fixed !important;
         }
     }
 </style>
@@ -574,7 +610,7 @@
                                             <th>@lang('app.applicant_name')</th>
                                             <th>@lang('app.district')</th>
                                             <th>@lang('app.lot_pt')</th>
-                                            <th>@lang('app.total_contribution')</th>
+                                            <th>@lang('app.total_contribution')(RM)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -599,7 +635,7 @@
                                                 <td>{{ $application->applicant ?? 'N/A' }}</td>
                                                 <td>{{ $application->district_name }}</td>
                                                  <td>{{ $application->land_lot ?? 'N/A' }}</td>
-                                                 <td style="text-align: right;">RM {{ number_format($application->final_amount, 2) }}</td>
+                                                 <td style="text-align: right;">{{ number_format($application->final_amount, 2) }}</td>
                                             </tr>
                                         @endforeach
 

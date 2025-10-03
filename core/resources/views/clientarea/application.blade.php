@@ -879,7 +879,7 @@
                     errorDiv.style.color = 'red';
                     errorDiv.style.fontSize = '12px';
                     errorDiv.style.marginTop = '5px';
-                    errorDiv.textContent = 'File size exceeds 15MB limit. Please choose a smaller file.';
+                    errorDiv.textContent = 'Saiz fail melebihi had 15mb.Sila pilih fail yang lebih kecil.';
                     
                     // Insert error message after the file name display
                     if (fileNameDisplay) {
@@ -932,7 +932,7 @@
     <script>
         document.querySelectorAll('.file-input').forEach(input => {
             input.addEventListener('change', function() {
-                const fileName = this.files[0] ? this.files[0].name : '@lang('app.no_file_chosen')';
+                const fileName = this.files[0] ? this.files[0].name : '@lang('app.no_file_chosens')';
                 document.getElementById(this.id + 'fileName').textContent = fileName;
             });
         });
