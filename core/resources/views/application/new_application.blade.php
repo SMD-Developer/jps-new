@@ -538,6 +538,7 @@
                             console.log('Response Data:', data);
                             if (data.success) {
                                 sendNotificationToUser(applicationId, 'rejection');
+                                 window.location.href = "{{ route('application_list') }}";
                             } else {
                                 Swal.fire('Error', data.message || 'Failed to reject application.',
                                     'error');

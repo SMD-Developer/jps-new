@@ -515,7 +515,7 @@
                                             <th>MOD TERIMAAN</th>
                                             <th>JENIS KAD</th>
                                             <th>KATEGORI TRANSAKSI PERBANKAN</th>
-                                            <th>JUMLAH CAJ (RM)</th>
+                                            <th>JUMLAH CAJ KOMISYEN (RM)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -594,7 +594,7 @@
                             <th>No</th>
                             <th>Kod Hasil</th>
                             <th>Vot Dana</th>
-                            <th>Amaun</th>
+                            <th>Amaun(RM)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -626,7 +626,7 @@
                             <th>No</th>
                             <th>Ringkasan Terimaan</th>
                             <th>Bil Rekod</th>
-                            <th>Amaun</th>
+                            <th>Amaun(RM)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -651,7 +651,7 @@
                             <td>1</td>
                             <td>EFT</td>
                             <td>{{ $eftCount }}</td>
-                            <td>RM {{ number_format($eftAmount, 2) }}</td>
+                            <td>{{ number_format($eftAmount, 2) }}</td>
                         </tr>
                         <tr>
                             <td>2</td>
@@ -668,7 +668,7 @@
                         <tr>
                             <td colspan="2" style="text-align:end;">JUMLAH</td>
                             <td>{{ $eftCount }}</td>
-                            <td>RM {{ number_format($eftAmount, 2) }}</td>
+                            <td>{{ number_format($eftAmount, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -683,7 +683,7 @@
                             <th>No</th>
                             <th>Ringkasan Mod Transaksi Perbankan</th>
                             <th>Bil Rekod</th>
-                            <th>Amaun</th>
+                            <th>Amaun(RM)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -718,19 +718,19 @@
                             <td>1</td>
                             <td>B2B</td>
                             <td>{{ $b2bCount }}</td>
-                            <td>RM {{ number_format($b2bAmount, 2) }}</td>
+                            <td>{{ number_format($b2bAmount, 2) }}</td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>B2C</td>
                             <td>{{ $b2cCount }}</td>
-                            <td>RM {{ number_format($b2cAmount, 2) }}</td>
+                            <td>{{ number_format($b2cAmount, 2) }}</td>
                         </tr>
                         
-                        <tr style="background-color: #f0f0f0; font-weight: bold;">
+                        <tr style="background-color: #f0f0f0;">
                             <td colspan="2" style="text-align:end;">JUMLAH</td>
                             <td>{{ $totalCount }}</td>
-                            <td>RM {{ number_format($totalAmount, 2) }}</td>
+                            <td>{{ number_format($totalAmount, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>
