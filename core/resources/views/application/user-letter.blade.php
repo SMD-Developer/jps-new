@@ -379,7 +379,7 @@
                 </div>
             </div>
             <div class="col-md-12 mt-3  text-right no-print display-flex jsutify-content-end">
-                     <button type="button" class="btn btn-success mx-2" onclick="window.location.href='{{ route('updateApplicationForm', ['id' => $application->id]) }}'">
+                    <button type="button" class="btn btn-success mx-2" onclick="window.location.href='{{ url()->previous() }}'">
                         @lang('app.back')
                     </button>
                     <button type="button" class="btn btn-secondary mr-2" onclick="window.print()">
@@ -393,7 +393,7 @@
                         @lang('app.adminstaff_send_to_approver')
                     </button>
                 </div>
-        </div>
+            </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
