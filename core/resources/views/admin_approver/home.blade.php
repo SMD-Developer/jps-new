@@ -298,58 +298,70 @@
         <div class="container-fl">
             <div class="row">
                 <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #E2FFED;">
-                        <i class="fa fa-users bg-aqua"></i>
-                        <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text1">@lang('app.new_registrations')</span>
-                            <span class="info-box-number">{{ $totalclient }}</span>
+                   <a href="{{ route('developer_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #E2FFED;">
+                            <i class="fa fa-users bg-aqua"></i>
+                            <div class="info-box-content">
+                                <span class="info-box-text text3 text-left text1">@lang('app.new_registrations')</span>
+                                <span class="info-box-number">{{ $totalclient }}</span>
+                            </div>
                         </div>
-                    </div>
+                   </a>
                 </div>
                 <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #4df1782e;">
-                        <i class="fa fa-list bg-aqua"></i>
-                        <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text1">@lang('app.total_no_of_application')</span>
-                            <span class="info-box-number mb-3">{{ $totalapplication }}</span>
+                    <a href="#" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #4df1782e;">
+                            <i class="fa fa-list bg-aqua"></i>
+                            <div class="info-box-content">
+                                <span class="info-box-text text3 text-left text1">@lang('app.total_no_of_application')</span>
+                                <span class="info-box-number mb-3">{{ $totalapplication }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #FBFFE0;">
-                        <i class="fa fa-file-pdf-o bg-green"></i>
-                        <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text2">@lang('app.new_applications')</span>
-                            <span class="info-box-number">{{ $newapplication }}</span>
+                    <a href="{{route('approver-application_list')}}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #FBFFE0;">
+                            <i class="fa fa-file-pdf-o bg-green"></i>
+                            <div class="info-box-content">
+                                <span class="info-box-text text3 text-left text2">@lang('app.new_application')</span>
+                                <span class="info-box-number">{{ $newapplication }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #EEF6FF;">
-                        <i class="fa fa-list-alt bg-yellow"></i>
-                        <div class="info-box-content pr-0" rowspan="2">
-                            <span class="info-box-text text3 text-left text2 mb-0">@lang('app.number_of_applications_this')</span>
-                            <span class="info-box-number">{{ $monthapplication }}</span>
+                    <a href="#" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #EEF6FF;">
+                            <i class="fa fa-list-alt bg-yellow"></i>
+                            <div class="info-box-content pr-0" rowspan="2">
+                                <span class="info-box-text text3 text-left text2 mb-0">@lang('app.number_of_applications_this')</span>
+                                <span class="info-box-number">{{ $monthapplication }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #f5f3f3;">
-                        <i class="fa fa-puzzle-piece bg-green"></i>
-                        <div class="info-box-content pr-0">
-                            <span class="info-box-text text3">@lang('app.number_of_approved')</span>
-                            <span class="info-box-number">{{ $approvedapplication }}</span>
+                    <a href="{{route('approved_application_list')}}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #f5f3f3;">
+                            <i class="fa fa-puzzle-piece bg-green"></i>
+                            <div class="info-box-content pr-0">
+                                <span class="info-box-text text3">@lang('app.number_of_approved')</span>
+                                <span class="info-box-number">{{ $approvedapplication }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #FFEFEF;">
-                        <i class="fa fa-close bg-red"></i>
-                        <div class="info-box-content pr-0">
-                            <span class="info-box-text text3">@lang('app.number_of_rejected_application')</span>
-                            <span class="info-box-number">{{ $rejected }}</span>
+                    <a href="{{route('approver-application_list')}}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #FFEFEF;">
+                            <i class="fa fa-close bg-red"></i>
+                            <div class="info-box-content pr-0">
+                                <span class="info-box-text text3">@lang('app.number_of_rejected_application')</span>
+                                <span class="info-box-number">{{ $rejected }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 

@@ -337,7 +337,7 @@
                         <div class="info-box clickable-box" style="background: #FBFFE0; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">
-                                <span class="info-box-text text3 text-left text2">@lang('app.new_applications')</span>
+                                <span class="info-box-text text3 text-left text2">@lang('app.new_application')</span>
                                 <span class="info-box-number">{{ $newapplication }}</span>
                             </div>
                         </div>

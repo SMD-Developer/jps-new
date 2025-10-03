@@ -1089,6 +1089,14 @@ if(! function_exists('getMenus')){
                             ],
                         ]
                     ],
+
+                    [
+                        'icon' => 'money',
+                        'text' => trans('app.claim_contribution'),
+                        'route' => url('claim-list'),
+                        'menu_active' => request()->is('claim-list') || request()->is('claim-list/*') ? 'active' : '',
+                        'permission' => 'filter-search'
+                    ],
                     
                     [
                         'icon' => 'money',
@@ -1275,14 +1283,6 @@ if(! function_exists('getMenus')){
         $menus['account_menu'] = [
             'title' => trans('app.account_menu'),
             'menus' => [
-
-                [
-                    'icon' => 'money',
-                    'text' => trans('app.claim_contribution'),
-                    'route' => url('claim-list'),
-                    'menu_active' => request()->is('claim-list') || request()->is('claim-list/*') ? 'active' : '',
-                    'permission' => 'filter-search'
-                ],
                 [
                     'icon' => 'fa fa-search',
                     'text' => trans('app.filter_search'),
