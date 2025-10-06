@@ -3013,7 +3013,7 @@ public function updateUserDetails(Request $request, $id)
         $validatedData = request()->validate([
             'idnegeri' => 'required|exists:state,idnegeri',
             'daerah' => 'required|string|max:100|unique:district,daerah',
-            'daerah_code' => 'required|string|max:11|unique:district,daerah_code',
+            'daerah_code' => 'string|max:11|unique:district,daerah_code',
             'status' => 'required|in:0,1'
         ]);
 
@@ -3042,7 +3042,7 @@ public function updateUserDetails(Request $request, $id)
         $validatedData = request()->validate([
             'idnegeri' => 'required|exists:state,idnegeri',
             'daerah' => 'required|string|max:100|unique:district,daerah,' . $id . ',iddaerah',
-            'daerah_code' => 'required|string|max:11|unique:district,daerah_code,' . $id . ',iddaerah',
+            'daerah_code' => 'string|max:11|unique:district,daerah_code,' . $id . ',iddaerah',
             'status' => 'required|in:0,1'
         ]);
 

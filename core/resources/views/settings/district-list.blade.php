@@ -265,10 +265,10 @@
                         <!-- District Code -->
                         <div class="form-group row">
                             <label for="daerah_code" class="col-sm-3 col-form-label">
-                                 @lang('app.district_code') <span class="text-danger">*</span>
+                                 @lang('app.district_code') <span class="text-danger"></span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="daerah_code" name="daerah_code" maxlength="11" required>
+                                <input type="text" class="form-control" id="daerah_code" name="daerah_code" maxlength="11" >
                                 <div class="invalid-feedback"></div>
                                 <small class="form-text text-muted">Maximum 11 characters</small>
                             </div>
@@ -325,7 +325,7 @@
                         <!-- State Selection -->
                         <div class="form-group row">
                             <label for="edit_idnegeri" class="col-sm-3 col-form-label">
-                                @lang('app.state') <span class="text-danger">*</span>
+                                @lang('app.state') <span class="text-danger"></span>
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="edit_idnegeri" name="idnegeri" required>
@@ -353,11 +353,11 @@
                         <!-- District Code -->
                         <div class="form-group row">
                             <label for="edit_daerah_code" class="col-sm-3 col-form-label">
-                                 @lang('app.district_code') <span class="text-danger">*</span>
+                                 @lang('app.district_code') <span class="text-danger"></span>
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="edit_daerah_code" name="daerah_code"
-                                    placeholder="Enter district code" maxlength="11" required>
+                                    placeholder="Enter district code" maxlength="11">
                                 <div class="invalid-feedback"></div>
                                 <small class="form-text text-muted">Maximum 11 characters</small>
                             </div>
