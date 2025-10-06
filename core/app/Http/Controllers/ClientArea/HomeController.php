@@ -360,35 +360,6 @@ class HomeController extends Controller {
     }
 		
     
-    
-    //   public function applicationStatus(Request $request)
-    //   {
-    //         $clientId = auth('user')->id();
-    //          $perPage = $request->input('per_page', 10);
-             
-    //          $query = Application::with(['client', 'logs', 'payment'])
-    //         ->where('user_id', $clientId)
-    //         ->orderBy('created_at', 'desc');
-            
-            
-    //           $applications = $query->paginate($perPage)
-    //     ->through(function ($application) {
-    //         if ($application->status == 'rejected') {
-    //             $rejectionLog = $application->logs
-    //                 ->where('status_to', 'rejected')
-    //                 ->sortByDesc('created_at')
-    //                 ->first();
-                
-    //             $application->setAttribute('rejected_by', $rejectionLog ? $rejectionLog->user_type : null);
-    //             $application->setAttribute('rejection_date', $rejectionLog ? $rejectionLog->created_at : null);
-    //         }
-    //         return $application;
-    //     })
-    //     ->appends($request->except('page'));
-        
-    //         return view('clientarea.application.applicationStatus', compact('applications', 'perPage'));
-    //     }
-    
        public function applicationStatus(Request $request)
         {
             $clientId = auth('user')->id();
@@ -523,21 +494,6 @@ class HomeController extends Controller {
             return view('clientarea.application.user-receiptoriginal', compact('application'));
         }
         
-        
-    // 	public function userReceiptCopy($application_id)
-    //     {
-    //         $application = Application::select('applications.*', 
-    //                 'state.negeri', 
-    //                 'district.daerah', 
-    //                 'division.mukim as land_mukim')
-    //             ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
-    //             ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-    //             ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
-    //             ->where('applications.id', $application_id)
-    //             ->firstOrFail();
-        
-    //         return view('clientarea.application.user-receiptcopy', compact('application'));
-    //   }
     
     
         public function userReceiptCopy($application_id)
@@ -569,17 +525,6 @@ class HomeController extends Controller {
             return view('clientarea.application.user-receiptcopy', compact('application'));
         }
     
-    // 	public function contribution_history(Request $request){
-    //         $clientId = auth('user')->id();
-    //         $perPage = $request->input('per_page', 10);
-            
-    //         $applications = Application::with('client')
-    //             ->where('user_id', $clientId)
-    //             ->where('status', 'approved')
-    //             ->orderBy('created_at', 'desc')
-    //             ->paginate($perPage);
-    //         return view('clientarea.application.contribution_history', compact('applications' , 'perPage'));
-    //     }
     
         public function contribution_history(Request $request){
             $clientId = auth('user')->id();
@@ -792,88 +737,37 @@ class HomeController extends Controller {
             ]);
         }
         
- 
-    
-    // public function submitDeposit(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'application_id' => 'required|exists:applications,id',
-    //         'deposit_date' => 'required|date|before_or_equal:today',
-    //         'transaction' => 'required|string|max:50|unique:applications,transaction,' . $request->application_id,
-    //         'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-    //         'note' => 'nullable|string|max:500'
-    //     ]);
-    
-    //     try {
-    //         $file = $request->file('receipt');
-    
-    //       $uploadPath = public_path('receipts');
-            
-    //         if (!file_exists($uploadPath)) {
-    //             mkdir($uploadPath, 0775, true);
-    //         }
-    //         if (!is_writable($uploadPath)) {
-    //             throw new \Exception("Upload path is not writable: " . $uploadPath);
-    //         }
-            
-            
-            
-    //         $fileName = $file->getClientOriginalName();
-    //         $file->move($uploadPath, $fileName);
-    //       $receiptPath = 'public/receipts/' . $fileName;
-    
-    //         $application = Application::find($request->application_id);
-    //         $application->update([
-    //             'deposit_date' => $validated['deposit_date'],
-    //             'transaction' => $validated['transaction'], // ✅ Fixed: Use validated transaction
-    //             'receipt_path' => $receiptPath, // ✅ Fixed: Use $receiptPath instead of $path
-    //             'note' => $validated['note'],
-    //             'payment_status' => 'in review'
-    //         ]);
-            
-            
-    //         Payment::create([
-    //         'application_id' => $application->id,
-    //         'transaction_id' => $validated['transaction'],
-    //         'payment_date' => $validated['deposit_date'],
-    //         'receipt_path' => $receiptPath,
-    //         'payment_status' => 'in_review',
-    //         'method' => 'EFT',
-    //         'amount' => $application->final_amount ?? null, 
-    //     ]);
-            
-    //         $financeAdmin = User::where('role_id', '9e032970-5f48-4d2b-b88e-abb9da79140f')->first();
-            
-    //         if (!$financeAdmin) {
-    //             \Log::warning('No finance admin with role_id: 9e032970-5f48-4d2b-b88e-abb9da79140f');
-    //             return response()->json(['success' => false, 'message' => 'No approver found'], 404);
-    //         }
-    
-    //         $financeAdmin->notify(new DepositReceiptSubmitted($application));
-    
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Butiran pembayaran berjaya dihantar!',
-    //             'redirect' => url()->previous()
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Submit deposit error: ' . $e->getMessage()); // Add logging for debugging
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Failed to submit payment details. Please try again.'
-    //         ], 500);
-    //     }
-    // }
     
     public function submitDeposit(Request $request)
     {
-        $validated = $request->validate([
-            'application_id' => 'required|exists:applications,id',
-            'deposit_date' => 'required|date|before_or_equal:today',
-            'transaction' => 'required|string|max:50|unique:applications,transaction,' . $request->application_id,
-            'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'note' => 'nullable|string|max:500'
-        ]);
+        $validator = \Validator::make(
+            $request->all(),
+            [
+                'application_id' => 'required|exists:applications,id',
+                'deposit_date' => 'required|date|before_or_equal:today',
+                'transaction' => 'required|string|max:50|unique:applications,transaction,' . $request->application_id,
+                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'note' => 'nullable|string|max:500'
+            ],
+            [
+                'deposit_date.required' => 'Medan ini wajib diisi.',  
+                'deposit_date.before_or_equal' => 'Tarikh bayaran tidak boleh melebihi hari ini.',
+                'transaction.required' => 'Medan ini wajib diisi.',
+                'transaction.unique' => 'Nombor transaksi ini telah digunakan.',
+                'receipt.required' => 'Medan ini wajib.',
+                'receipt.mimes' => 'Fail mestilah dalam format PDF, JPG, JPEG, atau PNG.',
+                'receipt.max' => 'Saiz fail tidak boleh melebihi 2MB.',
+            ]
+        );
+
+          if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $validated = $validator->validated();
     
         try {
             // Set up upload path for receipts (following your pattern)
@@ -964,138 +858,6 @@ class HomeController extends Controller {
             return redirect()->back()->with('error', trans('app.something_went_wrong'));
         }
     }
-
-
-    
-    // public function updateResubmitApplication(Request $request, $id)
-    // {
-    //     try {
-    //         $application = DB::table('applications')->where('id', $id)->first();
-
-    //         $currentUser = auth('user')->user();
-
-    //         if (!$application) {
-    //             return redirect()->back()->with('error', __('app.application_not_found'));
-    //         }
-
-    //         $validationRules = [
-    //             "uploade_date" => "required",
-    //             "applicant" => "required",
-    //             "identities" => "required",
-    //             "address" => "required",
-    //             // "postal_code" => "required|numeric|digits:6",
-    //             "phone" => "required|numeric|digits_between:8,12",
-    //             "email" => "required|email",
-    //             "state" => "required",
-    //             "city" => "required",
-    //             "district" => "required",
-    //             "land_lot" => "required",
-    //             "land_area" => "required",
-    //             "land_district" => "required",
-    //             "land_state" => "required",
-    //         ];
-
-    //         $fileKeys = ['land_grant', 'permission_plan'];
-    //         foreach ($fileKeys as $key) {
-    //             if ($request->hasFile($key)) {
-    //                 $validationRules[$key] = 'file|mimes:pdf|max:15000';
-    //             }
-    //         }
-
-    //         $this->validate($request, $validationRules);
-
-    //         // Handle file uploads
-    //         $uploadedFiles = [];
-    //         $uploadPath = public_path('pdf');
-        
-    //         foreach (['land_grant', 'permission_plan', 'letter_of_support'] as $fileKey) {
-    //             if ($request->hasFile($fileKey)) {
-    //                 $file = $request->file($fileKey);
-    //                 $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); 
-    //                 $fileExtension = $file->getClientOriginalExtension(); 
-    //                 $newFileName = $fileName .  '.' . $fileExtension;
-            
-    //                 $file->move($uploadPath, $newFileName);
-    //                 $uploadedFiles[$fileKey] = 'pdf/' . $newFileName;
-    //             }
-    //         }
-
-    //         $updateData = [
-    //             "uploade_date" => $request->input('uploade_date', $application->uploade_date),
-    //             "applicant" => $request->input('applicant', $application->applicant),
-    //             "identities" => $request->input('identities', $application->identities),
-    //             "address" => $request->input('address', $application->address),
-    //             "postal_code" => $request->input('postal_code', $application->postal_code),
-    //             "phone" => $request->input('phone', $application->phone),
-    //             "email" => $request->input('email', $application->email),
-    //             "city" => $request->input('city', $application->city),
-    //             "district" => $request->input('district', $application->district),
-    //             "land_district" => $request->input('land_district', $application->land_district),
-    //             "land_state" => $request->input('land_state', $application->land_state),
-    //             "land_lot" => $request->input('land_lot', $application->land_lot),
-    //             "land_area" => $request->input('land_area', $application->land_area),
-    //             "state" => $request->input('state', $application->state),
-    //             "status" => 'pending',
-    //             "rejection_reason" => null,
-    //             "application_type" => 'reapply' 
-    //         ];
-
-    //         if (!empty($uploadedFiles)) {
-    //             $updateData = array_merge($updateData, $uploadedFiles);
-    //         }
-
-    //         \Log::info("Update data:", $updateData);
-        
-    //         DB::beginTransaction();
-            
-    //         try {
-    //             DB::table('applications')->where('id', $id)->update($updateData);
-    //             DB::table('application_logs')->insert([
-    //                 'application_id' => $id,
-    //                 'user_type' => 'applicant', 
-    //                 'action' => 'reapply',
-    //                 'status_from' => $application->status, 
-    //                 'status_to' => 'pending',
-    //                 'remarks' => 'Application resubmitted by user',
-    //                 'user_id' => $currentUser, 
-    //                 'additional_data' => json_encode([
-    //                     'performed_by' => auth()->user()->name ?? 'User',
-    //                     'reapplication_date' => now()->format('Y-m-d H:i:s')
-    //                 ]),
-    //                 'action_at' => now(),
-    //                 'created_at' => now(),
-    //                 'updated_at' => now()
-    //             ]);
-                
-    //             // Commit the transaction
-    //             DB::commit();
-                
-    //             return response()->json([
-    //                 'success' => true,
-    //                 'message' => __('app.application_has_been_updated')
-    //             ]);
-                
-    //         } catch (\Exception $e) {
-    //             DB::rollback();
-    //             throw $e;
-    //         }
-            
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         \Log::error('Validation Errors: ', $e->errors());
-            
-    //         return response()->json([
-    //             'success' => false,
-    //             'errors' => $e->errors(),
-    //             'message' => 'Validation failed. Please check your inputs.'
-    //         ], 422);
-    //     } catch (\Exception $e) {
-    //         \Log::error($e->getMessage());
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'An unexpected error occurred. Please try again.'
-    //         ], 500);
-    //     }
-    // }
     
     
     

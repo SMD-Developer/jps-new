@@ -190,6 +190,23 @@
     .invalid-feedback {
         display: block;
     }
+
+    /* Fix invalid feedback layout */
+    .invalid-feedback {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #dc3545;
+        font-weight: 500;
+    }
+
+    /* Keep form fields aligned even when invalid */
+    .form-group input.is-invalid,
+    .form-group select.is-invalid,
+    .form-group textarea.is-invalid {
+        border-color: #dc3545;
+    }
+
 </style>
 <title>@lang('app.upload_deposit_receipt') | JPS</title>
 @section('content')
@@ -219,10 +236,6 @@
                                 <input type="text" class="form-control" value="{{ $application->applicant }}" readonly>
                             </div>
                         
-                            <!--<div class="form-group">-->
-                            <!--    <label>@lang('app.total_contribution')</label>-->
-                            <!--    <input type="text" class="form-control" value="{{ $application->final_amount }}" readonly>-->
-                            <!--</div>-->
                             <div class="form-group">
                                 <label>@lang('app.total_contribution')</label>
                                 <input type="text" class="form-control" 
@@ -245,14 +258,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <!--<div class="form-group">-->
-                            <!--    <label for="receipt">@lang('app.upload_receipt')*</label>-->
-                            <!--    <input type="file" id="receipt" name="receipt" class="form-control @error('receipt') is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png" required>-->
-                            <!--    @error('receipt')-->
-                            <!--        <div class="invalid-feedback">{{ $message }}</div>-->
-                            <!--    @enderror-->
-                            <!--</div>-->
                             
                              <div class="form-group">
                                 <label for="receipt">@lang('app.upload_receipt')*</label>
@@ -317,35 +322,51 @@
                     }
                 })
                 .then(response => response.json())
-                .then(data => {
-                    Swal.close(); // Close loading indicator
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Resit berjaya dimuat naik',
-                            text: data.message || 'Butiran pembayaran berjaya dihantar',
-                            confirmButtonText: 'OK',
-                            showClass: {
-                                popup: 'animate__animated animate__fadeInDown'
-                            },
-                            hideClass: {
-                                popup: 'animate__animated animate__fadeOutUp'
+                .then(async response => {
+                Swal.close();
+
+                        // If Laravel returns validation errors
+                        if (!response.success && response.errors) {
+                            // Clear old errors
+                            document.querySelectorAll('.invalid-feedback').forEach(e => e.remove());
+                            document.querySelectorAll('.is-invalid').forEach(e => e.classList.remove('is-invalid'));
+
+                            // Loop through each error and show below field
+                            for (const [field, messages] of Object.entries(response.errors)) {
+                                const input = document.querySelector(`[name="${field}"]`);
+                                if (input) {
+                                    input.classList.add('is-invalid');
+                                    const errorDiv = document.createElement('div');
+                                    errorDiv.classList.add('invalid-feedback');
+                                    errorDiv.textContent = messages[0];
+                                    input.closest('.form-group').appendChild(errorDiv);
+                                }
                             }
-                        }).then(() => {
-                            // Optionally redirect
-                            window.location.href = "{{ route('client_application_status') }}";
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message || 'Something went wrong!',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
+                            return; 
+                        }
+
+                        // If success
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Resit berjaya dimuat naik',
+                                text: response.message || 'Butiran pembayaran berjaya dihantar',
+                                confirmButtonText: 'OK',
+                            }).then(() => {
+                                window.location.href = "{{ route('client_application_status') }}";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'Something went wrong!',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+
                 .catch(error => {
-                    Swal.close(); // Close loading indicator
+                    Swal.close(); 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
