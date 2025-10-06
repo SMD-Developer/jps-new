@@ -1594,7 +1594,6 @@ background-color: red;
             $("#" + name + "-error").text('');
         }
     });
-    .
 
     // Prevent browser back/forward causing issues
     window.addEventListener('beforeunload', function() {
