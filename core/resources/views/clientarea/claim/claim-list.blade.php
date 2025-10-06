@@ -127,6 +127,18 @@
         background-color: #fff3cd;
         color: #856404;
     }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;      
+        font-weight: 600;
+        padding: 0.35rem 0.8rem; 
+        border-radius: 12px;     
+        white-space: nowrap;     
+    }
+
 </style>
 <title>{{ trans('app.claim_contribution_list_user') }} | JPS</title>
 @section('content')
@@ -186,49 +198,49 @@
                                     
                                           
                                             <td>
-                                            @if($item->status)
-                                                @switch($item->status)
-                                                    @case('pending')
-                                                         <div class="status-badge">
-                                                            <span class="badge bg-primary text-dark d-flex align-items-center justify-content-center">
-                                                                <i class="bi bi-hourglass-split me-2"></i>
-                                                                {{ trans('app.in_process') }}
-                                                            </span>
-                                                        </div>
-                                                    @break
-                                                    @case('complete')
-                                                        {{ trans('app.complete') }}
-                                                    @break
-                                                    @case('rejected')
-                                                       <div class="status-badge">
-                                                            <span class="badge bg-danger text-dark d-flex align-items-center justify-content-center">
-                                                                <i class="bi bi-hourglass-split me-2"></i>
-                                                                {{trans('app.rejected')}}
-                                                            </span>
-                                                        </div>
-                                                      
-                                                     @break
-                                                     @case('approve_payment_in_process')
+                                                @if($item->status)
+                                                    @switch($item->status)
+                                                        @case('pending')
+                                                            <div class="status-badge">
+                                                                <span class="badge bg-primary text-dark d-flex align-items-center justify-content-center">
+                                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                                    {{ trans('app.in_process') }}
+                                                                </span>
+                                                            </div>
+                                                        @break
+                                                        @case('complete')
+                                                            {{ trans('app.complete') }}
+                                                        @break
+                                                        @case('rejected')
                                                         <div class="status-badge">
-                                                            <span class="badge bg-danger text-dark d-flex align-items-center justify-content-center">
-                                                                <i class="bi bi-hourglass-split me-2"></i>
-                                                                {{trans('app.approve_payment_in_process')}}
-                                                            </span>
-                                                        </div>
-                                                     @break
-                                                     @case('approve_paid')
-                                                     <div class="status-badge">
-                                                            <span class="badge bg-info text-dark d-flex align-items-center justify-content-center">
-                                                                <i class="bi bi-hourglass-split me-2"></i>
-                                                                {{trans('app.approve_paid')}}
-                                                            </span>
-                                                        </div>
-                                                     @break
-                                                @endswitch
-                                            @else
-                                                {{ trans('app.no_status') }}
-                                            @endif
-                                        </td>
+                                                                <span class="badge bg-danger text-dark d-flex align-items-center justify-content-center">
+                                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                                    {{trans('app.rejected')}}
+                                                                </span>
+                                                            </div>
+                                                        
+                                                        @break
+                                                        @case('approve_payment_in_process')
+                                                            <div class="status-badge">
+                                                                <span class="badge bg-success text-dark d-flex align-items-center justify-content-center">
+                                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                                    {{trans('app.approve_payment_in_process')}}
+                                                                </span>
+                                                            </div>
+                                                        @break
+                                                        @case('approve_paid')
+                                                        <div class="status-badge">
+                                                                <span class="badge bg-info text-dark d-flex align-items-center justify-content-center">
+                                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                                    {{trans('app.approve_paid')}}
+                                                                </span>
+                                                            </div>
+                                                        @break
+                                                    @endswitch
+                                                @else
+                                                    {{ trans('app.no_status') }}
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

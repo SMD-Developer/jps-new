@@ -441,6 +441,7 @@
                             <input type="file" id="land_grant" name="land_grant" class="file-input"
                                 accept="application/pdf" onchange="validateFileSize(this)">
                             <div id="land_grantfileName" class="file-name"></div>
+                            <div id="land_grant_error" class="invalid-feedback d-block" style="display:none;"></div>
                         </div>
                     </div>
 
@@ -652,15 +653,25 @@
         });
     </script>
     <script>
-        function validateFileSize(input) {
+       function validateFileSize(input) {
             const file = input.files[0];
+            const errorDiv = document.getElementById(input.id + '_error');
+
             if (file) {
-                if (file.size > 15 * 1024 * 1024) { // 15MB
-                    alert('@lang('app.file_size_exceeds_15MB')');
-                    input.value = ''; // Clear the input
+                if (file.size > 15 * 1024 * 1024) { 
+                    errorDiv.textContent = "Fail belum dimuat naik.Saiz fail melebihi had 15mb. Sila pilih fail yang lebih kecil.";
+                    errorDiv.style.display = 'block';
+                    input.value = ''; 
+                } else {
+                    errorDiv.textContent = '';
+                    errorDiv.style.display = 'none';
                 }
+            } else {
+                errorDiv.textContent = '';
+                errorDiv.style.display = 'none';
             }
         }
+
     </script>
     <script>
         document.querySelectorAll('.file-input').forEach(input => {

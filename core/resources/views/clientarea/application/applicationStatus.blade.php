@@ -194,6 +194,20 @@
         <div class="row">
             <div class="col-md-12">
                 <!-- Filter Section -->
+                <div class="d-flex justify-content-between align-items-baseline mb-3 mx-3">
+                        <div class="d-flex align-items-baseline">
+                                <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
+                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
+                                    style="width: auto">
+                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
+                                </select>
+                        </div>
+                </div>
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="table-responsive">
