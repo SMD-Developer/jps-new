@@ -523,7 +523,7 @@ background-color: red;
                                                 id="idCardNumber"
                                                 value="{{ old('idCardNumber') }}" 
                                                 maxlength="14"
-                                                placeholder="">
+                                                placeholder="Enter ID Number">
                                         </div>
                                     </div>
                                     <span class="text-dangerr" id="idCardNumberError"></span>
@@ -1123,7 +1123,7 @@ background-color: red;
 
         const idTypeSelect = document.getElementById('idType');
         const idCardInput = document.getElementById('idCardNumber');
-        const idCardStar = idCardLabel.nextElementSibling; // The <span class="star">*</span>
+        const idCardStar = idCardLabel.nextElementSibling; 
 
         const originalTexts = {
             sectionHeader: userInfoButton.innerText.trim(),
@@ -1165,7 +1165,7 @@ background-color: red;
                 if (idCardStar) idCardStar.style.display = 'none';
 
                 // Normal input
-                idCardInput.placeholder = "Enter Registration Number";
+                idCardInput.placeholder = "";
                 idCardInput.removeEventListener('input', handleInput);
                 idCardInput.value = '';
 
@@ -1594,6 +1594,7 @@ background-color: red;
             $("#" + name + "-error").text('');
         }
     });
+    .
 
     // Prevent browser back/forward causing issues
     window.addEventListener('beforeunload', function() {
