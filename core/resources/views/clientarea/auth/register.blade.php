@@ -636,94 +636,6 @@ background-color: red;
                     </div>
                 </div>             
                 
-                <!-- Security Questions Section -->
-                <div class="accordion-item border-0 mt-3">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button header-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                            @lang('app.security_questions')
-                        </button>
-                    </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree">
-                        <div class="accordion-body">
-                            <div class="row mt-4">
-                                <div class="col-md-3 col-6">
-                                    <div class="form-group">
-                                        <label for="state">@lang('app.security_questions') 1</label>
-                                        <span class="star">*</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group inlin">
-                                        <span class="pe-3"><b> : </b></span>
-                                        
-                                        <select class="form-control" name="securityQuestion1">
-                                            <option value="" selected disabled>@lang('--Sila Pilih--')</option>
-                                            @foreach($primaryQuestions as $question)
-                                                <option value="{{ $question->question_key }}">{{ __($question->question) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="text-dangerr" id="securityQuestion1"></div>
-                                </div>
-                            </div>
-                        
-                            <div class="row mt-4">
-                                <div class="col-md-3 col-6">
-                                    <div class="form-group">
-                                        <label for="securityAnswers1">@lang('app.security_answers') 1</label>
-                                        <span class="star">*</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group inlin">
-                                        <span class="pe-3"><b> : </b> </span>
-                                        <input type="text" class="form-control" name="securityAnswers1" value="{{old('securityAnswers1')}}">
-                                    </div>
-                                    <div class="text-dangerr" id="securityAnswers1"></div>
-                                </div>
-                                <div class="col-md-6"></div>
-                            </div>
-                            <div class="row mt-4">
-                                <div class="col-md-3 col-6">
-                                    <div class="form-group">
-                                        <label for="state">@lang('app.security_questions') 2</label>
-                                        <span class="star">*</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group inlin">
-                                        <span class="pe-3"><b> : </b></span>
-                                        <select class="form-control" name="securityQuestions2">
-                                            <option value="" selected disabled>@lang('--Sila Pilih--')</option>
-                                            @foreach($secondaryQuestions as $question)
-                                                <option value="{{ $question->question_key }}">{{ __($question->question) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="text-dangerr" id="securityQuestions2"></div>
-                                </div>
-                            </div>
-                        
-                            <div class="row mt-4">
-                                <div class="col-md-3 col-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputName2">@lang('app.security_answers') 2</label>
-                                        <span class="star">*</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group inlin">
-                                        <span class="pe-3"><b> : </b> </span>
-                                        <input type="text" class="form-control" name="securityAnswers2" value="{{old('securityAnswers2')}}">
-                                    </div> 
-                                    <div class="text-dangerr" id="securityAnswers2"></div>                        
-                                </div>
-                                <div class="col-md-6"></div>
-                            </div>                           
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Confirmation Section -->
                 <div class="accordion-item border-0 mt-3">
                     <h2 class="accordion-header">
@@ -927,35 +839,6 @@ background-color: red;
             isValid = false;
         }
     
-    
-    
-    // Validate Landline
-    // if (!$('input[name="landline"]').val()) {
-    //     $('#landline-error').text('Nombor telefon diperlukan');
-    //     isValid = false;
-    // }
-    
-    // Validate Security Questions
-    if (!$('select[name="securityQuestion1"]').val()) {
-        $('#securityQuestion1').text('Soalan Keselamatan 1 diperlukan');
-        isValid = false;
-    }
-    
-    if (!$('input[name="securityAnswers1"]').val()) {
-        $('#securityAnswers1').text('Keselamatan Jawapan 1 diperlukan');
-        isValid = false;
-    }
-    
-    if (!$('select[name="securityQuestions2"]').val()) {
-        $('#securityQuestions2').text('Soalan Keselamatan 2 diperlukan');
-        isValid = false;
-    }
-    
-    if (!$('input[name="securityAnswers2"]').val()) {
-        $('#securityAnswers2').text('Keselamatan Jawapan 2 diperlukan');
-        isValid = false;
-    }
-    
     // Validate Terms and Conditions
     if (!$('#terms').is(':checked')) {
         // Add an error message span for terms if it doesn't exist
@@ -968,71 +851,6 @@ background-color: red;
     
     return isValid;
 }
-
-    // Handle form submission with AJAX
-    // $('#registrationForm').on('submit', function (e) {
-    //     e.preventDefault(); // Prevent the default form submission
-        
-    //     // Validate form before submission
-    //     if (!validateForm()) {
-    //         return false; // Stop the submission if validation fails
-    //     }
-        
-    //     var recaptchaResponse = grecaptcha.getResponse();
-    //     if (!recaptchaResponse) {
-    //         $('#recaptcha-error').text('Please complete the reCAPTCHA verification.');
-    //         return false;
-    //     } else {
-    //         $('#recaptcha-error').text('');
-    //     }
-
-    //     let formData = $(this).serialize(); // Serialize form data
-
-    //     $.ajax({
-    //         url: "{{ route('client_register') }}", // Replace with your route
-    //         type: "POST",
-    //         data: formData,
-    //         success: function (response) {
-    //             if (response.success) {
-    //                 // Show SweetAlert Success
-    //                 Swal.fire({
-    //                     title: "@lang('app.success')",
-    //                     text: "@lang('app.your_registration_successful')",
-    //                     icon: "success",
-    //                     confirmButtonText: "OK"
-    //                 }).then(() => {
-    //                     $('#registrationForm')[0].reset(); // Reset form after submission
-    //                     $('#resetButton').prop('disabled', true); // Disable reset button
-    //                     window.location.href = "{{ route('client_login') }}"; // Replace with your desired route
-    //                 });
-    //             }
-    //         },
-    //         error: function (xhr) {
-    //             if (xhr.status === 422) {
-    //                 let errors = xhr.responseJSON.errors;
-    //                 // Clear previous error messages
-    //                 $('.text-dangerr').text('');
-                    
-    //                 // Display each error under its respective field
-    //                 $.each(errors, function (key, value) {
-    //                     // Use the key to find the error container
-    //                     if (key === 'g-recaptcha-response') {
-    //                         $('#recaptcha-error').text(value[0]);
-    //                     } 
-    //                     if ($("#" + key).length) {
-    //                         $("#" + key).text(value[0]);
-    //                     } else if ($("#" + key + "-error").length) {
-    //                         $("#" + key + "-error").text(value[0]);
-    //                     }
-    //                      grecaptcha.reset();
-    //                 });
-    //             } else {
-    //                 // For other server errors, you might want to display a message
-    //                 $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred. Please try again.</div>').show();
-    //             }
-    //         },
-    //     });
-    // });
 
 
     $('input[name="mobileNumber"]').off('input blur focus keypress');
@@ -1271,83 +1089,46 @@ background-color: red;
     }
 </script>  
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const accountTypeSelect = document.querySelector('select[name="accountType"]');
-    const userInfoButton = document.querySelector('button[data-bs-target="#collapseTwo"]');
-    const userNameLabel = document.querySelector('label[for="userName"]');
-    const idCardLabel = document.querySelector('label[for="idTypeNumber"]');
-    const userNameHintDiv = document.querySelector('label[for="userName"]').closest('.row').querySelector('.col-md-5');
-    
-    const originalTexts = {
-        sectionHeader: userInfoButton.innerText.trim(),
-        userName: userNameLabel.innerText.trim(),
-        idCard: idCardLabel.innerText.trim()
-    };
-    
-    accountTypeSelect.addEventListener('change', function() {
-        const selectedAccountTypeId = parseInt(this.value);
+    document.addEventListener('DOMContentLoaded', function() {
+        const accountTypeSelect = document.querySelector('select[name="accountType"]');
+        const userInfoButton = document.querySelector('button[data-bs-target="#collapseTwo"]');
+        const userNameLabel = document.querySelector('label[for="userName"]');
+        const idCardLabel = document.querySelector('label[for="idTypeNumber"]');
+        const userNameHintDiv = document.querySelector('label[for="userName"]').closest('.row').querySelector('.col-md-5');
         
-        if (selectedAccountTypeId === 3) {
-            // Type 3 - Company information
-            userInfoButton.innerText = "Maklumat Syarikat";
-            userNameLabel.innerText = "Nama Syarikat";
-            idCardLabel.innerText = "No Pendaftaran Syarikat";
-            userNameHintDiv.style.display = 'none'; 
-        } 
-        else if (selectedAccountTypeId === 2) {
-            userInfoButton.innerText = "Maklumat Syarikat"; 
-            userNameLabel.innerText = "Nama Syarikat"; 
-            idCardLabel.innerText = "No Pendaftaran Syarikat"; 
-            userNameHintDiv.style.display = 'none'; 
-        }
-        else {
-            // Default - Type 1 or any other type
-            userInfoButton.innerText = originalTexts.sectionHeader;
-            userNameLabel.innerText = originalTexts.userName;
-            idCardLabel.innerText = originalTexts.idCard;
-            userNameHintDiv.style.display = ''; 
-        }
-    });
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const securityQuestion1 = document.querySelector('select[name="securityQuestion1"]');
-    const securityQuestion2 = document.querySelector('select[name="securityQuestions2"]');
-    let originalOptions = [];
-    Array.from(securityQuestion2.options).forEach(option => {
-        if (option.value) { 
-            originalOptions.push({
-                value: option.value,
-                text: option.text
-            });
-        }
-    });
-    
-    function updateSecondDropdown() {
-        const selectedValue = securityQuestion1.value;
-        securityQuestion2.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.text = '--Sila Pilih--';
-        defaultOption.selected = true;
-        defaultOption.disabled = true;
-        securityQuestion2.appendChild(defaultOption);
-        originalOptions.forEach(option => {
-            const baseKey1 = selectedValue ? selectedValue.replace(/_[ps]$/, '') : '';
-            const baseKey2 = option.value ? option.value.replace(/_[ps]$/, '') : '';
-            if (baseKey1 !== baseKey2) {
-                const newOption = document.createElement('option');
-                newOption.value = option.value;
-                newOption.text = option.text;
-                securityQuestion2.appendChild(newOption);
+        const originalTexts = {
+            sectionHeader: userInfoButton.innerText.trim(),
+            userName: userNameLabel.innerText.trim(),
+            idCard: idCardLabel.innerText.trim()
+        };
+        
+        accountTypeSelect.addEventListener('change', function() {
+            const selectedAccountTypeId = parseInt(this.value);
+            
+            if (selectedAccountTypeId === 3) {
+                // Type 3 - Company information
+                userInfoButton.innerText = "Maklumat Syarikat";
+                userNameLabel.innerText = "Nama Syarikat";
+                idCardLabel.innerText = "No Pendaftaran Syarikat";
+                userNameHintDiv.style.display = 'none'; 
+            } 
+            else if (selectedAccountTypeId === 2) {
+                userInfoButton.innerText = "Maklumat Syarikat"; 
+                userNameLabel.innerText = "Nama Syarikat"; 
+                idCardLabel.innerText = "No Pendaftaran Syarikat"; 
+                userNameHintDiv.style.display = 'none'; 
+            }
+            else {
+                // Default - Type 1 or any other type
+                userInfoButton.innerText = originalTexts.sectionHeader;
+                userNameLabel.innerText = originalTexts.userName;
+                idCardLabel.innerText = originalTexts.idCard;
+                userNameHintDiv.style.display = ''; 
             }
         });
-    }
-    securityQuestion1.addEventListener('change', updateSecondDropdown);
-    updateSecondDropdown();
-});
+    });
 </script>
+
 <script>
     $(document).ready(function() {
     $('.toggle-password').on('click', function() {
@@ -1557,27 +1338,6 @@ $(document).ready(function () {
             isValid = false;
         }
         
-        // Validate Security Questions
-        if (!$('select[name="securityQuestion1"]').val()) {
-            $('#securityQuestion1').text('Soalan Keselamatan 1 diperlukan');
-            isValid = false;
-        }
-        
-        if (!$('input[name="securityAnswers1"]').val()) {
-            $('#securityAnswers1').text('Keselamatan Jawapan 1 diperlukan');
-            isValid = false;
-        }
-        
-        if (!$('select[name="securityQuestions2"]').val()) {
-            $('#securityQuestions2').text('Soalan Keselamatan 2 diperlukan');
-            isValid = false;
-        }
-        
-        if (!$('input[name="securityAnswers2"]').val()) {
-            $('#securityAnswers2').text('Keselamatan Jawapan 2 diperlukan');
-            isValid = false;
-        }
-        
         // Validate Terms and Conditions
         if (!$('#terms').is(':checked')) {
             if ($('#terms-error').length === 0) {
@@ -1594,124 +1354,17 @@ $(document).ready(function () {
         
         return isValid;
     }
-
-    // Handle form submission with AJAX - FIXED VERSION
-    // $('#registrationForm').off('submit').on('submit', function (e) {
-    //     e.preventDefault();
-        
-    //     console.log('Form submission started, isSubmitting:', isSubmitting);
-        
-    //     // Prevent multiple submissions
-    //     if (isSubmitting) {
-    //         console.log('Already submitting, ignoring duplicate submission');
-    //         return false;
-    //     }
-        
-    //     // Validate form before submission
-    //     if (!validateForm()) {
-    //         console.log('Validation failed');
-    //         return false;
-    //     }
-
-    //     // Set submitting flag and disable button
-    //     isSubmitting = true;
-    //     const submitButton = $('#submitButton');
-    //     const originalText = submitButton.text();
-    //     submitButton.prop('disabled', true).text('Registering...');
-
-    //     let formData = $(this).serialize();
-        
-    //     console.log('Making AJAX request...');
-
-    //     $.ajax({
-    //         url: "{{ route('client_register') }}",
-    //         type: "POST",
-    //         data: formData,
-    //         timeout: 30000, // 30 seconds timeout
-    //         success: function (response) {
-    //             console.log('AJAX Success:', response);
-                
-    //             if (response.success) {
-    //                 Swal.fire({
-    //                     title: "@lang('app.success')",
-    //                     text: "@lang('app.your_registration_successful')",
-    //                     icon: "success",
-    //                     confirmButtonText: "OK",
-    //                     allowOutsideClick: false,
-    //                     allowEscapeKey: false
-    //                 }).then(() => {
-    //                     $('#registrationForm')[0].reset();
-    //                     $('#resetButton').prop('disabled', true);
-    //                     window.location.href = "{{ route('client_login') }}";
-    //                 });
-    //             } else {
-    //                 // Reset on failure
-    //                 isSubmitting = false;
-    //                 submitButton.prop('disabled', false).text(originalText);
-                    
-    //                 Swal.fire({
-    //                     title: "Error",
-    //                     text: response.message || "Registration failed",
-    //                     icon: "error",
-    //                     confirmButtonText: "OK"
-    //                 });
-    //             }
-    //         },
-    //         error: function (xhr, status, error) {
-    //             console.log('AJAX Error:', xhr.status, status, error);
-                
-    //             // Reset submission state
-    //             isSubmitting = false;
-    //             submitButton.prop('disabled', false).text(originalText);
-                
-    //             if (xhr.status === 422) {
-    //                 let errors = xhr.responseJSON.errors;
-    //                 $('.text-dangerr').text('');
-                    
-    //                 // Display each error under its respective field
-    //                 $.each(errors, function (key, value) {
-    //                     if ($("#" + key).length) {
-    //                         $("#" + key).text(value[0]);
-    //                     } else if ($("#" + key + "-error").length) {
-    //                         $("#" + key + "-error").text(value[0]);
-    //                     }
-    //                 });
-                    
-    //                 // Scroll to first server-side error
-    //                 setTimeout(scrollToFirstError, 100);
-    //             } else if (status === 'timeout') {
-    //                 Swal.fire({
-    //                     title: "Timeout",
-    //                     text: "Request timed out. Please try again.",
-    //                     icon: "error",
-    //                     confirmButtonText: "OK"
-    //                 });
-    //             } else {
-    //                 $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred. Please try again.</div>').show();
-    //             }
-    //         },
-    //         complete: function() {
-    //             console.log('AJAX Complete');
-    //             // This runs regardless of success or error
-    //             // Don't reset isSubmitting here for success case as we redirect
-    //         }
-    //     });
-    // });
     
     $('#registrationForm').off('submit').on('submit', function (e) {
     e.preventDefault();
     
-    console.log('Form submission started, isSubmitting:', isSubmitting);
-    
     // Prevent multiple submissions
     if (isSubmitting) {
-        console.log('Already submitting, ignoring duplicate submission');
         return false;
     }
     
     // Validate form before submission
     if (!validateForm()) {
-        console.log('Validation failed');
         return false;
     }
 
@@ -1722,8 +1375,6 @@ $(document).ready(function () {
     submitButton.prop('disabled', true).text('Registering...');
 
     let formData = $(this).serialize();
-    
-    console.log('Making AJAX request...');
 
     $.ajax({
         url: "{{ route('client_register') }}",
@@ -1731,18 +1382,14 @@ $(document).ready(function () {
         data: formData,
         timeout: 30000, // 30 seconds timeout
         success: function (response) {
-            console.log('AJAX Success:', response);
             
             if (response.success) {
                 // Get email using the correct ID: emailAddress
                 let userEmail = $('#emailAddress').val() || 
                                $('input[name="email"]').val();
                 
-                console.log('Email value:', userEmail); // Debug log
-                
                 // Check if email is valid before proceeding
                 if (!userEmail || userEmail === 'undefined' || userEmail === '') {
-                    console.error('Email is undefined or empty');
                     Swal.fire({
                         title: "Error",
                         text: "Unable to retrieve email address. Please try again.",
@@ -1770,7 +1417,6 @@ $(document).ready(function () {
                     
                     // Redirect to OTP verification page with email parameter
                     let redirectUrl = "{{ route('otp.verification') }}" + "?email=" + encodeURIComponent(userEmail);
-                    console.log('Redirecting to:', redirectUrl); // Debug log
                     window.location.href = redirectUrl;
                 });
             } else {
@@ -1787,7 +1433,6 @@ $(document).ready(function () {
             }
         },
         error: function (xhr, status, error) {
-            console.log('AJAX Error:', xhr.status, status, error);
             
             // Reset submission state
             isSubmitting = false;
@@ -1820,9 +1465,6 @@ $(document).ready(function () {
             }
         },
         complete: function() {
-            console.log('AJAX Complete');
-            // This runs regardless of success or error
-            // Don't reset isSubmitting here for success case as we redirect
         }
     });
 });
@@ -1875,7 +1517,6 @@ $(document).ready(function () {
 
 // Additional safety: Prevent multiple script executions
 if (window.registrationScriptLoaded) {
-    console.warn('Registration script already loaded, skipping...');
 } else {
     window.registrationScriptLoaded = true;
 }

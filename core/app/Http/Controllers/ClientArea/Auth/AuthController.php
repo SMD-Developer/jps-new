@@ -42,282 +42,6 @@ class AuthController extends Controller {
        $division = DB::table('division')->where('status', 1)->orderBy('mukim_code', 'asc')->get();
         return view('clientarea.auth.login', compact(['states', 'districts', 'division']));
     }
-//     public function postLogin(Request $request){
-// 		// get our login input
-// 		$login = $request->input('login');
-// 		// check login field
-// 		$login_type = filter_var($login, FILTER_VALIDATE_EMAIL ) ? 'email' : 'username';
-// 		// merge our login field into the request with either email or username as key
-// 		$request->merge([ $login_type => $login ]);
-// 		// let's validate and set our credentials
-//         $this->validate($request, [
-//             'email'    => 'required|email',
-//             'password' => 'required',
-//         ]);
-//         $credentials = $request->only( 'email', 'password' );
-//         $loggedIn = auth('user')->attempt($credentials,$request->has('remember'));
-//         if($request->ajax()){
-//             if($loggedIn){
-//                 return response()->json([
-//                     'success' => true,
-//                     'message' => 'login successful!',
-//                     'action'=>'redirect',
-//                     'redirect_url' => route('client_application', auth()->guard('user')->user()->uuid)
-//                 ]);
-//             }
-
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Username and password do not match!',
-//                 'action'=>'show_msg'
-//             ],422);
-//         }
-//         if($loggedIn){
-//             return redirect()->route('update_profile', auth()->guard('user')->user()->uuid);
-//         }
-// 		return redirect()->back()->withInput($request->only('login', 'remember'))->withErrors(['login' => 'Invalid Login Credentials !']);
-// 	}
-
-//   public function postLogin(Request $request)
-//     {
-//         $login = $request->input('login');
-//         $login_type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-//         $request->merge([$login_type => $login]);
-        
-//          if (empty($login) && empty($password)) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Emel dan kata laluan tidak boleh dibiarkan kosong',
-//             ], 422);
-//         }
-
-//         $this->validate($request, [
-//             'email' => 'required|email',
-//             'password' => 'required',
-//         ]);
-        
-//         $credentials = $request->only('email', 'password');
-//         $identifier = $request->email;
-//         $client = Client::where('email', $identifier)->first();
-
-//         if ($client) {
-//             $lockedUntil = $this->getUserLockoutTime($client->uuid);
-//             if ($lockedUntil && $lockedUntil > now()) {
-//                 $remainingTime = now()->diffInMinutes($lockedUntil) + 1;
-                
-//                 if ($request->ajax()) {
-//                     return response()->json([
-//                         'success' => false,
-//                         'message' => __('app.account_locked', ['minutes' => $remainingTime]),
-//                     ], 401);
-//                 }
-//                 return redirect()->back()->withInput($request->only('login', 'remember'))
-//                     ->withErrors(['login' => __('app.account_locked', ['minutes' => $remainingTime])]);
-//             }
-//         }
-
-//         $loggedIn = auth('user')->attempt($credentials, $request->has('remember'));
-        
-//         if ($loggedIn) {
-//             $this->resetFailedAttempts(auth('user')->user()->uuid);
-            
-//             if ($request->ajax()) {
-//                 return response()->json([
-//                     'success' => true,
-//                     'message' => 'Login successful!',
-//                     'action' => 'redirect',
-//                     'redirect_url' => route('client_application', auth('user')->user()->uuid)
-//                 ]);
-//             }
-//             return redirect()->route('update_profile', auth('user')->user()->uuid);
-//         }
-        
-//         if ($client) {
-//             $this->recordFailedAttempt($client->uuid);
-//             $attempts = $this->getFailedAttempts($client->uuid);
-//             $remainingAttempts = 5 - $attempts;
-            
-//             if ($attempts >= 5) {
-//                 $this->lockUserAccount($client->uuid);
-                
-//                 if ($request->ajax()) {
-//                     return response()->json([
-//                         'success' => false,
-//                         'message' => __('account locked maximum attempt reached', ['minutes' => 30]),
-//                     ], 401);
-//                 }
-//                 return redirect()->back()->withInput($request->only('login', 'remember'))
-//                     ->withErrors(['login' => __('account locked maximum attempt reached', ['minutes' => 30])]);
-//             }
-            
-//             $message = __('auth.failed') . ' ' . __($remainingAttempts . ' attempts remaining.');
-            
-//             if ($request->ajax()) {
-//                 return response()->json([
-//                     'success' => false,
-//                     'message' => $message,
-//                     'action' => 'show_msg'
-//                 ], 422);
-//             }
-//             return redirect()->back()->withInput($request->only('login', 'remember'))
-//                 ->withErrors(['login' => $message]);
-//         }
-        
-//         $message = 'Username and password do not match!';
-        
-//         if ($request->ajax()) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => $message,
-//                 'action' => 'show_msg'
-//             ], 422);
-//         }
-//         return redirect()->back()->withInput($request->only('login', 'remember'))
-//             ->withErrors(['login' => 'Invalid Login Credentials!']);
-//     }
-
-
-
-    // public function postLogin(Request $request)
-    // {
-    //     $login = $request->input('login');
-    //     $password = $request->input('password');
-        
-    //     if (empty($login) && empty($password)) {
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Emel dan kata laluan tidak boleh dibiarkan kosong',
-    //             ], 422);
-    //         }
-    //         return redirect()->back()->withInput($request->only('login', 'remember'))
-    //             ->withErrors(['login' => 'Emel dan kata laluan tidak boleh dibiarkan kosong']);
-    //     }
-        
-
-    //     if (empty($password)) {
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Kata laluan perlu diisi',
-    //             ], 422);
-    //         }
-    //         return redirect()->back()->withInput($request->only('login', 'remember'))
-    //             ->withErrors(['password' => 'Kata laluan perlu diisi']);
-    //     }
-        
-    //     if (empty($login)) {
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'E-mel diperlukan',
-    //             ], 422);
-    //         }
-    //         return redirect()->back()->withInput($request->only('login', 'remember'))
-    //             ->withErrors(['login' => 'E-mel diperlukan']);
-    //     }
-        
-    //     $login_type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-    //     $request->merge([$login_type => $login]);
-        
-    //     // Validate the request (this will handle format validation)
-    //     $this->validate($request, [
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ], [
-    //         'email.required' => 'E-mel diperlukan',
-    //         'email.email' => 'Format e-mel tidak sah',
-    //         'password.required' => 'Kata laluan perlu diisi',
-    //     ]);
-        
-    //     $credentials = $request->only('email', 'password');
-    //     $identifier = $request->email;
-        
-    //     // Check if client exists in database
-    //     $client = Client::where('email', $identifier)->first();
-        
-    //     if (!$client) {
-    //         // Client not found in database
-    //         $message = 'E-mel tiada dalam rekod kami. Sila daftar di Daftar di sini';
-            
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => $message,
-    //                 'action' => 'show_msg',
-    //                 // 'register_url' => route('client_register') // Include register URL for frontend
-    //             ], 422);
-    //         }
-    //         return redirect()->back()->withInput($request->only('login', 'remember'))
-    //             ->withErrors(['login' => $message]);
-    //     }
-        
-    //     // Check if account is locked
-    //     $lockedUntil = $this->getUserLockoutTime($client->uuid);
-    //     if ($lockedUntil && $lockedUntil > now()) {
-    //         $remainingTime = now()->diffInMinutes($lockedUntil) + 1;
-            
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => __('app.account_locked', ['minutes' => $remainingTime]),
-    //             ], 401);
-    //         }
-    //         return redirect()->back()->withInput($request->only('login', 'remember'))
-    //             ->withErrors(['login' => __('app.account_locked', ['minutes' => $remainingTime])]);
-    //     }
-        
-    //     // Attempt login
-    //     $loggedIn = auth('user')->attempt($credentials, $request->has('remember'));
-        
-    //     if ($loggedIn) {
-    //         $this->resetFailedAttempts(auth('user')->user()->uuid);
-            
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => true,
-    //                 'message' => 'Login successful!',
-    //                 'action' => 'redirect',
-    //                 'redirect_url' => route('client_application', auth('user')->user()->uuid)
-    //             ]);
-    //         }
-    //         return redirect()->route('update_profile', auth('user')->user()->uuid);
-    //     }
-        
-    //     // Login failed - record failed attempt
-    //     $this->recordFailedAttempt($client->uuid);
-    //     $attempts = $this->getFailedAttempts($client->uuid);
-    //     $remainingAttempts = 5 - $attempts;
-        
-    //     if ($attempts >= 5) {
-    //         $this->lockUserAccount($client->uuid);
-            
-    //         $lockMessage = 'Akaun dikunci kerana maksimum percubaan dicapai. Cuba lagi dalam 30 minit.';
-            
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => $lockMessage,
-    //             ], 401);
-    //         }
-    //         return redirect()->back()->withInput($request->only('login', 'remember'))
-    //             ->withErrors(['login' => $lockMessage]);
-    //     }
-        
-    //     // Wrong password - show remaining attempts with forgot password link
-    //     $message = 'E-mel dan kata laluan tidak sepadan. Klik Lupa kata laluan jika anda lupa kata laluan. Anda mempunyai ' . $remainingAttempts . ' cubaan lagi.';
-        
-    //     if ($request->ajax()) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => $message,
-    //             'action' => 'show_msg',
-    //             // 'forgot_password_url' => route('client_forgot_password') // Include forgot password URL
-    //         ], 422);
-    //     }
-    //     return redirect()->back()->withInput($request->only('login', 'remember'))
-    //         ->withErrors(['login' => $message]);
-    // }
     
      public function postLogin(Request $request)
     {
@@ -625,10 +349,10 @@ class AuthController extends Controller {
                     'city'              => 'required|string|max:255',
                     'mobileNumber'      => 'required|string|size:10|regex:/^[0-9]{10}$/|unique:client_register,mobileNumber',
                     'landline'          => 'string|min:10|unique:client_register,landline',
-                    'securityQuestion1' => 'required',  
-                    'securityAnswers1'  => 'required|string|max:255',
-                    'securityQuestions2'=> 'required',  
-                    'securityAnswers2'  => 'required|string|max:255',
+                    'securityQuestion1' => '',  
+                    'securityAnswers1'  => 'string|max:255',
+                    'securityQuestions2'=> '',  
+                    'securityAnswers2'  => 'string|max:255',
                     'terms'             => 'required|accepted',
                     'g-recaptcha-response' => 'required'
                 ],
@@ -795,7 +519,6 @@ class AuthController extends Controller {
                     'errors' => $e->validator->errors(),
                 ], 422);
             } catch (\Exception $e) {
-                Log::error('Registration error: ' . $e->getMessage());
                 return response()->json([
                     'success' => false,
                     'message' => 'An unexpected error occurred. Please try again later.',
@@ -930,10 +653,6 @@ class AuthController extends Controller {
                 // Update latest OTP reference
                 $latestOtp = $otpRecord;
                 
-                \Log::info('New OTP generated and sent', [
-                    'email' => $email,
-                    'client_id' => $clientRegister->client_id
-                ]);
             }
     
             // Calculate remaining time properly - THIS IS THE FIX
@@ -972,15 +691,6 @@ class AuthController extends Controller {
                     $remainingSeconds = 0;
                 }
             }
-    
-            \Log::info('OTP verification page accessed', [
-                'email' => $email,
-                'user_name' => $clientRegister->userName,
-                'remaining_time' => $remainingTime,
-                'remaining_seconds' => $remainingSeconds,
-                'otp_expires_at' => $latestOtp ? $latestOtp->expires_at : 'no_otp',
-                'current_time' => now()->toDateTimeString()
-            ]);
             
             return view('clientarea.auth.otp-verification', compact('email', 'clientRegister', 'remainingTime', 'remainingSeconds'));
             
