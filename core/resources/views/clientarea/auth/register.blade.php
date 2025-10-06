@@ -702,19 +702,241 @@ background-color: red;
 </div>
 <!-- At the end of your body -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-</body>
-</body>
-</html>
+<script>
+// ============================================
+// WINDOW ROUTES CONFIGURATION
+// ============================================
+window.appRoutes = {
+    otpVerification: "{{ route('otp.verification') }}",
+    clientLogin: "{{ route('client_login') }}"
+};
 
-<script>
-    window.appRoutes = {
-        otpVerification: "{{ route('otp.verification') }}",
-        clientLogin: "{{ route('client_login') }}"
+// ============================================
+// AJAX SETUP - CSRF TOKEN
+// ============================================
+$.ajaxSetup({
+    headers: {
+        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+    },
+});
+
+// Global flag to prevent multiple submissions
+let isSubmitting = false;
+
+// ============================================
+// PASSWORD VALIDATION (Vanilla JavaScript)
+// ============================================
+document.addEventListener("DOMContentLoaded", function() {
+    let passwordInput = document.getElementById("password");
+    let confirmPasswordInput = document.getElementById("setPassword");
+    let validationBox = document.getElementById("password-validation");
+
+    if (!passwordInput || !confirmPasswordInput || !validationBox) return;
+
+    passwordInput.addEventListener("focus", function() {
+        validationBox.style.display = "block";
+    });
+
+    document.addEventListener("click", function(event) {
+        if (!passwordInput.contains(event.target) && !validationBox.contains(event.target)) {
+            validationBox.style.display = "none";
+        }
+    });
+
+    passwordInput.addEventListener("input", function() {
+        validationBox.style.display = "block";
+        validatePassword();
+    });
+
+    passwordInput.addEventListener("input", matchPasswords);
+    confirmPasswordInput.addEventListener("input", matchPasswords);
+});
+
+function validatePassword() {
+    let password = document.getElementById("password").value;
+    
+    if (password) {
+        document.getElementById("password-error").textContent = "";
+    }
+    
+    let checks = {
+        length: password.length >= 8 && password.length <= 20,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        noSpaces: !/\s/.test(password),
+        specialChar: /[!@#$%]/.test(password),
+        noSequential: !/(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password),
     };
-</script>
-<script>
-   $(document).ready(function () {
-    // Keep your existing code
+
+    document.getElementById("length").innerHTML = (checks.length ? "✅" : "❌") + " {{ trans('app.password_minimum') }} 8 {{ trans('app.too') }} 20 {{ trans('app.characters') }}";
+    document.getElementById("uppercase").innerHTML = (checks.uppercase ? "✅" : "❌") + " {{ trans('app.uppercase_letter') }} (A-Z)";
+    document.getElementById("lowercase").innerHTML = (checks.lowercase ? "✅" : "❌") + " {{ trans('app.lowercase_letter') }} (a-z)";
+    document.getElementById("number").innerHTML = (checks.number ? "✅" : "❌") + " {{ trans('app.number') }} (0-9)";
+    document.getElementById("noSpaces").innerHTML = (checks.noSpaces ? "✅" : "❌") + " {{ trans('app.no_spaces') }}";
+    document.getElementById("special").innerHTML = (checks.specialChar ? "✅" : "❌") + " {{ trans('app.special_character') }} (!@#$%)";
+    document.getElementById("noSequential").innerHTML = (checks.noSequential ? "✅" : "❌") + " {{ trans('app.no_sequential_characters') }} (abc, 123)";
+}
+
+function matchPasswords() {
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("setPassword").value;
+    let matchError = document.getElementById("password-match-error");
+
+    if (confirmPassword === "" && password === "") {
+        matchError.innerHTML = "";
+    } else if (password !== confirmPassword) {
+        matchError.innerHTML = "❌ {{ trans('app.passwords_do_not_match') }}";
+        matchError.style.color = "red";
+    } else {
+        matchError.innerHTML = "✅ {{ trans('app.passwords_match') }}";
+        matchError.style.color = "green";
+    }
+}
+
+// ============================================
+// ACCOUNT TYPE & ID CARD FORMATTING
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    const accountTypeSelect = document.querySelector('select[name="accountType"]');
+    const userInfoButton = document.querySelector('button[data-bs-target="#collapseTwo"]');
+    const userNameLabel = document.querySelector('label[for="userName"]');
+    const idCardLabel = document.querySelector('label[for="idTypeNumber"]');
+    const userNameHintDiv = document.querySelector('label[for="userName"]')?.closest('.row')?.querySelector('.col-md-5');
+    const idTypeSelect = document.getElementById('idType');
+    const idCardInput = document.getElementById('idCardNumber');
+    const idCardStar = idCardLabel?.nextElementSibling;
+
+    if (!accountTypeSelect || !userInfoButton) return;
+
+    const originalTexts = {
+        sectionHeader: userInfoButton.innerText.trim(),
+        userName: userNameLabel?.innerText.trim() || '',
+        idCard: idCardLabel?.innerText.trim() || ''
+    };
+
+    function formatIdCard(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 0) {
+            if (value.length <= 6) {
+                input.value = value;
+            } else if (value.length <= 8) {
+                input.value = value.slice(0, 6) + '-' + value.slice(6);
+            } else {
+                input.value = value.slice(0, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 12);
+            }
+        }
+    }
+
+    function handleInput(e) {
+        formatIdCard(e.target);
+    }
+
+    // Handle Account Type Change
+    accountTypeSelect.addEventListener('change', function() {
+        const selectedAccountTypeId = parseInt(this.value);
+
+        if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3) {
+            // Company Type
+            userInfoButton.innerText = "Maklumat Syarikat";
+            if (userNameLabel) userNameLabel.innerText = "Nama Syarikat";
+            if (idCardLabel) idCardLabel.innerText = "No Pendaftaran Syarikat";
+            if (userNameHintDiv) userNameHintDiv.style.display = 'none';
+            if (idTypeSelect) {
+                idTypeSelect.style.display = 'none';
+                idTypeSelect.value = ''; // Clear selection
+            }
+            if (idCardStar) idCardStar.style.display = 'none';
+            if (idCardInput) {
+                idCardInput.placeholder = "Enter Company Registration Number";
+                idCardInput.removeEventListener('input', handleInput);
+                idCardInput.value = '';
+                idCardInput.maxLength = 50; // Allow longer company registration numbers
+            }
+        } else {
+            // Individual Type
+            userInfoButton.innerText = originalTexts.sectionHeader;
+            if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
+            if (idCardLabel) idCardLabel.innerText = originalTexts.idCard;
+            if (userNameHintDiv) userNameHintDiv.style.display = '';
+            
+            // IMPORTANT: Make dropdown visible
+            if (idTypeSelect) {
+                idTypeSelect.style.display = 'block';
+                idTypeSelect.style.visibility = 'visible';
+                idTypeSelect.value = ''; // Reset selection
+            }
+            if (idCardStar) idCardStar.style.display = 'inline';
+            
+            if (idCardInput) {
+                idCardInput.placeholder = "Select ID Type First";
+                idCardInput.value = '';
+                idCardInput.maxLength = 14;
+            }
+
+            // Handle ID Type Selection
+            if (idTypeSelect) {
+                // Remove old listeners to prevent duplicates
+                idTypeSelect.removeEventListener('change', handleIdTypeChange);
+                idTypeSelect.addEventListener('change', handleIdTypeChange);
+            }
+        }
+    });
+
+    // Separate function for ID type change
+    function handleIdTypeChange() {
+        if (!idCardInput) return;
+        
+        const idType = idTypeSelect.value;
+        
+        if (idType === '1') {
+            // Kad Pengenalan Baru
+            idCardInput.placeholder = "______-__-____";
+            idCardInput.maxLength = 14;
+            idCardInput.value = '';
+            idCardInput.removeEventListener('input', handleInput);
+            idCardInput.addEventListener('input', handleInput);
+        } else if (idType === '2') {
+            // Kad Pengenalan Lama
+            idCardInput.placeholder = "";
+            idCardInput.maxLength = 20;
+            idCardInput.value = '';
+            idCardInput.removeEventListener('input', handleInput);
+        } else if (idType === '3') {
+            // No. Polis
+            idCardInput.placeholder = "";
+            idCardInput.maxLength = 20;
+            idCardInput.value = '';
+            idCardInput.removeEventListener('input', handleInput);
+        } else if (idType === '4') {
+            // No. Tentera
+            idCardInput.placeholder = "";
+            idCardInput.maxLength = 20;
+            idCardInput.value = '';
+            idCardInput.removeEventListener('input', handleInput);
+        } else {
+            idCardInput.placeholder = "Select ID Type First";
+            idCardInput.value = '';
+            idCardInput.removeEventListener('input', handleInput);
+        }
+    }
+});
+
+// ============================================
+// MAIN JQUERY READY - ALL FORM LOGIC
+// ============================================
+$(document).ready(function () {
+    
+    // Password Toggle Visibility
+    $('.toggle-password').on('click', function() {
+        const targetId = $(this).data('target');
+        const input = $('#' + targetId);
+        const type = input.attr('type') === 'password' ? 'text' : 'password';
+        input.attr('type', type);
+        $(this).toggleClass('bi-eye bi-eye-slash');
+    });
+    
+    // District Loading (State Dropdown)
     $('#negeri').on('change', function () {
         const stateId = $(this).val();
         $('#daerah').html('<option value="">Loading...</option>');
@@ -726,7 +948,7 @@ background-color: red;
                 success: function (data) {
                     let options = '<option value="">Sila Pilih Daerah</option>';
                     data.forEach(district => {
-                        options += `<option value="${district.iddaerah}">${district.daerah_code +' - '+district.daerah}</option>`;
+                        options += `<option value="${district.iddaerah}">${district.daerah_code + ' - ' + district.daerah}</option>`;
                     });
                     $('#daerah').html(options);
                 },
@@ -737,161 +959,17 @@ background-color: red;
         } else {
             $('#daerah').html('<option value="">Sila Pilih</option>');
         }
-    });        
-
-    // Enable/Disable Reset Button based on form input
-    $('#registrationForm input, #registrationForm select').on('input change', function () {
-        let isFormFilled = $('#registrationForm')[0].checkValidity();
-        if (isFormFilled) {
-            $('#resetButton').prop('disabled', false);
-        } else {
-            $('#resetButton').prop('disabled', true);
-        }
     });
 
-    // Reset the form when the reset button is clicked
-    $('#resetButton').on('click', function () {
-        $('#registrationForm')[0].reset(); // Reset form fields
-        $('#responseMessage').hide(); // Hide the success/error message
-        $('#resetButton').prop('disabled', true); // Disable the reset button after reset
-        // Clear all error messages
-        $('.text-dangerr').text('');
-    });
-
-    // Add client-side validation function
-    function validateForm() {
-    let isValid = true;
-    
-    // Clear previous error messages
-    $('.text-dangerr').text('');
-    
-      $('#password').on('input', function() {
-        $('#password-error').text('');
-    });
-    
-    // Also clear the password match error when typing in either password field
-    $('#password, #setPassword').on('input', function() {
-        $('#password-match-error').text('');
-    });
-    
-    
-    // Validate Account Type
-    if (!$('select[name="accountType"]').val()) {
-        $('#accountType').text('Jenis akaun diperlukan');
-        isValid = false;
-    }
-    
-    // Validate Email
-    if (!$('input[name="email"]').val()) {
-        $('#email-error').text('E-mel diperlukan');
-        isValid = false;
-    }
-    
-    // Validate Password - Make sure we're checking the correct element ID
-    if (!$('#password').val()) {
-        $('#password-error').text('Kata laluan diperlukan');
-        isValid = false;
-    }
-    
-    // Validate Confirm Password
-    if (!$('#setPassword').val()) {
-        $('#password-match-error').text('Sahkan kata laluan diperlukan');
-        isValid = false;
-    } else if ($('#password').val() !== $('#setPassword').val()) {
-        $('#password-match-error').text('Kata laluan tidak sepadan');
-        isValid = false;
-    }
-    
-    // Validate Username
-    if (!$('input[name="userName"]').val()) {
-        $('#userName-error').text('Nama pengguna diperlukan');
-        isValid = false;
-    }
-    
-    // Validate ID Card Number
-    if (!$('input[name="idCardNumber"]').val()) {
-        $('#idCardNumber').text('Nombor Kad Pengenalan diperlukan');
-        isValid = false;
-    }
-    
-    // Validate Registered Address
-    if (!$('input[name="registeredAddress"]').val()) {
-        $('#registeredAddress').text('Alamat Berdaftar diperlukan');
-        isValid = false;
-    }
-    
-    // Validate Postal Code
-    if (!$('input[name="postalCode"]').val()) {
-        $('#postalCode').text('Poskod diperlukan');
-        isValid = false;
-    }
-    
-    // Validate State
-    if (!$('select[name="state"]').val()) {
-        $('#state').text('Negeri diperlukan');
-        isValid = false;
-    }
-    
-    // Validate District
-    if (!$('select[name="district"]').val()) {
-        $('#district').text('Daerah diperlukan');
-        isValid = false;
-    }
-
-
-    if (!$('input[name="city"]').val()) {
-        $('#city').text('Bandar diperlukan');
-        isValid = false;
-    }
-
-
-    const mobileNumber = $('input[name="mobileNumber"]').val().trim();
-        if (!mobileNumber) {
-            $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan').removeClass('text-info text-success').addClass('text-dangerr').show();
-            $('input[name="mobileNumber"]').addClass('border-danger');
-            isValid = false;
-        } else if (!/^[0-9]{10}$/.test(mobileNumber)) {
-            $('#mobileNumber-error').text('Nombor telefon bimbit mesti tepat 10 digit').removeClass('text-info text-success').addClass('text-dangerr').show();
-            $('input[name="mobileNumber"]').addClass('border-danger');
-            isValid = false;
-        }
-    
-    // Validate Terms and Conditions
-    if (!$('#terms').is(':checked')) {
-        // Add an error message span for terms if it doesn't exist
-        if ($('#terms-error').length === 0) {
-            $('label[for="terms"]').after('<span id="terms-error" class="text-dangerr d-block mt-1"></span>');
-        }
-        $('#terms-error').text('Anda mesti menerima terma dan syarat');
-        isValid = false;
-    }
-    
-    return isValid;
-}
-
-
-    $('input[name="mobileNumber"]').off('input blur focus keypress');
-    
-    // Input event - real-time typing
+    // Mobile Number Validation (Real-time)
     $('input[name="mobileNumber"]').on('input', function(e) {
-        let value = $(this).val();
-        
-        // Remove any non-numeric characters
-        value = value.replace(/[^0-9]/g, '');
-        
-        // Limit to 10 digits maximum
-        if (value.length > 10) {
-            value = value.substring(0, 10);
-        }
-        
-        // Update the input value
+        let value = $(this).val().replace(/[^0-9]/g, '');
+        if (value.length > 10) value = value.substring(0, 10);
         $(this).val(value);
         
-        // Clear error styling and message when user is typing correctly
         $('#mobileNumber-error').removeClass('text-info text-success').addClass('text-dangerr');
         $(this).removeClass('border-danger border-success');
         
-        // Show real-time validation feedback
         if (value.length > 0 && value.length < 10) {
             $('#mobileNumber-error').text(`${value.length}/10 digits entered`).removeClass('text-dangerr').addClass('text-info').show();
         } else if (value.length === 10) {
@@ -903,7 +981,6 @@ background-color: red;
         }
     });
 
-    // 4. Keypress event - prevent non-numeric input
     $('input[name="mobileNumber"]').on('blur', function() {
         const mobileValue = $(this).val().trim();
         const errorElement = $('#mobileNumber-error');
@@ -923,7 +1000,6 @@ background-color: red;
         }
     });
     
-    // Focus event - clear errors when focusing
     $('input[name="mobileNumber"]').on('focus', function() {
         $(this).removeClass('border-danger');
         const errorElement = $('#mobileNumber-error');
@@ -932,7 +1008,6 @@ background-color: red;
         }
     });
     
-    // Keypress event - prevent non-numeric input
     $('input[name="mobileNumber"]').on('keypress', function(e) {
         if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
             (e.keyCode === 65 && e.ctrlKey === true) ||
@@ -951,321 +1026,162 @@ background-color: red;
         }
     });
 
-    
-    // Add real-time validation for specific fields
-    $('input[name="email"]').on('blur', function() {
-        if (!$(this).val()) {
-            $('#email-error').text('Email is required');
-        }
-    });
-    
-    $('input[name="userName"]').on('blur', function() {
-        if (!$(this).val()) {
-            $('#userName-error').text('Username is required');
-        }
-    });
-
-     // Clear error message when user starts typing
-    $('input.form-control, textarea.form-control').on('input', function() {
-        let name = $(this).attr('name');
-        if ($("#" + name).length) {
-            $("#" + name).text('');
-        } else if ($("#" + name + "-error").length) {
-            $("#" + name + "-error").text('');
-        }
-    });
-
-    // Separate handler for select dropdowns (only clear error messages, not options)
-    $('select.form-control').on('change', function() {
-        let name = $(this).attr('name');
-        if ($("#" + name + "-error").length) {
-            $("#" + name + "-error").text('');
-        }
-    });
-});
-
-</script>
-<script>
-    let formData = $('#registrationForm').serializeArray();
-    if (!formData.some(field => field.name === 'terms')) {
-        formData.push({ name: 'terms', value: 0 });
-    }
-
-</script> 
-<script>
-    $(document).ready(function () {
-        // Function to validate fields in real time
-        function validateField(fieldName, fieldValue) {
-            $.ajax({
-                url: "{{ route('validate.field') }}",
-                type: "POST",
-                data: {
-                    field: fieldName,
-                    value: fieldValue,
-                    _token: "{{ csrf_token() }}",
-                },
-                success: function (response) {
-                    let errorSpan = $("#" + fieldName + "-error");
-
-                    if (!response.valid) {
-                        errorSpan.text(response.message).show();
-                    } else {
-                        errorSpan.text("").hide();
-                    }
-                },
-                error: function () {
-                    console.error("An error occurred during validation.");
-                },
-            });
-        }
-
-        // Attach event listeners to specific fields
-        $("input[name='email'], input[name='mobileNumber'], input[name='landline']").on('blur', function () {
-            let fieldName = $(this).attr("name");
-            let fieldValue = $(this).val();
-
-            if (fieldValue) {
-                validateField(fieldName, fieldValue);
-            }
-        });
-    });
-</script>    
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let passwordInput = document.getElementById("password");
-        let confirmPasswordInput = document.getElementById("setPassword");
-        let validationBox = document.getElementById("password-validation");
-        let passwordError = document.getElementById("password-error");
-        let matchError = document.getElementById("password-match-error");
-    
-        // Show validation box on focus (click)
-        passwordInput.addEventListener("focus", function() {
-            validationBox.style.display = "block";
-        });
-    
-        // Hide validation box when clicking outside
-        document.addEventListener("click", function(event) {
-            if (!passwordInput.contains(event.target) && !validationBox.contains(event.target)) {
-                validationBox.style.display = "none";
-            }
-        });
-    
-        // Show validation box and validate password while typing
-        passwordInput.addEventListener("input", function() {
-            validationBox.style.display = "block";
-            validatePassword();
-        });
-    
-        // Check password match when typing
-        passwordInput.addEventListener("input", matchPasswords);
-        confirmPasswordInput.addEventListener("input", matchPasswords);
-    });
-    
-    function validatePassword() {
-        let password = document.getElementById("password").value;
-        
-        if (password) {
-        document.getElementById("password-error").textContent = "";
-        }
-        
-        let length = document.getElementById("length");
-        let uppercase = document.getElementById("uppercase");
-        let lowercase = document.getElementById("lowercase");
-        let number = document.getElementById("number");
-        let noSpaces = document.getElementById("noSpaces");
-        let special = document.getElementById("special");
-        let noSequential = document.getElementById("noSequential");
-    
-        // Check conditions
-        let checks = {
-            length: password.length >= 8 && password.length <= 20,
-            uppercase: /[A-Z]/.test(password),
-            lowercase: /[a-z]/.test(password),
-            number: /[0-9]/.test(password),
-            noSpaces: !/\s/.test(password),
-            specialChar: /[!@#$%]/.test(password),
-            noSequential: !/(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password),
-        };
-    
-        // Update UI
-        length.innerHTML = (checks.length ? "✅" : "❌") + " {{ trans('app.password_minimum') }} 8 {{ trans('app.too') }} 20 {{ trans('app.characters') }}";
-        uppercase.innerHTML = (checks.uppercase ? "✅" : "❌") + " {{ trans('app.uppercase_letter') }} (A-Z)";
-        lowercase.innerHTML = (checks.lowercase ? "✅" : "❌") + " {{ trans('app.lowercase_letter') }} (a-z)";
-        number.innerHTML = (checks.number ? "✅" : "❌") + " {{ trans('app.number') }} (0-9)";
-        noSpaces.innerHTML = (checks.noSpaces ? "✅" : "❌") + " {{ trans('app.no_spaces') }}";
-        special.innerHTML = (checks.specialChar ? "✅" : "❌") + " {{ trans('app.special_character') }} (!@#$%)";
-        noSequential.innerHTML = (checks.noSequential ? "✅" : "❌") + " {{ trans('app.no_sequential_characters') }} (abc, 123)";
-    }
-    
-    function matchPasswords() {
-        let password = document.getElementById("password").value;
-        let confirmPassword = document.getElementById("setPassword").value;
-        let matchError = document.getElementById("password-match-error");
-    
-        if (confirmPassword === "" && password === "") {
-            matchError.innerHTML = "";
-        } else if (password !== confirmPassword) {
-            matchError.innerHTML = "❌ {{ trans('app.passwords_do_not_match') }}";
-            matchError.style.color = "red";
-        } else {
-            matchError.innerHTML = "✅ {{ trans('app.passwords_match') }}";
-            matchError.style.color = "green";
-        }
-    }
-</script>  
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const accountTypeSelect = document.querySelector('select[name="accountType"]');
-        const userInfoButton = document.querySelector('button[data-bs-target="#collapseTwo"]');
-        const userNameLabel = document.querySelector('label[for="userName"]');
-        const idCardLabel = document.querySelector('label[for="idTypeNumber"]');
-        const userNameHintDiv = document.querySelector('label[for="userName"]').closest('.row').querySelector('.col-md-5');
-
-        const idTypeSelect = document.getElementById('idType');
-        const idCardInput = document.getElementById('idCardNumber');
-        const idCardStar = idCardLabel.nextElementSibling; 
-
-        const originalTexts = {
-            sectionHeader: userInfoButton.innerText.trim(),
-            userName: userNameLabel.innerText.trim(),
-            idCard: idCardLabel.innerText.trim()
-        };
-
-        // 🔹 Function to format Kad Pengenalan Baru
-        function formatIdCard(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                if (value.length <= 6) {
-                    input.value = value;
-                } else if (value.length <= 8) {
-                    input.value = value.slice(0, 6) + '-' + value.slice(6);
+    // Real-time Field Validation (AJAX)
+    function validateField(fieldName, fieldValue) {
+        $.ajax({
+            url: "{{ route('validate.field') }}",
+            type: "POST",
+            data: {
+                field: fieldName,
+                value: fieldValue,
+                _token: "{{ csrf_token() }}",
+            },
+            success: function (response) {
+                let errorSpan = $("#" + fieldName + "-error");
+                if (!response.valid) {
+                    errorSpan.text(response.message).show();
                 } else {
-                    input.value = value.slice(0, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 12);
+                    errorSpan.text("").hide();
                 }
-            }
-        }
-
-        function handleInput(e) {
-            formatIdCard(e.target);
-        }
-
-        // 🔹 Handle Account Type Change
-        accountTypeSelect.addEventListener('change', function() {
-            const selectedAccountTypeId = parseInt(this.value);
-
-            if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3) {
-                // 🏢 Company Type
-                userInfoButton.innerText = "Maklumat Syarikat";
-                userNameLabel.innerText = "Nama Syarikat";
-                idCardLabel.innerText = "No Pendaftaran Syarikat";
-                userNameHintDiv.style.display = 'none';
-                
-                // Hide dropdown & asterisk
-                idTypeSelect.style.display = 'none';
-                if (idCardStar) idCardStar.style.display = 'none';
-
-                // Normal input
-                idCardInput.placeholder = "";
-                idCardInput.removeEventListener('input', handleInput);
-                idCardInput.value = '';
-
-            } else {
-                // 👤 Individual Type
-                userInfoButton.innerText = originalTexts.sectionHeader;
-                userNameLabel.innerText = originalTexts.userName;
-                idCardLabel.innerText = originalTexts.idCard;
-                userNameHintDiv.style.display = '';
-
-                // Show dropdown & asterisk
-                idTypeSelect.style.display = 'block';
-                if (idCardStar) idCardStar.style.display = 'inline';
-
-                // Reset input for pattern use
-                idCardInput.placeholder = "______-__-____";
-                idCardInput.maxLength = 14;
-                idCardInput.value = '';
-
-                // Attach listener for ID type change
-                idTypeSelect.addEventListener('change', function() {
-                    if (this.value === '1') {
-                        // Kad Pengenalan Baru
-                        idCardInput.placeholder = "______-__-____";
-                        idCardInput.maxLength = 14;
-                        idCardInput.addEventListener('input', handleInput);
-                    } else {
-                        // Other ID Types
-                        idCardInput.placeholder = "";
-                        idCardInput.removeEventListener('input', handleInput);
-                        idCardInput.value = '';
-                    }
-                });
-            }
+            },
+            error: function () {
+                console.error("Validation error occurred.");
+            },
         });
+    }
+
+    $("input[name='email'], input[name='mobileNumber'], input[name='landline']").on('blur', function () {
+        let fieldName = $(this).attr("name");
+        let fieldValue = $(this).val();
+        if (fieldValue) {
+            validateField(fieldName, fieldValue);
+        }
     });
-</script>
 
+    // Client-side Form Validation
+    function validateForm() {
+        let isValid = true;
+        $('.text-dangerr').text('');
+        $('.form-control, .form-select').removeClass('border-danger');
+        
+        if (!$('select[name="accountType"]').val()) {
+            $('#accountType').text('Jenis akaun diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('input[name="email"]').val()) {
+            $('#email-error').text('E-mel diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('#password').val()) {
+            $('#password-error').text('Kata laluan diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('#setPassword').val()) {
+            $('#password-match-error').text('Sahkan kata laluan diperlukan');
+            isValid = false;
+        } else if ($('#password').val() !== $('#setPassword').val()) {
+            $('#password-match-error').text('Kata laluan tidak sepadan');
+            isValid = false;
+        }
+        
+        if (!$('input[name="userName"]').val()) {
+            $('#userName-error').text('Nama pengguna diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('input[name="idCardNumber"]').val()) {
+            $('#idCardNumberError').text('Nombor Kad Pengenalan diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('textarea[name="registeredAddress"]').val()) {
+            $('#registeredAddress').text('Alamat Berdaftar diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('input[name="postalCode"]').val()) {
+            $('#postalCode').text('Poskod diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('select[name="state"]').val()) {
+            $('#state').text('Negeri diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('select[name="district"]').val()) {
+            $('#district').text('Daerah diperlukan');
+            isValid = false;
+        }
+        
+        if (!$('input[name="city"]').val()) {
+            $('#city').text('Bandar diperlukan');
+            isValid = false;
+        }
+        
+        const mobileNumber = $('input[name="mobileNumber"]').val().trim();
+        if (!mobileNumber) {
+            $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan').removeClass('text-info text-success').addClass('text-dangerr').show();
+            $('input[name="mobileNumber"]').addClass('border-danger');
+            isValid = false;
+        } else if (!/^[0-9]{10}$/.test(mobileNumber)) {
+            $('#mobileNumber-error').text('Nombor telefon bimbit mesti tepat 10 digit').removeClass('text-info text-success').addClass('text-dangerr').show();
+            $('input[name="mobileNumber"]').addClass('border-danger');
+            isValid = false;
+        }
+        
+        if (!$('#terms').is(':checked')) {
+            if ($('#terms-error').length === 0) {
+                $('label[for="terms"]').after('<span id="terms-error" class="text-dangerr d-block mt-1"></span>');
+            }
+            $('#terms-error').text('Anda mesti menerima terma dan syarat');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            setTimeout(scrollToFirstError, 100);
+        }
+        
+        return isValid;
+    }
 
-
-<script>
-    $(document).ready(function() {
-        $('.toggle-password').on('click', function() {
-            const targetId = $(this).data('target');
-            const input = $('#' + targetId);
-            const type = input.attr('type') === 'password' ? 'text' : 'password';
-
-            input.attr('type', type);
-            $(this).toggleClass('bi-eye bi-eye-slash');
-        });
-    });
-</script>
-<script>
-    // Function to scroll to the first error field
+    // Scroll to First Error
     function scrollToFirstError() {
-        // Find all visible error messages
         const errorElements = $('.text-dangerr:visible').filter(function() {
             return $(this).text().trim() !== '';
         });
         
         if (errorElements.length > 0) {
-            // Get the first error element
             const firstError = errorElements.first();
-            
-            // Find the corresponding input field or select
             const fieldId = firstError.attr('id');
             let targetField = null;
             
-            // Try different ways to find the associated field
             if (fieldId.endsWith('-error')) {
                 const baseId = fieldId.replace('-error', '');
                 targetField = $('#' + baseId);
             } else {
-                // For fields where error span id matches field name
                 targetField = $(`[name="${fieldId}"]`);
             }
             
-            // If we found the field, scroll to it
             if (targetField && targetField.length > 0) {
-                // Open the accordion that contains this field
                 const accordionCollapse = targetField.closest('.accordion-collapse');
                 if (accordionCollapse.length > 0 && !accordionCollapse.hasClass('show')) {
                     accordionCollapse.collapse('show');
                 }
                 
-                // Scroll to the field with some offset
                 $('html, body').animate({
                     scrollTop: targetField.offset().top - 100
                 }, 500);
                 
-                // Focus on the field
                 targetField.focus();
-                
-                // Add a highlight effect
                 targetField.addClass('border-danger');
                 setTimeout(() => {
                     targetField.removeClass('border-danger');
                 }, 3000);
             } else {
-                // If we can't find the specific field, scroll to the error message
                 $('html, body').animate({
                     scrollTop: firstError.offset().top - 100
                 }, 500);
@@ -1273,179 +1189,13 @@ background-color: red;
         }
     }
 
-    $(document).ready(function () {
-        // Add global flag to prevent multiple submissions
-        let isSubmitting = false;
-        
-        // District loading functionality
-        $('#negeri').on('change', function () {
-            const stateId = $(this).val();
-            $('#daerah').html('<option value="">Loading...</option>');
-
-            if (stateId) {
-                $.ajax({
-                    url: `/clientarea/register-districts/${stateId}`,
-                    type: 'GET',
-                    success: function (data) {
-                        let options = '<option value="">Sila Pilih Daerah</option>';
-                        data.forEach(district => {
-                            options += `<option value="${district.iddaerah}">${district.daerah_code +' - '+district.daerah}</option>`;
-                        });
-                        $('#daerah').html(options);
-                    },
-                    error: function () {
-                        $('#daerah').html('<option value="">Error loading districts</option>');
-                    }
-                });
-            } else {
-                $('#daerah').html('<option value="">Sila Pilih</option>');
-            }
-        });        
-
-        // Enable/Disable Reset Button based on form input
-        $('#registrationForm input, #registrationForm select').on('input change', function () {
-            let isFormFilled = $('#registrationForm')[0].checkValidity();
-            if (isFormFilled) {
-                $('#resetButton').prop('disabled', false);
-            } else {
-                $('#resetButton').prop('disabled', true);
-            }
-        });
-
-        // Reset the form when the reset button is clicked
-        $('#resetButton').on('click', function () {
-            $('#registrationForm')[0].reset();
-            $('#responseMessage').hide();
-            $('#resetButton').prop('disabled', true);
-            $('.text-dangerr').text('');
-            $('.form-control, .form-select').removeClass('border-danger');
-            // Reset submission flag
-            isSubmitting = false;
-            $('#submitButton').prop('disabled', false).text('Register');
-        });
-
-        // Enhanced validation function with scroll functionality
-        function validateForm() {
-            let isValid = true;
-            
-            // Clear previous error messages and styling
-            $('.text-dangerr').text('');
-            $('.form-control, .form-select').removeClass('border-danger');
-            
-            $('#password').on('input', function() {
-                $('#password-error').text('');
-            });
-            
-            $('#password, #setPassword').on('input', function() {
-                $('#password-match-error').text('');
-            });
-            
-            // Validate Account Type
-            if (!$('select[name="accountType"]').val()) {
-                $('#accountType').text('Jenis akaun diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Email
-            if (!$('input[name="email"]').val()) {
-                $('#email-error').text('E-mel diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Password
-            if (!$('#password').val()) {
-                $('#password-error').text('Kata laluan diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Confirm Password
-            if (!$('#setPassword').val()) {
-                $('#password-match-error').text('Sahkan kata laluan diperlukan');
-                isValid = false;
-            } else if ($('#password').val() !== $('#setPassword').val()) {
-                $('#password-match-error').text('Kata laluan tidak sepadan');
-                isValid = false;
-            }
-            
-            // Validate Username
-            if (!$('input[name="userName"]').val()) {
-                $('#userName-error').text('Nama pengguna diperlukan');
-                isValid = false;
-            }
-            
-            // Validate ID Card Number
-            if (!$('input[name="idCardNumber"]').val()) {
-                $('#idCardNumber').text('Nombor Kad Pengenalan diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Registered Address
-            if (!$('input[name="registeredAddress"]').val()) {
-                $('#registeredAddress').text('Alamat Berdaftar diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Postal Code
-            if (!$('input[name="postalCode"]').val()) {
-                $('#postalCode').text('Poskod diperlukan');
-                isValid = false;
-            }
-            
-            // Validate State
-            if (!$('select[name="state"]').val()) {
-                $('#state').text('Negeri diperlukan');
-                isValid = false;
-            }
-            
-            // Validate District
-            if (!$('select[name="district"]').val()) {
-                $('#district').text('Daerah diperlukan');
-                isValid = false;
-            }
-
-
-            if (!$('input[name="city"]').val()) {
-                $('#city').text('Bandar diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Mobile Number
-            if (!$('input[name="mobileNumber"]').val()) {
-                $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan');
-                isValid = false;
-            }
-            
-            // Validate Terms and Conditions
-            if (!$('#terms').is(':checked')) {
-                if ($('#terms-error').length === 0) {
-                    $('label[for="terms"]').after('<span id="terms-error" class="text-dangerr d-block mt-1"></span>');
-                }
-                $('#terms-error').text('Anda mesti menerima terma dan syarat');
-                isValid = false;
-            }
-            
-            // If validation fails, scroll to first error
-            if (!isValid) {
-                setTimeout(scrollToFirstError, 100);
-            }
-            
-            return isValid;
-        }
-        
-        $('#registrationForm').off('submit').on('submit', function (e) {
+    // Form Submission (AJAX)
+    $('#registrationForm').on('submit', function (e) {
         e.preventDefault();
         
-        // Prevent multiple submissions
-        if (isSubmitting) {
-            return false;
-        }
-        
-        // Validate form before submission
-        if (!validateForm()) {
-            return false;
-        }
+        if (isSubmitting) return false;
+        if (!validateForm()) return false;
 
-        // Set submitting flag and disable button
         isSubmitting = true;
         const submitButton = $('#submitButton');
         const originalText = submitButton.text();
@@ -1457,15 +1207,11 @@ background-color: red;
             url: "{{ route('client_register') }}",
             type: "POST",
             data: formData,
-            timeout: 30000, // 30 seconds timeout
+            timeout: 30000,
             success: function (response) {
-                
                 if (response.success) {
-                    // Get email using the correct ID: emailAddress
-                    let userEmail = $('#emailAddress').val() || 
-                                $('input[name="email"]').val();
+                    let userEmail = $('#emailAddress').val() || $('input[name="email"]').val();
                     
-                    // Check if email is valid before proceeding
                     if (!userEmail || userEmail === 'undefined' || userEmail === '') {
                         Swal.fire({
                             title: "Error",
@@ -1473,8 +1219,6 @@ background-color: red;
                             icon: "error",
                             confirmButtonText: "OK"
                         });
-                        
-                        // Reset submission state
                         isSubmitting = false;
                         submitButton.prop('disabled', false).text(originalText);
                         return;
@@ -1488,19 +1232,14 @@ background-color: red;
                         allowOutsideClick: false,
                         allowEscapeKey: false
                     }).then(() => {
-                        // Reset form
                         $('#registrationForm')[0].reset();
                         $('#resetButton').prop('disabled', true);
-                        
-                        // Redirect to OTP verification page with email parameter
                         let redirectUrl = "{{ route('otp.verification') }}" + "?email=" + encodeURIComponent(userEmail);
                         window.location.href = redirectUrl;
                     });
                 } else {
-                    // Reset on failure
                     isSubmitting = false;
                     submitButton.prop('disabled', false).text(originalText);
-                    
                     Swal.fire({
                         title: "Error",
                         text: response.message || "Registration failed",
@@ -1510,8 +1249,6 @@ background-color: red;
                 }
             },
             error: function (xhr, status, error) {
-                
-                // Reset submission state
                 isSubmitting = false;
                 submitButton.prop('disabled', false).text(originalText);
                 
@@ -1519,7 +1256,6 @@ background-color: red;
                     let errors = xhr.responseJSON.errors;
                     $('.text-dangerr').text('');
                     
-                    // Display each error under its respective field
                     $.each(errors, function (key, value) {
                         if ($("#" + key).length) {
                             $("#" + key).text(value[0]);
@@ -1528,7 +1264,6 @@ background-color: red;
                         }
                     });
                     
-                    // Scroll to first server-side error
                     setTimeout(scrollToFirstError, 100);
                 } else if (status === 'timeout') {
                     Swal.fire({
@@ -1540,45 +1275,44 @@ background-color: red;
                 } else {
                     $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred. Please try again.</div>').show();
                 }
-            },
-            complete: function() {
             }
         });
     });
-    
-    // Add visual feedback when fields have errors
-    $(document).on('focus', '.form-control, .form-select', function() {
-        $(this).removeClass('border-danger');
-        const fieldName = $(this).attr('name') || $(this).attr('id');
-        if (fieldName) {
-            $(`#${fieldName}, #${fieldName}-error`).text('');
-        }
-    });
-    
-    // Real-time validation for specific fields
-    $('input[name="email"]').on('blur', function() {
-        if (!$(this).val()) {
-            $('#email-error').text('Email is required');
-        }
-    });
-    
-    $('input[name="userName"]').on('blur', function() {
-        if (!$(this).val()) {
-            $('#userName-error').text('Username is required');
-        }
-    });
-    
-    $('input[name="mobileNumber"]').on('blur', function() {
-        if (!$(this).val()) {
-            $('#mobileNumber-error').text('Mobile Number is required');
-        }
-    });
-    
-    
 
+    // Reset Button Functionality
+    $('#registrationForm input, #registrationForm select, #registrationForm textarea').on('input change', function () {
+        let hasInput = false;
+        $('#registrationForm input, #registrationForm select, #registrationForm textarea').each(function() {
+            if ($(this).val()) {
+                hasInput = true;
+                return false;
+            }
+        });
+        $('#resetButton').prop('disabled', !hasInput);
+    });
 
-    // Clear error message when user starts typing
+    $('#resetButton').on('click', function () {
+        $('#registrationForm')[0].reset();
+        $('#responseMessage').hide();
+        $('#resetButton').prop('disabled', true);
+        $('.text-dangerr').text('');
+        $('.form-control, .form-select').removeClass('border-danger border-success');
+        isSubmitting = false;
+        $('#submitButton').prop('disabled', false).text('@lang('app.register')');
+    });
+
+    // Clear Errors on Input/Focus
     $('input.form-control, textarea.form-control').on('input', function() {
+        let name = $(this).attr('name');
+        if ($("#" + name).length) {
+            $("#" + name).text('');
+        } else if ($("#" + name + "-error").length) {
+            $("#" + name + "-error").text('');
+        }
+        $(this).removeClass('border-danger');
+    });
+
+    $('select.form-control').on('change', function() {
         let name = $(this).attr('name');
         if ($("#" + name).length) {
             $("#" + name).text('');
@@ -1587,25 +1321,33 @@ background-color: red;
         }
     });
 
-    // Separate handler for select dropdowns (only clear error messages, not options)
-    $('select.form-control').on('change', function() {
-        let name = $(this).attr('name');
-        if ($("#" + name + "-error").length) {
-            $("#" + name + "-error").text('');
+    $(document).on('focus', '.form-control, .form-select', function() {
+        $(this).removeClass('border-danger');
+        const fieldName = $(this).attr('name') || $(this).attr('id');
+        if (fieldName) {
+            $(`#${fieldName}, #${fieldName}-error`).text('');
         }
     });
 
-    // Prevent browser back/forward causing issues
-    window.addEventListener('beforeunload', function() {
+    $('#password').on('input', function() {
+        $('#password-error').text('');
+    });
+    
+    $('#password, #setPassword').on('input', function() {
+        $('#password-match-error').text('');
+    });
+
+    // Prevent Navigation During Submission
+    window.addEventListener('beforeunload', function(e) {
         if (isSubmitting) {
+            e.preventDefault();
+            e.returnValue = '';
             return 'Registration is in progress. Are you sure you want to leave?';
         }
     });
 });
-
-// Additional safety: Prevent multiple script executions
-if (window.registrationScriptLoaded) {
-} else {
-    window.registrationScriptLoaded = true;
-}
 </script>
+</body>
+</html>
+
+
