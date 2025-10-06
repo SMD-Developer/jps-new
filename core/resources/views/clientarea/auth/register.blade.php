@@ -507,9 +507,26 @@ background-color: red;
                                 <div class="col-md-4 col-6">
                                     <div class="form-group inlin">
                                         <span class="pe-3"><b> : </b></span>
-                                        <input type="text" class="form-control"  name="idCardNumber" value="{{old('idCardNumber')}}">
+                                        <div class="d-flex gap-2">
+                                            <select class="form-control" name="idType" id="idType" style="width: 150px;">
+                                                <option value="">@lang('--Sila Pilih--')</option>
+                                                <option value="1">Kad Pengenalan Baru</option>
+                                                <option value="2">Kad Pengenalan Lama</option>
+                                                <option value="3">No. Polis</option>
+                                                <option value="4">No. Tentera</option>
+                                            </select>
+
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                name="idCardNumber" 
+                                                id="idCardNumber"
+                                                value="{{ old('idCardNumber') }}" 
+                                                maxlength="14"
+                                                placeholder="">
+                                        </div>
                                     </div>
-                                    <span class="text-dangerr" id="idCardNumber"></span>
+                                    <span class="text-dangerr" id="idCardNumberError"></span>
                                 </div>
                             </div>
                             <div class="row mt-4">
@@ -522,7 +539,7 @@ background-color: red;
                                 <div class="col-md-4 col-6">
                                     <div class="form-group inlin">
                                         <span class="pe-3"><b> : </b></span>
-                                        <input type="text" class="form-control" name="registeredAddress" value="{{old('registeredAddress')}}">
+                                        <textarea class="form-control" name="registeredAddress" rows="3">{{old('registeredAddress')}}</textarea>
                                     </div>
                                     <span class="text-dangerr" id="registeredAddress"></span>
                                 </div>
@@ -947,13 +964,21 @@ background-color: red;
             $('#userName-error').text('Username is required');
         }
     });
-    
-    // Clear error message when user starts typing
-    $('.form-control').on('input', function() {
+
+     // Clear error message when user starts typing
+    $('input.form-control, textarea.form-control').on('input', function() {
         let name = $(this).attr('name');
         if ($("#" + name).length) {
             $("#" + name).text('');
         } else if ($("#" + name + "-error").length) {
+            $("#" + name + "-error").text('');
+        }
+    });
+
+    // Separate handler for select dropdowns (only clear error messages, not options)
+    $('select.form-control').on('change', function() {
+        let name = $(this).attr('name');
+        if ($("#" + name + "-error").length) {
             $("#" + name + "-error").text('');
         }
     });
@@ -1095,379 +1120,431 @@ background-color: red;
         const userNameLabel = document.querySelector('label[for="userName"]');
         const idCardLabel = document.querySelector('label[for="idTypeNumber"]');
         const userNameHintDiv = document.querySelector('label[for="userName"]').closest('.row').querySelector('.col-md-5');
-        
+
+        const idTypeSelect = document.getElementById('idType');
+        const idCardInput = document.getElementById('idCardNumber');
+        const idCardStar = idCardLabel.nextElementSibling; // The <span class="star">*</span>
+
         const originalTexts = {
             sectionHeader: userInfoButton.innerText.trim(),
             userName: userNameLabel.innerText.trim(),
             idCard: idCardLabel.innerText.trim()
         };
-        
+
+        // 🔹 Function to format Kad Pengenalan Baru
+        function formatIdCard(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 6) {
+                    input.value = value;
+                } else if (value.length <= 8) {
+                    input.value = value.slice(0, 6) + '-' + value.slice(6);
+                } else {
+                    input.value = value.slice(0, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 12);
+                }
+            }
+        }
+
+        function handleInput(e) {
+            formatIdCard(e.target);
+        }
+
+        // 🔹 Handle Account Type Change
         accountTypeSelect.addEventListener('change', function() {
             const selectedAccountTypeId = parseInt(this.value);
-            
-            if (selectedAccountTypeId === 3) {
-                // Type 3 - Company information
+
+            if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3) {
+                // 🏢 Company Type
                 userInfoButton.innerText = "Maklumat Syarikat";
                 userNameLabel.innerText = "Nama Syarikat";
                 idCardLabel.innerText = "No Pendaftaran Syarikat";
-                userNameHintDiv.style.display = 'none'; 
-            } 
-            else if (selectedAccountTypeId === 2) {
-                userInfoButton.innerText = "Maklumat Syarikat"; 
-                userNameLabel.innerText = "Nama Syarikat"; 
-                idCardLabel.innerText = "No Pendaftaran Syarikat"; 
-                userNameHintDiv.style.display = 'none'; 
-            }
-            else {
-                // Default - Type 1 or any other type
+                userNameHintDiv.style.display = 'none';
+                
+                // Hide dropdown & asterisk
+                idTypeSelect.style.display = 'none';
+                if (idCardStar) idCardStar.style.display = 'none';
+
+                // Normal input
+                idCardInput.placeholder = "Enter Registration Number";
+                idCardInput.removeEventListener('input', handleInput);
+                idCardInput.value = '';
+
+            } else {
+                // 👤 Individual Type
                 userInfoButton.innerText = originalTexts.sectionHeader;
                 userNameLabel.innerText = originalTexts.userName;
                 idCardLabel.innerText = originalTexts.idCard;
-                userNameHintDiv.style.display = ''; 
+                userNameHintDiv.style.display = '';
+
+                // Show dropdown & asterisk
+                idTypeSelect.style.display = 'block';
+                if (idCardStar) idCardStar.style.display = 'inline';
+
+                // Reset input for pattern use
+                idCardInput.placeholder = "______-__-____";
+                idCardInput.maxLength = 14;
+                idCardInput.value = '';
+
+                // Attach listener for ID type change
+                idTypeSelect.addEventListener('change', function() {
+                    if (this.value === '1') {
+                        // Kad Pengenalan Baru
+                        idCardInput.placeholder = "______-__-____";
+                        idCardInput.maxLength = 14;
+                        idCardInput.addEventListener('input', handleInput);
+                    } else {
+                        // Other ID Types
+                        idCardInput.placeholder = "";
+                        idCardInput.removeEventListener('input', handleInput);
+                        idCardInput.value = '';
+                    }
+                });
             }
         });
     });
 </script>
+
+
 
 <script>
     $(document).ready(function() {
-    $('.toggle-password').on('click', function() {
-        const targetId = $(this).data('target');
-        const input = $('#' + targetId);
-        const type = input.attr('type') === 'password' ? 'text' : 'password';
+        $('.toggle-password').on('click', function() {
+            const targetId = $(this).data('target');
+            const input = $('#' + targetId);
+            const type = input.attr('type') === 'password' ? 'text' : 'password';
 
-        input.attr('type', type);
-        $(this).toggleClass('bi-eye bi-eye-slash');
+            input.attr('type', type);
+            $(this).toggleClass('bi-eye bi-eye-slash');
+        });
     });
-});
 </script>
 <script>
-// Function to scroll to the first error field
-function scrollToFirstError() {
-    // Find all visible error messages
-    const errorElements = $('.text-dangerr:visible').filter(function() {
-        return $(this).text().trim() !== '';
-    });
-    
-    if (errorElements.length > 0) {
-        // Get the first error element
-        const firstError = errorElements.first();
+    // Function to scroll to the first error field
+    function scrollToFirstError() {
+        // Find all visible error messages
+        const errorElements = $('.text-dangerr:visible').filter(function() {
+            return $(this).text().trim() !== '';
+        });
         
-        // Find the corresponding input field or select
-        const fieldId = firstError.attr('id');
-        let targetField = null;
-        
-        // Try different ways to find the associated field
-        if (fieldId.endsWith('-error')) {
-            const baseId = fieldId.replace('-error', '');
-            targetField = $('#' + baseId);
-        } else {
-            // For fields where error span id matches field name
-            targetField = $(`[name="${fieldId}"]`);
-        }
-        
-        // If we found the field, scroll to it
-        if (targetField && targetField.length > 0) {
-            // Open the accordion that contains this field
-            const accordionCollapse = targetField.closest('.accordion-collapse');
-            if (accordionCollapse.length > 0 && !accordionCollapse.hasClass('show')) {
-                accordionCollapse.collapse('show');
+        if (errorElements.length > 0) {
+            // Get the first error element
+            const firstError = errorElements.first();
+            
+            // Find the corresponding input field or select
+            const fieldId = firstError.attr('id');
+            let targetField = null;
+            
+            // Try different ways to find the associated field
+            if (fieldId.endsWith('-error')) {
+                const baseId = fieldId.replace('-error', '');
+                targetField = $('#' + baseId);
+            } else {
+                // For fields where error span id matches field name
+                targetField = $(`[name="${fieldId}"]`);
             }
             
-            // Scroll to the field with some offset
-            $('html, body').animate({
-                scrollTop: targetField.offset().top - 100
-            }, 500);
-            
-            // Focus on the field
-            targetField.focus();
-            
-            // Add a highlight effect
-            targetField.addClass('border-danger');
-            setTimeout(() => {
-                targetField.removeClass('border-danger');
-            }, 3000);
-        } else {
-            // If we can't find the specific field, scroll to the error message
-            $('html, body').animate({
-                scrollTop: firstError.offset().top - 100
-            }, 500);
-        }
-    }
-}
-
-$(document).ready(function () {
-    // Add global flag to prevent multiple submissions
-    let isSubmitting = false;
-    
-    // District loading functionality
-    $('#negeri').on('change', function () {
-        const stateId = $(this).val();
-        $('#daerah').html('<option value="">Loading...</option>');
-
-        if (stateId) {
-            $.ajax({
-                url: `/clientarea/register-districts/${stateId}`,
-                type: 'GET',
-                success: function (data) {
-                    let options = '<option value="">Sila Pilih Daerah</option>';
-                    data.forEach(district => {
-                        options += `<option value="${district.iddaerah}">${district.daerah_code +' - '+district.daerah}</option>`;
-                    });
-                    $('#daerah').html(options);
-                },
-                error: function () {
-                    $('#daerah').html('<option value="">Error loading districts</option>');
+            // If we found the field, scroll to it
+            if (targetField && targetField.length > 0) {
+                // Open the accordion that contains this field
+                const accordionCollapse = targetField.closest('.accordion-collapse');
+                if (accordionCollapse.length > 0 && !accordionCollapse.hasClass('show')) {
+                    accordionCollapse.collapse('show');
                 }
-            });
-        } else {
-            $('#daerah').html('<option value="">Sila Pilih</option>');
-        }
-    });        
-
-    // Enable/Disable Reset Button based on form input
-    $('#registrationForm input, #registrationForm select').on('input change', function () {
-        let isFormFilled = $('#registrationForm')[0].checkValidity();
-        if (isFormFilled) {
-            $('#resetButton').prop('disabled', false);
-        } else {
-            $('#resetButton').prop('disabled', true);
-        }
-    });
-
-    // Reset the form when the reset button is clicked
-    $('#resetButton').on('click', function () {
-        $('#registrationForm')[0].reset();
-        $('#responseMessage').hide();
-        $('#resetButton').prop('disabled', true);
-        $('.text-dangerr').text('');
-        $('.form-control, .form-select').removeClass('border-danger');
-        // Reset submission flag
-        isSubmitting = false;
-        $('#submitButton').prop('disabled', false).text('Register');
-    });
-
-    // Enhanced validation function with scroll functionality
-    function validateForm() {
-        let isValid = true;
-        
-        // Clear previous error messages and styling
-        $('.text-dangerr').text('');
-        $('.form-control, .form-select').removeClass('border-danger');
-        
-        $('#password').on('input', function() {
-            $('#password-error').text('');
-        });
-        
-        $('#password, #setPassword').on('input', function() {
-            $('#password-match-error').text('');
-        });
-        
-        // Validate Account Type
-        if (!$('select[name="accountType"]').val()) {
-            $('#accountType').text('Jenis akaun diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Email
-        if (!$('input[name="email"]').val()) {
-            $('#email-error').text('E-mel diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Password
-        if (!$('#password').val()) {
-            $('#password-error').text('Kata laluan diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Confirm Password
-        if (!$('#setPassword').val()) {
-            $('#password-match-error').text('Sahkan kata laluan diperlukan');
-            isValid = false;
-        } else if ($('#password').val() !== $('#setPassword').val()) {
-            $('#password-match-error').text('Kata laluan tidak sepadan');
-            isValid = false;
-        }
-        
-        // Validate Username
-        if (!$('input[name="userName"]').val()) {
-            $('#userName-error').text('Nama pengguna diperlukan');
-            isValid = false;
-        }
-        
-        // Validate ID Card Number
-        if (!$('input[name="idCardNumber"]').val()) {
-            $('#idCardNumber').text('Nombor Kad Pengenalan diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Registered Address
-        if (!$('input[name="registeredAddress"]').val()) {
-            $('#registeredAddress').text('Alamat Berdaftar diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Postal Code
-        if (!$('input[name="postalCode"]').val()) {
-            $('#postalCode').text('Poskod diperlukan');
-            isValid = false;
-        }
-        
-        // Validate State
-        if (!$('select[name="state"]').val()) {
-            $('#state').text('Negeri diperlukan');
-            isValid = false;
-        }
-        
-        // Validate District
-        if (!$('select[name="district"]').val()) {
-            $('#district').text('Daerah diperlukan');
-            isValid = false;
-        }
-
-
-        if (!$('input[name="city"]').val()) {
-            $('#city').text('Bandar diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Mobile Number
-        if (!$('input[name="mobileNumber"]').val()) {
-            $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan');
-            isValid = false;
-        }
-        
-        // Validate Terms and Conditions
-        if (!$('#terms').is(':checked')) {
-            if ($('#terms-error').length === 0) {
-                $('label[for="terms"]').after('<span id="terms-error" class="text-dangerr d-block mt-1"></span>');
-            }
-            $('#terms-error').text('Anda mesti menerima terma dan syarat');
-            isValid = false;
-        }
-        
-        // If validation fails, scroll to first error
-        if (!isValid) {
-            setTimeout(scrollToFirstError, 100);
-        }
-        
-        return isValid;
-    }
-    
-    $('#registrationForm').off('submit').on('submit', function (e) {
-    e.preventDefault();
-    
-    // Prevent multiple submissions
-    if (isSubmitting) {
-        return false;
-    }
-    
-    // Validate form before submission
-    if (!validateForm()) {
-        return false;
-    }
-
-    // Set submitting flag and disable button
-    isSubmitting = true;
-    const submitButton = $('#submitButton');
-    const originalText = submitButton.text();
-    submitButton.prop('disabled', true).text('Registering...');
-
-    let formData = $(this).serialize();
-
-    $.ajax({
-        url: "{{ route('client_register') }}",
-        type: "POST",
-        data: formData,
-        timeout: 30000, // 30 seconds timeout
-        success: function (response) {
-            
-            if (response.success) {
-                // Get email using the correct ID: emailAddress
-                let userEmail = $('#emailAddress').val() || 
-                               $('input[name="email"]').val();
                 
-                // Check if email is valid before proceeding
-                if (!userEmail || userEmail === 'undefined' || userEmail === '') {
+                // Scroll to the field with some offset
+                $('html, body').animate({
+                    scrollTop: targetField.offset().top - 100
+                }, 500);
+                
+                // Focus on the field
+                targetField.focus();
+                
+                // Add a highlight effect
+                targetField.addClass('border-danger');
+                setTimeout(() => {
+                    targetField.removeClass('border-danger');
+                }, 3000);
+            } else {
+                // If we can't find the specific field, scroll to the error message
+                $('html, body').animate({
+                    scrollTop: firstError.offset().top - 100
+                }, 500);
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        // Add global flag to prevent multiple submissions
+        let isSubmitting = false;
+        
+        // District loading functionality
+        $('#negeri').on('change', function () {
+            const stateId = $(this).val();
+            $('#daerah').html('<option value="">Loading...</option>');
+
+            if (stateId) {
+                $.ajax({
+                    url: `/clientarea/register-districts/${stateId}`,
+                    type: 'GET',
+                    success: function (data) {
+                        let options = '<option value="">Sila Pilih Daerah</option>';
+                        data.forEach(district => {
+                            options += `<option value="${district.iddaerah}">${district.daerah_code +' - '+district.daerah}</option>`;
+                        });
+                        $('#daerah').html(options);
+                    },
+                    error: function () {
+                        $('#daerah').html('<option value="">Error loading districts</option>');
+                    }
+                });
+            } else {
+                $('#daerah').html('<option value="">Sila Pilih</option>');
+            }
+        });        
+
+        // Enable/Disable Reset Button based on form input
+        $('#registrationForm input, #registrationForm select').on('input change', function () {
+            let isFormFilled = $('#registrationForm')[0].checkValidity();
+            if (isFormFilled) {
+                $('#resetButton').prop('disabled', false);
+            } else {
+                $('#resetButton').prop('disabled', true);
+            }
+        });
+
+        // Reset the form when the reset button is clicked
+        $('#resetButton').on('click', function () {
+            $('#registrationForm')[0].reset();
+            $('#responseMessage').hide();
+            $('#resetButton').prop('disabled', true);
+            $('.text-dangerr').text('');
+            $('.form-control, .form-select').removeClass('border-danger');
+            // Reset submission flag
+            isSubmitting = false;
+            $('#submitButton').prop('disabled', false).text('Register');
+        });
+
+        // Enhanced validation function with scroll functionality
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear previous error messages and styling
+            $('.text-dangerr').text('');
+            $('.form-control, .form-select').removeClass('border-danger');
+            
+            $('#password').on('input', function() {
+                $('#password-error').text('');
+            });
+            
+            $('#password, #setPassword').on('input', function() {
+                $('#password-match-error').text('');
+            });
+            
+            // Validate Account Type
+            if (!$('select[name="accountType"]').val()) {
+                $('#accountType').text('Jenis akaun diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Email
+            if (!$('input[name="email"]').val()) {
+                $('#email-error').text('E-mel diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Password
+            if (!$('#password').val()) {
+                $('#password-error').text('Kata laluan diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Confirm Password
+            if (!$('#setPassword').val()) {
+                $('#password-match-error').text('Sahkan kata laluan diperlukan');
+                isValid = false;
+            } else if ($('#password').val() !== $('#setPassword').val()) {
+                $('#password-match-error').text('Kata laluan tidak sepadan');
+                isValid = false;
+            }
+            
+            // Validate Username
+            if (!$('input[name="userName"]').val()) {
+                $('#userName-error').text('Nama pengguna diperlukan');
+                isValid = false;
+            }
+            
+            // Validate ID Card Number
+            if (!$('input[name="idCardNumber"]').val()) {
+                $('#idCardNumber').text('Nombor Kad Pengenalan diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Registered Address
+            if (!$('input[name="registeredAddress"]').val()) {
+                $('#registeredAddress').text('Alamat Berdaftar diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Postal Code
+            if (!$('input[name="postalCode"]').val()) {
+                $('#postalCode').text('Poskod diperlukan');
+                isValid = false;
+            }
+            
+            // Validate State
+            if (!$('select[name="state"]').val()) {
+                $('#state').text('Negeri diperlukan');
+                isValid = false;
+            }
+            
+            // Validate District
+            if (!$('select[name="district"]').val()) {
+                $('#district').text('Daerah diperlukan');
+                isValid = false;
+            }
+
+
+            if (!$('input[name="city"]').val()) {
+                $('#city').text('Bandar diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Mobile Number
+            if (!$('input[name="mobileNumber"]').val()) {
+                $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan');
+                isValid = false;
+            }
+            
+            // Validate Terms and Conditions
+            if (!$('#terms').is(':checked')) {
+                if ($('#terms-error').length === 0) {
+                    $('label[for="terms"]').after('<span id="terms-error" class="text-dangerr d-block mt-1"></span>');
+                }
+                $('#terms-error').text('Anda mesti menerima terma dan syarat');
+                isValid = false;
+            }
+            
+            // If validation fails, scroll to first error
+            if (!isValid) {
+                setTimeout(scrollToFirstError, 100);
+            }
+            
+            return isValid;
+        }
+        
+        $('#registrationForm').off('submit').on('submit', function (e) {
+        e.preventDefault();
+        
+        // Prevent multiple submissions
+        if (isSubmitting) {
+            return false;
+        }
+        
+        // Validate form before submission
+        if (!validateForm()) {
+            return false;
+        }
+
+        // Set submitting flag and disable button
+        isSubmitting = true;
+        const submitButton = $('#submitButton');
+        const originalText = submitButton.text();
+        submitButton.prop('disabled', true).text('Registering...');
+
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: "{{ route('client_register') }}",
+            type: "POST",
+            data: formData,
+            timeout: 30000, // 30 seconds timeout
+            success: function (response) {
+                
+                if (response.success) {
+                    // Get email using the correct ID: emailAddress
+                    let userEmail = $('#emailAddress').val() || 
+                                $('input[name="email"]').val();
+                    
+                    // Check if email is valid before proceeding
+                    if (!userEmail || userEmail === 'undefined' || userEmail === '') {
+                        Swal.fire({
+                            title: "Error",
+                            text: "Unable to retrieve email address. Please try again.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                        
+                        // Reset submission state
+                        isSubmitting = false;
+                        submitButton.prop('disabled', false).text(originalText);
+                        return;
+                    }
+                    
+                    Swal.fire({
+                        title: "@lang('app.success')",
+                        text: "Pendaftaran berjaya. Sila semak e-mel anda untuk kod pengesahan OTP.",
+                        icon: "success",
+                        confirmButtonText: "Teruskan ke pengesahan",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        // Reset form
+                        $('#registrationForm')[0].reset();
+                        $('#resetButton').prop('disabled', true);
+                        
+                        // Redirect to OTP verification page with email parameter
+                        let redirectUrl = "{{ route('otp.verification') }}" + "?email=" + encodeURIComponent(userEmail);
+                        window.location.href = redirectUrl;
+                    });
+                } else {
+                    // Reset on failure
+                    isSubmitting = false;
+                    submitButton.prop('disabled', false).text(originalText);
+                    
                     Swal.fire({
                         title: "Error",
-                        text: "Unable to retrieve email address. Please try again.",
+                        text: response.message || "Registration failed",
                         icon: "error",
                         confirmButtonText: "OK"
                     });
-                    
-                    // Reset submission state
-                    isSubmitting = false;
-                    submitButton.prop('disabled', false).text(originalText);
-                    return;
                 }
+            },
+            error: function (xhr, status, error) {
                 
-                Swal.fire({
-                    title: "@lang('app.success')",
-                    text: "Pendaftaran berjaya. Sila semak e-mel anda untuk kod pengesahan OTP.",
-                    icon: "success",
-                    confirmButtonText: "Teruskan ke pengesahan",
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
-                }).then(() => {
-                    // Reset form
-                    $('#registrationForm')[0].reset();
-                    $('#resetButton').prop('disabled', true);
-                    
-                    // Redirect to OTP verification page with email parameter
-                    let redirectUrl = "{{ route('otp.verification') }}" + "?email=" + encodeURIComponent(userEmail);
-                    window.location.href = redirectUrl;
-                });
-            } else {
-                // Reset on failure
+                // Reset submission state
                 isSubmitting = false;
                 submitButton.prop('disabled', false).text(originalText);
                 
-                Swal.fire({
-                    title: "Error",
-                    text: response.message || "Registration failed",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    $('.text-dangerr').text('');
+                    
+                    // Display each error under its respective field
+                    $.each(errors, function (key, value) {
+                        if ($("#" + key).length) {
+                            $("#" + key).text(value[0]);
+                        } else if ($("#" + key + "-error").length) {
+                            $("#" + key + "-error").text(value[0]);
+                        }
+                    });
+                    
+                    // Scroll to first server-side error
+                    setTimeout(scrollToFirstError, 100);
+                } else if (status === 'timeout') {
+                    Swal.fire({
+                        title: "Timeout",
+                        text: "Request timed out. Please try again.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                } else {
+                    $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred. Please try again.</div>').show();
+                }
+            },
+            complete: function() {
             }
-        },
-        error: function (xhr, status, error) {
-            
-            // Reset submission state
-            isSubmitting = false;
-            submitButton.prop('disabled', false).text(originalText);
-            
-            if (xhr.status === 422) {
-                let errors = xhr.responseJSON.errors;
-                $('.text-dangerr').text('');
-                
-                // Display each error under its respective field
-                $.each(errors, function (key, value) {
-                    if ($("#" + key).length) {
-                        $("#" + key).text(value[0]);
-                    } else if ($("#" + key + "-error").length) {
-                        $("#" + key + "-error").text(value[0]);
-                    }
-                });
-                
-                // Scroll to first server-side error
-                setTimeout(scrollToFirstError, 100);
-            } else if (status === 'timeout') {
-                Swal.fire({
-                    title: "Timeout",
-                    text: "Request timed out. Please try again.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-            } else {
-                $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred. Please try again.</div>').show();
-            }
-        },
-        complete: function() {
-        }
+        });
     });
-});
     
     // Add visual feedback when fields have errors
     $(document).on('focus', '.form-control, .form-select', function() {
@@ -1497,8 +1574,11 @@ $(document).ready(function () {
         }
     });
     
+    
+
+
     // Clear error message when user starts typing
-    $('.form-control').on('input', function() {
+    $('input.form-control, textarea.form-control').on('input', function() {
         let name = $(this).attr('name');
         if ($("#" + name).length) {
             $("#" + name).text('');
@@ -1506,7 +1586,15 @@ $(document).ready(function () {
             $("#" + name + "-error").text('');
         }
     });
-    
+
+    // Separate handler for select dropdowns (only clear error messages, not options)
+    $('select.form-control').on('change', function() {
+        let name = $(this).attr('name');
+        if ($("#" + name + "-error").length) {
+            $("#" + name + "-error").text('');
+        }
+    });
+
     // Prevent browser back/forward causing issues
     window.addEventListener('beforeunload', function() {
         if (isSubmitting) {

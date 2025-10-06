@@ -322,6 +322,7 @@ class AuthController extends Controller {
                 // Validate the request
                 $this->validate($request, [
                     'accountType'       => 'required',
+                    'idType' => 'nullable|string|max:50',
                     'email' => [
                         'required',
                         'email',
@@ -465,6 +466,7 @@ class AuthController extends Controller {
                         'setPassword'       => bcrypt($request->setPassword),
                         'userName'          => $request->userName,
                         'idCardNumber'      => $request->idCardNumber,
+                        'id_type'           => $request->idType,
                         'registeredAddress' => $request->registeredAddress,
                         'postalCode'        => $request->postalCode,
                         'state_id'          => $state_id,

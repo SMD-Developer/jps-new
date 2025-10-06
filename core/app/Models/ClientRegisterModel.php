@@ -29,6 +29,7 @@ class ClientRegisterModel extends Model
     protected $fillable=[
                         'client_id',
                         'accountType',  //
+                        'id_type',
                         'email',
                         'password',
                         'setPassword',
