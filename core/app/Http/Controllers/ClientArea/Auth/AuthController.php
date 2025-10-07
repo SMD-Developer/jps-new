@@ -43,22 +43,41 @@ class AuthController extends Controller {
         return view('clientarea.auth.login', compact(['states', 'districts', 'division']));
     }
     
-    public function postLogin(Request $request)
+     public function postLogin(Request $request)
     {
         $login = $request->input('login');
         $password = $request->input('password');
         
         if (empty($login) && empty($password)) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Emel dan kata laluan tidak boleh dibiarkan kosong',
+                ], 422);
+            }
             return redirect()->back()->withInput($request->only('login', 'remember'))
                 ->withErrors(['login' => 'Emel dan kata laluan tidak boleh dibiarkan kosong']);
         }
         
+    
         if (empty($password)) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kata laluan perlu diisi',
+                ], 422);
+            }
             return redirect()->back()->withInput($request->only('login', 'remember'))
                 ->withErrors(['password' => 'Kata laluan perlu diisi']);
         }
         
         if (empty($login)) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'E-mel diperlukan',
+                ], 422);
+            }
             return redirect()->back()->withInput($request->only('login', 'remember'))
                 ->withErrors(['login' => 'E-mel diperlukan']);
         }
@@ -66,7 +85,7 @@ class AuthController extends Controller {
         $login_type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $request->merge([$login_type => $login]);
         
-        // Validate the request
+        // Validate the request (this will handle format validation)
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required',
@@ -83,17 +102,28 @@ class AuthController extends Controller {
         $client = Client::where('email', $identifier)->first();
         
         if (!$client) {
+            // Client not found in database
             $message = 'E-mel tiada dalam rekod kami. Sila daftar di Daftar di sini';
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                    'action' => 'show_msg',
+                    // 'register_url' => route('client_register') // Include register URL for frontend
+                ], 422);
+            }
             return redirect()->back()->withInput($request->only('login', 'remember'))
                 ->withErrors(['login' => $message]);
         }
         
-        // **ENHANCED: Check if email is verified with better messaging**
+        // **NEW: Check if email is verified**
         $clientRegister = ClientRegisterModel::where('email', $identifier)
             ->where('client_id', $client->uuid)
             ->first();
         
         if ($clientRegister && !$clientRegister->is_email_verified) {
+            // Email not verified - prevent login and offer to resend verification
             \Log::info('Login attempt with unverified email', [
                 'email' => $identifier,
                 'client_id' => $client->uuid
@@ -106,38 +136,73 @@ class AuthController extends Controller {
                 ->where('expires_at', '>', now())
                 ->exists();
             
-            // Store verification info in session for the error message
-            session()->flash('email_not_verified', true);
-            session()->flash('verification_email', $identifier);
-            session()->flash('has_active_otp', $hasActiveOtp);
+            $message = 'Alamat e-mel anda tidak disahkan. Sila sahkan e-mel anda untuk log masuk.';
+            $actionMessage = $hasActiveOtp 
+                ? 'Semak e-mel anda untuk kod pengesahan atau klik di bawah untuk menghantar semula.'
+                : 'Klik di bawah untuk menerima kod pengesahan baharu.';
             
-            $message = 'Alamat e-mel anda belum disahkan. Sila sahkan e-mel anda untuk log masuk.';
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                    'action' => 'email_not_verified',
+                    'action_message' => $actionMessage,
+                    'email' => $identifier,
+                    'verification_url' => route('otp.verification') . '?email=' . urlencode($identifier),
+                    'has_active_otp' => $hasActiveOtp
+                ], 403);
+            }
             
-            return redirect()->back()
-                ->withInput($request->only('login'))
-                ->withErrors(['login' => $message]);
+            // For non-AJAX requests, redirect to OTP verification page
+            return redirect()->route('otp.verification', ['email' => $identifier])
+                ->with('warning', $message . ' ' . $actionMessage);
         }
         
         // Check if account is locked
         $lockedUntil = $this->getUserLockoutTime($client->uuid);
         if ($lockedUntil && $lockedUntil > now()) {
             $remainingTime = now()->diffInMinutes($lockedUntil) + 1;
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('app.account_locked', ['minutes' => $remainingTime]),
+                ], 401);
+            }
             return redirect()->back()->withInput($request->only('login', 'remember'))
                 ->withErrors(['login' => __('app.account_locked', ['minutes' => $remainingTime])]);
         }
         
-        // Check for force password reset
-        if ($client->force_password_reset) {
-            $message = 'Anda mesti menetapkan semula kata laluan anda sebelum log masuk. Sila semak e-mel anda untuk mendapatkan arahan tetapan semula kata laluan.';
-            return redirect()->back()->withInput($request->only('login', 'remember'))
-                ->withErrors(['login' => $message]);
-        }
+        
+        // ADD THIS CHECK FOR FORCE PASSWORD RESET - RIGHT HERE
+            if ($client->force_password_reset) {
+                $message = 'Anda mesti menetapkan semula kata laluan anda sebelum log masuk. Sila semak e-mel anda untuk mendapatkan arahan tetapan semula kata laluan.';
+                
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $message,
+                        'action' => 'password_reset_required'
+                    ], 401);
+                }
+                return redirect()->back()->withInput($request->only('login', 'remember'))
+                    ->withErrors(['login' => $message]);
+            }
         
         // Attempt login
         $loggedIn = auth('user')->attempt($credentials, $request->has('remember'));
         
         if ($loggedIn) {
             $this->resetFailedAttempts(auth('user')->user()->uuid);
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful!',
+                    'action' => 'redirect',
+                    'redirect_url' => route('client_application', auth('user')->user()->uuid)
+                ]);
+            }
             return redirect()->route('update_profile', auth('user')->user()->uuid);
         }
         
@@ -148,13 +213,30 @@ class AuthController extends Controller {
         
         if ($attempts >= 5) {
             $this->lockUserAccount($client->uuid);
+            
             $lockMessage = 'Akaun dikunci kerana maksimum percubaan dicapai. Cuba lagi dalam 30 minit.';
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $lockMessage,
+                ], 401);
+            }
             return redirect()->back()->withInput($request->only('login', 'remember'))
                 ->withErrors(['login' => $lockMessage]);
         }
         
-        // Wrong password
+        // Wrong password - show remaining attempts with forgot password link
         $message = 'E-mel dan kata laluan tidak sepadan. Klik Lupa kata laluan jika anda lupa kata laluan. Anda mempunyai ' . $remainingAttempts . ' cubaan lagi.';
+        
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'action' => 'show_msg',
+                // 'forgot_password_url' => route('client_forgot_password') // Include forgot password URL
+            ], 422);
+        }
         return redirect()->back()->withInput($request->only('login', 'remember'))
             ->withErrors(['login' => $message]);
     }
@@ -458,7 +540,7 @@ class AuthController extends Controller {
             ->get();
         
         // Return the registration view for GET requests
-        return view('clientarea.auth.register', compact('states', 'districts', 'accountTypes', 'primaryQuestions', 'secondaryQuestions'));
+        return view('clientarea.auth.register', compact('states', 'districts', 'accountTypes', 'primaryQuestions', 'secondaryQuestions','idTypes'));
     }
     
     public function validateField(Request $request)
