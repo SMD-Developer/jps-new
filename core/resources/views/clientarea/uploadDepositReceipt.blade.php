@@ -200,6 +200,12 @@
         font-weight: 500;
     }
 
+    .is-invalid~.invalid-feedback{
+        display: flex !important;
+        justify-content: end !important;
+        margin: 2px !important;
+    }
+
     /* Keep form fields aligned even when invalid */
     .form-group input.is-invalid,
     .form-group select.is-invalid,

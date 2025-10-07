@@ -853,19 +853,19 @@ document.addEventListener('DOMContentLoaded', function() {
             idCardInput.addEventListener('input', handleInput);
         } else if (idType === '2') {
             // Kad Pengenalan Lama
-            idCardInput.placeholder = "Enter Old IC Number";
+            idCardInput.placeholder = "";
             idCardInput.maxLength = 20;
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
         } else if (idType === '3') {
             // No. Polis
-            idCardInput.placeholder = "Enter Police Number";
+            idCardInput.placeholder = "";
             idCardInput.maxLength = 20;
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
         } else if (idType === '4') {
             // No. Tentera
-            idCardInput.placeholder = "Enter Military Number";
+            idCardInput.placeholder = "";
             idCardInput.maxLength = 20;
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
@@ -896,10 +896,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (idCardStar) idCardStar.style.display = 'none';
             if (idCardInput) {
-                idCardInput.placeholder = "Enter Company Registration Number";
+                idCardInput.placeholder = "";
                 idCardInput.removeEventListener('input', handleInput);
                 idCardInput.value = '';
                 idCardInput.maxLength = 50;
+                idCardInput.style.setProperty('width', '300px', 'important');
             }
         } else {
             // Individual Type - Restore everything
