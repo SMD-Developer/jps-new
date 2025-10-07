@@ -1098,7 +1098,7 @@ $(document).ready(function () {
         }
         
         if (!$('input[name="idCardNumber"]').val()) {
-            $('#idCardNumberError').text('Nombor Kad Pengenalan diperlukan');
+            $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
             isValid = false;
         }
         
