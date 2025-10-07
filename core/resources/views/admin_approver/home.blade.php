@@ -386,6 +386,16 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="graph-counts text-center mt-2 col-6">
+                            <span class="me-3">
+                                @lang('app.passed') - <strong>{{ $passed ?? 0 }}</strong>
+                            </span>
+                            <span>
+                                @lang('app.reject') - <strong>{{ $rejected ?? 0 }}</strong>
+                            </span>
+                        </div>
+                   </div>
 
                 </div>
                 <div class="col-lg-5 col-sm-6 col-xs-12">
