@@ -671,6 +671,45 @@ i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middl
         <div class="row fill">
                 <div class="col-md-2 "></div>
                 <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
+                    @if(session('email_not_verified'))
+                    <div class="alert alert-warning" role="alert" style="position: relative; margin: 0 20px 15px 20px; padding: 15px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; color: #856404;">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+                        
+                        <div style="display: flex; align-items: start; gap: 10px;">
+                            <i class="fa fa-exclamation-triangle" style="font-size: 24px; color: #ffc107; margin-top: 3px;"></i>
+                            <div style="flex: 1;">
+                                <h6 style="margin: 0 0 8px 0; color: #856404; font-weight: 600;">E-mel Belum Disahkan</h6>
+                                <p style="margin: 0 0 10px 0; font-size: 13px; color: #856404;">
+                                    Alamat e-mel anda belum disahkan. Sila sahkan e-mel anda untuk log masuk.
+                                </p>
+                                
+                                @if(session('has_active_otp'))
+                                    <p style="margin: 0 0 12px 0; font-size: 12px; color: #856404;">
+                                        <i class="fa fa-info-circle"></i> Semak e-mel anda untuk kod pengesahan.
+                                    </p>
+                                @else
+                                    <p style="margin: 0 0 12px 0; font-size: 12px; color: #856404;">
+                                        <i class="fa fa-info-circle"></i> Klik butang di bawah untuk menerima kod baharu.
+                                    </p>
+                                @endif
+                                
+                                <a href="{{ route('otp.verification', ['email' => session('verification_email')]) }}" 
+                                class="btn btn-sm" 
+                                style="background-color: #ffc107; color: #000; border: none; padding: 6px 16px; border-radius: 5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; font-size: 13px;">
+                                    <i class="fa fa-envelope-open-text"></i>
+                                    Sahkan E-mel Sekarang
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Regular error messages --}}
+                    @if($errors->has('login') && !session('email_not_verified'))
+                    <div class="alert alert-danger" role="alert" style="margin: 0 20px 15px 20px; padding: 10px 12px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; color: #721c24; font-size: 13px;">
+                        <i class="fa fa-exclamation-circle"></i> {{ $errors->first('login') }}
+                    </div>
+                    @endif
                     <!--<p class="text-center text-light"><b>Log Masuk</b></p>-->
                     {!! Form::open(['url' => '/clientarea/login','class'=>'loginFrm needs-validation mt-3','novalidate']) !!}
                     <div class="input-box email">
