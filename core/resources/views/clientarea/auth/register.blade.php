@@ -508,7 +508,7 @@ background-color: red;
                                     <div class="form-group inlin">
                                         <span class="pe-3"><b> : </b></span>
                                         <div class="d-flex gap-2">
-                                            <select class="form-control" name="idType" id="idType" style="width: 150px;">
+                                            <select class="form-control" name="idType" id="idTypes" style="width: 150px;">
                                                 <option value="">@lang('--Sila Pilih--')</option>
                                                 <option value="1">Kad Pengenalan Baru</option>
                                                 <option value="2">Kad Pengenalan Lama</option>
@@ -803,11 +803,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const userNameLabel = document.querySelector('label[for="userName"]');
     const idCardLabel = document.querySelector('label[for="idTypeNumber"]');
     const userNameHintDiv = document.querySelector('label[for="userName"]')?.closest('.row')?.querySelector('.col-md-5');
-    const idTypeSelect = document.getElementById('idType');
+    const idTypeSelect = document.getElementById('idTypes');
     const idCardInput = document.getElementById('idCardNumber');
     const idCardStar = idCardLabel?.nextElementSibling;
 
-    if (!accountTypeSelect || !userInfoButton) return;
+    if (!accountTypeSelect || !userInfoButton || !idTypeSelect) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    // Store original ID type options to restore later
+    const originalIdTypeOptions = idTypeSelect.innerHTML;
 
     const originalTexts = {
         sectionHeader: userInfoButton.innerText.trim(),
@@ -832,58 +838,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formatIdCard(e.target);
     }
 
-    // Handle Account Type Change
-    accountTypeSelect.addEventListener('change', function() {
-        const selectedAccountTypeId = parseInt(this.value);
-
-        if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3) {
-            // Company Type
-            userInfoButton.innerText = "Maklumat Syarikat";
-            if (userNameLabel) userNameLabel.innerText = "Nama Syarikat";
-            if (idCardLabel) idCardLabel.innerText = "No Pendaftaran Syarikat";
-            if (userNameHintDiv) userNameHintDiv.style.display = 'none';
-            if (idTypeSelect) {
-                idTypeSelect.style.display = 'none';
-                idTypeSelect.value = ''; // Clear selection
-            }
-            if (idCardStar) idCardStar.style.display = 'none';
-            if (idCardInput) {
-                idCardInput.placeholder = "Enter Company Registration Number";
-                idCardInput.removeEventListener('input', handleInput);
-                idCardInput.value = '';
-                idCardInput.maxLength = 50; // Allow longer company registration numbers
-            }
-        } else {
-            // Individual Type
-            userInfoButton.innerText = originalTexts.sectionHeader;
-            if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
-            if (idCardLabel) idCardLabel.innerText = originalTexts.idCard;
-            if (userNameHintDiv) userNameHintDiv.style.display = '';
-            
-            // IMPORTANT: Make dropdown visible
-            if (idTypeSelect) {
-                idTypeSelect.style.display = 'block';
-                idTypeSelect.style.visibility = 'visible';
-                idTypeSelect.value = ''; // Reset selection
-            }
-            if (idCardStar) idCardStar.style.display = 'inline';
-            
-            if (idCardInput) {
-                idCardInput.placeholder = "Select ID Type First";
-                idCardInput.value = '';
-                idCardInput.maxLength = 14;
-            }
-
-            // Handle ID Type Selection
-            if (idTypeSelect) {
-                // Remove old listeners to prevent duplicates
-                idTypeSelect.removeEventListener('change', handleIdTypeChange);
-                idTypeSelect.addEventListener('change', handleIdTypeChange);
-            }
-        }
-    });
-
-    // Separate function for ID type change
+    // Handle ID Type Selection (define once, outside)
     function handleIdTypeChange() {
         if (!idCardInput) return;
         
@@ -898,19 +853,19 @@ document.addEventListener('DOMContentLoaded', function() {
             idCardInput.addEventListener('input', handleInput);
         } else if (idType === '2') {
             // Kad Pengenalan Lama
-            idCardInput.placeholder = "";
+            idCardInput.placeholder = "Enter Old IC Number";
             idCardInput.maxLength = 20;
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
         } else if (idType === '3') {
             // No. Polis
-            idCardInput.placeholder = "";
+            idCardInput.placeholder = "Enter Police Number";
             idCardInput.maxLength = 20;
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
         } else if (idType === '4') {
             // No. Tentera
-            idCardInput.placeholder = "";
+            idCardInput.placeholder = "Enter Military Number";
             idCardInput.maxLength = 20;
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
@@ -920,6 +875,55 @@ document.addEventListener('DOMContentLoaded', function() {
             idCardInput.removeEventListener('input', handleInput);
         }
     }
+
+    // Attach ID type change listener once
+    idTypeSelect.addEventListener('change', handleIdTypeChange);
+
+    // Handle Account Type Change
+    accountTypeSelect.addEventListener('change', function() {
+        const selectedAccountTypeId = parseInt(this.value);
+
+        if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3) {
+            // Company Type
+            userInfoButton.innerText = "Maklumat Syarikat";
+            if (userNameLabel) userNameLabel.innerText = "Nama Syarikat";
+            if (idCardLabel) idCardLabel.innerText = "No Pendaftaran Syarikat";
+            if (userNameHintDiv) userNameHintDiv.style.display = 'none';
+            
+            // Hide the dropdown completely for company
+            idTypeSelect.style.display = 'none';
+            idTypeSelect.value = '';
+            
+            if (idCardStar) idCardStar.style.display = 'none';
+            if (idCardInput) {
+                idCardInput.placeholder = "Enter Company Registration Number";
+                idCardInput.removeEventListener('input', handleInput);
+                idCardInput.value = '';
+                idCardInput.maxLength = 50;
+            }
+        } else {
+            // Individual Type - Restore everything
+            userInfoButton.innerText = originalTexts.sectionHeader;
+            if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
+            if (idCardLabel) idCardLabel.innerText = originalTexts.idCard;
+            if (userNameHintDiv) userNameHintDiv.style.display = '';
+            
+            // Restore ID Type dropdown with original options
+            idTypeSelect.innerHTML = originalIdTypeOptions;
+            idTypeSelect.style.display = 'block';
+            idTypeSelect.style.visibility = 'visible';
+            idTypeSelect.value = '';
+            
+            if (idCardStar) idCardStar.style.display = 'inline';
+            
+            if (idCardInput) {
+                idCardInput.placeholder = "Select ID Type First";
+                idCardInput.value = '';
+                idCardInput.maxLength = 14;
+                idCardInput.removeEventListener('input', handleInput);
+            }
+        }
+    });
 });
 
 // ============================================
