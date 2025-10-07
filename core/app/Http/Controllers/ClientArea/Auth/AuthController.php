@@ -540,7 +540,7 @@ class AuthController extends Controller {
             ->get();
         
         // Return the registration view for GET requests
-        return view('clientarea.auth.register', compact('states', 'districts', 'accountTypes', 'primaryQuestions', 'secondaryQuestions','idTypes'));
+        return view('clientarea.auth.register', compact('states', 'districts', 'accountTypes', 'primaryQuestions', 'secondaryQuestions'));
     }
     
     public function validateField(Request $request)
