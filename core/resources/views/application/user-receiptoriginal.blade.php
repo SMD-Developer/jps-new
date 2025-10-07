@@ -197,14 +197,8 @@
                             </div>
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
-                                <div class="value">{{ $application->created_at->format('d/m/Y h:i:s A') }}</div>
+                                <div class="value">{{ $application->fpx_payment_time ?? $application->payment_date }}</div>
                             </div>
-                            <!--<div class="info-row" style="margin-bottom: 20px;">-->
-                            <!--    <div class="label">PERIHAL TERIMAAN</div>-->
-                            <!--    <div class="value">{{ $application->land_lot }} ({{ $application->hectare }}HEKTAR) DI-->
-                            <!--        MUKIM {{ $application->negeri ?? 'N/A' }}, DAERAH {{ $application->daerah ?? 'N/A' }}-->
-                            <!--    </div>-->
-                            <!--</div>-->
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">

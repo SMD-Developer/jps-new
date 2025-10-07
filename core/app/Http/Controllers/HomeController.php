@@ -1851,17 +1851,18 @@ class HomeController extends Controller {
     
     public function userReceiptView($application_id)
     {
-        $application = Application::with(['payment']) 
+        $application = Application::with(['payment'])
             ->select(
-                'applications.*', 
-                'state.negeri', 
+                'applications.*',
+                'state.negeri',
                 'district.daerah',
-                'payments.payment_status as payment_status', 
+                'payments.payment_status as payment_status',
                 'payments.method as payment_method',
                 'payments.amount as payment_amount',
                 'payments.transaction_id',
                 'payments.receipt_number as receipt_number',
-                'payments.created_at as payment_date'
+                'payments.created_at as payment_date',
+                'payments.gateway_response' 
             )
             ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
             ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
@@ -1869,9 +1870,33 @@ class HomeController extends Controller {
             ->where('applications.id', $application_id)
             ->firstOrFail();
 
-    
+        
+        if ($application->gateway_response) {
+            $gatewayResponse = json_decode($application->gateway_response, true);
+
+            // Extract FPX transaction time
+            if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+
+                // Convert FPX time (YmdHis) → readable format
+                $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                    ->format('d/m/Y h:i:s A');
+
+                $application->fpx_payment_time = $formattedTime;
+            }
+            // If not found, fall back to processed_at
+            elseif (isset($gatewayResponse['processed_at'])) {
+                $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                    ->setTimezone('Asia/Kuala_Lumpur') // Convert UTC → Malaysia time
+                    ->format('d/m/Y h:i:s A');
+
+                $application->fpx_payment_time = $formattedTime;
+            }
+        }
+
         return view('application.user-receiptoriginal', compact('application'));
     }
+
     
     public function adminuserReceiptCopy(){
         return view('application.user-receiptcopy');
