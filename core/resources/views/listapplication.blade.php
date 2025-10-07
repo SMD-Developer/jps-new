@@ -234,104 +234,83 @@
             <div class="col-md-12">
                 <!-- Filter Section -->
                 <div class="card mb-3">
-                    <div class="card-body">
+                    <div class="card-body">   
+                        <form method="GET" action="{{ url()->current() }}">
+                            <div class="row g-2 align-items-end mt-3 mx-1">
+                                <!-- Search Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="search" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.search') }} -
+                                        </label>
+                                        <input type="text" id="search" name="search" class="form-control form-control-sm"
+                                            placeholder="{{ trans('app.search') }}" value="{{ request('search') }}">
+                                    </div>
+                                </div>
 
-                        <!--<div class="row search-row align-items-center g-2 mt-3" style="gap:63px;">-->
-                            <!-- Search Input -->
-                        <!--    <div class="col-md-2 col-sm-6 colsm36">-->
-                        <!--        <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>-->
-                        <!--        <input type="text" id="search" class="form-control form-control-sm"-->
-                        <!--            placeholder="{{ trans('app.search') }}">-->
-                        <!--    </div>-->
+                                <!-- District Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="district" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.district') }} -
+                                        </label>
+                                        <select id="district" name="district" class="form-select form-select-sm">
+                                            <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                            @foreach ($district as $value)
+                                                <option value="{{ $value->iddaerah }}" {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                                    {{ $value->daerah_code }} - {{ $value->daerah }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
 
-                            <!-- District Dropdown -->
-                        <!--    <div class="col-md-2 col-sm-6" id="aside">-->
-                        <!--        <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;-->
-                        <!--        <select id="district" class="form-select form-select-sm form-control form-control-sm" style="width:190px;">-->
-                        <!--            <option value="" selected disabled>{{ trans('app.select_district') }}</option>-->
-                        <!--            @foreach ($district as $value)-->
-                        <!--                <option value="{{ $value->iddaerah }}"-->
-                        <!--                    {{ request('district') == $value->iddaerah ? 'selected' : '' }}>-->
-                        <!--                    {{ $value->daerah_code }} - {{ $value->daerah }}-->
-                        <!--                </option>-->
-                        <!--            @endforeach-->
-                        <!--        </select>-->
-                        <!--    </div>-->
+                                <!-- Division Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="division" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.division') }} -
+                                        </label>
+                                        <select id="division" name="division" class="form-select form-select-sm">
+                                            <option value="">{{ trans('app.select_division') }}</option>
+                                            @if(request('district'))
+                                                @php
+                                                    $divisions = DB::table('division')->where('daerah_id', request('district'))->get();
+                                                @endphp
+                                                @foreach ($divisions as $div)
+                                                    <option value="{{ $div->idmukim }}" {{ request('division') == $div->idmukim ? 'selected' : '' }}>
+                                                        {{ $div->mukim_code }} - {{ $div->mukim }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
 
-                            <!-- Mukim Dropdown -->
-                        <!--    <div class="col-md-2 col-sm-6" id="aside">-->
-                        <!--        <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;-->
-                        <!--        <select id="division" class="form-select form-select-sm form-control form-control-sm" style="width:190px;">-->
-                        <!--            <option value="" selected disabled>{{ trans('app.select_division') }}</option>-->
-                                    <!-- Divisions are dynamically populated -->
-                        <!--        </select>-->
-                        <!--    </div>-->
-
-                            <!-- Lot/PT Input -->
-                        <!--    <div class="col-md-2 col-sm-6" id="aside">-->
-                        <!--        <label for="lot"-->
-                        <!--            class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;-->
-                        <!--        <input type="text" id="lot" class="form-control form-control-sm"-->
-                        <!--            placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}" style="width:190px;">-->
-                        <!--    </div>-->
-
-                            <!-- Search Button -->
-                        <!--    <div class="col-md-2 col-sm-6 mt-3" style="margin-bottom:9px;">-->
-                        <!--        <a href="#" class="btn btn-primary btn-sm search-btn w-100"-->
-                        <!--            style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">-->
-                        <!--            <strong>{{ trans('app.search_b') }}</strong>-->
-                        <!--        </a>-->
-                        <!--    </div>-->
-                        <!--</div>-->
-                        
-                        <div class="row search-row align-items-center gap-4 mt-3 mx-1">
-                        <!-- Search Input -->
-                        <div class="col-md-2 col-sm-6 colsm36">
-                            <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
-                            <input type="text" id="search" class="form-control form-control-sm"
-                                placeholder="{{ trans('app.search') }}">
-                        </div>
-
-                            <!-- District Dropdown -->
-                            <div class="col-md-2 col-sm-6" id="aside">
-                                <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
-                                <select id="district" class="form-select form-select-sm form-control form-control-sm" style="width:190px;">
-                                    <option value="" selected disabled>{{ trans('app.select_district') }}</option>
-                                    @foreach ($district as $value)
-                                        <option value="{{ $value->iddaerah }}"
-                                            {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
-                                            {{ $value->daerah_code }} - {{ $value->daerah }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <!-- Lot/PT Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="lot" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.lot_pt') }} -
+                                        </label>
+                                        <input type="text" id="lot" name="lot" class="form-control form-control-sm"
+                                            placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                                    </div>
+                                </div>
                             </div>
-                        
-                            <!-- Mukim Dropdown -->
-                            <div class="col-md-2 col-sm-6" id="aside">
-                                <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
-                                <select id="division" class="form-select form-select-sm form-control form-control-sm" style="width:210px;">
-                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
-                                    <!-- Divisions are dynamically populated -->
-                                </select>
+                            <!-- Second Line for Buttons -->
+                            <div class="row mt-3 mx-1">
+                                <div class="col d-flex justify-content-end gap-2">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <strong>{{ trans('app.search') }}</strong>
+                                    </button>
+                                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                        <strong>{{ trans('app.reset') }}</strong>
+                                    </a>
+                                </div>
                             </div>
+                        </form>
                         
-                            <!-- Lot/PT Input -->
-                            <div class="col-md-2 col-sm-6" id="aside">
-                                <label for="lot"
-                                    class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;
-                                <input type="text" id="lot" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}" style="width:190px;">
-                            </div>
-                        
-                            <!-- Search Button - Moved to the right using ms-auto -->
-                            <div class="col-md-2 col-sm-6 ms-auto d-flex" style="margin-bottom:9px;">
-                                <a href="#" class="btn btn-primary btn-sm search-btn w-50"
-                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
-                                    <strong>{{ trans('app.search_b') }}</strong>
-                                </a>
-                            </div>
-                        </div>
-
                         <div class="d-flex justify-content-between align-items-baseline mb-3 mx-3">
                             <div class="d-flex align-items-baseline">
                                 <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
@@ -472,34 +451,6 @@
                                            <td>
                                                 {{ $item->status === 'rejected' ? ($item->rejection_reason ?? '-') : '-' }}
                                             </td>
-
-
-                                            <!--<td>-->
-                                            <!--    <div class="sbtn">-->
-                                            <!--        @if ($canAdminStaffViewApplication)-->
-                                            <!--            <a href="{{ route('newApplication', ['id' => $item->id]) }}"-->
-                                            <!--                class="btn btn-primary btn-sm view-application {{ $item->viewed_by_current_user ? 'btn-viewed' : '' }}"-->
-                                            <!--                data-id="{{ $item->id }}">-->
-                                            <!--                <i class="fa fa-eye"></i>-->
-                                            <!--            </a>-->
-                                            <!--        @endif-->
-
-                                            <!--        @if ($canAdminStaffEditApplication)-->
-                                            <!--            <a href="{{ route('updateApplication', ['id' => $item->id]) }}"-->
-                                            <!--                class="btn btn-warning btn-sm edit-application {{ $item->edited_by_current_user ? 'btn-edited' : '' }}"-->
-                                            <!--                data-id="{{ $item->id }}">-->
-                                            <!--                <i class="fa fa-edit"></i>-->
-                                            <!--            </a>-->
-                                            <!--        @endif-->
-
-                                            <!--        @if ($item->status == 'rejected')-->
-                                            <!--            <span class="btn btn-danger btn-sm" style="cursor: default;"-->
-                                            <!--                title="Application Rejected">-->
-                                            <!--                <i class="fa fa-times"></i>-->
-                                            <!--            </span>-->
-                                            <!--        @endif-->
-                                            <!--    </div>-->
-                                            <!--</td>-->
                                            <td>
                                                 <div class="sbtn">
                                                     @if ($canAdminStaffViewApplication)
@@ -528,13 +479,6 @@
                                                             <i class="fa fa-edit"></i>
                                                         </a>
                                                     @endif
-                                            
-                                                    <!-- @if ($item->status == 'rejected')
-                                                        <span class="btn btn-danger btn-sm" style="cursor: default;"
-                                                            title="Application Rejected">
-                                                            <i class="fa fa-times"></i>
-                                                        </span>
-                                                    @endif -->
                                                 </div>
                                             </td>
                                         </tr>
@@ -756,76 +700,43 @@
         });
 
         // Track application actions
-        // $(document).ready(function() {
-        //     // Track view clicks
-        //     $(document).on('click', '.view-application', function(e) {
-        //         const applicationId = $(this).data('id');
-        //         trackAction(applicationId, 'view');
-        //     });
-
-        //     // Track edit clicks
-        //     $(document).on('click', '.edit-application', function(e) {
-        //         const applicationId = $(this).data('id');
-        //         trackAction(applicationId, 'edit');
-        //     });
-
-        //     function trackAction(applicationId, actionType) {
-        //         $.ajax({
-        //             url: '/track-application-action',
-        //             method: 'POST',
-        //             data: {
-        //                 application_id: applicationId,
-        //                 action_type: actionType,
-        //                 _token: '{{ csrf_token() }}'
-        //             },
-        //             success: function() {
-        //                 console.log('Action tracked');
-        //             },
-        //             error: function() {
-        //                 console.error('Failed to track action');
-        //             }
-        //         });
-        //     }
-        // });
-        // Track application actions
-    // Track application actions
-    $(document).ready(function() {
-        // Track view clicks
-        $(document).on('click', '.view-application', function(e) {
-            const applicationId = $(this).data('id');
-            const $button = $(this); // Store reference to the clicked button
-            trackAction(applicationId, 'view', $button);
-        });
-    
-        // Track edit clicks
-        $(document).on('click', '.edit-application', function(e) {
-            const applicationId = $(this).data('id');
-            const $button = $(this); // Store reference to the clicked button
-            trackAction(applicationId, 'edit', $button);
-        });
-    
-        function trackAction(applicationId, actionType, $button) {
-            $.ajax({
-                url: '/track-application-action',
-                method: 'POST',
-                data: {
-                    application_id: applicationId,
-                    action_type: actionType,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function() {
-                    if (actionType === 'view') {
-                        $button.addClass('btn-viewed');
-                    } else if (actionType === 'edit') {
-                        $button.addClass('btn-edited');
-                    }
-                    console.log('Action tracked and UI updated');
-                },
-                error: function() {
-                    console.error('Failed to track action');
-                }
+        $(document).ready(function() {
+            // Track view clicks
+            $(document).on('click', '.view-application', function(e) {
+                const applicationId = $(this).data('id');
+                const $button = $(this); // Store reference to the clicked button
+                trackAction(applicationId, 'view', $button);
             });
-        }
-    });
+        
+            // Track edit clicks
+            $(document).on('click', '.edit-application', function(e) {
+                const applicationId = $(this).data('id');
+                const $button = $(this); // Store reference to the clicked button
+                trackAction(applicationId, 'edit', $button);
+            });
+        
+            function trackAction(applicationId, actionType, $button) {
+                $.ajax({
+                    url: '/track-application-action',
+                    method: 'POST',
+                    data: {
+                        application_id: applicationId,
+                        action_type: actionType,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
+                        if (actionType === 'view') {
+                            $button.addClass('btn-viewed');
+                        } else if (actionType === 'edit') {
+                            $button.addClass('btn-edited');
+                        }
+                        console.log('Action tracked and UI updated');
+                    },
+                    error: function() {
+                        console.error('Failed to track action');
+                    }
+                });
+            }
+        });
     </script>
 @endsection

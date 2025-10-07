@@ -180,6 +180,9 @@
                                     style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
                                     <strong>{{ trans('app.search_b') }}</strong>
                                 </a>
+                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                        <strong>{{ trans('app.reset') }}</strong>
+                                </a>
                             </div>
 
                             <div class="d-flex align-items-baseline mb-3 mx-3">

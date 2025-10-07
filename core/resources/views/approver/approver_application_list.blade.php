@@ -114,79 +114,97 @@
                 <!-- Filter Section -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <div class="row search-row align-items-center g-2 mt-3">
-                            <!-- Search Input -->
-                            <div class="col-md-3 col-sm-6 colsm36">
-                                <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
-                                <input type="text" id="search" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.search') }}">
-                            </div>
-                            <!-- District Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
-                                <select id="district" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_district') }}</option>
-                                    @foreach ($district as $value)
-                                        <option value="{{ $value->iddaerah }}">{{ $value->daerah_code }} -
-                                            {{ $value->daerah }}</option>
-                                    @endforeach
+                        <form method="GET" action="{{ url()->current() }}">
+                            <div class="row g-2 align-items-end mt-3 mx-1">
+                                <!-- Search Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="search" class="form-label">{{ trans('app.search') }}:</label>
+                                    <input type="text" id="search" name="search" class="form-control form-control-sm"
+                                        placeholder="{{ trans('app.search') }}" value="{{ request('search') }}">
+                                </div>
 
-                                </select>
+                                <!-- District Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="district" class="form-label">{{ trans('app.district') }}:</label>
+                                    <select id="district" name="district" class="form-select form-select-sm">
+                                        <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                        @foreach ($district as $value)
+                                            <option value="{{ $value->iddaerah }}" {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                                {{ $value->daerah_code }} - {{ $value->daerah }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Mukim/Division Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="division" class="form-label">{{ trans('app.division') }}:</label>
+                                    <select id="division" name="division" class="form-select form-select-sm">
+                                        <option value="" selected disabled>{{ trans('app.select_division') }}</option>
+                                        @if(request('district'))
+                                            @php
+                                                $divisions = DB::table('division')->where('daerah_id', request('district'))->get();
+                                            @endphp
+                                            @foreach ($divisions as $div)
+                                                <option value="{{ $div->idmukim }}" {{ request('division') == $div->idmukim ? 'selected' : '' }}>
+                                                    {{ $div->mukim_code }} - {{ $div->mukim }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+
+                                <!-- Lot/PT Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="lot" class="form-label">{{ trans('app.lot_pt') }}:</label>
+                                    <input type="text" id="lot" name="lot" class="form-control form-control-sm"
+                                        placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                                </div>
+
+                                <!-- Search Button -->
+                                <div class="col-12 text-end mt-2">
+                                    <button type="submit" class="btn btn-primary btn-sm" style="background:#3c8dbc; border:1px solid #3c8dbc;">
+                                        <strong>{{ trans('app.search_b') }}</strong>
+                                    </button>
+                                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm"><strong>{{ trans('app.reset') }}</strong></a>
+                                </div>
                             </div>
-                            <!-- Mukim Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
-                                <select id="division" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
-                                </select>
-                            </div>
-                            <!-- Lot/PT Input -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="lot" class="form-label me-2">{{ trans('app.lot_pt') }}
-                                    :</label>&nbsp;&nbsp;
-                                <input type="text" id="lot" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.enter_lot_pt') }}">
-                            </div>
-                            <div class="col-md-12 col-sm-12 mt-3 text-right">
-                                <a href="#" class="btn btn-primary btn-sm"
-                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;"><strong>{{ trans('app.search_b') }}</strong></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-baseline mb-3 mx-3">
-                            <div class="d-flex align-items-baseline mb-3 mx-1" style="width: auto">
-                                <label for="perPageSelect" class="me-2" style="white-space: nowrap;">@lang('app.show') :&nbsp; </label>
-                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()">
-                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
-                                </select>
-                            </div>
-                             <div class="d-flex align-items-baseline mt-3 mx-3" id="aside">
-                                <label for="status" class="form-label">{{ trans('app.status') }}:</label>&nbsp;&nbsp;
-                                <select id="status" class="form-select form-select-sm form-control form-control-sm"
-                                    style="width:150px;">
-                                    <option value="">{{ trans('app.all') }}</option>
-                                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
-                                        {{ trans('app.approved') }}
-                                    </option>
-                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
-                                        {{ trans('app.rejected') }}
-                                    </option>
-                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
-                                        {{ trans('app.pending') }}
-                                    </option>
-                                     <option value="appeal" {{ request('status') == 'appeal' ? 'selected' : '' }}>
+
+                            <!-- Second Row: Show per page and Status -->
+                            <div class="row mt-3 mx-1 align-items-center">
+                                <div class="col-md-6 d-flex align-items-center mb-2">
+                                    <label for="perPageSelect" class="me-2" style="white-space: nowrap;">@lang('app.show'):</label>
+                                    <select id="perPageSelect" name="perPage" class="form-select form-select-sm" style="width:80px;">
+                                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                        <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 d-flex align-items-center justify-content-md-end mb-2">
+                                    <label for="status" class="me-2">{{ trans('app.status') }}:</label>
+                                    <select id="status" name="status" class="form-select form-select-sm" style="width:150px;">
+                                        <option value="">{{ trans('app.all') }}</option>
+                                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
+                                            {{ trans('app.rejected') }}
+                                        </option>
+                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                            {{ trans('app.pending') }}
+                                        </option>
+                                        <option value="appeal" {{ request('status') == 'appeal' ? 'selected' : '' }}>
                                             {{ trans('app.appeal') }}
-                                     </option>
-                                    <option value="resubmitted" {{ request('status') == 'resubmitted' ? 'selected' : '' }}>
+                                        </option>
+                                        <option value="resubmitted" {{ request('status') == 'resubmitted' ? 'selected' : '' }}>
                                             {{ trans('app.resubmitted') }}
-                                    </option>
-                                </select>
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
-                            </div>
-                        </div>
+                        </form>
+
 
                         <!-- Table Section -->
                         <div class="table-responsive">
@@ -276,33 +294,6 @@
                                                 {{ $item->landDivision->mukim ?? '' }}, Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                                 </td>
-                                            <!--<td>-->
-                                            <!--    <div class="sbtn">-->
-                                            <!--        @if($canApproverViewApplicationDetails)-->
-                                            <!--        <a href="{{ route('approvernewApplication', ['id' => $item->id]) }}"-->
-                                            <!--         class="btn btn-primary btn-sm view-btn {{ isset($item->is_approver_viewed) && $item->is_approver_viewed ? 'btn-viewed' : '' }}" -->
-                                            <!--         data-app-id="{{ $item->id }}"><i class="fa fa-eye mt-1"></i></a>-->
-                                            <!--        @endif-->
-                                            <!--        @if ($isAdminOrStaff)-->
-                                            <!--            <a href="{{ route('updateApplication', ['id' => $item->id]) }}"-->
-                                            <!--                class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>-->
-                                            <!--        @endif-->
-                                            <!--        @if($isResubmitted)-->
-                                            <!--            <span class="badge bg-info text-warning " data-bs-toggle="tooltip" title="Resubmitted Application">-->
-                                            <!--                <i class="fa-solid fa-rotate btn-sm view-btn" style="font-size: 1rem;"></i>-->
-                                            <!--            </span>-->
-                                            <!--        @endif-->
-                                            <!--        @if($item->status == 'approved')-->
-                                            <!--            <span class="badge bg-success text-white " data-bs-toggle="tooltip" title="Approved Application">-->
-                                            <!--                <i class="fa-solid fa-check btn-sm view-btn" style="font-size: 1rem;"></i>-->
-                                            <!--            </span>-->
-                                            <!--        @elseif($item->status == 'rejected')-->
-                                            <!--            <span class="badge bg-danger text-white " data-bs-toggle="tooltip" title="Rejected Application">-->
-                                            <!--                <i class="fa-solid fa-xmark btn-sm view-btn" style="font-size: 1rem;"></i>-->
-                                            <!--            </span>-->
-                                            <!--        @endif-->
-                                            <!--    </div>-->
-                                            <!--</td>-->
                                             <td>
                                                 @switch($item->status)
                                                     @case('approved')
