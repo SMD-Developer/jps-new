@@ -180,7 +180,7 @@ background-color: red;
 
 /*.accordion-body{background: aliceblue;}*/
 .form-control {
-    width: 95% !important;
+    width: 305px !important;
     -webkit-appearance: listbox !important; /* WebKit browsers (Chrome, Safari) */
     appearance: listbox !important;         /* Standard property for other browsers */
     border: 1px solid #1991EE;
@@ -293,6 +293,11 @@ background-color: red;
     font-size: 1.1rem !important;
     cursor: pointer !important;
 }
+
+    .form-group {
+        display: flex;
+        align-items: flex-start;
+    }
 
 @media screen and (max-width: 488px) {
         .btn1, .btn2, .btn3{
@@ -498,37 +503,38 @@ background-color: red;
                             </div>
                 
                             <div class="row mt-4">
-                                <div class="col-md-3 col-6">
-                                    <div class="form-group">
-                                        <label for="idTypeNumber">@lang('app.identification_card_number')</label>
-                                        <span class="star">*</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group inlin">
-                                        <span class="pe-3"><b> : </b></span>
-                                        <div class="d-flex gap-2">
-                                            <select class="form-control" name="idType" id="idTypes" style="width: 150px;">
-                                                <option value="">@lang('--Sila Pilih--')</option>
-                                                <option value="1">Kad Pengenalan Baru</option>
-                                                <option value="2">Kad Pengenalan Lama</option>
-                                                <option value="3">No. Polis</option>
-                                                <option value="4">No. Tentera</option>
-                                            </select>
+                                        <div class="col-md-3 col-6">
+                                            <div class="form-group">
+                                                <label for="idTypeNumber">@lang('app.identification_card_number')</label>
+                                                <span class="star">*</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-6">
+                                            <div class="form-group">
+                                                <span class="pe-3"><b> : </b></span>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <select class="form-control" name="idType" id="idTypes">
+                                                        <option value="">@lang('--Sila Pilih--')</option>
+                                                        <option value="1">Kad Pengenalan Baru</option>
+                                                        <option value="2">Kad Pengenalan Lama</option>
+                                                        <option value="3">No. Polis</option>
+                                                        <option value="4">No. Tentera</option>
+                                                    </select>
 
-                                            <input 
-                                                type="text" 
-                                                class="form-control" 
-                                                name="idCardNumber" 
-                                                id="idCardNumber"
-                                                value="{{ old('idCardNumber') }}" 
-                                                maxlength="14"
-                                                placeholder="Enter ID Number">
+                                                    <input 
+                                                        type="text" 
+                                                        class="form-control" 
+                                                        name="idCardNumber" 
+                                                        id="idCardNumber"
+                                                        value="{{ old('idCardNumber') }}" 
+                                                        maxlength="14"
+                                                        placeholder="Enter ID Number">
+                                                </div>
+                                            </div>
+                                             <span class="text-dangerr" id="idCardNumberError"></span>
                                         </div>
                                     </div>
-                                    <span class="text-dangerr" id="idCardNumberError"></span>
-                                </div>
-                            </div>
+
                             <div class="row mt-4">
                                 <div class="col-md-3 col-6">
                                     <div class="form-group">
@@ -1107,7 +1113,7 @@ $(document).ready(function () {
             if (selectedAccountType === 2 || selectedAccountType === 3) {
                 $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
             } else {
-                $('#idCardNumberError').text('Nombor Mod pengguna diperlukan');
+                $('#idCardNumberError').text('Nombor kad pengguna diperlukan');
             }
             isValid = false;
         }
