@@ -749,8 +749,13 @@ class HomeController extends Controller {
             [
                 'application_id' => 'required|exists:applications,id',
                 'deposit_date' => 'required|date|before_or_equal:today',
-                'transaction' => 'required|string|max:50|unique:applications,transaction,' . $request->application_id,
-                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'transaction' => [
+                    'required',
+                    'regex:/^[A-Za-z0-9\-]+$/',
+                    'max:50',
+                    'unique:applications,transaction,' . $request->application_id,
+                ],
+                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:15360',
                 'note' => 'nullable|string|max:500'
             ],
             [
@@ -761,6 +766,7 @@ class HomeController extends Controller {
                 'receipt.required' => 'Fail wajib dimuatnaik.',
                 'receipt.mimes' => 'Fail mestilah dalam format PDF, JPG, JPEG, atau PNG.',
                 'receipt.max' => 'Saiz fail tidak boleh melebihi 2MB.',
+                'transaction.regex' => 'Nombor transaksi hanya boleh mengandungi huruf, nombor dan sempang.',
             ]
         );
 

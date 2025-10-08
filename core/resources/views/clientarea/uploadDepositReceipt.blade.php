@@ -291,118 +291,183 @@
     </section>
 
     <script>
-    // Form submission handler
-    document.getElementById('depositForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this;
-        const formData = new FormData(form);
+        // Form submission handler
+        document.getElementById('depositForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+        
+            document.querySelectorAll('.invalid-feedback').forEach(e => e.remove());
+            document.querySelectorAll('.is-invalid').forEach(e => e.classList.remove('is-invalid'));
+            let hasErrors = false;
+            const errorMessages = {
+                'deposit_date': 'Medan ini wajib diisi.',
+                'transaction': 'Medan ini wajib diisi.',
+                'receipt': 'Fail wajib dimuatnaik.'
+            };
+        
+            const depositDate = document.querySelector('[name="deposit_date"]');
+            if (!depositDate.value) {
+                hasErrors = true;
+                depositDate.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('invalid-feedback');
+                errorDiv.textContent = errorMessages['deposit_date'];
+                depositDate.closest('.form-group').appendChild(errorDiv);
+            } else {
+                const selectedDate = new Date(depositDate.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (selectedDate > today) {
+                    hasErrors = true;
+                    depositDate.classList.add('is-invalid');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('invalid-feedback');
+                    errorDiv.textContent = 'Tarikh bayaran tidak boleh melebihi hari ini.';
+                    depositDate.closest('.form-group').appendChild(errorDiv);
+                }
+            }
+            
+            // Check transaction
+            const transaction = document.querySelector('[name="transaction"]');
+            if (!transaction.value) {
+                hasErrors = true;
+                transaction.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('invalid-feedback');
+                errorDiv.textContent = errorMessages['transaction'];
+                transaction.closest('.form-group').appendChild(errorDiv);
+            }
+            
+            // Check receipt file
+            const receipt = document.querySelector('[name="receipt"]');
+            if (!receipt.files || receipt.files.length === 0) {
+                hasErrors = true;
+                receipt.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('invalid-feedback');
+                errorDiv.textContent = errorMessages['receipt'];
+                receipt.closest('.form-group').appendChild(errorDiv);
+            } else {
+                const file = receipt.files[0];
+                const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                const maxSize = 2 * 1024 * 1024; // 2MB
+                
+                // Check file type
+                if (!allowedTypes.includes(file.type)) {
+                    hasErrors = true;
+                    receipt.classList.add('is-invalid');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('invalid-feedback');
+                    errorDiv.textContent = 'Fail mestilah dalam format PDF, JPG, JPEG, atau PNG.';
+                    receipt.closest('.form-group').appendChild(errorDiv);
+                }
+                // Check file size
+                else if (file.size > maxSize) {
+                    hasErrors = true;
+                    receipt.classList.add('is-invalid');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('invalid-feedback');
+                    errorDiv.textContent = 'Saiz fail tidak boleh melebihi 2MB.';
+                    receipt.closest('.form-group').appendChild(errorDiv);
+                }
+            }
+            
+            // If validation fails, don't show popup
+            if (hasErrors) {
+                return;
+            }
+            
+            const formData = new FormData(form);
 
-        Swal.fire({
-            title: 'Sahkan penghantaran',
-            text: "Adakah anda pasti ingin menghantar butiran pembayaran ini?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya',
-            cancelButtonText: 'Tidak'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show loading indicator
-                Swal.fire({
-                    title: 'Processing...',
-                    html: 'Sila tunggu sementara kami menghantar butiran pembayaran anda',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                // Submit form via AJAX
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(async response => {
-                Swal.close();
-
-                        // If Laravel returns validation errors
-                        if (!response.success && response.errors) {
-                            // Clear old errors
-                            document.querySelectorAll('.invalid-feedback').forEach(e => e.remove());
-                            document.querySelectorAll('.is-invalid').forEach(e => e.classList.remove('is-invalid'));
-
-                            // Loop through each error and show below field
-                            for (const [field, messages] of Object.entries(response.errors)) {
-                                const input = document.querySelector(`[name="${field}"]`);
-                                if (input) {
-                                    input.classList.add('is-invalid');
-                                    const errorDiv = document.createElement('div');
-                                    errorDiv.classList.add('invalid-feedback');
-                                    errorDiv.textContent = messages[0];
-                                    input.closest('.form-group').appendChild(errorDiv);
-                                }
-                            }
-                            return; 
+            Swal.fire({
+                title: 'Sahkan penghantaran',
+                text: "Adakah anda pasti ingin menghantar butiran pembayaran ini?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading indicator
+                    Swal.fire({
+                        title: 'Processing...',
+                        html: 'Sila tunggu sementara kami menghantar butiran pembayaran anda',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
                         }
+                    });
 
-                        // If success
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Resit berjaya dimuat naik',
-                                text: response.message || 'Butiran pembayaran berjaya dihantar',
-                                confirmButtonText: 'OK',
-                            }).then(() => {
-                                window.location.href = "{{ route('client_application_status') }}";
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.message || 'Something went wrong!',
-                                confirmButtonText: 'OK'
-                            });
+                    // Submit form via AJAX
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
                         }
                     })
+                    .then(response => response.json())
+                    .then(async response => {
+                    Swal.close();
 
-                .catch(error => {
-                    Swal.close(); 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to submit the form. Please try again.',
-                        confirmButtonText: 'OK'
+                            // If Laravel returns validation errors (for server-side validation like unique check)
+                            if (!response.success && response.errors) {
+                                // Clear old errors
+                                document.querySelectorAll('.invalid-feedback').forEach(e => e.remove());
+                                document.querySelectorAll('.is-invalid').forEach(e => e.classList.remove('is-invalid'));
+
+                                // Loop through each error and show below field
+                                for (const [field, messages] of Object.entries(response.errors)) {
+                                    const input = document.querySelector(`[name="${field}"]`);
+                                    if (input) {
+                                        input.classList.add('is-invalid');
+                                        const errorDiv = document.createElement('div');
+                                        errorDiv.classList.add('invalid-feedback');
+                                        errorDiv.textContent = messages[0];
+                                        input.closest('.form-group').appendChild(errorDiv);
+                                    }
+                                }
+                                return; 
+                            }
+
+                            // If success
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Resit berjaya dimuat naik',
+                                    text: response.message || 'Butiran pembayaran berjaya dihantar',
+                                    confirmButtonText: 'OK',
+                                }).then(() => {
+                                    window.location.href = "{{ route('client_application_status') }}";
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message || 'Something went wrong!',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+
+                    .catch(error => {
+                        Swal.close(); 
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to submit the form. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                        console.error('Error:', error);
                     });
-                    console.error('Error:', error);
-                });
-            }
-        });
-    });
-
-    // Success message handler for non-AJAX (fallback)
-    @if(session('success'))
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Payment Receipt Uploaded',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK',
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp'
                 }
             });
         });
-    @endif
-</script>
+    </script>
     <script>
         function validateFileSize(input) {
             const file = input.files[0];
