@@ -758,7 +758,7 @@ class HomeController extends Controller {
                 'deposit_date.before_or_equal' => 'Tarikh bayaran tidak boleh melebihi hari ini.',
                 'transaction.required' => 'Medan ini wajib diisi.',
                 'transaction.unique' => 'Nombor transaksi ini telah digunakan.',
-                'receipt.required' => 'Medan ini wajib.',
+                'receipt.required' => 'Fail wajib dimuatnaik.',
                 'receipt.mimes' => 'Fail mestilah dalam format PDF, JPG, JPEG, atau PNG.',
                 'receipt.max' => 'Saiz fail tidak boleh melebihi 2MB.',
             ]

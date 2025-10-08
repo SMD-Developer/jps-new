@@ -676,7 +676,7 @@
     <script>
         document.querySelectorAll('.file-input').forEach(input => {
             input.addEventListener('change', function() {
-                const fileName = this.files[0] ? this.files[0].name : '@lang('app.no_file_chosen')';
+                const fileName = this.files[0] ? this.files[0].name : '@lang('app.no_file_chosens')';
                 document.getElementById(this.id + 'fileName').textContent = fileName;
             });
         });
