@@ -382,7 +382,9 @@ class HomeController extends Controller {
         // Get current user ID for highlighting
         $currentUserId = auth('admin')->id();
 
-        $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get(); 
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get(); 
         return view('claim.claim-contribution-list', compact( 'list',              
             'district',              
             'perPage',              
@@ -1388,7 +1390,9 @@ class HomeController extends Controller {
             ->paginate($perPage)
             ->appends($request->except('page'));
             
-        $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
         $account_types = DB::table('account_types')->get();
             
         return view('application.developer_list', compact(
