@@ -1093,12 +1093,22 @@ $(document).ready(function () {
         }
         
         if (!$('input[name="userName"]').val()) {
-            $('#userName-error').text('Nama pengguna diperlukan');
+            const selectedAccountType = parseInt($('select[name="accountType"]').val());
+            if (selectedAccountType === 2 || selectedAccountType === 3) {
+                $('#userName-error').text('Nama Syarikat diperlukan');
+            } else {
+                $('#userName-error').text('Nama pengguna diperlukan');
+            }
             isValid = false;
         }
         
         if (!$('input[name="idCardNumber"]').val()) {
-            $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
+            const selectedAccountType = parseInt($('select[name="accountType"]').val());
+            if (selectedAccountType === 2 || selectedAccountType === 3) {
+                $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
+            } else {
+                $('#idCardNumberError').text('Nombor Mod pengguna diperlukan');
+            }
             isValid = false;
         }
         
