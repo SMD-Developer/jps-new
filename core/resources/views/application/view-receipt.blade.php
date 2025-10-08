@@ -426,8 +426,13 @@
 
                                             @endphp
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ date('d/m/Y', strtotime($item['uploade_date'])) }}</td>
+                                            <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
+                                             <td>
+                                                @php
+                                                    $latestPayment = $item->payments->sortByDesc('created_at')->first();
+                                                @endphp
+                                                {{ $latestPayment?->payment_date ? \Carbon\Carbon::parse($latestPayment->payment_date)->format('d M Y') : 'N/A' }}
+                                            </td>
                                             <td>{{ $item->refference_no }}</td>
                                             <td>
                                                 @php
@@ -874,9 +879,6 @@
                         <!-- Common Fields -->
                         <div class="form-section">
                             <h6><i class="fa fa-cog"></i> {{ trans('app.payment_status_update') }}</h6>
-                            <!--<div class="alert alert-info">-->
-                            <!--    <i class="fa fa-info-circle"></i> {{ trans('app.money_debited_update_status') }}-->
-                            <!--</div>-->
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -893,22 +895,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--    <div class="form-group mb-3">-->
-                                <!--        <label for="receipt_number"-->
-                                <!--            class="form-label">{{ trans('app.receipt_number') }}</label>-->
-                                <!--        <input type="text" name="receipt_number" id="receipt_number"-->
-                                <!--            class="form-control"-->
-                                <!--            placeholder="{{ trans('app.auto_generated_if_empty') }}">-->
-                                <!--    </div>-->
-                                <!--</div>-->
                             </div>
-
-                            <!--<div class="form-group mb-3">-->
-                            <!--    <label for="admin_notes" class="form-label">{{ trans('app.admin_notes') }}</label>-->
-                            <!--    <textarea name="admin_notes" id="admin_notes" class="form-control" rows="3"-->
-                            <!--        placeholder="{{ trans('app.enter_notes_reason_for_status_change') }}"></textarea>-->
-                            <!--</div>-->
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -928,269 +915,235 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('perPageSelect').addEventListener('change', function() {
-                const perPage = this.value;
-                const url = new URL(window.location.href);
-                url.searchParams.set('per_page', perPage);
-                url.searchParams.set('page', 1);
-                window.location.href = url.toString();
-            });
+    // Define functions at global scope FIRST
+    window.changePerPage = function() {
+        const perPage = document.getElementById('perPageSelect').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+        const search = '{{ request("q") }}';
+        
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', perPage);
+        url.searchParams.set('status_filter', statusFilter);
+        url.searchParams.set('page', 1);
+        
+        if (search) {
+            url.searchParams.set('q', search);
+        }
+        
+        window.location.href = url.toString();
+    };
+    
+    window.changeStatusFilter = function() {
+        changePerPage(); // Reuse the same function
+    };
 
-            const paymentMethodSelect = document.getElementById('payment_method');
-            const conditionalFields = {
-                'cheque': document.getElementById('cheque-fields'),
-                'bank_transfer': document.getElementById('bank-transfer-fields'),
-                'online': document.getElementById('online-fields')
-            };
+    // Then DOMContentLoaded for everything else
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentMethodSelect = document.getElementById('payment_method');
+        const conditionalFields = {
+            'cheque': document.getElementById('cheque-fields'),
+            'bank_transfer': document.getElementById('bank-transfer-fields'),
+            'online': document.getElementById('online-fields')
+        };
 
+        Object.values(conditionalFields).forEach(field => {
+            if (field) field.style.display = 'none';
+        });
+        
+        paymentMethodSelect.addEventListener('change', function() {
+            const selectedMethod = this.value;
             Object.values(conditionalFields).forEach(field => {
-                if (field) field.style.display = 'none';
+                if (field) {
+                    field.classList.remove('show');
+                    setTimeout(() => {
+                        field.style.display = 'none';
+                    }, 300);
+                }
             });
-            paymentMethodSelect.addEventListener('change', function() {
-                const selectedMethod = this.value;
+
+            if (selectedMethod && conditionalFields[selectedMethod]) {
+                setTimeout(() => {
+                    conditionalFields[selectedMethod].style.display = 'block';
+                    setTimeout(() => {
+                        conditionalFields[selectedMethod].classList.add('show');
+                    }, 50);
+                }, 300);
+            }
+            updateRequiredFields(selectedMethod);
+        });
+
+        function updateRequiredFields(paymentMethod) {
+            document.querySelectorAll('.conditional-fields input, .conditional-fields select').forEach(
+                input => {
+                    input.removeAttribute('required');
+                });
+            if (paymentMethod === 'cheque') {
+                ['cheque_number', 'cheque_date', 'bank_name'].forEach(id => {
+                    const field = document.getElementById(id);
+                    if (field) field.setAttribute('required', 'required');
+                });
+            } else if (paymentMethod === 'bank_transfer') {
+                ['transaction_id', 'transfer_date', 'from_bank', 'receipt_upload'].forEach(id => {
+                    const field = document.getElementById(id);
+                    if (field) field.setAttribute('required', 'required');
+                });
+            }
+        }
+
+        const editPaymentModal = document.getElementById('editPaymentModal');
+        if (editPaymentModal) {
+            editPaymentModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const applicationId = button.getAttribute('data-application-id');
+                const refNo = button.getAttribute('data-reference-no');
+                const applicant = button.getAttribute('data-applicant');
+                const amount = button.getAttribute('data-amount');
+                const currentStatus = button.getAttribute('data-current-status') || 'Not Set';
+                const paymentMethod = button.getAttribute('data-payment-method');
+
+                document.getElementById('modal-ref-no').textContent = refNo;
+                document.getElementById('modal-applicant').textContent = applicant;
+                document.getElementById('modal-amount').textContent = parseFloat(amount || 0)
+                    .toLocaleString('en-US', {
+                        minimumFractionDigits: 2
+                    });
+                document.getElementById('modal-current-status').textContent = currentStatus;
+                document.getElementById('editPaymentForm').action =
+                    `admin/payment/update/${applicationId}`;
+                document.getElementById('editPaymentForm').reset();
                 Object.values(conditionalFields).forEach(field => {
                     if (field) {
                         field.classList.remove('show');
-                        setTimeout(() => {
-                            field.style.display = 'none';
-                        }, 300);
+                        field.style.display = 'none';
                     }
                 });
-
-                if (selectedMethod && conditionalFields[selectedMethod]) {
-                    setTimeout(() => {
-                        conditionalFields[selectedMethod].style.display = 'block';
-                        setTimeout(() => {
-                            conditionalFields[selectedMethod].classList.add('show');
-                        }, 50);
-                    }, 300);
-                }
-                updateRequiredFields(selectedMethod);
             });
 
-            function updateRequiredFields(paymentMethod) {
-                document.querySelectorAll('.conditional-fields input, .conditional-fields select').forEach(
-                    input => {
-                        input.removeAttribute('required');
-                    });
-                if (paymentMethod === 'cheque') {
-                    ['cheque_number', 'cheque_date', 'bank_name'].forEach(id => {
-                        const field = document.getElementById(id);
-                        if (field) field.setAttribute('required', 'required');
-                    });
-                } else if (paymentMethod === 'bank_transfer') {
-                    ['transaction_id', 'transfer_date', 'from_bank', 'receipt_upload'].forEach(id => {
-                        const field = document.getElementById(id);
-                        if (field) field.setAttribute('required', 'required');
-                    });
-                }
-            }
+            const editPaymentForm = document.getElementById('editPaymentForm');
+            if (editPaymentForm) {
+                editPaymentForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
 
-            const editPaymentModal = document.getElementById('editPaymentModal');
-            if (editPaymentModal) {
-                editPaymentModal.addEventListener('show.bs.modal', function(event) {
-                    const button = event.relatedTarget;
-                    const applicationId = button.getAttribute('data-application-id');
-                    const refNo = button.getAttribute('data-reference-no');
-                    const applicant = button.getAttribute('data-applicant');
-                    const amount = button.getAttribute('data-amount');
-                    const currentStatus = button.getAttribute('data-current-status') || 'Not Set';
-                    const paymentMethod = button.getAttribute('data-payment-method');
-                    console.log('Modal Data:', {
-                        applicationId,
-                        refNo,
-                        applicant,
-                        amount,
-                        currentStatus,
-                        paymentMethod
+                    const formData = new FormData(this);
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    let isValid = true;
+                    const requiredFields = this.querySelectorAll('[required]');
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim() && field.type !== 'file') {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        } else if (field.type === 'file' && !field.files.length) {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            field.classList.remove('is-invalid');
+                        }
                     });
 
-                    document.getElementById('modal-ref-no').textContent = refNo;
-                    document.getElementById('modal-applicant').textContent = applicant;
-                    document.getElementById('modal-amount').textContent = parseFloat(amount || 0)
-                        .toLocaleString('en-US', {
-                            minimumFractionDigits: 2
+                    if (!isValid) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            text: 'Please fill in all required fields.',
+                            confirmButtonColor: '#F1AA2A'
                         });
-                    document.getElementById('modal-current-status').textContent = currentStatus;
-                    document.getElementById('editPaymentForm').action =
-                        `admin/payment/update/${applicationId}`;
-                    document.getElementById('editPaymentForm').reset();
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('loading');
+                    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Updating...';
+
+                    fetch(this.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                try {
+                                    const modal = bootstrap.Modal.getInstance(editPaymentModal);
+                                    if (modal) {
+                                        modal.hide();
+                                    }
+                                } catch (e) {
+                                    try {
+                                        $('#editPaymentModal').modal('hide');
+                                    } catch (e2) {
+                                        try {
+                                            editPaymentModal.classList.remove('show');
+                                            editPaymentModal.style.display = 'none';
+                                            document.body.classList.remove('modal-open');
+                                            const backdrop = document.querySelector('.modal-backdrop');
+                                            if (backdrop) {
+                                                backdrop.remove();
+                                            }
+                                        } catch (e3) {
+                                            console.log('Could not close modal automatically');
+                                        }
+                                    }
+                                }
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '@lang('app.success')!',
+                                    text: data.message || '@lang('app.payment_updated_successfully')',
+                                    confirmButtonColor: '#28a745',
+                                    confirmButtonText: 'OK',
+                                    showCancelButton: false,
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('view.receipt') }}";
+                                    }
+                                });
+                            } else {
+                                throw new Error(data.message || 'Update failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: `Error updating payment status: ${error.message}`,
+                                confirmButtonColor: '#F1AA2A'
+                            });
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('loading');
+                            submitBtn.innerHTML = originalText;
+                        });
+                });
+            }
+            
+            editPaymentModal.addEventListener('hidden.bs.modal', function() {
+                if (editPaymentForm) {
+                    editPaymentForm.reset();
+                    const alerts = this.querySelectorAll('.alert');
+                    alerts.forEach(alert => alert.remove());
                     Object.values(conditionalFields).forEach(field => {
                         if (field) {
                             field.classList.remove('show');
                             field.style.display = 'none';
                         }
                     });
-                });
-
-
-                const editPaymentForm = document.getElementById('editPaymentForm');
-                if (editPaymentForm) {
-                    editPaymentForm.addEventListener('submit', function(e) {
-                        e.preventDefault();
-
-                        const formData = new FormData(this);
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.innerHTML;
-                        let isValid = true;
-                        const requiredFields = this.querySelectorAll('[required]');
-                        requiredFields.forEach(field => {
-                            if (!field.value.trim() && field.type !== 'file') {
-                                field.classList.add('is-invalid');
-                                isValid = false;
-                            } else if (field.type === 'file' && !field.files.length) {
-                                field.classList.add('is-invalid');
-                                isValid = false;
-                            } else {
-                                field.classList.remove('is-invalid');
-                            }
-                        });
-
-                        if (!isValid) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Validation Error',
-                                text: 'Please fill in all required fields.',
-                                confirmButtonColor: '#F1AA2A'
-                            });
-                            return;
-                        }
-
-                        submitBtn.disabled = true;
-                        submitBtn.classList.add('loading');
-                        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Updating...';
-
-                        fetch(this.action, {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                        .getAttribute('content'),
-                                    'Accept': 'application/json'
-                                }
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success) {
-                                    try {
-                                        const modal = bootstrap.Modal.getInstance(editPaymentModal);
-                                        if (modal) {
-                                            modal.hide();
-                                        }
-                                    } catch (e) {
-                                        try {
-                                            $('#editPaymentModal').modal('hide');
-                                        } catch (e2) {
-                                            try {
-                                                editPaymentModal.classList.remove('show');
-                                                editPaymentModal.style.display = 'none';
-                                                document.body.classList.remove('modal-open');
-                                                const backdrop = document.querySelector(
-                                                    '.modal-backdrop');
-                                                if (backdrop) {
-                                                    backdrop.remove();
-                                                }
-                                            } catch (e3) {
-                                                console.log('Could not close modal automatically');
-                                            }
-                                        }
-                                    }
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: '@lang('app.success')!',
-                                        text: data.message ||
-                                            '@lang('app.payment_updated_successfully')',
-                                        confirmButtonColor: '#28a745',
-                                        confirmButtonText: 'OK',
-                                        showCancelButton: false,
-                                        allowOutsideClick: false,
-                                        allowEscapeKey: false
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href =
-                                                "{{ route('view.receipt') }}";
-                                        }
-                                    });
-                                } else {
-                                    throw new Error(data.message || 'Update failed');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: `Error updating payment status: ${error.message}`,
-                                    confirmButtonColor: '#F1AA2A'
-                                });
-                            })
-                            .finally(() => {
-                                submitBtn.disabled = false;
-                                submitBtn.classList.remove('loading');
-                                submitBtn.innerHTML = originalText;
-                            });
-                    });
                 }
-                editPaymentModal.addEventListener('hidden.bs.modal', function() {
-                    if (editPaymentForm) {
-                        editPaymentForm.reset();
-                        const alerts = this.querySelectorAll('.alert');
-                        alerts.forEach(alert => alert.remove());
-                        Object.values(conditionalFields).forEach(field => {
-                            if (field) {
-                                field.classList.remove('show');
-                                field.style.display = 'none';
-                            }
-                        });
-                    }
-                });
-            }
-            window.changePerPage = function() {
-                document.getElementById('perPageSelect').dispatchEvent(new Event('change'));
-            };
-        });
-    </script>
-    <script>
-
-
-        window.changePerPage = function() {
-            const perPage = document.getElementById('perPageSelect').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const url = new URL(window.location.href);
-            url.searchParams.set('per_page', perPage);
-            url.searchParams.set('status_filter', statusFilter);
-            url.searchParams.set('page', 1); 
-            window.location.href = url.toString();
-        };
-        
-        
-        window.changeStatusFilter = function() {
-            const perPage = document.getElementById('perPageSelect').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const url = new URL(window.location.href);
-            url.searchParams.set('per_page', perPage);
-            url.searchParams.set('status_filter', statusFilter);
-            url.searchParams.set('page', 1); 
-            window.location.href = url.toString();
-        };
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('perPageSelect').addEventListener('change', function() {
-                changePerPage();
             });
-        
-        
-            document.getElementById('statusFilter').addEventListener('change', function() {
-                changeStatusFilter();
-            });
-        
-        });
-    </script>
+        }
+    });
+</script>
 @endsection

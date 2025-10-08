@@ -1749,74 +1749,72 @@ class HomeController extends Controller {
     
     public function viewReceipt(Request $request)     
     {         
-            $perPage = $request->input('per_page', 10);
-            $statusFilter = $request->input('status_filter', 'all'); 
-            $search = $request->input('q');
-            
-            $query = Application::with(['state', 'landDistrict', 'landDivision', 'client', 'latestPayment'])
-                ->where('status', 'approved')
-                ->orderBy('created_at', 'desc');         
-            
-            $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
+        $perPage = $request->input('per_page', 10);
+        $statusFilter = $request->input('status_filter', 'all'); 
+        $search = $request->input('q');
         
-            $isFinanceAdmin = false;         
-            if (auth('admin')->check()) {             
-                $roleId = auth('admin')->user()->role_id;             
-                $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
-            }          
+        // Use 'payments' instead of 'latestPayment'
+        $query = Application::with(['state', 'landDistrict', 'landDivision', 'client', 'payments'])
+            ->where('status', 'approved')
+            ->orderBy('created_at', 'desc');         
         
-               // Filter based on payments table payment_status
-            switch ($statusFilter) {
-                        case 'completed':
-                            $query->whereHas('payment', function($q) {
-                                $q->where('payment_status', 'completed');
-                            });
-                            break;
-                            
-                        case 'failed':
-                            $query->whereHas('payment', function($q) {
-                                $q->where('payment_status', 'failed');
-                            });
-                            break;
-                            
-                        case 'pending':
-                        case 'pending_authorization':
-                            $query->whereHas('payment', function($q) {
-                                $q->where('payment_status', 'pending_authorization');
-                            });
-                            break;
-                            
-                        case 'incomplete':
-                        case 'no_payment':
-                            // Applications without any payment record (approved but no payment)
-                            $query->whereDoesntHave('payment');
-                            break;
-                            
-                        case 'in_review':
-                            $query->whereHas('payment', function($q) {
-                                $q->where('payment_status', 'in_review');
-                            });
-                            break;
-                            
-                        case 'all':
-                        default:
-                            // No additional filtering - show all approved applications regardless of payment status
-                            break;
-                    }
-            
-            $query->when($search, function ($q) use ($search) {
-                $like = "%{$search}%";
-                $q->where(function ($sub) use ($like) {
-                    $sub->where('refference_no', 'like', $like)
-                        ->orWhere('applicant', 'like', $like)
-                        ->orWhere('land_lot', 'like', $like)
-                        ->orWhere('final_amount', 'like', $like)
-                        ->orWhereHas('client', function($clientQuery) use ($like) {
-                            $clientQuery->where('userName', 'like', $like);
-                        });
-                });
-            });
+        $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
 
+        $isFinanceAdmin = false;         
+        if (auth('admin')->check()) {             
+            $roleId = auth('admin')->user()->role_id;             
+            $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
+        }          
+
+        // Filter based on payments table payment_status
+        switch ($statusFilter) {
+            case 'completed':
+                $query->whereHas('payments', function($q) {
+                    $q->where('payment_status', 'completed');
+                });
+                break;
+                
+            case 'failed':
+                $query->whereHas('payments', function($q) {
+                    $q->where('payment_status', 'failed');
+                });
+                break;
+                
+            case 'pending':
+            case 'pending_authorization':
+                $query->whereHas('payments', function($q) {
+                    $q->where('payment_status', 'pending_authorization');
+                });
+                break;
+                
+            case 'incomplete':
+            case 'no_payment':
+                $query->whereDoesntHave('payments');
+                break;
+                
+            case 'in_review':
+                $query->whereHas('payments', function($q) {
+                    $q->where('payment_status', 'in_review');
+                });
+                break;
+                
+            case 'all':
+            default:
+                break;
+        }
+        
+        $query->when($search, function ($q) use ($search) {
+            $like = "%{$search}%";
+            $q->where(function ($sub) use ($like) {
+                $sub->where('refference_no', 'like', $like)
+                    ->orWhere('applicant', 'like', $like)
+                    ->orWhere('land_lot', 'like', $like)
+                    ->orWhere('final_amount', 'like', $like)
+                    ->orWhereHas('client', function($clientQuery) use ($like) {
+                        $clientQuery->where('userName', 'like', $like);
+                    });
+            });
+        });
 
         $list = $query->paginate($perPage)->withQueryString();
 
@@ -1849,51 +1847,59 @@ class HomeController extends Controller {
     //     }
     
     
-    public function userReceiptView($application_id)
-    {
-        $application = Application::with(['payment'])
+    public function userReceiptView($application_id)     
+    {         
+        $application = Application::with(['payment' => function($query) {
+                $query->where('payment_status', 'completed')
+                    ->latest('created_at');
+            }])
             ->select(
                 'applications.*',
                 'state.negeri',
-                'district.daerah',
-                'payments.payment_status as payment_status',
-                'payments.method as payment_method',
-                'payments.amount as payment_amount',
-                'payments.transaction_id',
-                'payments.receipt_number as receipt_number',
-                'payments.created_at as payment_date',
-                'payments.gateway_response' 
+                'district.daerah'
             )
             ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
             ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-            ->leftJoin('payments', 'applications.id', '=', 'payments.application_id')
             ->where('applications.id', $application_id)
             ->firstOrFail();
-
+            
+        $completedPayment = $application->payment()
+            ->where('payment_status', 'completed')
+            ->latest('created_at')
+            ->first();
         
-        if ($application->gateway_response) {
-            $gatewayResponse = json_decode($application->gateway_response, true);
+        if ($completedPayment) {
+            $application->payment_status = $completedPayment->payment_status;
+            $application->payment_method = $completedPayment->method;
+            $application->payment_amount = $completedPayment->amount;
+            $application->transaction_id = $completedPayment->transaction_id;
+            $application->receipt_number = $completedPayment->receipt_number;
+            $application->payment_date = $completedPayment->created_at;
+            $application->gateway_response = $completedPayment->gateway_response;
+            
+             if ($completedPayment->gateway_response) {
+                $gatewayResponse = is_array($completedPayment->gateway_response) 
+                    ? $completedPayment->gateway_response 
+                    : json_decode($completedPayment->gateway_response, true);
+                if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                    $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                    
+                    $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
 
-            // Extract FPX transaction time
-            if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
-                $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
-
-                // Convert FPX time (YmdHis) → readable format
-                $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
-                    ->format('d/m/Y h:i:s A');
-
-                $application->fpx_payment_time = $formattedTime;
-            }
-            // If not found, fall back to processed_at
-            elseif (isset($gatewayResponse['processed_at'])) {
-                $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
-                    ->setTimezone('Asia/Kuala_Lumpur') // Convert UTC → Malaysia time
-                    ->format('d/m/Y h:i:s A');
-
-                $application->fpx_payment_time = $formattedTime;
+                elseif (isset($gatewayResponse['processed_at'])) {
+                    $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                        ->setTimezone('Asia/Kuala_Lumpur')
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
             }
         }
-
+        
         return view('application.user-receiptoriginal', compact('application'));
     }
 
