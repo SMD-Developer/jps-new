@@ -304,7 +304,9 @@ class HomeController extends Controller {
             $roleId = auth('admin')->user()->role_id;             
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
         } 
-        $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
         $query = Application::with('client')->where('status', 'approved');
         if ($request->filled('search')) {
         $searchTerm = $request->get('search');
@@ -594,7 +596,9 @@ class HomeController extends Controller {
                 ->paginate($perPage)
                 ->appends($request->except('page'));
             
-        $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
         
         return view('approver.approver_application_list', compact('list', 'district', 'perPage', 'isAdminOrStaff', 'canApproverViewApplicationDetails'));
     }

@@ -69,56 +69,77 @@
 
                     <div class="row search-row align-items-end mt-3 mx-1">
                         <!-- Search Input -->
-                           <div class="col-md-3 col-sm-6 colsm36">
-                                <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
-                                <input type="text" id="search" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.search') }}">
-                            </div>
-                            <!-- District Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
-                                <select id="district" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_district') }}</option>
-                                    @foreach ($district as $value)
-                                        <option value="{{ $value->iddaerah }}"
-                                            {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
-                                            {{ $value->daerah_code }} - {{ $value->daerah }}
-                                        </option>
-                                    @endforeach
+                        <div class="col-md-3 col-sm-6 colsm36">
+                            <label for="search" class="form-label">{{ trans('app.search') }}:&nbsp;</label>
+                            <input type="text" id="search" class="form-control form-control-sm"
+                                placeholder="{{ trans('app.search') }}">
+                        </div>
+
+                        <!-- District Dropdown -->
+                        <div class="col-md-3 col-sm-6" id="aside">
+                            <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
+                            <select id="district" class="form-select form-select-sm form-control form-control-sm">
+                                <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                @foreach ($district as $value)
+                                    <option value="{{ $value->iddaerah }}"
+                                        {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                        {{ $value->daerah_code }} - {{ $value->daerah }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Mukim Dropdown -->
+                        <div class="col-md-3 col-sm-6" id="aside">
+                            <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
+                            <select id="division" class="form-select form-select-sm form-control form-control-sm">
+                                <option value="" selected disabled>{{ trans('app.select_division') }}</option>
+                                <!-- Divisions are dynamically populated -->
+                            </select>
+                        </div>
+
+                        <!-- Lot/PT Input -->
+                        <div class="col-md-3 col-sm-6" id="aside">
+                            <label for="lot" class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;
+                            <input type="text" id="lot" class="form-control form-control-sm"
+                                placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                        </div>
+
+                        <!-- Buttons + Show Per Page (Right Aligned) -->
+                        <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex justify-content-end align-items-center flex-wrap gap-2">
+                            <!-- Show Per Page -->
+                            <div class="d-flex align-items-center me-3">
+                                <label for="perPageSelect" class="me-2 mb-0 fw-semibold" style="white-space: nowrap;">
+                                    @lang('app.show'):
+                                </label>
+                                <select id="perPageSelect" name="perPage" class="form-select form-select-sm" style="width:80px;">
+                                    <option value="5" {{ request('perPage') == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ request('perPage') == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
+                                    <option value="500" {{ request('perPage') == 500 ? 'selected' : '' }}>500</option>
                                 </select>
                             </div>
-                            <!-- Mukim Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
-                                <select id="division" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
-                                    <!-- Divisions are dynamically populated -->
-                                </select>
-                            </div>
-                            <!-- Lot/PT Input -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="lot"
-                                    class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;
-                                <input type="text" id="lot" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
-                            </div>
-                            <div class="col-md-12 col-sm-12 mt-3 text-right">
-                                <a href="#" class="btn btn-primary btn-sm search-btn"
-                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
-                                    <strong>{{ trans('app.search_b') }}</strong>
-                                </a>
-                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
-                                        <strong>{{ trans('app.reset') }}</strong>
-                                </a>
-                            </div>
+
+                            <!-- Buttons -->
+                            <a href="#" class="btn btn-primary btn-sm search-btn"
+                                style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
+                                <strong>{{ trans('app.search_b') }}</strong>
+                            </a>
+                            <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                <strong>{{ trans('app.reset') }}</strong>
+                            </a>
+                        </div>
                     </div>
+
 
                     <!-- Table -->
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th><strong>{{ trans('app.bil') }}</strong></th>
                                     <th>{{ trans('app.date') }}</th>
                                     <th>{{ trans('app.reference _no') }}</th>
                                     <th><strong>{{ trans('app.account_type') }}</strong></th>
@@ -420,4 +441,5 @@
         });
     });
 </script>
+
 @endsection
