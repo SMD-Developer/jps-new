@@ -444,30 +444,6 @@
                             <div id="land_grant_error" class="invalid-feedback d-block" style="display:none;"></div>
                         </div>
                     </div>
-
-                    <!--<div class="form-group">-->
-                    <!--    <div class="col-md-4">-->
-                    <!--        <label for="pelan">@lang('app.planning_permission_plan')</label>-->
-                    <!--    </div>-->
-                    <!--    <div class="col-md-8">-->
-                    <!--        <label for="permission_plan" class="submit-button is-invalid">@lang('app.choose_file')</label>-->
-                    <!--        <input type="file" id="permission_plan" name="permission_plan" class="file-input"-->
-                    <!--            accept="application/pdf" onchange="validateFileSize(this)">-->
-                    <!--        <div id="permission_planfileName" class="file-name"></div>-->
-                    <!--    </div>-->
-                    <!--</div>-->
-
-                    <!--<div class="form-group">-->
-                    <!--    <div class="col-md-4">-->
-                    <!--        <label for="sokongan">@lang('app.letter_of_support')</label>-->
-                    <!--    </div>-->
-                    <!--    <div class="col-md-8">-->
-                    <!--        <label for="letter_of_support" class="submit-button is-invalid">@lang('app.choose_file')</label>-->
-                    <!--        <input type="file" id="letter_of_support" name="letter_of_support" class="file-input"-->
-                    <!--            accept="application/pdf" onchange="validateFileSize(this)">-->
-                    <!--        <div id="letter_of_supportfileName" class="file-name"></div>-->
-                    <!--    </div>-->
-                    <!--</div>-->
                     <p class="note">
                         *@lang('app.file_only_pdf_format_size_not_exceed_15mb')
                     </p>
@@ -570,6 +546,102 @@
                 $('.invalid-feedback').remove();
                 $('.form-control').removeClass('is-invalid');
 
+
+                let hasErrors = false;
+                function showError(fieldName, message) {
+                    hasErrors = true;
+                    let inputField = $('[name="' + fieldName + '"]');
+                    inputField.addClass('is-invalid');
+                    inputField.after('<div class="invalid-feedback d-flex justify-content-end">' + message + '</div>');
+                }
+
+                // Validate required fields
+                if (!$('[name="uploade_date"]').val()) {
+                    showError('uploade_date', "@lang('app.uploade_date_required')");
+                }
+                if (!$('[name="applicant"]').val()) {
+                    showError('applicant', "@lang('app.applicant_required')");
+                }
+                if (!$('[name="identities"]').val()) {
+                    showError('identities', "@lang('app.identities_required')");
+                }
+                if (!$('[name="address"]').val()) {
+                    showError('address', "@lang('app.address_required')");
+                }
+                
+
+                const postalCode = $('[name="postal_code"]').val();
+                if (!postalCode) {
+                    showError('postal_code', "@lang('app.postal_code_required')");
+                } else if (!/^\d+$/.test(postalCode)) {
+                    showError('postal_code', "@lang('app.postal_code_numeric')");
+                } else if (postalCode.length < 4 || postalCode.length > 8) {
+                    showError('postal_code', "@lang('app.postal_code_digits')");
+                }
+                
+                // Validate phone
+                const phone = $('[name="phone"]').val();
+                if (!phone) {
+                    showError('phone', "@lang('app.phone_required')");
+                } else if (!/^\d+$/.test(phone)) {
+                    showError('phone', "@lang('app.phone_numeric')");
+                } else if (phone.length < 10 || phone.length > 15) {
+                    showError('phone', "@lang('app.phone_digits_between')");
+                }
+                
+                // Validate email
+                const email = $('[name="email"]').val();
+                if (!email) {
+                    showError('email', "@lang('app.email_required')");
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showError('email', "@lang('app.email_valid')");
+                }
+                
+                if (!$('[name="city"]').val()) {
+                    showError('city', "@lang('app.city_required')");
+                }
+                if (!$('[name="district"]').val()) {
+                    showError('district', "@lang('app.district_required')");
+                }
+                if (!$('[name="state"]').val()) {
+                    showError('state', "@lang('app.state_required')");
+                }
+                if (!$('[name="land_district"]').val()) {
+                    showError('land_district', "@lang('app.land_district_required')");
+                }
+                if (!$('[name="land_lot"]').val()) {
+                    showError('land_lot', "@lang('app.land_lot_required')");
+                }
+                if (!$('[name="land_area"]').val()) {
+                    showError('land_area', "@lang('app.land_area_required')");
+                }
+                if (!$('[name="land_unit"]').val()) {
+                    showError('land_unit', "@lang('app.land_unit_required')");
+                }
+
+                // Validate land_grant file
+                const landGrantFile = $('#land_grant')[0].files[0];
+                if (!landGrantFile) {
+                    showError('land_grant', "@lang('app.land_grant_required')");
+                    $('#land_grant_error').text("@lang('app.land_grant_required')").show();
+                } else {
+                    // Check file size (15MB = 15360KB)
+                    if (landGrantFile.size > 15 * 1024 * 1024) {
+                        showError('land_grant', "@lang('app.land_grant_max')");
+                        $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                    }
+                    // Check file type (PDF only)
+                    else if (landGrantFile.type !== 'application/pdf') {
+                        showError('land_grant', "@lang('app.land_grant_mimes')");
+                        $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+                // If validation fails, don't show popup
+                if (hasErrors) {
+                    return;
+                }
+
                 Swal.fire({
                     title: "@lang('app.are_you_sure_admin')",
                     // text: "@lang('app.confirm_submit_application')",
@@ -591,7 +663,6 @@
                         });
 
                         var formData = new FormData(this);
-                        console.log("FormData:", formData);
 
                         $.ajax({
                             url: "{{ route('client_claim_submit') }}",
