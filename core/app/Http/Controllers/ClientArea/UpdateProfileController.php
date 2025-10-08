@@ -197,78 +197,100 @@ class UpdateProfileController extends Controller
 
     public function changePassword(Request $request, $uuid)
     {
-        $request->validate([
-            'old_password' => 'required',
-            'new_password' => [
-                'required',
-                'string',
-                'min:8',
-                'max:20',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[^\s]{8,20}$/',
-                'different:old_password'
-            ],
-            'new_password_confirmation' => 'required|same:new_password',
-        ], [
-            'new_password.regex' => __('app.password_validation_message'),
-            'new_password.different' => __('app.new_password_must_be_different')
-        ]);
-    
-        $lockedUntil = $this->getUserLockoutTime($uuid);
-        if ($lockedUntil && $lockedUntil > Carbon::now()) {
-            $remainingTime = Carbon::now()->diffInMinutes($lockedUntil) + 1;
-            return response()->json([
-                'success' => false,
-                'errors' => [
-                    'old_password' => [__('app.account_locked', ['minutes' => $remainingTime])]
-                ]
-            ], 422);
-        }
-        
-        // $client = ClientRegisterModel::whereClientId($id)->first();
-         $client = Client::where('uuid', $uuid)->first();
-        if (!$client) {
-            return response()->json([
-                'success' => false,
-                'errors' => ['general' => [__('app.user_not_found')]]
-            ], 404);
-        }
-        
-        if (!Hash::check($request->old_password, $client->password)) {
-            $this->recordFailedAttempt($uuid);
-            $attempts = $this->getFailedAttempts($uuid);
-            $remainingAttempts = 5 - $attempts;
-            
-            if ($attempts >= 5) {
-                $this->lockUserAccount($uuid);
-                
+        try {
+            $request->validate([
+                'old_password' => 'required',
+                'new_password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'max:20',
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,20}$/',
+                    'different:old_password'
+                ],
+                'new_password_confirmation' => 'required|same:new_password',
+            ], [
+                // ✅ Safe fallback messages (no "app.password_validation_message" issue)
+                'new_password.regex' => __('app.password_validation_message', [], 'en') !== 'app.password_validation_message'
+                    ? __('app.password_validation_message')
+                    : 'Kata laluan mesti mengandungi sekurang-kurangnya satu huruf besar, satu huruf kecil, satu nombor dan satu aksara khas (!@#$%).',
+                'new_password.different' => __('app.new_password_must_be_different', [], 'en') !== 'app.new_password_must_be_different'
+                    ? __('app.new_password_must_be_different')
+                    : 'Kata laluan baharu mestilah berbeza daripada kata laluan lama.',
+                'new_password_confirmation.same' => 'Kata laluan pengesahan tidak sepadan dengan kata laluan baharu.'
+            ]);
+
+            $lockedUntil = $this->getUserLockoutTime($uuid);
+            if ($lockedUntil && $lockedUntil > Carbon::now()) {
+                $remainingTime = Carbon::now()->diffInMinutes($lockedUntil) + 1;
                 return response()->json([
                     'success' => false,
                     'errors' => [
-                        'old_password' => [__('account locked maximum attempt reached', ['minutes' => 30])]
+                        'old_password' => [
+                            __('app.account_locked', ['minutes' => $remainingTime])
+                        ]
                     ]
                 ], 422);
             }
-            
+
+            $client = Client::where('uuid', $uuid)->first();
+            if (!$client) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['general' => [__('app.user_not_found')]]
+                ], 404);
+            }
+
+            if (!Hash::check($request->old_password, $client->password)) {
+                $this->recordFailedAttempt($uuid);
+                $attempts = $this->getFailedAttempts($uuid);
+                $remainingAttempts = 5 - $attempts;
+
+                if ($attempts >= 5) {
+                    $this->lockUserAccount($uuid);
+                    return response()->json([
+                        'success' => false,
+                        'errors' => [
+                            'old_password' => [__('account locked maximum attempt reached', ['minutes' => 30])]
+                        ]
+                    ], 422);
+                }
+
+                return response()->json([
+                    'success' => false,
+                    'errors' => [
+                        'old_password' => [
+                            __('app.old_password_incorrect') . ' ' .
+                            __($remainingAttempts . ' attempts remaining.')
+                        ]
+                    ]
+                ], 422);
+            }
+
+            $this->resetFailedAttempts($uuid);
+            $client->password = Hash::make($request->new_password);
+            $client->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('app.password_updated_successfully')
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // ✅ Always return JSON for validation issues
             return response()->json([
                 'success' => false,
-                'errors' => [
-                    'old_password' => [
-                        __('app.old_password_incorrect') . ' ' . 
-                        __( $remainingAttempts . ' attempts remaining.')
-                    ]
-                ]
+                'errors' => $e->errors(),
             ], 422);
+        } catch (\Exception $e) {
+            // ✅ Handle unexpected exceptions gracefully
+            \Log::error('Password change error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while updating password. Please try again later.',
+            ], 500);
         }
-    
-        $this->resetFailedAttempts($uuid);
-        $client->password = Hash::make($request->new_password);
-        $client->save();
-        
-        return response()->json([
-            'success' => true,
-            'message' => __('app.password_updated_successfully')
-        ]);
     }
+
 
 
      

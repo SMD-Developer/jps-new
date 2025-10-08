@@ -364,7 +364,7 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function() { 
             const messages = {
                 success: 'Kata laluan berjaya dikemas kini',
                 wrongOldPassword: 'Kata laluan lama salah',
@@ -523,86 +523,96 @@
 
             // Comprehensive error handler based on the backend responses
             function handleErrorResponse(xhr) {
-                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = xhr.responseJSON.errors;
+                let response = xhr.responseJSON || {};
 
-                    // Handle errors related to old_password specifically
-                    if (errors.old_password && errors.old_password.length > 0) {
-                        const errorMsg = errors.old_password[0];
+                // Laravel validation errors (status 422)
+                if (xhr.status === 422 && response.errors) {
+                    const errors = response.errors;
+                    let alertShown = false;
+                    let errorHTML = '';
 
-                        // Case: Account completely blocked or temporarily locked
-                        if (errorMsg.includes('@lang('app.account_locked')') ||
-                            errorMsg.includes('account locked') ||
-                            errorMsg.includes('account has been temporarily locked') ||
-                            errorMsg.includes('account has been blocked you have reached maximum attempt')) {
-
-                            // Extract minutes from the error message if available
-                            let minutesMatch = errorMsg.match(/(\d+)\s*(?:minute|min)/i);
-                            let minutes = minutesMatch ? minutesMatch[1] : 30;
-
-                            disableForm();
-                            showLockoutMessage(minutes);
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Account has been blocked',
-                                text: errorMsg,
-                                confirmButtonText: 'ok'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    logoutUser();
-                                }
-                            });
-
-                            return;
-                        }
-
-                        // Case: Wrong password with attempts remaining (matches your backend response pattern)
-                        if (errorMsg.includes('@lang('app.old_password_incorrect')') ||
-                            errorMsg.includes('attempts remaining')) {
-
-                            $('#old_password').addClass('is-invalid');
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: messages.wrongPasswordTitle,
-                                html: errorMsg,
-                            });
-
-                            return;
-                        }
-                    }
-
-                    // Handle other validation errors
-                    let errorList = '';
+                    // Loop through all fields
                     Object.entries(errors).forEach(([field, messagesArr]) => {
-                        // Skip old_password as it was handled above
-                        if (field !== 'old_password') {
-                            $(`#${field}`).addClass('is-invalid');
-                            messagesArr.forEach(msg => {
-                                errorList += `<div>${msg}</div>`;
+                        // Highlight the invalid field
+                        $(`#${field}`).addClass('is-invalid');
+
+                        const messageText = messagesArr.join('<br>');
+
+                        // 🟥 Case 1: Account locked or blocked
+                        if (
+                            messageText.toLowerCase().includes('account locked') ||
+                            messageText.toLowerCase().includes('blocked') ||
+                            messageText.toLowerCase().includes('maximum attempt')
+                        ) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '@lang("app.account_locked_title")',
+                                html: messageText,
                             });
+                            disableForm();
+                            alertShown = true;
+                            return;
                         }
+
+                        // 🟧 Case 2: Wrong old password (with attempts remaining)
+                        if (
+                            field === 'old_password' &&
+                            (messageText.toLowerCase().includes('incorrect') ||
+                                messageText.toLowerCase().includes('attempt'))
+                        ) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '@lang("app.wrong_old_password")',
+                                html: messageText,
+                            });
+                            alertShown = true;
+                            return;
+                        }
+
+                        // 🟨 Case 3: New password regex or mismatch errors
+                        if (field === 'new_password' || field === 'new_password_confirmation') {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '@lang("app.invalid_password")',
+                                html: messageText,
+                            });
+                            alertShown = true;
+                            return;
+                        }
+
+                        // 🟩 Default: collect other validation messages
+                        errorHTML += `<div>${messageText}</div>`;
                     });
 
-                    if (errorList) {
+                    // Show all other validation errors (if any not already shown)
+                    if (!alertShown && errorHTML !== '') {
                         Swal.fire({
                             icon: 'warning',
-                            title: messages.validationTitle,
-                            html: errorList,
+                            title: '@lang("app.validation_error")',
+                            html: errorHTML,
                         });
                     }
-                } else {
-                    // Handle general server errors
-                    if (!messages.hideDefaultError) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '@lang('app.oops')',
-                            text: messages.defaultError,
-                        });
-                    }
+                    return;
                 }
+
+                // Laravel Not Found (404)
+                if (xhr.status === 404 && response.errors) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '@lang("app.user_not_found")',
+                        html: Object.values(response.errors).flat().join('<br>'),
+                    });
+                    return;
+                }
+
+                // Other unexpected errors
+                Swal.fire({
+                    icon: 'error',
+                    title: '@lang("app.oops")',
+                    text: '@lang("app.something_went_wrong_try_again")',
+                });
             }
+
 
             // Helper function to logout user
             function logoutUser() {
