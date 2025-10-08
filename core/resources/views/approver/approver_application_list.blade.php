@@ -115,17 +115,18 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <form method="GET" action="{{ url()->current() }}">
-                            <div class="row g-2 align-items-end mt-3 mx-1">
+                            <div class="row g-3 align-items-center mt-3 mx-1">
+
                                 <!-- Search Input -->
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="search" class="form-label">{{ trans('app.search') }}:</label>
+                                <div class="col-md-3 col-sm-6 d-flex align-items-center">
+                                    <label for="search" class="form-label mb-0 me-2 fw-semibold">{{ trans('app.search') }}:</label>
                                     <input type="text" id="search" name="search" class="form-control form-control-sm"
                                         placeholder="{{ trans('app.search') }}" value="{{ request('search') }}">
                                 </div>
 
                                 <!-- District Dropdown -->
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="district" class="form-label">{{ trans('app.district') }}:</label>
+                                <div class="col-md-3 col-sm-6 d-flex align-items-center">
+                                    <label for="district" class="form-label mb-0 me-2 fw-semibold">{{ trans('app.district') }}:</label>
                                     <select id="district" name="district" class="form-select form-select-sm">
                                         <option value="" selected disabled>{{ trans('app.select_district') }}</option>
                                         @foreach ($district as $value)
@@ -137,8 +138,8 @@
                                 </div>
 
                                 <!-- Mukim/Division Dropdown -->
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="division" class="form-label">{{ trans('app.division') }}:</label>
+                                <div class="col-md-3 col-sm-6 d-flex align-items-center">
+                                    <label for="division" class="form-label mb-0 me-2 fw-semibold">{{ trans('app.division') }}:</label>
                                     <select id="division" name="division" class="form-select form-select-sm">
                                         <option value="" selected disabled>{{ trans('app.select_division') }}</option>
                                         @if(request('district'))
@@ -155,20 +156,23 @@
                                 </div>
 
                                 <!-- Lot/PT Input -->
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="lot" class="form-label">{{ trans('app.lot_pt') }}:</label>
+                                <div class="col-md-3 col-sm-6 d-flex align-items-center">
+                                    <label for="lot" class="form-label mb-0 me-2 fw-semibold">{{ trans('app.lot_pt') }}:</label>
                                     <input type="text" id="lot" name="lot" class="form-control form-control-sm"
                                         placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
                                 </div>
 
-                                <!-- Search Button -->
+                                <!-- Buttons -->
                                 <div class="col-12 text-end mt-2">
                                     <button type="submit" class="btn btn-primary btn-sm" style="background:#3c8dbc; border:1px solid #3c8dbc;">
                                         <strong>{{ trans('app.search_b') }}</strong>
                                     </button>
-                                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm"><strong>{{ trans('app.reset') }}</strong></a>
+                                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                        <strong>{{ trans('app.reset') }}</strong>
+                                    </a>
                                 </div>
                             </div>
+
 
                             <!-- Second Row: Show per page and Status -->
                             <div class="row mt-3 mx-1 align-items-center">
