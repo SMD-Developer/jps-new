@@ -69,18 +69,14 @@
 
                     <div class="row search-row align-items-end mt-3 mx-1">
                         <!-- Search Input -->
-                        <div class="col-md-3 col-sm-6 mb-2">
-                            <div class="d-flex align-items-center">
-                                <label for="search" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.search') }} -</label>
+                           <div class="col-md-3 col-sm-6 colsm36">
+                                <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
                                 <input type="text" id="search" class="form-control form-control-sm"
                                     placeholder="{{ trans('app.search') }}">
                             </div>
-                        </div>
-
-                        <!-- District Dropdown -->
-                        <div class="col-md-3 col-sm-6 mb-2">
-                            <div class="d-flex align-items-center">
-                                <label for="district" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.district') }} -</label>
+                            <!-- District Dropdown -->
+                            <div class="col-md-3 col-sm-6" id="aside">
+                                <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
                                 <select id="district" class="form-select form-select-sm form-control form-control-sm">
                                     <option value="" selected disabled>{{ trans('app.select_district') }}</option>
                                     @foreach ($district as $value)
@@ -91,50 +87,30 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-
-                        <!-- Division Dropdown -->
-                        <div class="col-md-3 col-sm-6 mb-2">
-                            <div class="d-flex align-items-center">
-                                <label for="division" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.division') }} -</label>
+                            <!-- Mukim Dropdown -->
+                            <div class="col-md-3 col-sm-6" id="aside">
+                                <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
                                 <select id="division" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="">{{ trans('app.select_division') }}</option>
-                                    @if(request('district'))
-                                        @php
-                                            $divisions = DB::table('division')->where('daerah_id', request('district'))->get();
-                                        @endphp
-                                        @foreach ($divisions as $div)
-                                            <option value="{{ $div->idmukim }}" {{ request('division') == $div->idmukim ? 'selected' : '' }}>
-                                                {{ $div->mukim_code }} - {{ $div->mukim }}
-                                            </option>
-                                        @endforeach
-                                    @endif
+                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
+                                    <!-- Divisions are dynamically populated -->
                                 </select>
                             </div>
-                        </div>
-
-                        <!-- Lot/PT Input -->
-                        <div class="col-md-3 col-sm-6 mb-2">
-                            <div class="d-flex align-items-center">
-                                <label for="lot" class="form-label mb-0 me-2" style="white-space: nowrap;">{{ trans('app.lot_pt') }} -</label>
+                            <!-- Lot/PT Input -->
+                            <div class="col-md-3 col-sm-6" id="aside">
+                                <label for="lot"
+                                    class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;
                                 <input type="text" id="lot" class="form-control form-control-sm"
                                     placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Second Row for Buttons -->
-                    <div class="row mt-2 mx-1 mb-2">
-                        <div class="col-12 d-flex justify-content-end gap-2">
-                            <a href="#" class="btn btn-primary btn-sm search-btn"
-                                style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
-                                <strong>{{ trans('app.search_b') }}</strong>
-                            </a>
-
-                            <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
-                                <strong>{{ trans('app.reset') }}</strong>
-                            </a>
-                        </div>
+                            <div class="col-md-12 col-sm-12 mt-3 text-right">
+                                <a href="#" class="btn btn-primary btn-sm search-btn"
+                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
+                                    <strong>{{ trans('app.search_b') }}</strong>
+                                </a>
+                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                        <strong>{{ trans('app.reset') }}</strong>
+                                </a>
+                            </div>
                     </div>
 
                     <!-- Table -->
