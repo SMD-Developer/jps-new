@@ -76,16 +76,14 @@ class ProfileController extends CrudController {
         if ($loggedUser) {
             $user = $this->repository->getById($loggedUser->uuid);
             
-            // ✅ Validate the request first
             $validated = $request->validate([
                 'photo' => 'nullable|file|max:2048',
-                'username' => 'required|string|unique:users,username,' . $user->id,
+                'username' => 'required|string|unique:users,username,' . $user->uuid . ',uuid',
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $user->id,
+                'email' => 'required|email|unique:users,email,' . $user->uuid . ',uuid',
                 'phone' => 'nullable|string|max:20'
             ]);
-            
-            // ✅ Prepare data for update (only the actual values)
+        
             $data = [
                 'username' => $request->username,
                 'name' => $request->name,
@@ -93,7 +91,6 @@ class ProfileController extends CrudController {
                 'phone' => $request->phone
             ];
             
-            // ✅ Handle photo upload if exists
             if ($request->hasFile('photo')) {
                 $photo = $request->file('photo');
                 $photoName = time() . '_' . $photo->getClientOriginalName();
