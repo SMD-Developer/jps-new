@@ -131,46 +131,7 @@ class UpdateProfileController extends Controller
 
     return redirect()->route('edit_profile', $id);
 }
-    
-    //  public function Settings($id)
-    // {
-    //     $title = __("app.change_password");  
-    //     $client = ClientRegisterModel::whereClientId($id)
-    //     ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
-    //     ->select('client_register.*', 'account_types.name as account_type_name')
-    //     ->first();
-    //     // dd( $client);
-    //      return view('clientarea.crud.settings', compact('title','client'));
-    // } 
-    // public function changePassword(Request $request, $uuid)
-    // {
-    //     // dd($request->all(), $uuid);
-    //     $validator = Validator::make($request->all(), [
-    //         'old_password' => 'required',
-    //         'new_password' => 'required|string|min:8|confirmed',
-    //     ]);
-        
-    //     if ($validator->fails()) {
-    //         return response()->json(['errors' => $validator->errors()], 422);
-    //     }
-    //     // dd('Validation passed');
-    //     // Get client from `clients` table (used for login)
-    //     $client = Client::where('uuid', $uuid)->first();
-    //     // dd($client);
-    //     if (!$client) {
-    //         return response()->json(['errors' => ['client' => ['Client not found.']]], 422);
-    //     }
-    
-    //     // Check old password using the hashed password from the clients table
-    //     if (!Hash::check($request->old_password, $client->password)) {
-    //         return response()->json(['errors' => ['old_password' => ['Old password is incorrect.']]], 422);
-    //     }
-    
-    //     $client->password = Hash::make($request->new_password);
-    //     $client->save();
-    //     // Update password in `client_register` table as well
-    //     return response()->json(['message' => 'Password updated successfully.']);
-    // }
+
     
     
     public function Settings($id)
