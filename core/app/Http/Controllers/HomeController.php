@@ -281,7 +281,9 @@ class HomeController extends Controller {
                 }
             }
             
-            $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();                  
+            $district = DB::table('district')->where('stat', 1)
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();                  
             
             return view('listapplication', compact(             
                 'list',              
