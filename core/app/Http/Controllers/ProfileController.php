@@ -76,39 +76,38 @@ class ProfileController extends CrudController {
         if ($loggedUser) {
             $user = $this->repository->getById($loggedUser->uuid);
             
-            // ✅ Validate the request
+            // ✅ Make username nullable/optional
             $validated = $request->validate([
-                'photo' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+                'photo' => 'nullable|file|max:2048',
                 'username' => 'nullable|string|unique:users,username,' . $user->uuid . ',uuid',
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $user->uuid . ',uuid',
                 'phone' => 'nullable|string|max:20'
             ]);
             
-            // ✅ Prepare data for update
+            // ✅ Only include username if provided
             $data = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone
             ];
             
-            // Add username only if provided
+            // Add username only if it's provided
             if ($request->filled('username')) {
                 $data['username'] = $request->username;
             }
             
-            // ✅ Handle photo upload with your path configuration
+            // ✅ Handle photo upload if exists
             if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
-                $filename = strtolower(Str::random(50) . '.' . $file->getClientOriginalExtension());
-                $file->move(config('app.uploads_path') . 'admin_images', $filename);
-
-                // Delete old photo if exists
-                if ($user->photo) {
-                    File::delete(config('app.uploads_path') . 'admin_images/' . $user->photo);
+                $photo = $request->file('photo');
+                $photoName = time() . '_' . $photo->getClientOriginalName();
+                $photo->move(public_path('uploads/profiles'), $photoName);
+                $data['photo'] = 'uploads/profiles/' . $photoName;
+                
+                // Optional: Delete old photo
+                if ($user->photo && file_exists(public_path($user->photo))) {
+                    unlink(public_path($user->photo));
                 }
-
-                $data['photo'] = $filename;
             }
             
             // ✅ Update user
