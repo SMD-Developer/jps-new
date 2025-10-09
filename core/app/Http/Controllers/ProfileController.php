@@ -76,38 +76,39 @@ class ProfileController extends CrudController {
         if ($loggedUser) {
             $user = $this->repository->getById($loggedUser->uuid);
             
-            // ✅ Make username nullable/optional
+            // ✅ Validate the request
             $validated = $request->validate([
-                'photo' => 'nullable|file|max:2048',
+                'photo' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
                 'username' => 'nullable|string|unique:users,username,' . $user->uuid . ',uuid',
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $user->uuid . ',uuid',
                 'phone' => 'nullable|string|max:20'
             ]);
             
-            // ✅ Only include username if provided
+            // ✅ Prepare data for update
             $data = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone
             ];
             
-            // Add username only if it's provided
+            // Add username only if provided
             if ($request->filled('username')) {
                 $data['username'] = $request->username;
             }
             
-            // ✅ Handle photo upload if exists
+            // ✅ Handle photo upload with your path configuration
             if ($request->hasFile('photo')) {
-                $photo = $request->file('photo');
-                $photoName = time() . '_' . $photo->getClientOriginalName();
-                $photo->move(public_path('uploads/profiles'), $photoName);
-                $data['photo'] = 'uploads/profiles/' . $photoName;
-                
-                // Optional: Delete old photo
-                if ($user->photo && file_exists(public_path($user->photo))) {
-                    unlink(public_path($user->photo));
+                $file = $request->file('photo');
+                $filename = strtolower(Str::random(50) . '.' . $file->getClientOriginalExtension());
+                $file->move(config('app.uploads_path') . 'admin_images', $filename);
+
+                // Delete old photo if exists
+                if ($user->photo) {
+                    File::delete(config('app.uploads_path') . 'admin_images/' . $user->photo);
                 }
+
+                $data['photo'] = $filename;
             }
             
             // ✅ Update user
