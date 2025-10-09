@@ -1755,17 +1755,18 @@ class HomeController extends Controller {
 
     
     
-    public function viewReceipt(Request $request)     
+    public function viewReceipt(Request $request)
     {         
         $perPage = $request->input('per_page', 10);
         $statusFilter = $request->input('status_filter', 'all'); 
+        $methodFilter = $request->input('method_filter', 'all'); 
         $search = $request->input('q');
         
-        // Use 'payments' instead of 'latestPayment'
+        // Load payments relation without filtering for latest
         $query = Application::with(['state', 'landDistrict', 'landDivision', 'client', 'payments'])
-            ->where('status', 'approved')
-            ->orderBy('created_at', 'desc');         
-        
+            ->where('applications.status', 'approved')
+            ->orderBy('applications.created_at', 'desc');         
+
         $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
 
         $isFinanceAdmin = false;         
@@ -1774,55 +1775,49 @@ class HomeController extends Controller {
             $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
         }          
 
-        // Filter based on payments table payment_status
-        switch ($statusFilter) {
-            case 'completed':
-                $query->whereHas('payments', function($q) {
-                    $q->where('payment_status', 'completed');
+        // Filter based on payment status (any payment)
+       if ($statusFilter !== 'all') {
+            if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {
+                $query->whereHas('payments', function($q) use ($statusFilter) {
+                    $q->where('payment_status', $statusFilter)
+                    ->where('created_at', function($q2) {
+                        $q2->selectRaw('MAX(created_at)')
+                            ->from('payments as p2')
+                            ->whereColumn('p2.application_id', 'payments.application_id');
+                    });
                 });
-                break;
-                
-            case 'failed':
-                $query->whereHas('payments', function($q) {
-                    $q->where('payment_status', 'failed');
-                });
-                break;
-                
-            case 'pending':
-            case 'pending_authorization':
-                $query->whereHas('payments', function($q) {
-                    $q->where('payment_status', 'pending_authorization');
-                });
-                break;
-                
-            case 'incomplete':
-            case 'no_payment':
+            } elseif (in_array($statusFilter, ['incomplete','no_payment'])) {
                 $query->whereDoesntHave('payments');
-                break;
-                
-            case 'in_review':
-                $query->whereHas('payments', function($q) {
-                    $q->where('payment_status', 'in_review');
-                });
-                break;
-                
-            case 'all':
-            default:
-                break;
+            }
         }
-        
-        $query->when($search, function ($q) use ($search) {
+
+
+
+        // Filter based on payment method (any payment)
+        if ($methodFilter !== 'all') {
+            $query->whereHas('payments', function($q) use ($methodFilter) {
+                switch ($methodFilter) {
+                    case 'B2B': $q->where('method','FPX_B2B'); break;
+                    case 'B2C': $q->where('method','FPX_B2C'); break;
+                    case 'EFT': $q->where('method','EFT'); break;
+                    case 'Cheque': $q->where('method','cheque'); break;
+                }
+            });
+        }
+
+        // Search filter
+        if ($search) {
             $like = "%{$search}%";
-            $q->where(function ($sub) use ($like) {
-                $sub->where('refference_no', 'like', $like)
-                    ->orWhere('applicant', 'like', $like)
-                    ->orWhere('land_lot', 'like', $like)
-                    ->orWhere('final_amount', 'like', $like)
+            $query->where(function ($sub) use ($like) {
+                $sub->where('applications.refference_no', 'like', $like)
+                    ->orWhere('applications.applicant', 'like', $like)
+                    ->orWhere('applications.land_lot', 'like', $like)
+                    ->orWhere('applications.final_amount', 'like', $like)
                     ->orWhereHas('client', function($clientQuery) use ($like) {
                         $clientQuery->where('userName', 'like', $like);
                     });
             });
-        });
+        }
 
         $list = $query->paginate($perPage)->withQueryString();
 
@@ -1831,9 +1826,11 @@ class HomeController extends Controller {
             'canApproverViewReciept', 
             'perPage', 
             'isFinanceAdmin',
-            'statusFilter' 
+            'statusFilter',
+            'methodFilter' 
         ));     
     }
+
     
     public function userReceipt(){
         $list = Application::with(['state', 'landDistrict', 'landDivision', 'client'])

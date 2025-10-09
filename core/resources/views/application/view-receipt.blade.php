@@ -316,7 +316,16 @@
                                         
                                     </select>
                                 </div>
-                               
+                                <div>
+                                    <select id="methodFilter" class="form-select form-select-sm" onchange="changeMethodFilter()" style="width: auto; min-width: 150px;">
+                                        <option value="all" {{ ($methodFilter ?? 'all') == 'all' ? 'selected' : '' }}> @lang('app.all_payments')</option>
+                                        <option value="B2B" {{ ($methodFilter ?? 'all') == 'B2B' ? 'selected' : '' }}>B2B</option>
+                                        <option value="B2C" {{ ($methodFilter ?? 'all') == 'B2C' ? 'selected' : '' }}>B2C</option>
+                                        <option value="EFT" {{ ($methodFilter ?? 'all') == 'EFT' ? 'selected' : '' }}>EFT</option>
+                                        <option value="Cheque" {{ ($methodFilter ?? 'all') == 'Cheque' ? 'selected' : '' }}>@lang('app.cheque')</option>
+                                    </select>
+                                </div>
+
                             </div>
                                <!-- Search Box - Right End -->
                             <form method="GET" class="d-flex align-items-center mt-3">
@@ -359,78 +368,58 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($list as $item)
-                                       @php
-                                                $isFinanceAdmin = auth('admin')->check() && 
-                                                                 auth('admin')->user()->role_id === '9e032970-5f48-4d2b-b88e-abb9da79140f';
-                                                
-                                                // Initialize default values
-                                                $paymentMethod = '-';
-                                                $methodClass = 'method-pending';
-                                                
-                                                
-                                                // If payment exists
-                                                if ($item->payment) {
-                                                    // Determine payment method
-                                                    switch ($item->payment->method) {
-                                                        case 'FPX_B2C':
-                                                            $paymentMethod = 'B2C';
-                                                            $methodClass = 'method-online';
-                                                            break;
-                                                        case 'FPX_B2B':
-                                                            $paymentMethod = 'B2B';
-                                                            $methodClass = 'method-online';
-                                                            break;
-                                                        case 'cheque':
-                                                            $paymentMethod = 'Cheque';
-                                                            $methodClass = 'method-offline';
-                                                            break;
-                                                        case 'bank_transfer':
-                                                            $paymentMethod = 'Bank Transfer';
-                                                            $methodClass = 'method-offline';
-                                                            break;
-                                                        default:
-                                                            if (strpos($item->payment->method, 'FPX') !== false) {
-                                                                $paymentMethod = str_replace('_', ' ', $item->payment->method);
-                                                                $methodClass = 'method-online';
-                                                            } else {
-                                                                $paymentMethod = 'Online'; // This will now only appear for unknown methods
-                                                                $methodClass = 'method-online';
-                                                            }
-                                                    }
-                                                    
-                                                    // Special case for government agencies - always show as EFT if payment exists
-                                                    if ($item->client && $item->client->accountType == 3) {
-                                                        $paymentMethod = 'EFT';
+                                   @foreach ($list as $item)
+                                        @php
+                                            // Get latest payment ONCE at the top
+                                            $latestPayment = $item->payments->sortByDesc('created_at')->first();
+                                            
+                                            $isFinanceAdmin = auth('admin')->check() && 
+                                                            auth('admin')->user()->role_id === '9e032970-5f48-4d2b-b88e-abb9da79140f';
+                                            
+                                            // Initialize default values
+                                            $paymentMethod = '-';
+                                            $methodClass = 'method-pending';
+                                            
+                                            // If latest payment exists
+                                            if ($latestPayment) {
+                                                // Determine payment method
+                                                switch ($latestPayment->method) {
+                                                    case 'FPX_B2C':
+                                                        $paymentMethod = 'B2C';
+                                                        $methodClass = 'method-online';
+                                                        break;
+                                                    case 'FPX_B2B':
+                                                        $paymentMethod = 'B2B';
+                                                        $methodClass = 'method-online';
+                                                        break;
+                                                    case 'cheque':
+                                                        $paymentMethod = 'Cheque';
                                                         $methodClass = 'method-offline';
-                                                    }
+                                                        break;
+                                                    case 'bank_transfer':
+                                                        $paymentMethod = 'Bank Transfer';
+                                                        $methodClass = 'method-offline';
+                                                        break;
+                                                    default:
+                                                        if (strpos($latestPayment->method, 'FPX') !== false) {
+                                                            $paymentMethod = str_replace('_', ' ', $latestPayment->method);
+                                                            $methodClass = 'method-online';
+                                                        } else {
+                                                            $paymentMethod = 'Online';
+                                                            $methodClass = 'method-online';
+                                                        }
                                                 }
                                                 
-                                               // Determine payment status
-                                                    if ($item->payment && $item->payment->payment_status) {
-                                                        // Special TEMPORARY logic for B2B
-                                                        if (
-                                                            $item->payment->method === 'FPX_B2B'
-                                                            && $item->payment->payment_status === 'pending_authorization'
-                                                        ) {
-                                                            $paymentStatus = trans('app.pending');
-                                                        } elseif ($item->payment->payment_status == 'completed') {
-                                                            $paymentStatus = trans('app.paids');
-                                                        } elseif ($item->payment->payment_status == 'in_review') {
-                                                            $paymentStatus = trans('app.payment_in_review');
-                                                        } else {
-                                                            // Use the payment status translation as usual
-                                                            $paymentStatus = trans('app.' . $item->payment->payment_status);
-                                                        }
-                                                    }
-
-                                            @endphp
+                                                // Special case for government agencies - always show as EFT if payment exists
+                                                if ($item->client && $item->client->accountType == 3) {
+                                                    $paymentMethod = 'EFT';
+                                                    $methodClass = 'method-offline';
+                                                }
+                                            }
+                                        @endphp
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
-                                             <td>
-                                                @php
-                                                    $latestPayment = $item->payments->sortByDesc('created_at')->first();
-                                                @endphp
+                                            <td>
                                                 {{ $latestPayment?->payment_date ? \Carbon\Carbon::parse($latestPayment->payment_date)->format('d M Y') : 'N/A' }}
                                             </td>
                                             <td>{{ $item->refference_no }}</td>
@@ -479,8 +468,7 @@
                                             </td>
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}</td>
-                                            <td>{{ $item->final_amount ? 'RM ' . number_format($item->final_amount, 2) : 'N/A' }}
-                                            </td>
+                                            <td>{{ $item->final_amount ? 'RM ' . number_format($item->final_amount, 2) : 'N/A' }}</td>
                                             <td>
                                                 @if($paymentMethod !== '-')
                                                     <span class="payment-method-badge {{ $methodClass }}">
@@ -490,76 +478,50 @@
                                                     -
                                                 @endif
                                             </td>
-                                            <td>{{ $item->latestPayment && $item->latestPayment->transaction_id ? $item->latestPayment->transaction_id : '-' }}</td>
-
-                                            <!--<td>-->
-                                            <!--    @if ($item->payment && $item->payment->payment_status)-->
-                                            <!--        @if ($item->payment->method === 'FPX_B2B' && $item->payment->payment_status === 'pending_authorization')-->
-                                            <!--            {{ trans('app.payment_pending') }}-->
-                                            <!--        @elseif ($item->payment->payment_status == 'completed')-->
-                                            <!--            {{ trans('app.paids') }}-->
-                                            <!--        @elseif ($item->payment->payment_status == 'in_review')-->
-                                            <!--            {{ trans('app.payment_in_review') }}-->
-                                            <!--        @elseif ($item->payment->payment_status == 'failed')-->
-                                            <!--            {{ trans('app.payment_failed')}}-->
-                                            <!--        @else-->
-                                            <!--            @lang('app.' . $item->payment->payment_status)-->
-                                            <!--        @endif-->
-                                            <!--    @else-->
-                                            <!--        {{ trans('app.unpaid') }}-->
-                                            <!--    @endif-->
-                                            <!--</td>-->
-                                            
+                                            <td>{{ $latestPayment && $latestPayment->transaction_id ? $latestPayment->transaction_id : '-' }}</td>
                                             
                                             <td>
-                                                @if ($item->latestPayment && $item->latestPayment->payment_status)
-                                                    @if ($item->latestPayment->method === 'FPX_B2B' && $item->latestPayment->payment_status === 'pending_authorization')
+                                                @if ($latestPayment && $latestPayment->payment_status)
+                                                    @if ($latestPayment->method === 'FPX_B2B' && $latestPayment->payment_status === 'pending_authorization')
                                                         {{ trans('app.payment_pending') }}
-                                                    @elseif ($item->latestPayment->payment_status == 'completed')
+                                                    @elseif ($latestPayment->payment_status == 'completed')
                                                         {{ trans('app.paids') }}
-                                                    @elseif ($item->latestPayment->payment_status == 'in_review')
+                                                    @elseif ($latestPayment->payment_status == 'in_review')
                                                         {{ trans('app.payment_in_review') }}
-                                                    @elseif ($item->latestPayment->payment_status == 'failed')
+                                                    @elseif ($latestPayment->payment_status == 'failed')
                                                         {{ trans('app.payment_failed')}}
                                                     @else
-                                                        @lang('app.' . $item->latestPayment->payment_status)
+                                                        @lang('app.' . $latestPayment->payment_status)
                                                     @endif
                                                 @else
                                                     {{ trans('app.unpaid') }}
                                                 @endif
                                             </td>
 
-                                           
-                                       
-                                        <td>
+                                            <td>
                                                 <div class="sbtn">
                                                     {{-- Don't show anything if payment status is 'failed' --}}
-                                                    @if (!$item->payment || $item->payment->payment_status !== 'failed')
+                                                    @if (!$latestPayment || $latestPayment->payment_status !== 'failed')
                                                         
                                                         {{-- If payment exists and status is completed, show view receipt --}}
                                                         @if (
                                                             $canApproverViewReciept && 
-                                                            $item->latestPayment && 
-                                                            $item->latestPayment->payment_status === 'completed'
+                                                            $latestPayment && 
+                                                            $latestPayment->payment_status === 'completed'
                                                         )
                                                             <a href="{{ route('user_original_receipts', ['application_id' => $item->id]) }}" 
-                                                               class="btn btn-primary btn-sm">
+                                                            class="btn btn-primary btn-sm">
                                                                 <strong>{{ trans('app.view_receipt') }}</strong>
                                                             </a>
                                                         @endif
                                                         
+                                                        {{-- Finance admin can edit in_review status --}}
                                                         @if (
                                                             $isFinanceAdmin && 
-                                                            $item->payment &&  
-                                                            $item->payment->payment_status === 'in_review'
+                                                            $latestPayment &&  
+                                                            $latestPayment->payment_status === 'in_review'
                                                         )
-                                                           <!--<a href="{{ route('finance.payment.letter', ['application_id' => $item->id]) }}"-->
-                                                           <!--         class="btn btn-success btn-sm"-->
-                                                           <!--         title="{{ trans('app.view_receipt') }}">-->
-                                                           <!--         <i class="fa fa-edit fa-lg"></i>-->
-                                                           <!--     </a>-->
-                                                           
-                                                           <button type="button" 
+                                                            <button type="button" 
                                                                     class="btn btn-edit btn-sm"
                                                                     onclick="window.location.href='{{ route('finance.payment.letter', ['application_id' => $item->id]) }}'"
                                                                     title="{{ trans('app.view_receipt') }}">
@@ -570,10 +532,10 @@
                                                         {{-- If payment is NOT completed AND NOT in_review, show edit button for Finance Admin --}}
                                                         @if (
                                                             $isFinanceAdmin && 
-                                                            $item->latestPayment  &&
-                                                            $item->latestPayment ->payment_status !== 'completed' &&
-                                                            $item->latestPayment ->payment_status !== 'in_review' &&
-                                                            $item->latestPayment ->payment_status !== 'failed' // Added this condition
+                                                            $latestPayment &&
+                                                            $latestPayment->payment_status !== 'completed' &&
+                                                            $latestPayment->payment_status !== 'in_review' &&
+                                                            $latestPayment->payment_status !== 'failed'
                                                         )
                                                             <button type="button" class="btn btn-edit btn-sm"
                                                                 data-bs-toggle="modal" data-bs-target="#editPaymentModal"
@@ -581,7 +543,7 @@
                                                                 data-reference-no="{{ $item->refference_no }}"
                                                                 data-applicant="{{ $item->applicant }}"
                                                                 data-amount="{{ $item->final_amount }}"
-                                                                data-current-status="{{ $item->payment->payment_status }}"
+                                                                data-current-status="{{ $latestPayment->payment_status }}"
                                                                 data-payment-method="{{ $paymentMethod }}"
                                                                 title="{{ trans('app.edit_payment_status') }}">
                                                                 <i class="fa fa-edit"></i>
@@ -591,7 +553,7 @@
                                                         {{-- Additional condition for cases where no payment exists at all --}}
                                                         @if (
                                                             $isFinanceAdmin && 
-                                                            !$item->payment
+                                                            !$latestPayment
                                                         )
                                                             <button type="button" class="btn btn-edit btn-sm"
                                                                 data-bs-toggle="modal" data-bs-target="#editPaymentModal"
@@ -609,7 +571,6 @@
                                                     @endif
                                                 </div>
                                             </td>
-
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -915,129 +876,146 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    // Define functions at global scope FIRST
-    window.changePerPage = function() {
-        const perPage = document.getElementById('perPageSelect').value;
-        const statusFilter = document.getElementById('statusFilter').value;
-        const search = '{{ request("q") }}';
-        
-        const url = new URL(window.location.href);
-        url.searchParams.set('per_page', perPage);
-        url.searchParams.set('status_filter', statusFilter);
-        url.searchParams.set('page', 1);
-        
-        if (search) {
-            url.searchParams.set('q', search);
-        }
-        
-        window.location.href = url.toString();
-    };
-    
-    window.changeStatusFilter = function() {
-        changePerPage(); // Reuse the same function
-    };
+        // ================================
+        // Global Filter Functions
+        // ================================
+        function updateFilters() {
+            const perPage = document.getElementById('perPageSelect').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const methodFilter = document.getElementById('methodFilter').value;
+            const search = '{{ request("q") }}';
 
-    // Then DOMContentLoaded for everything else
-    document.addEventListener('DOMContentLoaded', function() {
-        const paymentMethodSelect = document.getElementById('payment_method');
-        const conditionalFields = {
-            'cheque': document.getElementById('cheque-fields'),
-            'bank_transfer': document.getElementById('bank-transfer-fields'),
-            'online': document.getElementById('online-fields')
-        };
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', perPage);
+            url.searchParams.set('status_filter', statusFilter);
+            url.searchParams.set('method_filter', methodFilter);
+            url.searchParams.set('page', 1);
 
-        Object.values(conditionalFields).forEach(field => {
-            if (field) field.style.display = 'none';
-        });
-        
-        paymentMethodSelect.addEventListener('change', function() {
-            const selectedMethod = this.value;
-            Object.values(conditionalFields).forEach(field => {
-                if (field) {
-                    field.classList.remove('show');
-                    setTimeout(() => {
-                        field.style.display = 'none';
-                    }, 300);
-                }
-            });
-
-            if (selectedMethod && conditionalFields[selectedMethod]) {
-                setTimeout(() => {
-                    conditionalFields[selectedMethod].style.display = 'block';
-                    setTimeout(() => {
-                        conditionalFields[selectedMethod].classList.add('show');
-                    }, 50);
-                }, 300);
+            if (search) {
+                url.searchParams.set('q', search);
             }
-            updateRequiredFields(selectedMethod);
-        });
 
-        function updateRequiredFields(paymentMethod) {
-            document.querySelectorAll('.conditional-fields input, .conditional-fields select').forEach(
-                input => {
-                    input.removeAttribute('required');
-                });
-            if (paymentMethod === 'cheque') {
-                ['cheque_number', 'cheque_date', 'bank_name'].forEach(id => {
-                    const field = document.getElementById(id);
-                    if (field) field.setAttribute('required', 'required');
-                });
-            } else if (paymentMethod === 'bank_transfer') {
-                ['transaction_id', 'transfer_date', 'from_bank', 'receipt_upload'].forEach(id => {
-                    const field = document.getElementById(id);
-                    if (field) field.setAttribute('required', 'required');
-                });
-            }
+            window.location.href = url.toString();
         }
 
-        const editPaymentModal = document.getElementById('editPaymentModal');
-        if (editPaymentModal) {
-            editPaymentModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const applicationId = button.getAttribute('data-application-id');
-                const refNo = button.getAttribute('data-reference-no');
-                const applicant = button.getAttribute('data-applicant');
-                const amount = button.getAttribute('data-amount');
-                const currentStatus = button.getAttribute('data-current-status') || 'Not Set';
-                const paymentMethod = button.getAttribute('data-payment-method');
+        window.changePerPage = updateFilters;
+        window.changeStatusFilter = updateFilters;
+        window.changeMethodFilter = updateFilters;
 
-                document.getElementById('modal-ref-no').textContent = refNo;
-                document.getElementById('modal-applicant').textContent = applicant;
-                document.getElementById('modal-amount').textContent = parseFloat(amount || 0)
-                    .toLocaleString('en-US', {
-                        minimumFractionDigits: 2
-                    });
-                document.getElementById('modal-current-status').textContent = currentStatus;
-                document.getElementById('editPaymentForm').action =
-                    `admin/payment/update/${applicationId}`;
-                document.getElementById('editPaymentForm').reset();
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // ========================
+            // Conditional Payment Fields
+            // ========================
+            const paymentMethodSelect = document.getElementById('payment_method');
+            const conditionalFields = {
+                'cheque': document.getElementById('cheque-fields'),
+                'bank_transfer': document.getElementById('bank-transfer-fields'),
+                'online': document.getElementById('online-fields')
+            };
+
+            function hideAllConditionalFields() {
                 Object.values(conditionalFields).forEach(field => {
                     if (field) {
                         field.classList.remove('show');
                         field.style.display = 'none';
                     }
                 });
-            });
+            }
 
+            hideAllConditionalFields();
+
+            if (paymentMethodSelect) {
+                paymentMethodSelect.addEventListener('change', function() {
+                    hideAllConditionalFields();
+                    const selected = this.value;
+                    if (selected && conditionalFields[selected]) {
+                        setTimeout(() => {
+                            conditionalFields[selected].style.display = 'block';
+                            setTimeout(() => {
+                                conditionalFields[selected].classList.add('show');
+                            }, 50);
+                        }, 300);
+                    }
+                    updateRequiredFields(selected);
+                });
+            }
+
+            function updateRequiredFields(method) {
+                document.querySelectorAll('.conditional-fields input, .conditional-fields select')
+                    .forEach(input => input.removeAttribute('required'));
+
+                if (method === 'cheque') {
+                    ['cheque_number', 'cheque_date', 'bank_name'].forEach(id => {
+                        const f = document.getElementById(id);
+                        if (f) f.setAttribute('required', 'required');
+                    });
+                } else if (method === 'bank_transfer') {
+                    ['transaction_id', 'transfer_date', 'from_bank', 'receipt_upload'].forEach(id => {
+                        const f = document.getElementById(id);
+                        if (f) f.setAttribute('required', 'required');
+                    });
+                }
+            }
+
+            // ========================
+            // Edit Payment Modal
+            // ========================
+            const editPaymentModal = document.getElementById('editPaymentModal');
             const editPaymentForm = document.getElementById('editPaymentForm');
-            if (editPaymentForm) {
+            let editPaymentModalInstance = null;
+
+            if (editPaymentModal && editPaymentForm) {
+
+                // Initialize Bootstrap modal instance
+                editPaymentModalInstance = new bootstrap.Modal(editPaymentModal);
+
+                // Show modal event
+                editPaymentModal.addEventListener('show.bs.modal', function(event) {
+                    const btn = event.relatedTarget;
+                    const applicationId = btn.getAttribute('data-application-id');
+                    const refNo = btn.getAttribute('data-reference-no');
+                    const applicant = btn.getAttribute('data-applicant');
+                    const amount = btn.getAttribute('data-amount');
+                    const currentStatus = btn.getAttribute('data-current-status') || 'Not Set';
+                    const paymentMethod = btn.getAttribute('data-payment-method');
+
+                    document.getElementById('modal-ref-no').textContent = refNo;
+                    document.getElementById('modal-applicant').textContent = applicant;
+                    document.getElementById('modal-amount').textContent = parseFloat(amount || 0)
+                        .toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    document.getElementById('modal-current-status').textContent = currentStatus;
+
+                    editPaymentForm.action = `admin/payment/update/${applicationId}`;
+                    editPaymentForm.reset();
+                    hideAllConditionalFields();
+
+                    if (paymentMethod && conditionalFields[paymentMethod]) {
+                        setTimeout(() => {
+                            conditionalFields[paymentMethod].style.display = 'block';
+                            setTimeout(() => {
+                                conditionalFields[paymentMethod].classList.add('show');
+                            }, 50);
+                        }, 300);
+                        updateRequiredFields(paymentMethod);
+                    }
+                });
+
+                // Form submit
                 editPaymentForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-
                     const formData = new FormData(this);
                     const submitBtn = this.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
+
+                    // Validation
                     let isValid = true;
-                    const requiredFields = this.querySelectorAll('[required]');
-                    requiredFields.forEach(field => {
-                        if (!field.value.trim() && field.type !== 'file') {
-                            field.classList.add('is-invalid');
-                            isValid = false;
-                        } else if (field.type === 'file' && !field.files.length) {
-                            field.classList.add('is-invalid');
+                    this.querySelectorAll('[required]').forEach(f => {
+                        if (!f.value.trim() || (f.type === 'file' && !f.files.length)) {
+                            f.classList.add('is-invalid');
                             isValid = false;
                         } else {
-                            field.classList.remove('is-invalid');
+                            f.classList.remove('is-invalid');
                         }
                     });
 
@@ -1051,99 +1029,57 @@
                         return;
                     }
 
+                    // Submit button loading
                     submitBtn.disabled = true;
                     submitBtn.classList.add('loading');
                     submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Updating...';
 
                     fetch(this.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Accept': 'application/json'
-                            }
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                try {
-                                    const modal = bootstrap.Modal.getInstance(editPaymentModal);
-                                    if (modal) {
-                                        modal.hide();
-                                    }
-                                } catch (e) {
-                                    try {
-                                        $('#editPaymentModal').modal('hide');
-                                    } catch (e2) {
-                                        try {
-                                            editPaymentModal.classList.remove('show');
-                                            editPaymentModal.style.display = 'none';
-                                            document.body.classList.remove('modal-open');
-                                            const backdrop = document.querySelector('.modal-backdrop');
-                                            if (backdrop) {
-                                                backdrop.remove();
-                                            }
-                                        } catch (e3) {
-                                            console.log('Could not close modal automatically');
-                                        }
-                                    }
-                                }
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: '@lang('app.success')!',
-                                    text: data.message || '@lang('app.payment_updated_successfully')',
-                                    confirmButtonColor: '#28a745',
-                                    confirmButtonText: 'OK',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('view.receipt') }}";
-                                    }
-                                });
-                            } else {
-                                throw new Error(data.message || 'Update failed');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+                    .then(data => {
+                        if (data.success) {
+                            // Safely hide modal
+                            if (editPaymentModalInstance) editPaymentModalInstance.hide();
+
                             Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: `Error updating payment status: ${error.message}`,
-                                confirmButtonColor: '#F1AA2A'
-                            });
-                        })
-                        .finally(() => {
-                            submitBtn.disabled = false;
-                            submitBtn.classList.remove('loading');
-                            submitBtn.innerHTML = originalText;
+                                icon: 'success',
+                                title: '@lang("app.success")!',
+                                text: data.message || '@lang("app.payment_updated_successfully")',
+                                confirmButtonColor: '#28a745'
+                            }).then(() => window.location.href = "{{ route('view.receipt') }}");
+                        } else {
+                            throw new Error(data.message || 'Update failed');
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: `Error updating payment status: ${err}`,
+                            confirmButtonColor: '#F1AA2A'
                         });
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('loading');
+                        submitBtn.innerHTML = originalText;
+                    });
+                });
+
+                // Reset modal on hidden
+                editPaymentModal.addEventListener('hidden.bs.modal', () => {
+                    editPaymentForm.reset();
+                    hideAllConditionalFields();
                 });
             }
-            
-            editPaymentModal.addEventListener('hidden.bs.modal', function() {
-                if (editPaymentForm) {
-                    editPaymentForm.reset();
-                    const alerts = this.querySelectorAll('.alert');
-                    alerts.forEach(alert => alert.remove());
-                    Object.values(conditionalFields).forEach(field => {
-                        if (field) {
-                            field.classList.remove('show');
-                            field.style.display = 'none';
-                        }
-                    });
-                }
-            });
-        }
-    });
-</script>
+        });
+    </script>
 @endsection
