@@ -67,14 +67,6 @@ class PayController extends Controller
         $fpx_buyerBankId = $bankData['bank_code']; 
         $fpx_buyerBankBranch = $bankData['bank_name']; 
         
-        if ($bankCode === 'SBI_BANK_A') {
-            $fpx_buyerBankId = 'TEST0021';
-            $fpx_buyerBankBranch = 'SBI BANK A';
-        } elseif ($bankCode === 'SBI_BANK_B') {
-            $fpx_buyerBankId = 'TEST0022';
-            $fpx_buyerBankBranch = 'SBI BANK B';
-        }
-        
         $fpx_buyerAccNo = "";
         $fpx_buyerId = "";
         $fpx_makerName = "";
@@ -777,7 +769,7 @@ class PayController extends Controller
     }
 
 
-   public function indirect(Request $request)
+    public function indirect(Request $request)
     {
         $fpx_buyerBankBranch = $request->input('fpx_buyerBankBranch');
         $fpx_buyerBankId = $request->input('fpx_buyerBankId');
@@ -835,14 +827,6 @@ class PayController extends Controller
             $errorCode = $fpx_debitAuthCode;
             $statusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode, $isB2B);
         }
-        
-        Log::info('Payment Status Determined', [
-            'fpx_sellerOrderNo' => $fpx_sellerOrderNo,
-            'is_b2b' => $isB2B,
-            'fpx_debitAuthCode' => $fpx_debitAuthCode,
-            'determined_status' => $paymentStatus,
-            'status_message' => $statusMessage
-        ]);
         
         try {
             $paymentRecord = DB::table('payments') 
