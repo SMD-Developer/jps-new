@@ -33,7 +33,7 @@
                             </div>
 
                             <!-- FPX Payment Form -->
-                            <form name="form1" method="post" action="https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp">
+                            <form name="form1" method="post" action="https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp">
                                 <!-- All Hidden FPX Parameters -->
                                 <input type="hidden" value="{{ $fpx_msgType }}" name="fpx_msgType">
                                 <input type="hidden" value="{{ $fpx_msgToken }}" name="fpx_msgToken">
