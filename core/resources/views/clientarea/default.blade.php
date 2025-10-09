@@ -670,6 +670,9 @@ i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middl
         </div>
         <div class="row fill">
                 <div class="col-md-2 "></div>
+                @if (session('error'))
+                    <div class="alert alert-danger">{!! session('error') !!}</div>
+                @endif
                 <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
                     <!--<p class="text-center text-light"><b>Log Masuk</b></p>-->
                     {!! Form::open(['url' => '/clientarea/login','class'=>'loginFrm needs-validation mt-3','novalidate']) !!}

@@ -134,22 +134,38 @@ class AuthController extends Controller {
                 ->where('type', 'registration')
                 ->where('is_verified', false)
                 ->where('expires_at', '>', now())
-                ->exists();
+                ->latest()
+                ->first();
+
+            if (!$hasActiveOtp) {
+                    $otpRecord = OtpVerification::generateOtp($identifier, 'registration');
             
-            $message = 'Alamat e-mel anda tidak disahkan. Sila sahkan e-mel anda untuk log masuk.';
+                    $user_client = \App\Models\Client::where('uuid', $client->uuid)->first();
+            
+                    if ($user_client) {
+                        $user_client->notify(new \App\Notifications\OtpVerificationNotification($otpRecord->otp, $user_client->name));
+                    }
+            
+                    $otpMessage = 'Pautan pengesahan baru telah dihantar ke e-mel anda.';
+                } else {
+                    $otpMessage = 'Sila semak e-mel anda untuk kod pengesahan.';
+                }
+
+            $verificationUrl = route('otp.verification', ['email' => urlencode($identifier)]);
+            
+            $message = 'Alamat e-mel anda belum disahkan. ' . $otpMessage . 
+               ' <a href="' . $verificationUrl . '">Klik di sini untuk mengesahkan akaun anda.</a>';
             $actionMessage = $hasActiveOtp 
                 ? 'Semak e-mel anda untuk kod pengesahan atau klik di bawah untuk menghantar semula.'
                 : 'Klik di bawah untuk menerima kod pengesahan baharu.';
             
-            if ($request->ajax()) {
+             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
                     'message' => $message,
                     'action' => 'email_not_verified',
-                    'action_message' => $actionMessage,
                     'email' => $identifier,
-                    'verification_url' => route('otp.verification') . '?email=' . urlencode($identifier),
-                    'has_active_otp' => $hasActiveOtp
+                    'verification_url' => $verificationUrl,
                 ], 403);
             }
             
@@ -591,18 +607,18 @@ class AuthController extends Controller {
    public function showOtpVerification(Request $request)
     {
         try {
-            $email = $request->query('email');
+            $email = urldecode($request->query('email'));
             
             // Validate email parameter
             if (!$email) {
                 \Log::warning('OTP verification accessed without email parameter');
-                return redirect()->route('register')->with('error', 'Invalid request. Please register again.');
+                return redirect()->route('client_login')->with('error', 'Invalid request. Please register again.');
             }
     
             // Validate email format
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 \Log::warning('Invalid email format in OTP verification', ['email' => $email]);
-                return redirect()->route('register')->with('error', 'Invalid email format.');
+                return redirect()->route('client_login')->with('error', 'Invalid email format.');
             }
             
             // Check if user exists but not verified
@@ -624,7 +640,7 @@ class AuthController extends Controller {
                     return redirect()->route('client_login')->with('success', 'Your email is already verified. You can login now.');
                 }
                 
-                return redirect()->route('register')->with('error', 'User not found. Please register again.');
+                return redirect()->route('client_login')->with('error', 'User not found. Please register again.');
             }
     
             // Check if there's a valid OTP for this email
@@ -703,7 +719,7 @@ class AuthController extends Controller {
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return redirect()->route('register')->with('error', 'An error occurred. Please try registering again.');
+            return redirect()->route('client_login')->with('error', 'An error occurred. Please try registering again.');
         }
     }
     
