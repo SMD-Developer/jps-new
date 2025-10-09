@@ -15,114 +15,6 @@ use App\Notifications\PaymentSuccessful;
 
 class PayController extends Controller 
 {
-    /// Summary description for Controller
-    ///  ErrorCode  : Description
-    ///  00         : Your signature has been verified successfully.  
-    ///  06         : No Certificate found 
-    ///  07         : One Certificate Found and Expired
-    ///  08         : Both Certificates Expired
-    ///  09         : Your Data cannot be verified against the Signature.
-
-    // public function b2c(Request $request)
-    // {
-    //     $amount = $request->get('amount', session('payment_amount', 20.00));
-    //     $bankCode = $request->get('bank', session('selected_bank', 'SBI_BANK_A'));
-    //     $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
-        
-    //      $fpx_callbackUrl = route('fpx.callback'); 
-    //      $fpx_returnUrl = route('fpx.return');   
-        
-    //     $applicationId = session('application_id');
-    //     $application = null;
-    //     if ($applicationId) {
-    //         $application = Application::find($applicationId); 
-    //     }
-        
-    //     $bankData = $this->getDynamicBankData($bankCode);
-        
-    //     $fpx_msgType = "AR";
-    //     $fpx_msgToken = "01";
-    //     $fpx_sellerExId = "EX00026203";
-    //     $fpx_sellerExOrderNo=date('YmdHis');
-    //     $fpx_sellerTxnTime = date('YmdHis');
-    //     $fpx_sellerOrderNo=date('YmdHis');
-    //     $fpx_sellerId = "SE00101283";
-    //     $fpx_sellerBankCode = "01";
-    //     $fpx_txnCurrency = "MYR";
-    //     $fpx_txnAmount = number_format($amount, 2, '.', '');
-        
-    //     $fpx_buyerEmail = $application ? ($application->email ?? "test@example.com") : "test@example.com";
-    //     $fpx_buyerName = $application ? ($application->applicant ?? "Test User") : "Test User";
-        
-    //     $fpx_buyerBankId = $bankData['bank_code']; 
-    //     $fpx_buyerBankBranch = $bankData['bank_name']; 
-        
-    //     if ($bankCode === 'SBI_BANK_A') {
-    //         $fpx_buyerBankId = 'TEST0021';
-    //         $fpx_buyerBankBranch = 'SBI BANK A';
-    //     } elseif ($bankCode === 'SBI_BANK_B') {
-    //         $fpx_buyerBankId = 'TEST0022';
-    //         $fpx_buyerBankBranch = 'SBI BANK B';
-    //     }
-        
-    //     $fpx_buyerAccNo = "";
-    //     $fpx_buyerId = "";
-    //     $fpx_makerName = "";
-    //     $fpx_buyerIban = "";
-    //     // $fpx_productDesc = $application ? "Trench Contribution Payment - {$application->refference_no}" : "B2C Payment Test";
-    //     $fpx_productDesc="Card";
-    //     $fpx_version = "6.0";
-        
-    //     $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
-    
-
-    //     $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
-    //     $pkeyid = openssl_get_privatekey($priv_key);
-    //     openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
-    //     $fpx_checkSum = strtoupper(bin2hex($binary_signature));
-        
-    //     $actionUrl = 'https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
-        
-    //     $receiptNumber = $this->generateReceiptNumber();
-        
-    //     $this->storePaymentData([
-    //     'application_id' => $applicationId,
-    //     'amount' => $fpx_txnAmount,
-    //     'currency' => $fpx_txnCurrency,
-    //     'method' => 'FPX_B2C',
-    //     'test_case' => $testCase,
-    //     'bank_code' => $bankCode,
-    //     'bank_name' => $fpx_buyerBankBranch,
-    //     'buyer_bank_id' => $fpx_buyerBankId,
-    //     'buyer_email' => $fpx_buyerEmail,
-    //     'buyer_name' => $fpx_buyerName,
-    //     'seller_order_no' => $fpx_sellerOrderNo,
-    //     'seller_ex_order_no' => $fpx_sellerExOrderNo,
-    //     'transaction_id' => null, 
-    //     'payment_status' => 'pending',
-    //     'payment_gateway' => 'FPX',
-    //     'fpx_checksum' => $fpx_checkSum,
-    //     'receipt_number' => $receiptNumber,
-    //     'gateway_response' => json_encode([
-    //         'fpx_data' => $data,
-    //         'action_url' => $actionUrl,
-    //         'timestamp' => now()
-    //     ]),
-    //     'payment_date' => now()->toDateString()
-    // ]);
-        
-    //     $this->storeTransactionDetails([
-    //         'order_no' => $fpx_sellerOrderNo,
-    //         'amount' => $fpx_txnAmount,
-    //         'bank_code' => $bankCode,
-    //         'test_case' => $testCase,
-    //         'application_id' => $applicationId,
-    //         'bank_id' => $fpx_buyerBankId
-    //     ]);
-        
-    //     return view('clientarea.payments.index', compact('fpx_msgType', 'fpx_msgToken','$fpx_sellerTxnTime', 'fpx_sellerExId', 'fpx_sellerExOrderNo', 'fpx_sellerTxnTime', 'fpx_sellerOrderNo', 'fpx_sellerId', 'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 'fpx_buyerEmail', 'fpx_checkSum', 'fpx_buyerName', 'fpx_buyerBankId', 'fpx_buyerBankBranch', 'fpx_buyerAccNo', 'fpx_buyerId', 'fpx_makerName', 'fpx_buyerIban', 'fpx_productDesc', 'fpx_version', 'actionUrl','fpx_callbackUrl', 'fpx_returnUrl'));
-
-    // }
     
     
     public function b2c(Request $request)
@@ -134,10 +26,6 @@ class PayController extends Controller
         }
         
         $currentUserId = auth('user')->id();
-        Log::info('Payment initiated by user', [
-            'user_id' => $currentUserId,
-            'user_email' => auth()->user()->email ?? 'Unknown'
-        ]);
         
         $amount = $request->get('amount', session('payment_amount', 20.00));
         $bankCode = $request->get('bank', session('selected_bank', 'SBI_BANK_A'));
@@ -278,71 +166,8 @@ class PayController extends Controller
     }
     
     
-    //   private function storePaymentData($paymentData)
-    //     {
-            
-    //         // Add debug logging BEFORE insert
-    //         Log::info('About to insert payment data', [
-    //             'payment_status_being_inserted' => $paymentData['payment_status'],
-    //             'all_data' => $paymentData
-    //         ]);
-    //         try {
-    //             $paymentId = DB::table('payments')->insertGetId([
-    //                 'uuid' => (string) Str::uuid(),
-    //                 'application_id' => $paymentData['application_id'] ?? null,
-    //                 'payment_date' => now()->toDateString(),
-    //                 'amount' => $paymentData['amount'] ?? null,
-    //                 'currency' => $paymentData['currency'] ?? 'MYR',
-    //                 'method' => $paymentData['method'] ?? null,
-    //                 'payment_status' => $paymentData['payment_status'],
-    //                 'transaction_id' => $paymentData['transaction_id'] ?? null,
-    //                 'seller_order_no' => $paymentData['seller_order_no'] ?? null,
-    //                 'seller_ex_order_no' => $paymentData['seller_ex_order_no'] ?? null,
-    //                 'bank_code' => $paymentData['bank_code'] ?? null,
-    //                 'bank_name' => $paymentData['bank_name'] ?? null,
-    //                 'buyer_bank_id' => $paymentData['buyer_bank_id'] ?? null,
-    //                 'buyer_email' => $paymentData['buyer_email'] ?? null,
-    //                 'buyer_name' => $paymentData['buyer_name'] ?? null,
-    //                 'receipt_number'=> $paymentData['receipt_number'] ?? null,
-    //                 'payment_gateway' => 'FPX',
-    //                 'fpx_checksum' => $paymentData['fpx_checksum'] ?? null,
-    //                 'gateway_response' => $paymentData['gateway_response'] ?? null,
-    //                 'created_at' => now(),
-    //                 'updated_at' => now()
-    //             ]);
-                
-                
-    //             // if ($generateReceipt && $paymentData['payment_status'] === 'success') {
-    //             //     $insertData['receipt_number'] = $this->generateReceiptNumber();
-    //             // }
-                
-    //             // $paymentId = DB::table('payments')->insertGetId($insertData);
-                
-    //             Log::info('Payment created with pending status', [
-    //                 'payment_id' => $paymentId,
-    //                 'order_no' => $paymentData['seller_order_no']
-    //             ]);
-                
-    //             return $paymentId;
-                
-    //         } catch (\Exception $e) {
-    //             Log::error('Failed to store payment data', [
-    //                 'error' => $e->getMessage(),
-    //                 'data' => $paymentData
-    //             ]);
-    //             throw $e;
-    //         }
-    //     }
-    
-    
     private function storePaymentData($paymentData)
     {
-        // Add debug logging BEFORE insert
-        Log::info('About to insert payment data', [
-            'payment_status_being_inserted' => $paymentData['payment_status'],
-            'user_id' => $paymentData['user_id'] ?? 'Not provided',
-            'all_data' => $paymentData
-        ]);
         
         try {
             $paymentId = DB::table('payments')->insertGetId([
@@ -370,12 +195,6 @@ class PayController extends Controller
                 'updated_at' => now()
             ]);
             
-            Log::info('Payment created with pending status', [
-                'payment_id' => $paymentId,
-                'user_id' => $paymentData['user_id'] ?? 'Not provided',
-                'order_no' => $paymentData['seller_order_no']
-            ]);
-            
             return $paymentId;
             
         } catch (\Exception $e) {
@@ -387,170 +206,6 @@ class PayController extends Controller
         }
     }
     
-    
-    
-
-
-
-
-    // public function bankDetails() 
-    // { 
-    //     $fpx_msgToken="01";
-    //     $fpx_msgType="BE";
-    //     $fpx_sellerExId="EX00026203";
-    //     $fpx_version="6.0";
-
-    //     $data = $fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_version;
-    //     $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
-    //     $pkeyid = openssl_get_privatekey($priv_key);
-    //     openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
-    //     $fpx_checkSum = strtoupper(bin2hex( $binary_signature ) );
-        
-        
-        
-    //     //extract data from the post
-
-    //     extract($_POST);
-    //     $fields_string="";
-        
-    //     //set POST variables
-    //     $url ='https://uat.mepsfpx.com.my/FPXMain/RetrieveBankList';
-        
-    //     $fields = array(
-    //     						'fpx_msgToken' => urlencode($fpx_msgToken),
-    //     						'fpx_msgType' => urlencode($fpx_msgType),
-    //     						'fpx_sellerExId' => urlencode($fpx_sellerExId),
-    //     						'fpx_checkSum' => urlencode($fpx_checkSum),
-    //     						'fpx_version' => urlencode($fpx_version)
-        						
-    //     				);
-    //     $response_value=array();
-    //     $bank_list=array();
-        
-    //     try{
-    //             //url-ify the data for the POST
-    //             foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
-    //             rtrim($fields_string, '&');
-                
-    //             //open connection
-    //             $ch = curl_init();
-    //             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    //             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-                
-    //             //set the url, number of POST vars, POST data
-    //             curl_setopt($ch,CURLOPT_URL, $url);
-                
-    //             curl_setopt($ch,CURLOPT_POST, count($fields));
-    //             curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-                
-    //             // receive server response ...
-    //             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    //             //execute post
-    //             $result = curl_exec($ch);
-                
-    //             //close connection
-    //             curl_close($ch);
-                
-    //             $token = strtok($result, "&");
-    //             while ($token !== false)
-    //             {
-    //             	list($key1,$value1)=explode("=", $token);
-    //             	$value1=urldecode($value1);
-    //             	$response_value[$key1]=$value1;
-    //             	$token = strtok("&");
-    //             }
-                
-    //             //Response Checksum Calculation String
-    //             $data=$response_value['fpx_bankList']."|".$response_value['fpx_msgToken']."|".$response_value['fpx_msgType']."|".$response_value['fpx_sellerExId'];
-    //             $val=$this->verifySign_fpx($response_value['fpx_checkSum'], $data);
-                
-    //             // val == 00 verification success
-                
-    //             $token = strtok($response_value['fpx_bankList'], ",");
-    //             while ($token !== false)
-    //             {
-    //             	list($key1,$value1)=explode("~", $token);
-    //             	$value1=urldecode($value1);
-    //             	$bank_list[$key1]=$value1;
-    //             	$token = strtok(",");
-    //             }
-                
-                
-    //               if (!empty($bank_list)) {
-    //             // Add test case mapping for B2C scenarios
-    //             $enhanced_bank_list = [];
-                
-    //             foreach ($bank_list as $bank_code => $bank_name) {
-    //                 $enhanced_bank_list[] = [
-    //                     'bank_code' => $bank_code,
-    //                     'bank_name' => $bank_name,
-    //                     'status' => 'active',
-    //                     'test_scenario' => $this->getTestScenario($bank_code)
-    //                 ];
-    //             }
-                
-    //             // Add specific test banks if not already present
-    //             if (!isset($bank_list['SBI_BANK_A'])) {
-    //                 $enhanced_bank_list[] = [
-    //                     'bank_code' => 'SBI_BANK_A',
-    //                     'bank_name' => 'SBI Bank A',
-    //                     'status' => 'active',
-    //                     'test_scenario' => 'valid_account'
-    //                 ];
-    //             }
-                
-    //             if (!isset($bank_list['SBI_BANK_B'])) {
-    //                 $enhanced_bank_list[] = [
-    //                     'bank_code' => 'SBI_BANK_B',
-    //                     'bank_name' => 'SBI Bank B',
-    //                     'status' => 'active',
-    //                     'test_scenario' => 'insufficient_funds'
-    //                 ];
-    //             }
-    //     }
-        
-        
-            
-    //       }
-    //         catch(Exception $e){
-    //         	echo 'Error :', ($e->getMessage());
-    //         	// Fallback with test case banks
-    //             $enhanced_bank_list = [
-    //                 [
-    //                     'bank_code' => 'SBI_BANK_A',
-    //                     'bank_name' => 'SBI Bank A',
-    //                     'status' => 'active',
-    //                     'test_scenario' => 'valid_account'
-    //                 ],
-    //                 [
-    //                     'bank_code' => 'SBI_BANK_B',
-    //                     'bank_name' => 'SBI Bank B',
-    //                     'status' => 'active',
-    //                     'test_scenario' => 'insufficient_funds'
-    //                 ]
-    //             ];
-    //         }
-            
-    //         return response()->json([
-    //             'success' => true,
-    //             'banks' => $enhanced_bank_list,
-    //             'test_cases' => [
-    //                 '1.1' => 'Positive Scenario - Valid Account',
-    //                 '2.1' => 'Maximum Scenario - Exceeded Amount',
-    //                 '2.2' => 'Minimum Scenario - Below Minimum',
-    //                 '2.3' => 'Negative Scenario - Insufficient Funds',
-    //                 '3.1' => 'Re-query Scenario - AE message',
-    //                 '4.1' => 'Retrieved Bank List - BE message'
-    //             ],
-    //             'validation_rules' => [
-    //                 'min_amount' => 1.00,
-    //                 'max_amount' => 30000.00,
-    //                 'currency' => 'RM'
-    //             ]
-    //         ]);
-            
-    //         // return view('clientarea.payments.banklist', compact('bank_list', 'data'));
-    // }
     
     public function bankDetails() 
     {
@@ -609,10 +264,6 @@ class PayController extends Controller
             $fpx_checkSum = strtoupper(bin2hex($binary_signature));
             
         } catch (\Exception $e) {
-            \Log::error('FPX Private Key Error', [
-                'error' => $e->getMessage(),
-                'msg_token' => $msgToken
-            ]);
             
             return [
                 'success' => false,
@@ -639,13 +290,6 @@ class PayController extends Controller
         try {
             $fields_string = http_build_query($fields);
             
-            \Log::info('FPX Bank List Request', [
-                'url' => $url,
-                'seller_id' => $fpx_sellerExId,
-                'msg_token' => $msgToken,
-                'msg_type' => $msgType
-            ]);
-            
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -665,39 +309,21 @@ class PayController extends Controller
             
             // Check for CURL errors
             if ($curl_errno) {
-                \Log::error('FPX CURL Error', [
-                    'error_code' => $curl_errno,
-                    'error_message' => $curl_error,
-                    'url' => $url
-                ]);
                 
                 throw new \Exception("Connection error: " . $curl_error . " (Code: " . $curl_errno . ")");
             }
             
             // Check HTTP response code
             if ($http_code !== 200) {
-                \Log::error('FPX HTTP Error', [
-                    'http_code' => $http_code,
-                    'response' => $result
-                ]);
                 
                 throw new \Exception("HTTP Error: " . $http_code);
             }
             
             // Check if response is empty
             if (empty($result)) {
-                \Log::error('FPX Empty Response', [
-                    'url' => $url,
-                    'http_code' => $http_code
-                ]);
                 
                 throw new \Exception("Empty response from FPX server");
             }
-            
-            \Log::info('FPX Raw Response', [
-                'response_length' => strlen($result),
-                'response_preview' => substr($result, 0, 200)
-            ]);
             
             // Parse the response
             $token = strtok($result, "&");
@@ -714,11 +340,6 @@ class PayController extends Controller
             if (!isset($response_value['fpx_bankList']) || 
                 !isset($response_value['fpx_checkSum']) ||
                 !isset($response_value['fpx_msgToken'])) {
-                
-                \Log::error('FPX Invalid Response Structure', [
-                    'response_keys' => array_keys($response_value),
-                    'full_response' => $response_value
-                ]);
                 
                 throw new \Exception("Invalid response structure from FPX. Missing required fields.");
             }
@@ -1191,16 +812,6 @@ class PayController extends Controller
         // Check if this is B2B transaction (fpx_msgToken = "02")
         $isB2B = ($fpx_msgToken === '02');
         
-        Log::info('FPX Payment Response Analysis', [
-            'fpx_sellerOrderNo' => $fpx_sellerOrderNo,
-            'fpx_debitAuthCode' => $fpx_debitAuthCode,
-            'fpx_creditAuthCode' => $fpx_creditAuthCode,
-            'fpx_msgToken' => $fpx_msgToken,
-            'fpx_msgType' => $fpx_msgType,
-            'is_b2b' => $isB2B,
-            'fpx_fpxTxnId' => $fpx_fpxTxnId
-        ]);
-        
         // Handle status based on transaction type (B2B vs B2C)
         if ($fpx_debitAuthCode === '00') {
             $paymentStatus = 'completed';
@@ -1245,10 +856,6 @@ class PayController extends Controller
             
                         if ($client) {
                             auth('user')->login($client);
-                            Log::info('Client auto-login after payment', [
-                                'client_uuid' => $client->uuid,
-                                'payment_id' => $paymentRecord->id
-                            ]);
                         } else {
                             Log::warning('Stale payment user reference', [
                                 'stored_uuid' => $paymentRecord->user_id,
@@ -1293,14 +900,6 @@ class PayController extends Controller
                     
                     
                 session(['fpx_order_no' => $fpx_sellerOrderNo]);
-            
-                \Log::info('FPX Payment Updated', [
-                    'order_no' => $fpx_sellerOrderNo,
-                    'transaction_id' => $fpx_fpxTxnId,
-                    'status' => $paymentStatus,
-                    'amount' => $fpx_txnAmount,
-                    'is_b2b' => $isB2B
-                ]);
                 
             } else {
                 \Log::error('FPX Payment Record Not Found', [
@@ -1538,9 +1137,8 @@ class PayController extends Controller
         $fpx_buyerEmail = $paymentRecord->buyer_email ?? "";
         $fpx_buyerName = $paymentRecord->buyer_name ?? "";
         
-        // CRITICAL: For B2B, these fields should have values if available from the original transaction
-        $fpx_buyerBankId = $paymentRecord->buyer_bank_id ?? ""; // Should not be empty for B2B
-        $fpx_buyerBankBranch = $paymentRecord->buyer_bank_branch ?? ""; // Should not be empty for B2B
+        $fpx_buyerBankId = $paymentRecord->buyer_bank_id ?? ""; 
+        $fpx_buyerBankBranch = $paymentRecord->buyer_bank_branch ?? ""; 
         
         $fpx_checkSum = "";
         $fpx_buyerAccNo = "";
@@ -1549,19 +1147,6 @@ class PayController extends Controller
         $fpx_buyerIban = "";
         $fpx_productDesc = $paymentRecord->product_desc ?? "Payment";
         $fpx_version = "6.0";
-        
-        // Log the data being used for debugging
-        \Log::info('FPX Status Inquiry Data', [
-            'order_no' => $orderNo,
-            'method' => $paymentRecord->method ?? 'unknown',
-            'current_status' => $paymentRecord->payment_status,
-            'is_b2b' => $isB2B,
-            'msgToken' => $fpx_msgToken,
-            'buyerBankId' => $fpx_buyerBankId,
-            'buyerBankBranch' => $fpx_buyerBankBranch,
-            'txnAmount' => $fpx_txnAmount,
-            'buyerEmail' => $fpx_buyerEmail
-        ]);
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
         
@@ -1608,12 +1193,6 @@ class PayController extends Controller
             }
             rtrim($fields_string, '&');
             
-            // Log the request being sent
-            \Log::info('FPX Status Request', [
-                'url' => $url,
-                'fields' => $fields
-            ]);
-            
             // Open connection
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -1629,9 +1208,6 @@ class PayController extends Controller
             
             // Execute post
             $result = curl_exec($ch);
-            
-            // Log the response
-            \Log::info('FPX Status Response', ['response' => $result]);
             
             // Close connection
             curl_close($ch);
@@ -1678,67 +1254,6 @@ class PayController extends Controller
             // Check if status has changed
             $statusChanged = ($paymentRecord->payment_status !== $newPaymentStatus);
             
-            Log::info('FPX Status Check Result', [
-                'order_no' => $orderNo,
-                'old_status' => $paymentRecord->payment_status,
-                'new_status' => $newPaymentStatus,
-                'debit_auth_code' => $fpx_debitAuthCode,
-                'is_b2b' => $isB2B,
-                'status_changed' => $statusChanged,
-                'fpx_txn_id' => $response_value['fpx_fpxTxnId'] ?? 'N/A'
-            ]);
-            
-            // UPDATE DATABASE if status changed or if we got new transaction details
-            // if ($statusChanged || !empty($response_value['fpx_fpxTxnId'])) {
-            //     try {
-            //         $updateData = [
-            //             'payment_status' => $newPaymentStatus,
-            //             'status_message' => $newStatusMessage,
-            //             'updated_at' => now()
-            //         ];
-                    
-            //         // Add transaction ID if we got one
-            //         if (!empty($response_value['fpx_fpxTxnId'])) {
-            //             $updateData['transaction_id'] = $response_value['fpx_fpxTxnId'];
-            //         }
-                    
-            //         // Update gateway response with latest status inquiry
-            //         $updateData['gateway_response'] = json_encode([
-            //             'latest_status_inquiry' => $response_value,
-            //             'signature_valid' => $val,
-            //             'status_checked_at' => now(),
-            //             'previous_response' => $paymentRecord->gateway_response ? json_decode($paymentRecord->gateway_response, true) : null
-            //         ]);
-                    
-            //         DB::table('payments')
-            //             ->where('seller_order_no', $orderNo)
-            //             ->update($updateData);
-                    
-            //         Log::info('Payment Status Updated in Database', [
-            //             'order_no' => $orderNo,
-            //             'updated_to' => $newPaymentStatus,
-            //             'transaction_id' => $response_value['fpx_fpxTxnId'] ?? 'N/A'
-            //         ]);
-                    
-                    
-            //          // Send email if payment is completed and status changed
-            //         if ($newPaymentStatus === 'completed' && $statusChanged) {
-            //             $this->sendPaymentSuccessEmail($paymentRecord, $response_value);
-            //         }
-                    
-            //         // Refresh payment record for view
-            //         $paymentRecord = DB::table('payments')
-            //             ->where('seller_order_no', $orderNo)
-            //             ->first();
-                        
-            //     } catch (\Exception $e) {
-            //         Log::error('Failed to update payment status', [
-            //             'order_no' => $orderNo,
-            //             'error' => $e->getMessage()
-            //         ]);
-            //     }
-            // }
-            
             // UPDATE DATABASE if status changed or if we got new transaction details
             if ($statusChanged || !empty($response_value['fpx_fpxTxnId'])) {
                 try {
@@ -1782,13 +1297,6 @@ class PayController extends Controller
                         ->where('seller_order_no', $orderNo)
                         ->update($updateData);
                     
-                    Log::info('Payment Status Updated in Database', [
-                        'order_no' => $orderNo,
-                        'updated_to' => $newPaymentStatus,
-                        'transaction_id' => $response_value['fpx_fpxTxnId'] ?? 'N/A',
-                        'receipt_generated' => isset($updateData['receipt_number']) ? $updateData['receipt_number'] : 'No receipt generated'
-                    ]);
-                    
                     // Send email if payment is completed and status changed
                     if ($newPaymentStatus === 'completed' && $statusChanged) {
                         $this->sendPaymentSuccessEmail($paymentRecord, $response_value);
@@ -1807,12 +1315,6 @@ class PayController extends Controller
                 }
             }
             
-            // Log the verification result
-            \Log::info('FPX Status Verification', [
-                'signature_valid' => $val,
-                'debitAuthCode' => $fpx_debitAuthCode,
-                'response' => $response_value
-            ]);
             
         } catch(Exception $e) {
             \Log::error('FPX Status Inquiry Failed', [
@@ -1871,12 +1373,7 @@ class PayController extends Controller
                     // $emailData['service_type'] = $application->service_type ?? '';
                 }
             }
-            
-            Log::info('Sending payment success email', [
-                'order_no' => $paymentRecord->seller_order_no,
-                'email' => $userEmail,
-                'transaction_id' => $emailData['transaction_id']
-            ]);
+        
             
             // Send email using Laravel Mail
             Mail::send('emails.payment-success', $emailData, function($message) use ($userEmail, $emailData) {
@@ -1884,22 +1381,7 @@ class PayController extends Controller
                         ->subject('Payment Confirmation - Order #' . $emailData['seller_order_no'])
                         ->from(config('mail.from.address'), config('mail.from.name'));
             });
-            
-            // Log successful email send
-            Log::info('Payment success email sent successfully', [
-                'order_no' => $paymentRecord->seller_order_no,
-                'email' => $userEmail,
-                'transaction_id' => $emailData['transaction_id']
-            ]);
-            
-            // Update payment record to mark email as sent
-            // DB::table('payments')
-            //     ->where('seller_order_no', $paymentRecord->seller_order_no)
-            //     ->update([
-            //         'email_sent' => true,
-            //         'email_sent_at' => now(),
-            //         'updated_at' => now()
-            //     ]);
+        
                 
         } catch (\Exception $e) {
             Log::error('Failed to send payment success email', [
@@ -1946,40 +1428,6 @@ class PayController extends Controller
 	    return "OK";
 	}
 	
-// 	public function b2b()
-// 	{
-// 	    $fpx_msgType="AR";
-//         $fpx_msgToken="02";
-//         $fpx_sellerExId="EX00026203";
-//         $fpx_sellerExOrderNo=date('YmdHis');
-//         $fpx_sellerTxnTime=date('YmdHis');
-//         $fpx_sellerOrderNo=date('YmdHis');
-//         $fpx_sellerId="SE00101283";
-//         $fpx_sellerBankCode="01";
-//         $fpx_txnCurrency="MYR";
-//         $fpx_txnAmount="30.00";
-//         $fpx_buyerEmail="bhawesh.smd@gmail.com";
-//         $fpx_checkSum="";
-//         $fpx_buyerName="Bhawesh Bhaskar";
-//         $fpx_buyerBankId="TEST0021";
-//         $fpx_buyerBankBranch="SBI BANK A";
-//         $fpx_buyerAccNo="";
-//         $fpx_buyerId="";
-//         $fpx_makerName="";
-//         $fpx_buyerIban="";
-//         $fpx_productDesc="Card";
-//         $fpx_version="6.0";
-        
-        // $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
-        // $priv_key = file_get_contents('/home/wwwsmddeveloper/public_html/jpsmy/core/public/privatekey.php');
-        // $pkeyid = openssl_get_privatekey($priv_key);
-        // openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
-        // $fpx_checkSum = strtoupper(bin2hex( $binary_signature ) );
-        
-//         $actionUrl = 'https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
-
-//         return view('clientarea.payments.b2b', compact('fpx_msgType', 'fpx_msgToken', 'fpx_sellerExId', 'fpx_sellerExOrderNo', 'fpx_sellerTxnTime', 'fpx_sellerOrderNo', 'fpx_sellerId', 'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 'fpx_buyerEmail', 'fpx_checkSum', 'fpx_buyerName', 'fpx_buyerBankId', 'fpx_buyerBankBranch', 'fpx_buyerAccNo', 'fpx_buyerId', 'fpx_makerName', 'fpx_buyerIban', 'fpx_productDesc', 'fpx_version', 'actionUrl'));
-// 	}
 
 
     public function b2b(Request $request)
@@ -2107,23 +1555,10 @@ class PayController extends Controller
         }
         
          $isReprint = $request->get('type') === 'reprint';
-    
-        // if ($isReprint) {
-        //     // For reprint, set amount to RM 10.00
-        //     $applicationData->final_amount = 10.00;
-        //     $applicationData->payment_type = 'reprint';
-        //     $applicationData->original_application_id = $application; 
-        // }
-        
-        // // Store application data in session
-        // session(['application_id' => $applicationId, 'payment_amount' => $application->final_amount]);
         if ($isReprint) {
         $application->final_amount = 10.00;
         $application->payment_type = 'reprint';
         $application->original_application_id = $applicationId; 
-        
-        // If you want to save these changes to database, uncomment the next line:
-        // $application->save();
         
         // Store reprint-specific data in session
         session([
@@ -2170,166 +1605,5 @@ class PayController extends Controller
     }
 
 
-//   public function paymentSelection($applicationId, Request $request)
-// {
-//     $application = Application::find($applicationId);
-    
-//     if (!$application) {
-//         return redirect()->back()->with('error', 'Application not found');
-//     }
-    
-//     $isReprint = $request->get('type') === 'reprint';
-
-//     if ($isReprint) {
-//         $application->final_amount = 10.00;
-//         $application->payment_type = 'reprint';
-//         $application->original_application_id = $applicationId; 
-        
-//         // Store reprint-specific data in session
-//         session([
-//             'application_id' => $applicationId, 
-//             'payment_amount' => 10.00,
-//             'payment_type' => 'reprint'
-//         ]);
-//     } else {
-//         // Store original application data in session
-//         session([
-//             'application_id' => $applicationId, 
-//             'payment_amount' => $application->final_amount,
-//             'payment_type' => 'original'
-//         ]);
-//     }
-    
-//     return view('clientarea.payments.selection', compact('application'));
-// }
-
-// public function processPaymentSelection(Request $request)
-// {
-//     $request->validate([
-//         'payment_mode' => 'required|in:b2c,b2b',
-//         'selected_bank' => 'required_if:payment_mode,b2c',
-//         'email' => 'required|email'
-//     ]);
-    
-//     // Get payment data from request and session
-//     $paymentType = session('payment_type', 'original');
-//     $applicationId = session('application_id');
-//     $paymentMode = $request->input('payment_mode');
-//     $selectedBank = $request->input('selected_bank');
-//     $email = $request->input('email');
-//     $amount = session('payment_amount');
-    
-//     // **SERVER-SIDE LIMIT VALIDATION**
-//     $limitValidation = $this->validatePaymentLimits($amount, $paymentMode, $selectedBank);
-    
-//     if (!$limitValidation['isValid']) {
-//         // Generate unsuccessful receipt directly
-//         return $this->generateUnsuccessfulReceipt($request, $limitValidation, $amount, $paymentMode);
-//     }
-    
-//     // If validation passes, store payment selection in session and proceed
-//     session([
-//         'payment_mode' => $paymentMode,
-//         'selected_bank' => $selectedBank,
-//         'buyer_email' => $email
-//     ]);
-    
-//     // Redirect based on payment mode
-//     if ($paymentMode === 'b2c') {
-//         return redirect()->route('pay.details.b2c', [
-//             'amount' => $amount,
-//             'bank' => $selectedBank
-//         ]);
-//     } else {
-//         return redirect()->route('pay.details.b2b');
-//     }
-// }
-
-// private function validatePaymentLimits($amount, $paymentMode, $bankCode)
-// {
-//     $validation = ['isValid' => true, 'reason' => '', 'testCase' => ''];
-    
-//     if ($paymentMode === 'b2c') {
-//         if ($amount > 30000) {
-//             $validation = [
-//                 'isValid' => false,
-//                 'reason' => 'Maximum Transaction Limit Exceeded! (Maximum: RM30000.00)',
-//                 'testCase' => '2.1 - Maximum Scenario'
-//             ];
-//         } elseif ($amount < 1.00) {
-//             $validation = [
-//                 'isValid' => false,
-//                 'reason' => 'Transaction Amount is Lower Than Minimum Limit! (Minimum: RM1.00)',
-//                 'testCase' => '2.2 - Minimum Scenario'
-//             ];
-//         } elseif ($bankCode === 'SBI_BANK_B') {
-//             $validation = [
-//                 'isValid' => false,
-//                 'reason' => 'Insufficient funds in account',
-//                 'testCase' => '2.3 - Negative Scenario'
-//             ];
-//         }
-//     } elseif ($paymentMode === 'b2b') {
-//         if ($amount > 1000000) {
-//             $validation = [
-//                 'isValid' => false,
-//                 'reason' => 'Maximum Transaction Limit Exceeded! (Maximum: RM1000000.00)',
-//                 'testCase' => '2.1 - Maximum Scenario'
-//             ];
-//         } elseif ($amount < 2.00) {
-//             $validation = [
-//                 'isValid' => false,
-//                 'reason' => 'Transaction Amount is Lower Than Minimum Limit! (Minimum: RM2.00)',
-//                 'testCase' => '2.2 - Minimum Scenario'
-//             ];
-//         } elseif ($bankCode === 'SBI_BANK_B') {
-//             $validation = [
-//                 'isValid' => false,
-//                 'reason' => 'Insufficient funds in account',
-//                 'testCase' => '2.3 - Negative Scenario'
-//             ];
-//         }
-//     }
-    
-//     return $validation;
-// }
-    
-    
-// private function generateUnsuccessfulReceipt($request, $limitValidation, $amount, $paymentMode)
-// {
-//     $receiptNumber = $this->generateReceiptNumber();
-//     $orderNo = date('YmdHis');
-    
-//     // Store unsuccessful payment record
-//     $this->storePaymentData([
-//         'user_id' => auth('user')->id(),
-//         'application_id' => session('application_id'),
-//         'amount' => number_format($amount, 2, '.', ''),
-//         'currency' => 'MYR',
-//         'method' => 'FPX_' . strtoupper($paymentMode),
-//         'test_case' => $limitValidation['testCase'],
-//         'bank_code' => $request->input('selected_bank'),
-//         'buyer_email' => $request->input('email'),
-//         'seller_order_no' => $orderNo,
-//         'transaction_id' => null,
-//         'payment_status' => 'failed',
-//         'status_message' => $limitValidation['reason'],
-//         'payment_gateway' => 'FPX',
-//         'receipt_number' => $receiptNumber,
-//         'payment_date' => now()->toDateString()
-//     ]);
-    
-//     // Return unsuccessful receipt view
-//     return view('clientarea.payments.unsuccessful-receipt', [
-//         'status' => 'UNSUCCESSFUL',
-//         'unsuccessful_reason' => $limitValidation['reason'],
-//         'transaction_amount' => $amount,
-//         'fpx_sellerOrderNo' => $orderNo,
-//         'fpx_buyerBankBranch' => $this->getBankName($request->input('selected_bank'), $paymentMode), // Added second parameter
-//         'receipt_number' => $receiptNumber,
-//         'payment_date' => now()->format('d/m/Y H:i:s'),
-//         'test_case' => $limitValidation['testCase']
-//     ]);
-// }
 
 }
