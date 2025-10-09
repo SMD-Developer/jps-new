@@ -72,92 +72,60 @@ class ProfileController extends CrudController {
     public function store(Request $request)
     {
         $loggedUser = auth()->guard('admin')->user();
-        if ($loggedUser){
+        
+        if ($loggedUser) {
             $user = $this->repository->getById($loggedUser->uuid);
-            $data =  [
-               'photo' => 'nullable|file|max:2048',
-              'username'=>$request->username,
-              'name'=>$request->name,
-              'email'=>$request->email,
-              'phone'=> $request->phone
-            ];
-            $entity = $this->repository->updateById($user->uuid, $data);
-            $this->afterStore($request,$entity);
-            flash()->success(trans('app.record_updated'));
-        }
-        if (request()->ajax()) {
-            return response()->json([
-                'type' => 'success',
-                'message' => trans('app.record_updated'),
-                'action' => 'reload'
+            
+            // ✅ Validate the request first
+            $validated = $request->validate([
+                'photo' => 'nullable|file|max:2048',
+                'username' => 'required|string|unique:users,username,' . $user->id,
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'phone' => 'nullable|string|max:20'
             ]);
+            
+            // ✅ Prepare data for update (only the actual values)
+            $data = [
+                'username' => $request->username,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone
+            ];
+            
+            // ✅ Handle photo upload if exists
+            if ($request->hasFile('photo')) {
+                $photo = $request->file('photo');
+                $photoName = time() . '_' . $photo->getClientOriginalName();
+                $photo->move(public_path('uploads/profiles'), $photoName);
+                $data['photo'] = 'uploads/profiles/' . $photoName;
+                
+                // Optional: Delete old photo
+                if ($user->photo && file_exists(public_path($user->photo))) {
+                    unlink(public_path($user->photo));
+                }
+            }
+            
+            // ✅ Update user
+            $entity = $this->repository->updateById($user->uuid, $data);
+            $this->afterStore($request, $entity);
+            
+            flash()->success(trans('app.record_updated'));
+            
+            if (request()->ajax()) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => trans('app.record_updated'),
+                    'action' => 'reload'
+                ]);
+            }
+            
+            return redirect('profile');
         }
-        return redirect('profile');
+        
+        return redirect()->back()->with('error', 'User not authenticated');
     }
 
 
-//    use FormBuilderTrait;
-//    protected $formClass = ProfileForm::class;
-//    private $profile;
-//    public function __construct(Profile $profile){
-//        View::share('heading', trans('app.users'));
-//        View::share('headingIcon', 'user');
-//        $this->profile = $profile;
-//    }
-//    /**
-//     * Show the form for editing the specified resource.
-//     */
-//    public function edit(){
-//        if (auth()->guard('admin')->user()){
-//            $user = $this->profile->getById(auth()->guard('admin')->user()->uuid);
-//            unset($user->password);
-//            $form = $this->form($this->formClass, [
-//                'method' => 'POST',
-//                'url' => route('users.profile'),
-//                'class' => 'needs-validation row ajax-submit',
-//                'novalidate',
-//                'model'=> $user
-//            ]);
-//            $heading = trans('app.edit_profile');
-//            return view('crud.form', compact('heading','form'));
-//        }
-//        return redirect('profile');
-//	}
-//    /**
-//     * Update the specified resource in storage.
-//     * @param ProfileFormRequest $request
-//     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-//     */
-//    public function update(ProfileFormRequest $request){
-//        if (auth()->guard('admin')->user()){
-//            $user = $this->profile->getById(auth()->guard('admin')->user()->uuid);
-//            $data =  array(
-//                      'username'=>$request->username,
-//                      'name'=>$request->name,
-//                      'email'=>$request->email,
-//                      'phone'=> $request->phone,
-//            );
-//            if ($request->hasFile('photo')){
-//                $file = $request->file('photo');
-//                $filename = strtolower(Str::random(50) . '.' . $file->getClientOriginalExtension());
-//                $file->move(config('app.uploads_path'), $filename);
-//                \Image::make(sprintf(config('app.uploads_path').'%s', $filename))->resize(200, 200)->save();
-//                \File::delete(config('app.uploads_path').$user->photo);
-//                $data['photo']= $filename;
-//            }
-//            if($request->get('password') != ''){
-//                $data['password']= bcrypt($request->password);
-//            }
-//            $this->profile->updateById($user->uuid, $data);
-//            Flash::success(trans('app.record_updated'));
-//        }
-//        if (request()->ajax()) {
-//            return response()->json([
-//                'type' => 'success',
-//                'message' => trans('app.record_updated'),
-//                'action' => 'reload'
-//            ]);
-//        }
-//        return redirect('profile');
-//    }
+
 }
