@@ -76,21 +76,28 @@ class ProfileController extends CrudController {
         if ($loggedUser) {
             $user = $this->repository->getById($loggedUser->uuid);
             
+            // ✅ Make username nullable/optional
             $validated = $request->validate([
                 'photo' => 'nullable|file|max:2048',
-                'username' => 'required|string|unique:users,username,' . $user->uuid . ',uuid',
+                'username' => 'nullable|string|unique:users,username,' . $user->uuid . ',uuid',
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $user->uuid . ',uuid',
                 'phone' => 'nullable|string|max:20'
             ]);
-        
+            
+            // ✅ Only include username if provided
             $data = [
-                'username' => $request->username,
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone
             ];
             
+            // Add username only if it's provided
+            if ($request->filled('username')) {
+                $data['username'] = $request->username;
+            }
+            
+            // ✅ Handle photo upload if exists
             if ($request->hasFile('photo')) {
                 $photo = $request->file('photo');
                 $photoName = time() . '_' . $photo->getClientOriginalName();
