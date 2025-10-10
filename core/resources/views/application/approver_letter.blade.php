@@ -356,13 +356,21 @@
                     <p class="pengesahan"><strong>-Pengesahan Bayaran Caruman Parit</strong></p>
                     <p>Dengan segala hormatnya saya diarahkan merujuk kepada perkara tersebut di atas.</p>
                     <p style="text-align:justify;">
-                        2. Berdasarkan geran tanah dan dokumen sokongan yang dilampirkan, keluasan tanah yang perlu di bayar ialah
-                        <b>{{ number_format($application->hectare, 2) }}
-                            hektar</b>. Oleh yang demikian pihak tuan adalah
-                        dikehendaki membayar caruman parit ke jabatan ini <b>berjumlah RM {{ number_format($application->final_amount, 2) }}
-                        @if($application->appeal != 'yes')
-                        (RM {{ number_format($application->cost, 2) }} x {{ number_format($application->hectare, 2) }}
-                                hektar).
+                        @if($application->appeal === 'yes' && $application->appeal_status === 'approved')
+                            <b>Dimaklumkan bahawa rayuan yang telah dikemukakan oleh pihak tuan berhubung bayaran caruman parit bagi tanah tersebut dan surat kelulusan yang dikemukakan. Berdasarkan semakan terhadap geran tanah keluasan tanah yang terlibat ialah
+                            {{ number_format($application->hectare, 2) }} hektar.</b> 
+                            <br>
+                            Oleh yang demikian, pihak tuan adalah dikehendaki membayar caruman parit kepada jabatan ini berjumlah 
+                            <b>RM {{ number_format($application->final_amount, 2) }}</b>.
+                        @else
+                            2. Berdasarkan geran tanah dan dokumen sokongan yang dilampirkan, keluasan tanah yang perlu di bayar
+                            ialah <b>{{ number_format($application->hectare, 2) }} hektar</b>. Oleh yang demikian pihak tuan adalah
+                            dikehendaki membayar caruman parit ke jabatan ini <b>berjumlah RM
+                                {{ number_format($application->final_amount, 2) }}
+                                @if($application->appeal != 'yes')
+                                    (RM {{ number_format($application->cost, 2) }} x {{ number_format($application->hectare, 2) }} hektar)
+                                @endif
+                            </b>.
                         @endif
                     </p>
                     <p>Sekian, terima kasih.</p>
