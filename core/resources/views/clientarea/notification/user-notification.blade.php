@@ -94,10 +94,6 @@
                 <!-- Notifications Table -->
                 <div class="card">
                     <div class="card-body">
-                        <!--<div class="header-actions">-->
-                        <!--    <h6 style="margin: 0; font-size: 15px; font-weight: 600;">@lang('app.notifications')</h6>-->
-                        <!--    <button class="btn btn-mark-all" id="markAllAsRead">@lang('app.mark_all_as_read')</button>-->
-                        <!--</div>-->
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -164,44 +160,58 @@
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mark individual notification as read
             document.querySelectorAll('.mark-as-read').forEach(button => {
                 button.addEventListener('click', function() {
                     const notificationId = this.getAttribute('data-id');
+                    const button = this;
 
-                    fetch('/user-notifications/' + notificationId + '/mark-as-read', {
+                    button.disabled = true;
+                    button.textContent = 'Processing...';
+
+                    // Using route helper (add this to your blade file)
+                    const url = '{{ route("user.notifications.mark_as_read", ":id") }}'.replace(':id', notificationId);
+
+                    fetch(url, {
                             method: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'Content-Type': 'application/json',
+                                'Accept': 'application/json'
                             },
                         })
                         .then(response => {
+                            console.log('Response status:', response.status);
+                            
                             if (!response.ok) {
-                                throw new Error('Network response was not ok');
+                                return response.json().then(err => {
+                                    throw new Error(err.message || 'Failed with status: ' + response.status);
+                                }).catch(() => {
+                                    throw new Error('Request failed with status: ' + response.status);
+                                });
                             }
                             return response.json();
                         })
                         .then(data => {
                             if (data.success) {
-                                const row = this.closest('tr');
+                                const row = button.closest('tr');
                                 row.classList.remove('unread');
 
                                 const span = document.createElement('span');
                                 span.style.color = 'gray';
-                                span.textContent = '{{ trans('app.read') }}';
-                                this.parentNode.replaceChild(span, this);
+                                span.textContent = '@lang('app.read')';
+                                button.parentNode.replaceChild(span, button);
                             } else {
-                                console.error('Failed to mark as read:', data.message);
+                                throw new Error(data.message || 'Unknown error');
                             }
                         })
-                        .catch(error => console.error('Error marking notification as read:',
-                        error));
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error: ' + error.message);
+                            button.disabled = false;
+                            button.textContent = '@lang('app.mark_as_read')';
+                        });
                 });
             });
-
-            // Mark all notifications as read
             document.getElementById('markAllAsRead').addEventListener('click', function(e) {
                 e.preventDefault();
 

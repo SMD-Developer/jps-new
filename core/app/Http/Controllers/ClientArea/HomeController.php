@@ -669,26 +669,31 @@ class HomeController extends Controller {
 
 
         public function markAsReads($id)
-    {
-        try {
-            $user = auth::guard('user')->user();
+        {
+                try {
+                    $user = auth::guard('user')->user();
 
-            if (!$user) {
-                return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
-            }
-            $notification = $user->notifications()->where('id', $id)->first();
+                    if (!$user) {
+                        \Log::info('No user found in guard user');
+                        return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+                    }
 
-            if (!$notification) {
-                return response()->json(['success' => false, 'message' => 'Notification not found'], 404);
-            }
+                    $notification = $user->notifications()->where('id', $id)->first();
 
-            $notification->markAsRead();
+                    if (!$notification) {
+                        \Log::info('Notification not found: ' . $id);
+                        return response()->json(['success' => false, 'message' => 'Notification not found'], 404);
+                    }
 
-            return response()->json(['success' => true, 'message' => 'Notification marked as read']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+                    $notification->markAsRead();
+
+                    return response()->json(['success' => true, 'message' => 'Notification marked as read']);
+                } catch (\Exception $e) {
+                    \Log::error('Error in markAsReads(): ' . $e->getMessage());
+                    return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                }
         }
-    }
+
         
         public function markAllAsRead()
         {

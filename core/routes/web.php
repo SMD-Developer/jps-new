@@ -50,8 +50,8 @@ Route::group(['middleware' => 'install'], function(){
         Route::get('register-districts/{state_id}', 'ClientArea\HomeController@getDistricts')->name('register_districtes');
 
         Route::get('user-notification','ClientArea\HomeController@userNotification')->name('user_notification');
-        Route::post('user-notifications/{id}/mark-as-read','ClientArea\HomeController@markAsReads')->name('user.notifications.mark_as_read');
-        Route::post('user-notifications/mark-all-as-read','ClientArea\HomeController@markAllAsRead' )->name('user.notifications.mark_all_as_read');
+        Route::post('user-notifications/read/{id}','ClientArea\HomeController@markAsReads')->name('user.notifications.mark_as_read');
+        Route::post('user-notifications/read-all','ClientArea\HomeController@markAllAsRead')->name('user.notifications.mark_all_as_read');
         Route::get('get-notification-count', 'ClientArea\HomeController@getCount')->name('user.get.notification.count');
         Route::get('get-notifications', 'ClientArea\HomeController@getNotifications')->name('user.get.notifications');
         Route::get('get-user-details/{id}', 'ClientArea\HomeController@userApplicationDetails')->name('user.userDetails');
