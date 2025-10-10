@@ -261,6 +261,9 @@
                                     style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
                                     <strong>{{ trans('app.search_b') }}</strong>
                                 </a>
+                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                    <strong>{{ trans('app.reset') }}</strong>
+                                </a>
                             </div>
 
                         </div>
@@ -284,7 +287,7 @@
                                 <tbody>
                                     @foreach ($applications as $key => $application)
                                         <tr>
-                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $applications->firstItem() + $key }}</td>
                                             <td>{{ \Carbon\Carbon::parse($application->created_at)->format('d/m/Y') }}</td>
                                             <!--<td>{{ $application->refference_no ?? '-' }}</td>-->
                                             <td>
@@ -360,6 +363,10 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                             <!-- Pagination -->
+                            <div class="d-flex justify-content-center mt-2">
+                                {{ $applications->links() }}
+                            </div>
                         </div>
                         <!-- End Table Responsive -->
                     </div>

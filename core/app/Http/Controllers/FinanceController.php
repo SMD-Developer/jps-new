@@ -453,10 +453,12 @@ class financeController extends Controller {
         }
         
         $applications = $query->orderBy('created_at', 'desc')
-            ->paginate($perPage)
-            ->appends($request->except('page'));
+             ->paginate(10)
+             ->appends($request->query());
         
-        $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
         
         return view('finance.finance-approve', compact(
             'applications',
