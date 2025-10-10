@@ -361,7 +361,7 @@
             const messages = {
                 success: 'Kata laluan berjaya dikemas kini',
                 wrongOldPassword: 'Kata laluan lama salah',
-                validationTitle: 'Medan kosong',
+                validationTitle: 'Ralat',
                 defaultError: 'Anda telah menggunakan kata laluan yang lama. Sila masukkan kata laluan baharu.',
                 passwordsNotMatch: 'Kata laluan tidak sepadan',
                 fillRequiredFields: 'Fill required fields',
