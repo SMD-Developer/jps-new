@@ -1929,6 +1929,7 @@ class HomeController extends Controller {
                 'payments.transaction_id',
                 'payments.payment_status',
                 'payments.receipt_number',
+                'payments.bank_name',
                 'payments.created_at as payment_created_at'
             )
             ->where('payments.payment_status', 'completed')

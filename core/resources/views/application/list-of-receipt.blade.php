@@ -154,6 +154,8 @@
                                             {{ $application->district_name ?? 'N/A' }}
                                         </td>
                                         <td>RM {{ number_format($application->payment_amount, 2) }}</td>
+                                        <td class="d-none bank-name">{{ $application->bank_name }}</td>
+                                        <td class="d-none payment-method">{{ $application->method }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -307,7 +309,9 @@
                             receipt_time: row.cells[3].querySelector('.time') ? row.cells[3]
                                 .querySelector('.time').textContent.trim() : '',
                             description: row.cells[4].textContent.trim(),
-                            amount: row.cells[5].textContent.trim()
+                            amount: row.cells[5].textContent.trim(),
+                            bank_name: row.querySelector('.bank-name') ? row.querySelector('.bank-name').textContent.trim() : '',
+                            method: row.querySelector('.payment-method') ? row.querySelector('.payment-method').textContent.trim() : ''
                         };
 
                         selectedRows.push(rowData);

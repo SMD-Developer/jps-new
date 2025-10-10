@@ -525,8 +525,11 @@ th {
                                     <td></td>
                                     <td></td>
                                     <td>H0161304</td>
-                                     <td>{{ number_format(floatval(str_replace(',', '', $totalAmount)) / 2, 2, '.', ',') }}
-                                        </td>
+                                     @php
+                                          $amount = $totalAmount ?? 0;
+                                          $amount = is_numeric($amount) ? $amount : 0;
+                                      @endphp
+                                    <td>{{ number_format($amount / 2, 2, '.', ',') }}</td>
                                     <td></td>
                                   </tr>
                                   <tr>
@@ -543,8 +546,11 @@ th {
                                     <td></td>
                                     <td></td>
                                     <td>H0161304</td>
-                                    <td>{{ number_format(floatval(str_replace(',', '', $totalAmount)) / 2, 2, '.', ',') }}
-                                        </td>
+                                      @php
+                                          $amount = $totalAmount ?? 0;
+                                          $amount = is_numeric($amount) ? $amount : 0;
+                                      @endphp
+                                    <td>{{ number_format($amount / 2, 2, '.', ',') }}</td>
                                     <td></td>
                                   </tr>
                                   <tr>
@@ -705,85 +711,53 @@ th {
                                 </tr>
                              </table>
                              
-                             <table class="">
-                                <tr>
-                                  <td colspan="5"  class="text-center">SENARAI CEK/KIRIMAN WANG/WANG POS/BANK DRAF YANG DIBAYAR-MASUK </td>
-                                </tr>
-                                <tr>
-                                  <th class="text-center">Bill</th>
-                                  <th class="text-center">Bank Pembayar</th>
-                                  <th class="text-center">No. Cek/Kiriman Wang</th>
-                                  <th class="text-center">Tempat</th>
-                                  <th class="text-center">Amaun(RM)</th>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">1</td>
-                                  <td>MALAYAN BANKING BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">2</td>
-                                  <td>PUBLIC BANK BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">3</td>
-                                  <td>HONG LEONG BANK BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">4</td>
-                                  <td>HONG LEONG BANK BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">5</td>
-                                  <td>MALAYAN BANKING BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">6</td>
-                                  <td>RHB BANK BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">7</td>
-                                  <td>PUBLIC BANK BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">8</td>
-                                  <td>MALAYAN BANKING BERHAD</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right">476.00</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">9</td>
-                                  <td>EFT</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td class="text-right"></td>
-                                </tr>
-                                <tr>
-                                  <td colspan="4" class="text-right" style="border-right: 0;">JUMLAH BERSIH</td>
-                                  <td style="border-left: 0;" class="text-right">{{$totalAmount}}</td>
-                                </tr>
-                             </table>
+                              <table class="table table-bordered">
+                                  <tr>
+                                      <td colspan="5" class="text-center fw-bold">
+                                          SENARAI CEK/KIRIMAN WANG/WANG POS/BANK DRAF YANG DIBAYAR-MASUK
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <th class="text-center">Bill</th>
+                                      <th class="text-center">Bank Pembayar</th>
+                                      <th class="text-center">No. Cek/Kiriman Wang</th>
+                                      <th class="text-center">Tempat</th>
+                                      <th class="text-center">Amaun (RM)</th>
+                                  </tr>
+
+                                  @foreach($selectedReceipts as $index => $receipt)
+                                        <tr>
+                                            <td class="text-center">{{ $index + 1 }}</td>
+                                            <td>
+                                                {{-- Show bank_name if available, otherwise show method --}}
+                                                {{ !empty($receipt['bank_name']) ? $receipt['bank_name'] : ($receipt['method'] ?? 'N/A') }}
+                                            </td>
+
+                                            <td></td> {{-- Optional fields --}}
+                                            <td></td>
+
+                                            <td class="text-right">
+                                                  {{ number_format(floatval(str_replace([',', 'RM', ' '], '', $receipt['amount'] ?? 0)), 2, '.', ',') }}
+                                              </td>
+
+                                        </tr>
+                                  @endforeach
+                                  <tr>
+                                        @php
+                                        $total = 0;
+                                        foreach ($selectedReceipts as $receiptItem) {
+                                            $amt = str_replace([',','RM',' '], '', $receiptItem['amount'] ?? 0);
+                                            $total += floatval($amt);
+                                        }
+                                    @endphp
+                                    <tr>
+                                        <td colspan="4" class="text-right fw-bold">JUMLAH BERSIH</td>
+                                        <td class="text-right">{{ number_format($total, 2, '.', ',') }}</td>
+                                    </tr>
+
+                                  </tr>
+                              </table>
+
                         </section>
                         
                         <section class="6" style="margin-bottom: 50px;">
