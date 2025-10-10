@@ -314,7 +314,9 @@
                 errorDiv.textContent = errorMessages['deposit_date'];
                 depositDate.closest('.form-group').appendChild(errorDiv);
             } else {
-                const selectedDate = new Date(depositDate.value);
+                // Create dates in local timezone from the YYYY-MM-DD string
+                const [year, month, day] = depositDate.value.split('-').map(Number);
+                const selectedDate = new Date(year, month - 1, day); // month is 0-indexed
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
