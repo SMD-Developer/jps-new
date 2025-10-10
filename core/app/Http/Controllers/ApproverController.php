@@ -90,12 +90,49 @@ class ApproverController extends Controller
         'districts'));
     }
     
-    public function approve(){
+    public function approve(Request $request){
         $canFinanceApproverApplicationDetails = auth('admin')->user()->hasPermission('applications.view-details');
-        $applications = Application::with('client')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
-        return view('approver.approve', compact('applications', 'canFinanceApproverApplicationDetails'));
+        
+        $district = DB::table('district')->where('stat', 1)
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();
+        
+        $query = Application::with('client');
+        
+        // Search filter
+        if ($request->filled('search')) {
+            $searchTerm = $request->get('search');
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('refference_no', 'like', '%' . $searchTerm . '%')
+                ->orWhere('applicant', 'like', '%' . $searchTerm . '%')
+                ->orWhereHas('client', function($clientQuery) use ($searchTerm) {
+                    $clientQuery->where('name', 'like', '%' . $searchTerm . '%');
+                });
+            });
+        }
+        
+        // District filter
+        if ($request->filled('district')) {
+            $query->where('land_district', $request->get('district'));
+        }
+        
+        // Division filter  
+        if ($request->filled('division')) {
+            $query->where('land_state', $request->get('division'));
+        }
+        
+        // Lot/PT filter
+        if ($request->filled('lot')) {
+            $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
+        }
+        
+        $perPage = $request->input('perPage', 10);
+        
+        $applications = $query->orderBy('created_at', 'desc')
+                            ->paginate($perPage)
+                            ->appends($request->query());
+        
+        return view('approver.approve', compact('applications', 'canFinanceApproverApplicationDetails', 'district'));
     }
     
      public function approved_statement_approver()

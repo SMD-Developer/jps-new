@@ -106,9 +106,9 @@
                         </div>
 
                         <!-- Buttons + Show Per Page (Right Aligned) -->
-                        <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex justify-content-end align-items-center flex-wrap gap-2">
-                            <!-- Show Per Page -->
-                            <div class="d-flex align-items-center me-3">
+                         <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <!-- Show Per Page (LEFT) -->
+                            <div class="d-flex align-items-center">
                                 <label for="perPageSelect" class="me-2 mb-0 fw-semibold" style="white-space: nowrap;">
                                     @lang('app.show'):
                                 </label>
@@ -122,14 +122,16 @@
                                 </select>
                             </div>
 
-                            <!-- Buttons -->
-                            <a href="#" class="btn btn-primary btn-sm search-btn"
-                                style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
-                                <strong>{{ trans('app.search_b') }}</strong>
-                            </a>
-                            <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
-                                <strong>{{ trans('app.reset') }}</strong>
-                            </a>
+                            <!-- Buttons (RIGHT) -->
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-primary btn-sm search-btn"
+                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
+                                    <strong>{{ trans('app.search_b') }}</strong>
+                                </a>
+                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                    <strong>{{ trans('app.reset') }}</strong>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -274,7 +276,7 @@
                         </table>
 
                         <!-- Pagination -->
-                        <div class="d-flex justify-content-center mt-2">
+                        <div class="d-flex justify-content-end mt-2">
                             {{ $approvedApplications->links() }}
                         </div>
                     </div>
@@ -315,6 +317,8 @@
             url.searchParams.set('status', status);
             window.location.href = url.toString();
         });
+
+       
 
         
     });
@@ -439,6 +443,15 @@
                 }
             });
         });
+    });
+</script>
+<script>
+    document.getElementById('perPageSelect').addEventListener('change', function() {
+        const perPage = this.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('perPage', perPage);
+        url.searchParams.set('page', '1'); 
+        window.location.href = url.toString();
     });
 </script>
 

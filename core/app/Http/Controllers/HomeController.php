@@ -337,13 +337,11 @@ class HomeController extends Controller {
             $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
         }
         
+        $perPage = $request->input('perPage', 10); 
+
         $approvedApplications = $query->orderBy('created_at', 'desc')
-                                    ->paginate(10)
-                                    ->appends($request->query());
-        // $approvedApplications = Application::with('client')
-        //                             ->where('status', 'approved')
-        //                             ->orderBy('created_at', 'desc') 
-        //                             ->paginate(10); 
+                                            ->paginate($perPage)
+                                            ->appends($request->query());
 
         return view('application.approved_application_list', compact('approvedApplications', 'isAdminOrStaff', 'district'));
     }
@@ -351,7 +349,7 @@ class HomeController extends Controller {
 
 
     
-     public function claimList(Request $request){
+    public function claimList(Request $request){
         $perPage = $request->input('per_page', 10);         
         $isAuthenticated = auth('admin')->check();                  
         $canAdminStaffViewApplication = auth('admin')->user()->hasPermission('applications.view-details');         
@@ -397,7 +395,7 @@ class HomeController extends Controller {
     }
     
     
-     public function claimView(Request $request, $id)
+    public function claimView(Request $request, $id)
     {
         try {
             
@@ -429,25 +427,7 @@ class HomeController extends Controller {
             return redirect()->back()->with('error', 'Claim not found or an error occurred.');
         }
     }
-    
-    
-    // public function updateStatus(Request $request, $id)
-    // {
-    //     $validated = $request->validate([
-    //         'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid'
-    //     ]);
-    
-    //     $claim = DB::table('claim_contribution')->where('id', $id)->first();
-    //     if (!$claim) {
-    //         return response()->json(['message' => 'Claim not found'], 404);
-    //     }
-    
-    //     DB::table('claim_contribution')
-    //         ->where('id', $id)
-    //         ->update(['status' => $request->status]);
-    
-    //     return response()->json(['message' => __('app.status_updated_successfully')]);
-    // }
+
     
     public function updateStatus(Request $request, $id)
     {
@@ -525,29 +505,6 @@ class HomeController extends Controller {
             ], 500);
         }
     }
-
-
-//     public function approverapplicationList(Request $request)
-//   {
-//         $perPage = $request->input('per_page', 10);
-//         $canApproverViewApplicationDetails = auth('admin')->user()->hasPermission('applications.view-details');
-//         $isAuthenticated = auth('admin')->check();
-//         $isAdminOrStaff = false;
-//         if ($isAuthenticated) {
-//             // Get the role_id
-//             $roleId = auth('admin')->user()->role_id;
-//             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');
-//         }
-    
-//         $list = Application::with(['state', 'landDistrict', 'landDivision', 'client'])
-//             ->where('forwarded_by_admin_staff', 1)
-//             ->latest()
-//             ->paginate($perPage);
-            
-//         $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
-        
-//         return view('approver.approver_application_list', compact('list', 'district', 'perPage', 'isAdminOrStaff', 'canApproverViewApplicationDetails'));
-//     }
 
 
     public function approverapplicationList(Request $request)
@@ -673,65 +630,49 @@ class HomeController extends Controller {
     
         return view('application.new_application', compact('application','state', 'district', 'landDistrict' ,'division', 'landMeasurement'));
     }
-    
-    // public function trackAction(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'application_id' => 'required|exists:applications,id',
-    //         'action_type' => 'required|in:view,edit'
-    //     ]);
 
-    //     $this->trackApplicationAction(
-    //         $validated['application_id'],
-    //         $validated['action_type'],
-    //         $request,
-    //         'admin'
-    //     );
-
-    //     return response()->json(['success' => true]);
-    // }
     
     
     protected function trackAction($applicationId, $actionType, $request, $userType = 'admin')
-{
-    $userId = Auth::id();
-    $user = Auth::user();
-    
-    // Check if this user already performed this action on this application
-    $existingAction = DB::table('application_views')
-        ->where('application_id', $applicationId)
-        ->where('user_id', $userId)
-        ->where('action_type', $actionType)
-        ->first();
+    {
+        $userId = Auth::id();
+        $user = Auth::user();
         
-    if (!$existingAction) {
-        // Record the action
-        DB::table('application_views')->insert([
-            'application_id' => $applicationId,
-            'user_id' => $userId,
-            'user_type' => $userType,
-            'user_name' => $user->name ?? 'default_name',
-            'action_type' => $actionType,
-            'viewed_at' => now(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->header('User-Agent'),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-    } else {
-        // Update the existing record
-        DB::table('application_views')
+        // Check if this user already performed this action on this application
+        $existingAction = DB::table('application_views')
             ->where('application_id', $applicationId)
             ->where('user_id', $userId)
             ->where('action_type', $actionType)
-            ->update([
+            ->first();
+            
+        if (!$existingAction) {
+            // Record the action
+            DB::table('application_views')->insert([
+                'application_id' => $applicationId,
+                'user_id' => $userId,
+                'user_type' => $userType,
+                'user_name' => $user->name ?? 'default_name',
+                'action_type' => $actionType,
                 'viewed_at' => now(),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->header('User-Agent'),
+                'created_at' => now(),
                 'updated_at' => now()
             ]);
+        } else {
+            // Update the existing record
+            DB::table('application_views')
+                ->where('application_id', $applicationId)
+                ->where('user_id', $userId)
+                ->where('action_type', $actionType)
+                ->update([
+                    'viewed_at' => now(),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->header('User-Agent'),
+                    'updated_at' => now()
+                ]);
+        }
     }
-}
 
 
    public function approvernewApplication($id){
@@ -1409,49 +1350,6 @@ class HomeController extends Controller {
     }
     
     
-    // public function applicationStatus(Request $request) 
-    // {         
-    //     $perPage = $request->input('per_page', 10);         
-    //     $statusFilter = $request->input('status');                  
-        
-    //     $query = Application::with([
-    //         'client',
-    //         'logs' => function($query) {
-    //             $query->orderBy('action_at', 'desc');
-    //         }
-    //     ])->orderBy('created_at', 'desc');                  
-        
-    //     if ($statusFilter) {             
-    //         $query->where('status', $statusFilter);         
-    //     }                  
-        
-    //     // Total counts (unfiltered)         
-    //     $allCount = Application::count();         
-    //     $approvedCount = Application::where('status', 'approved')->count();         
-    //     $rejectedCount = Application::where('status', 'rejected')->count();                  
-        
-    //     $isAuthenticated = auth('admin')->check();         
-    //     $isAdminOrStaff = false;                   
-        
-    //     if ($isAuthenticated) {             
-    //         $roleId = auth('admin')->user()->role_id;             
-    //         $isAdminOrStaff = ($roleId === '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d');         
-    //     }                  
-        
-    //     $applications = $query->paginate($perPage);                  
-        
-    //     return view('application.application-status', compact(             
-    //         'applications',              
-    //         'allCount',              
-    //         'approvedCount',              
-    //         'rejectedCount',              
-    //         'perPage',             
-    //         'statusFilter',             
-    //         'isAdminOrStaff'         
-    //     ));     
-    // }
-    
-    
     public function applicationStatus(Request $request) 
     {         
         $perPage = $request->input('per_page', 10);         
@@ -1840,18 +1738,6 @@ class HomeController extends Controller {
             ->paginate($perPage);
         return view('application.user-receiptoriginal', compact('list'));
     }
-    
-    
-    //  public function userReceiptView($application_id)
-    //     {
-    //         $application = Application::select('applications.*', 'state.negeri', 'district.daerah')
-    //             ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
-    //             ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-    //             ->where('applications.id', $application_id)
-    //             ->firstOrFail();
-        
-    //         return view('application.user-receiptoriginal', compact('application'));
-    //     }
     
     
     public function userReceiptView($application_id)     
@@ -2421,27 +2307,6 @@ public function updateUserDetails(Request $request, $id)
             return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
-    
-    
-    // public function changePassword($uuid)
-    // {
-    //     // Check if user is authenticated
-    //     if (!auth('admin')->check()) {
-    //         return redirect()->route('admin.login')->with('error', 'Please login to access this page');
-    //     }
-        
-    //     $loggedInUser = auth('admin')->user();
-    //     if ($loggedInUser->uuid !== $uuid) {
-    //         return redirect()->back()->with('error', 'You can only change your own password');
-    //     }
-    
-    //     $title = trans('app.change_password');
-        
-    //     return view('auth.change_password', [
-    //         'title' => $title,
-    //         'uuid'=> $uuid
-    //     ]);
-    // }
     
     public function changePassword($uuid)
     {
