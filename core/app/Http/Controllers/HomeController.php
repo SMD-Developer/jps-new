@@ -1602,34 +1602,43 @@ class HomeController extends Controller {
             $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
         }          
 
-        // Filter based on payment status (any payment)
-       if ($statusFilter !== 'all') {
+        // Filter based on payment status (latest payment only)
+        if ($statusFilter !== 'all') {
             if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {
                 $query->whereHas('payments', function($q) use ($statusFilter) {
                     $q->where('payment_status', $statusFilter)
-                    ->where('created_at', function($q2) {
-                        $q2->selectRaw('MAX(created_at)')
-                            ->from('payments as p2')
-                            ->whereColumn('p2.application_id', 'payments.application_id');
-                    });
+                        ->where('id', function($q2) {
+                            $q2->selectRaw('MAX(id)')
+                                ->from('payments')
+                                ->whereColumn('application_id', 'payments.application_id');
+                        });
                 });
             } elseif (in_array($statusFilter, ['incomplete','no_payment'])) {
                 $query->whereDoesntHave('payments');
             }
         }
 
-
-
-        // Filter based on payment method (any payment)
+        // Filter based on payment method (latest payment only)
         if ($methodFilter !== 'all') {
-            $query->whereHas('payments', function($q) use ($methodFilter) {
-                switch ($methodFilter) {
-                    case 'B2B': $q->where('method','FPX_B2B'); break;
-                    case 'B2C': $q->where('method','FPX_B2C'); break;
-                    case 'EFT': $q->where('method','EFT'); break;
-                    case 'Cheque': $q->where('method','cheque'); break;
-                }
-            });
+            $methodMapping = [
+                'B2B' => 'FPX_B2B',
+                'B2C' => 'FPX_B2C',
+                'EFT' => 'EFT',
+                'Cheque' => 'cheque',
+            ];
+
+            $exactMethod = $methodMapping[$methodFilter] ?? null;
+
+            if ($exactMethod) {
+                $query->whereHas('payments', function($q) use ($exactMethod) {
+                    $q->where('payments.method', '=', $exactMethod)
+                        ->where('payments.created_at', function($q2) {
+                            $q2->selectRaw('MAX(created_at)')
+                                ->from('payments as p2')
+                                ->whereColumn('p2.application_id', 'payments.application_id');
+                        });
+                });
+            }
         }
 
         // Search filter

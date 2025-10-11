@@ -550,7 +550,9 @@ class HomeController extends Controller {
             $clientId = auth('user')->id(); 
             $client = DB::table('client_register')->where('client_id', $clientId)->first();
             $state = DB::table('state')->where('status', 1)->orderBy('negeri_code', 'asc')->get();
-            $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
+            $district = DB::table('district')
+            ->where('idnegeri', 1)
+            ->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
             $division = DB::table('division')->where('status', 1)->orderBy('mukim_code', 'asc')->get();
             $landMeasurement = DB::table('land_measurement_unit')->get();
             return view('clientarea.application.contribution_claims', compact('state', 'district', 'division', 'client','landMeasurement'));
