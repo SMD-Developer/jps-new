@@ -14,6 +14,7 @@ use App\Models\Payment;
 use App\Notifications\NewApplicationSent;
 use App\Notifications\UserApplicationStatusNotification;
 use App\Notifications\UserApplicationRejectionNotification;
+use App\Notifications\ClaimStatusUpdated;
 use App\Notifications\AccountUnblockedNotification;
 use App\Notifications\AdminAccountUnblockedNotification;
 use App\Models\User;
@@ -113,95 +114,13 @@ class HomeController extends Controller {
         // Return districts as JSON
         return response()->json($districts);
     }
+
 	public function getDivision($id)
     {
          $division=DB::table('division')->where('daerah_id',$id)->where('status',1)->orderBy('mukim_code','asc')->get();
         // Return districts as JSON
         return response()->json($division);
     }
-    
-   
-    // public function applicationList(Request $request) {         
-    //     $perPage = $request->input('per_page', 10);         
-    //     $isAuthenticated = auth('admin')->check();                  
-    //     $canAdminStaffViewApplication = auth('admin')->user()->hasPermission('applications.view-details');         
-    //     $canAdminStaffEditApplication = auth('admin')->user()->hasPermission('applications.edit');                  
-    //     $isAdminOrStaff = false;         
-    //     if ($isAuthenticated) {             
-    //         $roleId = auth('admin')->user()->role_id;             
-    //         $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
-    //     }                  
-
-    //     $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);                  
-
-    //     if ($request->has('district') && $request->district) {             
-    //         $query->where('land_district', $request->district);         
-    //     }                  
-
-    //     if ($request->has('division') && $request->division) {             
-    //         $query->where('land_state', $request->division);         
-    //     }                  
-
-    //     if ($request->has('lot') && $request->lot) {             
-    //         $query->where('land_lot', 'LIKE', '%' . $request->lot . '%');         
-    //     }                  
-
-    //     // Get the paginated results with activity tracking
-    //     $list = $query->latest()
-    //         ->paginate($perPage)
-    //         ->appends($request->except('page'));
-
-    //     // Get current user ID for highlighting
-    //     $currentUserId = auth('admin')->id();
-
-    //     // Get activity data for each application
-    //     foreach ($list as $application) {
-    //         // Get the most recent view and edit activities from application_views table
-    //         $latestView = DB::table('application_views')
-    //             ->where('application_id', $application->id)
-    //             ->where('action_type', 'view')
-    //             ->latest('viewed_at')
-    //             ->first();
-
-    //         $latestEdit = DB::table('application_views')
-    //             ->where('application_id', $application->id)
-    //             ->where('action_type', 'edit')
-    //             ->latest('viewed_at')
-    //             ->first();
-
-    //         // Initialize activity data
-    //         $application->latest_view_user = null;
-    //         $application->latest_edit_user = null;
-    //         $application->latest_view_date = null;
-    //         $application->latest_edit_date = null;
-    //         $application->viewed_by_current_user = false;
-    //         $application->edited_by_current_user = false;
-
-    //         if ($latestView) {
-    //             $application->latest_view_user = $latestView->user_name;
-    //             $application->latest_view_date = $latestView->viewed_at;
-    //             $application->viewed_by_current_user = ($latestView->user_id == $currentUserId);
-    //         }
-
-    //         if ($latestEdit) {
-    //             $application->latest_edit_user = $latestEdit->user_name;
-    //             $application->latest_edit_date = $latestEdit->viewed_at;
-    //             $application->edited_by_current_user = ($latestEdit->user_id == $currentUserId);
-    //         }
-    //     }
-
-    //     $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();                  
-
-    //     return view('listapplication', compact(             
-    //         'list',              
-    //         'district',              
-    //         'perPage',              
-    //         'isAdminOrStaff',              
-    //         'canAdminStaffViewApplication',              
-    //         'canAdminStaffEditApplication',
-    //         'currentUserId'
-    //     ));     
-    // }
     
     
     public function applicationList(Request $request) {         
@@ -485,6 +404,14 @@ class HomeController extends Controller {
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+
+            $client = ClientRegisterModel::where('client_id', $claim->user_id)->first();
+            if ($client) {
+                $claimModel = ClaimContribution::find($id);
+                $client->notify(new ClaimStatusUpdated($claimModel));
+            } else {
+                Log::warning('Client not found for claim', ['claim_id' => $id, 'user_id' => $claim->user_id]);
+            }
     
             return response()->json(['message' => __('Status Pemohonan berjaya dikemaskini')]);
     
@@ -675,8 +602,8 @@ class HomeController extends Controller {
     }
 
 
-   public function approvernewApplication($id){
-   $application = DB::table('applications')->where('id',$id)->first();
+    public function approvernewApplication($id){
+        $application = DB::table('applications')->where('id',$id)->first();
          
 	     if (!$application) {
         abort(404, __('app.application_not_found')); 
@@ -692,8 +619,8 @@ class HomeController extends Controller {
          $landCategories = DB::table('land_category')->get();
          $landMeasurement = DB::table('land_measurement_unit')->get();
 
-    return view('approver.approver_application_details', compact('application','state','district','division', 'landCategories', 'landMeasurement'));
-}
+        return view('approver.approver_application_details', compact('application','state','district','division', 'landCategories', 'landMeasurement'));
+    }
 
 
     public function search(Request $request)
@@ -2077,6 +2004,7 @@ class HomeController extends Controller {
             ->get();
             
         $districts = DB::table('district')
+            ->where('idnegeri', 1)
             ->where('stat', 1)
             ->orderBy('daerah_code', 'asc')
             ->get();
