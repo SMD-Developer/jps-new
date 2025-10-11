@@ -331,22 +331,32 @@
                 <div class="col-lg-7 col-sm-6 col-xs-12 long-bar pl-5">
                     <h5>@lang('app.application_status')</h5>
 
-                   <table class="graph mt-3">
-                    <tbody>
-                        <tr style="height:85%; margin-left: 40px; margin-right: 40px;">
-                            <th scope="row">@lang('app.passed')</th>
-                            <td class="td1" style="width: {{ ($passed + $rejected) > 0 ? ($passed / ($passed + $rejected)) * 100 : 0 }}%">
-                                <span></span>
-                            </td>
-                        </tr>
-                        <tr style="height:23%; margin-left: 40px; margin-right: 40px;">
-                            <th scope="row">@lang('app.reject')</th>
-                            <td class="td2" style="width: {{ ($passed + $rejected) > 0 ? ($rejected / ($passed + $rejected)) * 100 : 0 }}%">
-                                <span></span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <table class="graph mt-3">
+                        <tbody>
+                            <tr style="height:85%; margin-left: 40px; margin-right: 40px;">
+                                <th scope="row">@lang('app.passed')</th>
+                                <td class="td1">
+                                    <span class="count-display">{{ $passed ?? 0 }}</span>
+                                </td>
+                            </tr>
+                            <tr style="height:23%; margin-left: 40px; margin-right: 40px;">
+                                <th scope="row">@lang('app.reject')</th>
+                                <td class="td2">
+                                    <span class="count-display">{{ $rejected ?? 0 }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="graph-counts text-center mt-2 col-6">
+                            <span class="me-3">
+                                @lang('app.passed') - <strong>{{ $passed ?? 0 }}</strong>
+                            </span>
+                            <span>
+                                @lang('app.reject') - <strong>{{ $rejected ?? 0 }}</strong>
+                            </span>
+                        </div>
+                   </div>
 
                 </div>
                 <div class="col-lg-5 col-sm-6 col-xs-12">
