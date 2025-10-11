@@ -1607,11 +1607,10 @@ class HomeController extends Controller {
             if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {
                 $query->whereHas('payments', function($q) use ($statusFilter) {
                     $q->where('payment_status', $statusFilter)
-                        ->where('id', function($q2) {
-                            $q2->selectRaw('MAX(id)')
-                                ->from('payments')
-                                ->whereColumn('application_id', 'payments.application_id');
-                        });
+                        ->whereRaw('payments.created_at = (
+                            SELECT MAX(p2.created_at) FROM payments p2 
+                            WHERE p2.application_id = payments.application_id
+                        )');
                 });
             } elseif (in_array($statusFilter, ['incomplete','no_payment'])) {
                 $query->whereDoesntHave('payments');
