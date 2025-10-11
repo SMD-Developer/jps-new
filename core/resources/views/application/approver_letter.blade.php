@@ -359,7 +359,6 @@
                         @if($application->appeal === 'yes' && $application->appeal_status === 'approved')
                             <b>Dimaklumkan bahawa rayuan yang telah dikemukakan oleh pihak tuan berhubung bayaran caruman parit bagi tanah tersebut dan surat kelulusan yang dikemukakan. Berdasarkan semakan terhadap geran tanah keluasan tanah yang terlibat ialah
                             {{ number_format($application->hectare, 2) }} hektar.</b> 
-                            <br>
                             Oleh yang demikian, pihak tuan adalah dikehendaki membayar caruman parit kepada jabatan ini berjumlah 
                             <b>RM {{ number_format($application->final_amount, 2) }}</b>.
                         @else
