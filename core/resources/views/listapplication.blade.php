@@ -330,9 +330,6 @@
                                 <select id="status" class="form-select form-select-sm form-control form-control-sm"
                                     style="width:150px;">
                                     <option value="">{{ trans('app.all') }}</option>
-                                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
-                                        {{ trans('app.approved') }}
-                                    </option>
                                     <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
                                         {{ trans('app.rejected') }}
                                     </option>
