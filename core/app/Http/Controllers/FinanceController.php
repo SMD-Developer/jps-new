@@ -757,7 +757,9 @@ class financeController extends Controller {
     public function reportCollectionContributionDistrictSearch()
     {
         $title = __("app.report_collection_contribution_ditch_by_district");
-        $districts = DB::table('district')->get();
+        $districts = DB::table('district')
+        ->where('idnegeri', 1)
+        ->get();
         return view('finance.report-collection-contribution-ditch-by-district-search',['title' => $title,
          'districts'=> $districts]);
     }
