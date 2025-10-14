@@ -366,7 +366,7 @@
                 passwordsNotMatch: 'Kata laluan tidak sepadan',
                 fillRequiredFields: 'Fill required fields',
                 confirmTitle: 'Adakah anda pasti',
-                confirmText: 'Change password warning',
+                confirmText: '',
                 confirmButton: 'Ye',
                 cancelButton: 'Tidak',
                 accountLocked: 'Account locked',

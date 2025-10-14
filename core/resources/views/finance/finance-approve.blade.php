@@ -276,11 +276,8 @@
                                         <th><strong>{{ trans('app.date') }}</strong></th>
                                         <!--<th><strong>{{ trans('app.reference _no') }}</strong></th>-->
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
-                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
-                                        <th><strong>{{ trans('app.lot/PT') }}</strong></th>
-                                        <th><strong>{{ trans('app.status') }}</strong></th>
-                                        <!--<th><strong>{{ trans('app.total_contribution') }}</strong></th>-->
+                                        <th><strong>{{ trans('app.address') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -312,44 +309,8 @@
                                                     N/A
                                                 @endif
                                             </td>
-                                            <td>
-                                                @switch($application->application_type)
-                                                    @case('reapply')
-                                                        {{ trans('app.reapply') }}
-                                                    @break
-
-                                                    @case('appeal')
-                                                        Appeal
-                                                    @break
-
-                                                    @default
-                                                        {{ trans('app.new') }}
-                                                @endswitch
-                                            </td>
                                             <td>{{ $application->applicant }}</td>
-                                            <td>{{ $application->land_lot }}</td>
-                                            <!--<td>{{ $application->client ? 'RM ' . number_format($application->final_amount, 2) : 'N/A' }}-->
-                                            <!--</td>-->
-                                            <td>
-                                                @switch($application->status)
-                                                    @case('approved')
-                                                        <span
-                                                            class="status-badge status-approved">{{ trans('app.approved') }}</span>
-                                                    @break
-
-                                                    @case('rejected')
-                                                        <span
-                                                            class="status-badge status-rejected">{{ trans('app.rejected') }}</span>
-                                                    @break
-
-                                                    @case('pending')
-                                                        <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
-                                                    @break
-
-                                                    @default
-                                                        <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
-                                                @endswitch
-                                            </td>
+                                            <td>{{$application->client->registeredAddress}}</td>
                                             <td>
                                                 @if($canfinanceAdminViewDetails)
                                                     <a href="{{ route('reviewLetter', ['application_id' => $application->id]) }}"

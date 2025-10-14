@@ -362,7 +362,7 @@
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }}</strong></th>
                                         <th><strong>{{ trans('app.payment_method') }}</strong></th>
-                                         <th><strong>id transaksi</strong></th>
+                                         <th><strong>ID Transaksi</strong></th>
                                         <th><strong>{{ trans('app.payment_status') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
