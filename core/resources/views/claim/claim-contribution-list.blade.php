@@ -175,6 +175,7 @@
                                 <input type="text" id="lot" class="form-control form-control-sm"
                                     placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
                             </div>
+
                             <div class="col-md-12 col-sm-12 mt-3 text-right">
                                 <a href="#" class="btn btn-primary btn-sm search-btn"
                                     style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
@@ -185,17 +186,34 @@
                                 </a>
                             </div>
 
-                            <div class="d-flex align-items-baseline mb-3 mx-3">
-                                <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
-                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
-                                    style="width: auto">
-                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
-                                </select>
+                            <div class="d-flex align-items-center gap-3 mb-3 mx-3">
+                                <!-- Per Page Select -->
+                                <div class="d-flex align-items-center">
+                                    <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp;</label>
+                                    <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
+                                        style="width: auto">
+                                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                        <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
+                                    </select>
+                                </div>
+
+                                <!-- Status Select -->
+                                <div class="d-flex align-items-center">
+                                    <label for="status" class="me-2">{{ trans('app.status') }}:</label>
+                                    <select id="status" class="form-select form-select-sm form-control form-control-sm" style="width: auto">
+                                        <option value="" selected disabled>{{ trans('app.select_status') }}</option>
+                                        @foreach ($statuses as $key => $label)
+                                            <option value="{{ $key }}" 
+                                                {{ request('status') == $key ? 'selected' : '' }}>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                         </div>
@@ -354,6 +372,24 @@
 
     <script>
         $(document).ready(function() {
+
+
+                $('#status').on('change', function() {
+                    var district = $('#district').val();
+                    var division = $('#division').val();
+                    var lot = $('#lot').val();
+                    var status = $(this).val();
+                    var per_page = "{{ $perPage }}";
+                    var queryParams = [];
+                    
+                    if (district) queryParams.push('district=' + district);
+                    if (division) queryParams.push('division=' + division);
+                    if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
+                    if (status) queryParams.push('status=' + status);
+                    if (per_page) queryParams.push('per_page=' + per_page);
+                    
+                    window.location.href = window.location.pathname + '?' + queryParams.join('&');
+                });
 
             $('#district').on('change', function() {
                 const distId = $(this).val();

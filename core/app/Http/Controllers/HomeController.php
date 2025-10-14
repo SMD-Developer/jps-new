@@ -291,7 +291,11 @@ class HomeController extends Controller {
 
         if ($request->has('lot') && $request->lot) {             
             $query->where('land_lot', 'LIKE', '%' . $request->lot . '%');         
-        }                  
+        }   
+        
+        if ($request->has('status') && $request->status && $request->status !== 'all') {             
+            $query->where('status', $request->status);         
+        }    
 
         // Get the paginated results with activity tracking
         $list = $query->latest()
@@ -304,11 +308,21 @@ class HomeController extends Controller {
         $district = DB::table('district')->where('stat', 1)
         ->where('idnegeri', 1)
         ->orderBy('daerah_code', 'asc')->get(); 
+
+        $statuses = [
+            'all' => 'Semua',
+            'pending' => 'Belum Selesai',
+            'approve_payment_in_process' => 'Lulus-Dalam Proses Pembayaran',
+            'approve_paid' => 'Lulus-Sudah Bayar',
+            'rejected' => 'Ditolak'
+        ];
+        
         return view('claim.claim-contribution-list', compact( 'list',              
             'district',              
             'perPage',              
             'isAdminOrStaff',              
-            'canAdminStaffViewApplication',              
+            'canAdminStaffViewApplication',
+            'statuses',              
             'canAdminStaffEditClaimApplication',
             'currentUserId'));
     }
@@ -329,7 +343,9 @@ class HomeController extends Controller {
                 ->findOrFail($id);
             
             $state = DB::table('state')->where('status', 1)->orderBy('negeri_code', 'asc')->get();
-            $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
+            $district = DB::table('district')->where('stat', 1)
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();
             $division = DB::table('division')->where('status', 1)->orderBy('mukim_code', 'asc')->get();
             $landMeasurement = DB::table('land_measurement_unit')->get();
 
