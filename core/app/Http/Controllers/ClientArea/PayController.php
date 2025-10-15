@@ -1465,7 +1465,7 @@ class PayController extends Controller
         $fpx_buyerIban = "";
         // $fpx_productDesc = $application ? "Corporate Payment - {$application->refference_no}" : "B2B Corporate Payment";
         $fpx_productDesc="Card";
-        $fpx_version = "6.0";
+        $fpx_version = "7.0";
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
 
