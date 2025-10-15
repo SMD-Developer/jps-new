@@ -1491,7 +1491,7 @@ class PayController extends Controller
             'buyer_name' => $fpx_buyerName,
             'seller_order_no' => $fpx_sellerOrderNo,
             'seller_ex_order_no' => $fpx_sellerExOrderNo,
-            'transaction_id' => $fpx_sellerOrderNo, 
+            'transaction_id' => null, 
             'payment_status' => 'pending',
             'payment_gateway' => 'FPX',
             'fpx_checksum' => $fpx_checkSum,
