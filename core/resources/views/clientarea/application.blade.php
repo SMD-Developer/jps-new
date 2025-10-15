@@ -227,7 +227,7 @@
                                                     @php
                                                         $userAccountType = $client->accountType ?? null;
                                                         // Only show account types 1 and 2
-                                                        $allowedAccountTypes = $accountTypes->whereIn('id', [1, 2]);
+                                                        $allowedAccountTypes = $accountTypes->whereIn('id', [1, 2,4]);
                                                     @endphp
                                                     
                                                     @foreach($allowedAccountTypes as $accountType)

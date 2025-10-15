@@ -210,7 +210,7 @@
                             </div>
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
-                                <div class="value">{{ $application->created_at->format('d/m/Y h:i:s A') }}</div>
+                                <div class="value">{{ $application->fpx_payment_time ?? $application->payment_date }}</div>
                             </div>
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
@@ -237,8 +237,17 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">1</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">{{$application->payment_method}}</td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    @if($application->payment_method === 'cheque')
+                                        Cek<br>
+                                        @if(!empty($application->transaction_id))
+                                            <small>{{ $application->transaction_id }}</small>
+                                        @endif
+                                    @else
+                                        {{ $application->payment_method }}
+                                    @endif
+                                </td>
+                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
                                     {{ $application->transaction_id ?? 'N/A' }}<br>
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>

@@ -502,30 +502,63 @@ class HomeController extends Controller {
     
         public function userReceiptCopy($application_id)
         {
-            $application = Application::with(['payment'])
+            $application = Application::with(['payment' => function($query) {
+                    $query->where('payment_status', 'completed')
+                        ->latest('created_at');
+                }])
                 ->select(
                     'applications.*', 
                     'state.negeri', 
                     'district.daerah',
-                    'division.mukim as land_mukim',
-                    'payments.payment_status as payment_status', 
-                    'payments.method as payment_method',
-                    'payments.amount as payment_amount',
-                    'payments.transaction_id',
-                    'payments.receipt_number as receipt_number',
-                    'payments.created_at as payment_date'
+                    'division.mukim as land_mukim'
                 )
                 ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
                 ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
                 ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
-                ->leftJoin('payments', 'applications.id', '=', 'payments.application_id')
                 ->where('applications.id', $application_id)
                 ->firstOrFail();
                 
-                if (auth('user')->id() !== $application->user_id) {
-                        abort(403, 'Unauthorized access to this receipt.');
+            if (auth('user')->id() !== $application->user_id) {
+                abort(403, 'Unauthorized access to this receipt.');
+            }
+            
+            $completedPayment = $application->payment()
+                ->where('payment_status', 'completed')
+                ->latest('created_at')
+                ->first();
+            
+            if ($completedPayment) {
+                $application->payment_status = $completedPayment->payment_status;
+                $application->payment_method = $completedPayment->method;
+                $application->payment_amount = $completedPayment->amount;
+                $application->transaction_id = $completedPayment->transaction_id;
+                $application->receipt_number = $completedPayment->receipt_number;
+                $application->payment_date = $completedPayment->created_at;
+                $application->gateway_response = $completedPayment->gateway_response;
+                
+                if ($completedPayment->gateway_response) {
+                    $gatewayResponse = is_array($completedPayment->gateway_response) 
+                        ? $completedPayment->gateway_response 
+                        : json_decode($completedPayment->gateway_response, true);
+                        
+                    if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                        $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                        
+                        $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                            ->format('d/m/Y h:i:s A');
+                        
+                        $application->fpx_payment_time = $formattedTime;
                     }
-        
+                    elseif (isset($gatewayResponse['processed_at'])) {
+                        $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                            ->setTimezone('Asia/Kuala_Lumpur')
+                            ->format('d/m/Y h:i:s A');
+                        
+                        $application->fpx_payment_time = $formattedTime;
+                    }
+                }
+            }
+
             return view('clientarea.application.user-receiptcopy', compact('application'));
         }
     

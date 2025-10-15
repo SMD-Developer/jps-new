@@ -380,6 +380,9 @@
                                                             case 3:
                                                                 $clientType = 'Agensi Kerajaan';
                                                                 break;
+                                                            case 4: 
+                                                                $clientType = 'Perunding';
+                                                                break;
                                                             default:
                                                                 $clientType = 'Unknown';
                                                         }
@@ -394,6 +397,9 @@
                                                                 break;
                                                             case 3:
                                                                 $applicantType = 'Agensi Kerajaan';
+                                                                break;
+                                                            case 4: 
+                                                                $applicantType = 'Perunding';
                                                                 break;
                                                         }
                                                         
