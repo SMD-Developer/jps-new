@@ -35,7 +35,8 @@ class Application extends Model
         'resubmitted_at',
         'resubmission_count',
         'appeal_status',
-        'applicant_type'
+        'applicant_type',
+        'project_name'
     ];
     
     // public function state(){

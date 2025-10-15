@@ -125,6 +125,7 @@ class HomeController extends Controller {
                 "land_unit" => "required",
                 "state" => "required",
                 "land_grant" => "required|mimes:pdf|max:15000",
+                "project_name" => "required"
                 // "permission_plan" => "required|mimes:pdf|max:15000",
                 // "letter_of_support" => "required|mimes:pdf|max:15000",
             ], [
