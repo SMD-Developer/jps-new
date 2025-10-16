@@ -770,6 +770,7 @@ class HomeController extends Controller {
                 "adjustment_type"=>$request->input('adjustment_type'),
                 "appeal" => $request->input('appeal'), 
                 "remark" => $request->input('remark'),
+                "project_name" => $request->input('project_name'),
                 "appeal_status" => $request->input('appeal') === 'yes' ? 'approved' : 'rejected'
             ];
             

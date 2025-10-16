@@ -469,6 +469,24 @@
                         </div>
                     </div>
 
+                     <!-- Project Information Section -->
+                    <div class="section">
+                        <h4>@lang('app.project_information')</h4>
+                        
+                        <div class="container">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <label for="project_name">@lang('Nama Projek')</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{ $application->project_name }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- File Upload Section -->
                     <div class="section">
                         <h4>@lang('app.supporting_documents')</h4>

@@ -330,7 +330,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <p class="mb-0">Tetuan {{ ucwords(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->applicant)) }}</p>
                     <div class="row">
                         <div class="col-6">
                             <p class="mb-0 address-wrap">
@@ -344,10 +344,9 @@
 
                     <br>
                     <p class="">Tuan,</p>
-                    <h6 class="mb-0 text-justify"><b>PENGESAHAN BAYARAN CARUMAN PARIT DI ATAS
-                            {{ strtoupper($application->land_lot) }}, {{ strtoupper($application->land_mukim ?? 'N/A') }},
-                            DAERAH {{ strtoupper($application->land_daerah ?? 'N/A') }}, NEGERI SELANGOR UNTUK TETUAN
-                            {{ strtoupper($application->applicant) }}.</b></h6>
+                    <h6 class="mb-0 text-justify">
+                        <b>{{ strtoupper($application->project_name ?? 'N/A') }} TETUAN {{ strtoupper($application->applicant) }}.</b>
+                    </h6>
                     <p class="pengesahan"><strong>-Pengesahan Bayaran Caruman Parit</strong></p>
                     <p>Dengan segala hormatnya saya diarahkan merujuk kepada perkara tersebut di atas.</p>
                     <p style="text-align:justify;">
@@ -365,6 +364,9 @@
                                     (RM {{ number_format($application->cost, 2) }} x {{ number_format($application->hectare, 2) }} hektar)
                                 @endif
                             </b>.
+                            <br><br>
+                            3. Jabatan ini hanya akan mempertimbangkan kelulusan pelan-pelan kerja tanah dan sistem saliran di atas setelah bayaran 
+                            caruman parit tersebut dijelaskan.
                         @endif
                     </p>
                     <p>Sekian, terima kasih.</p>
