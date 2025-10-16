@@ -251,6 +251,57 @@ margin-bottom: 22px;
 
 }
 
+.pie-chart-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.legend {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+
+.legend li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .pie-chart-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .legend {
+        max-width: 100%;
+        margin-top: 20px;
+    }
+}
+
+.legend {
+    list-style: none;
+    padding: 0;
+}
+
+/* Add graph counts styling */
+.graph-counts {
+    font-size: 14px;
+    color: #333;
+}
+
+.graph-counts span {
+    margin-right: 20px;
+}
+
 
 </style>
 
@@ -344,16 +395,19 @@ margin-bottom: 22px;
                    </div>
     
                 </div>
-                <div class="col-lg-5 col-sm-6 col-xs-12">
+                 <div class="col-lg-5 col-sm-6 col-xs-12">
                     <h5>@lang('app.application_according_to_the_district')</h5>
-                    <ul class="pie-chart mt-3">
-                        @foreach ($districts as $district)
-                            <li>
-                                <span class="district-name" title="{{ $district['name'] }}">{{ $district['name'] }}</span>
-                                <span class="district-count">{{ $district['count'] }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
+                    <div class="pie-chart-container mt-3">
+                        <ul class="pie-chart">
+                            @foreach ($districts as $district)
+                                <li>
+                                    <span class="district-name" title="{{ $district['name'] }}">{{ $district['name'] }}</span>
+                                    <span class="district-count">{{ $district['count'] }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Legend will be added here by JavaScript -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -430,7 +484,8 @@ margin-bottom: 22px;
                 legendElement.appendChild(legendItem);
             });
             
-            pieChartElement.parentNode.appendChild(legendElement);
+            const pieChartContainer = document.querySelector('.pie-chart-container');
+            pieChartContainer.appendChild(legendElement);
         });
     </script>
 @endsection
