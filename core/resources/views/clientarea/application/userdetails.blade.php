@@ -232,6 +232,14 @@
                         </form>
                     </div>
 
+                    <div class="section">
+                        <h4>@lang('app.project_information')</h4>
+                            <div class="form-group">
+                                <label for="project_name">@lang('Nama Projek')</label>
+                                <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek" readonly>{{ $application->project_name }}</textarea>
+                            </div>
+                    </div>
+
                     <!-- Lot Information Section -->
                     <div class="section">
                         <h4>@lang('app.lot_information')</h4>
