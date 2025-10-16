@@ -1334,8 +1334,8 @@ class HomeController extends Controller {
         }
         
         // Apply status filter if exists
-        if ($statusFilter) {             
-            $query->where('status', $statusFilter);         
+        if ($statusFilter && $statusFilter !== 'all') {
+            $query->where('status', $statusFilter);
         }
         
         // Apply Admin Staff status filter - filter by LATEST log only

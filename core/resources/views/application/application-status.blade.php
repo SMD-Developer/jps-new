@@ -377,6 +377,27 @@
                             <!-- Left side: Filters -->
                             <div class="btn-group" role="group">
                                 <label class="form-label fw-bold me-3">@lang('app.filter') :</label>
+                                    <div class="d-flex align-items-center me-3">
+                                        <select id="defaultStatusFilter" class="form-select form-select-sm"
+                                            onchange="window.location.href = this.value"
+                                            style="width: auto; min-width: 150px;">
+                                            <option
+                                                value="{{ request()->fullUrlWithQuery(['status' => 'all', 'page' => 1]) }}"
+                                                {{ empty($statusFilter) || $statusFilter == 'all' ? 'selected' : '' }}>
+                                                @lang('app.all')
+                                            </option>
+                                            <option
+                                                value="{{ request()->fullUrlWithQuery(['status' => 'pending', 'page' => 1, 'per_page' => $perPage]) }}"
+                                                {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                                @lang('app.in_process')
+                                            </option>
+                                            <option
+                                                value="{{ request()->fullUrlWithQuery(['status' => 'approved', 'page' => 1, 'per_page' => $perPage]) }}"
+                                                {{ request('status') == 'approved' ? 'selected' : '' }}>
+                                                @lang('app.passed')
+                                            </option>
+                                        </select>
+                                    </div>
                                 @if ($isStaffAdmin)
                                     <div class="d-flex align-items-center me-3">
                                         <label for="adminStaffStatusFilter" class="me-2">

@@ -607,7 +607,7 @@
                         <tr>
                             <td></td>
                             <td></td>
-                            <td>L431</td>
+                            <td>L453</td>
                             <td>{{ number_format($grandTotal / 2, 2) }}</td>
                         </tr>
                         <tr>

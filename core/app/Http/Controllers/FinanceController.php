@@ -453,8 +453,8 @@ class financeController extends Controller {
         }
         
         $applications = $query->orderBy('created_at', 'desc')
-             ->paginate(10)
-             ->appends($request->query());
+         ->paginate($perPage)  
+         ->appends($request->query());
         
         $district = DB::table('district')->where('stat', 1)
         ->where('idnegeri', 1)
