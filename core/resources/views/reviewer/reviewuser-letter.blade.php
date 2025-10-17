@@ -68,7 +68,7 @@
         <div class="container middle-body">
             <div class="row  mt-3 head-row">
                 <div class="col-md-2">
-                    <img src="{{ asset('assets/images/admin-images/Picture1-removebg-preview.png') }}" class="img-fluid img1 float-right"
+                    <img src="{{ asset('assets/images/admin-images/jps-latest-logo.png') }}" class="img-fluid img1 float-right"
                         alt="..." width="90%;" style="margin-bottom: 10px;">
                 </div>
                 <div class="col-md-5">
@@ -108,7 +108,7 @@
             <div class="row mt-3">
                 <div class="col-md-2"></div>
                 <div class="col-md-4">
-                    <img src="{{ asset('assets/images/admin-images/logo-kita-selangor.png') }}" class="img-fluid img3"
+                    <img src="{{ asset('assets/images/admin-images/new-title.png') }}" class="img-fluid img3"
                         alt="..." width="60%">
                 </div>
                 <!--<div class="col-3">-->

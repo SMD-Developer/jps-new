@@ -282,7 +282,7 @@
         <div class="container middle-body">
             <div class="row mt-3 head-row">
                 <div class="col-md-2">
-                    <img src="{{ asset('assets/images/admin-images/Picture1-removebg-preview.png') }}"
+                    <img src="{{ asset('assets/images/admin-images/jps-latest-logo.png') }}"
                         class="img-fluid img1 float-right" alt="JPS Logo" style="width: 120px;">
                 </div>
                 <div class="col-md-5">
@@ -296,10 +296,12 @@
                     <i class="bi bi-telephone-forward-fill"> </i>&nbsp; : 03-5544 7376/7586 <br>
                     <i class="bi bi-telephone-forward-fill"> </i>&nbsp; : 03-5521 2204/2205/2207 <br>
                     <i class="bi bi-printer"> </i>&nbsp; : 03-5544 2911/5510 4494<br>
-                    <span style="white-space: nowrap;">
+                    <p style="white-space: nowrap; margin-bottom: 0;">
                         <i class="bi bi-envelope-arrow-up"></i> &nbsp;&nbsp;: webmaster@waterselangor.gov.my
-                    </span>
-                    <i class="bi bi-globe"> </i>&nbsp; : http://water.selangor.gov.my
+                    </p>
+                    <p style="white-space: nowrap; margin-bottom: 0;">
+                        <i class="bi bi-globe"></i>&nbsp; : http://water.selangor.gov.my
+                    </p>
                 </div>
                 <div class="col-md-2 pl-0">
                     <img src="{{ asset('assets/images/admin-images/logo-jps-(tran)(wordwhite).png') }}"
@@ -311,7 +313,7 @@
             <div class="row mt-3">
                 <div class="col-md-2"></div>
                 <div class="col-md-4">
-                    <img src="{{ asset('assets/images/admin-images/logo-kita-selangor.png') }}" class="img-fluid img3"
+                    <img src="{{ asset('assets/images/admin-images/new-title.png') }}" class="img-fluid img3"
                         alt="Kita Selangor Logo" style="width: 200px;">
                 </div>
                 <div class="col-md-2 ruj text-left">
