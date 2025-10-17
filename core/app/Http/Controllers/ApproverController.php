@@ -92,12 +92,18 @@ class ApproverController extends Controller
     
     public function approve(Request $request){
         $canFinanceApproverApplicationDetails = auth('admin')->user()->hasPermission('applications.view-details');
+        $perPage = $request->input('per_page', 10);
         
         $district = DB::table('district')->where('stat', 1)
             ->where('idnegeri', 1)
             ->orderBy('daerah_code', 'asc')->get();
         
-        $query = Application::with('client');
+        $query = Application::with('client')
+        ->whereIn('status', ['pending', 'rejected']);
+
+        if ($request->filled('status') && in_array($request->status, ['rejected', 'pending'])) {
+            $query->where('status', $request->status);
+        }
         
         // Search filter
         if ($request->filled('search')) {
@@ -126,13 +132,11 @@ class ApproverController extends Controller
             $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
         }
         
-        $perPage = $request->input('perPage', 10);
-        
         $applications = $query->orderBy('created_at', 'desc')
                             ->paginate($perPage)
                             ->appends($request->query());
         
-        return view('approver.approve', compact('applications', 'canFinanceApproverApplicationDetails', 'district'));
+        return view('approver.approve', compact('applications', 'canFinanceApproverApplicationDetails', 'district', 'perPage'));
     }
     
      public function approved_statement_approver()

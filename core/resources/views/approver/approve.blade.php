@@ -202,74 +202,109 @@
                 <!-- Filter Section -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <div class="row search-row align-items-center g-2 mb-5">
-                            <!-- Search Input -->
-                            <div class="col-md-3 col-sm-6 colsm36">
-                                <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
-                                <input type="text" id="search" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.search') }}">
-                            </div>
-                            <!-- District Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
-                                <select id="district" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_district') }}</option>
-                                    @foreach ($district as $value)
-                                        <option value="{{ $value->iddaerah }}"
-                                            {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
-                                            {{ $value->daerah_code }} - {{ $value->daerah }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- Mukim Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                               <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
-                                <select id="division" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
-                                    <!-- Divisions are dynamically populated -->
-                                </select>
-                            </div>
-                            <!-- Lot/PT Input -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="lot" class="form-label me-2">{{ trans('app.lot_pt') }}
-                                    :</label>&nbsp;&nbsp;
-                                <input type="text" id="lot" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.enter_lot_pt') }}">
-                            </div>
-
-
-                            <!-- Buttons + Show Per Page (Right Aligned) -->
-                            <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                <!-- Show Per Page (LEFT) -->
-                                <div class="d-flex align-items-center">
-                                    <label for="perPageSelect" class="me-2 mb-0 fw-semibold" style="white-space: nowrap;">
-                                        @lang('app.show'):
-                                    </label>
-                                    <select id="perPageSelect" name="perPage" class="form-select form-select-sm" style="width:80px;">
-                                        <option value="5" {{ request('perPage') == 5 ? 'selected' : '' }}>5</option>
-                                        <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                                        <option value="20" {{ request('perPage') == 20 ? 'selected' : '' }}>20</option>
-                                        <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                                        <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
-                                        <option value="500" {{ request('perPage') == 500 ? 'selected' : '' }}>500</option>
-                                    </select>
+                        <form method="GET" action="{{ url()->current() }}">
+                            <div class="row g-2 align-items-end mt-3 mx-1">
+                                <!-- Search Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="search" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.search') }} -
+                                        </label>
+                                        <input type="text" id="search" name="search" class="form-control form-control-sm"
+                                            placeholder="{{ trans('app.search') }}" value="{{ request('search') }}">
+                                    </div>
                                 </div>
 
-                                <!-- Buttons (RIGHT) -->
-                                <div class="d-flex gap-2">
-                                    <a href="#" class="btn btn-primary btn-sm search-btn"
-                                        style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
-                                        <strong>{{ trans('app.search_b') }}</strong>
-                                    </a>
+                                <!-- District Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="district" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.district') }} -
+                                        </label>
+                                        <select id="district" name="district" class="form-select form-select-sm">
+                                            <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                            @foreach ($district as $value)
+                                                <option value="{{ $value->iddaerah }}" {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                                    {{ $value->daerah_code }} - {{ $value->daerah }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Division Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="division" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.division') }} -
+                                        </label>
+                                        <select id="division" name="division" class="form-select form-select-sm">
+                                            <option value="">{{ trans('app.select_division') }}</option>
+                                            @if(request('district'))
+                                                @php
+                                                    $divisions = DB::table('division')->where('daerah_id', request('district'))->get();
+                                                @endphp
+                                                @foreach ($divisions as $div)
+                                                    <option value="{{ $div->idmukim }}" {{ request('division') == $div->idmukim ? 'selected' : '' }}>
+                                                        {{ $div->mukim_code }} - {{ $div->mukim }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Lot/PT Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="lot" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.lot_pt') }} -
+                                        </label>
+                                        <input type="text" id="lot" name="lot" class="form-control form-control-sm"
+                                            placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Second Line for Buttons -->
+                            <div class="row mt-3 mx-1">
+                                <div class="col d-flex justify-content-end gap-2">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <strong>{{ trans('app.search') }}</strong>
+                                    </button>
                                     <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
                                         <strong>{{ trans('app.reset') }}</strong>
                                     </a>
                                 </div>
                             </div>
-                           
+                        </form>
+                        
+                        <div class="d-flex justify-content-between align-items-baseline mb-3 mx-3">
+                            <div class="d-flex align-items-baseline">
+                                <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
+                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
+                                    style="width: auto">
+                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
+                                </select>
+                            </div>
 
-                            
+                            <div class="d-flex align-items-baseline mt-3" id="aside">
+                                <label for="status" class="form-label">{{ trans('app.status') }}:</label>&nbsp;&nbsp;
+                                <select id="status" class="form-select form-select-sm form-control form-control-sm"
+                                    style="width:150px;">
+                                    <option value="">{{ trans('app.all') }}</option>
+                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
+                                        {{ trans('app.rejected') }}
+                                    </option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                        {{ trans('app.pending') }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                         <!--    </div>-->
                         <!--</div>-->
@@ -284,11 +319,13 @@
                                     <tr>
                                         <th><strong>{{ trans('app.bil') }}</strong></th>
                                         <th><strong>{{ trans('app.date') }}</strong></th>
+                                        <th><strong>{{ trans('app.reference _no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                          <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
+                                        <th><strong>{{ trans('app.remarks') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -297,6 +334,7 @@
                                         <tr>
                                             <td>{{ $applications->firstItem() + $key }}</td>
                                             <td>{{ \Carbon\Carbon::parse($application->created_at)->format('d/m/Y') }}</td>
+                                            <td>{{ $application->refference_no ?? '-' }}</td>
                                             <td>
                                                 @if ($application->client)
                                                     @php
@@ -304,6 +342,7 @@
                                                             1 => 'Individu',
                                                             2 => 'Pemaju',
                                                             3 => 'Agensi Kerajaan',
+                                                            4 => 'Perunding'
                                                         ];
                                                         
                                                         $clientType = $accountTypes[$application->client->accountType] ?? 'N/A';
@@ -354,6 +393,9 @@
                                                     @default
                                                         <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
                                                 @endswitch
+                                            </td>
+                                            <td>
+                                                {{ $application->status === 'rejected' ? ($application->rejection_reason ?? '-') : '-' }}
                                             </td>
                                             <td>
                                                 @if($canFinanceApproverApplicationDetails )
@@ -465,12 +507,106 @@
         });
 </script>
 <script>
-    document.getElementById('perPageSelect').addEventListener('change', function() {
-        const perPage = this.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('perPage', perPage);
-        url.searchParams.set('page', '1'); 
-        window.location.href = url.toString();
-    });
-</script>
+        if (performance.navigation.type === 1 && window.location.search) {
+            console.log('Query string on refresh:', window.location.search);
+            const cleanUrl = window.location.pathname;
+
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+            console.log('Reloading with clean URL:', cleanUrl);
+            window.location.href = cleanUrl;
+        }
+
+        function changePerPage() {
+            let perPage = document.getElementById('perPageSelect').value;
+            let url = new URL(window.location.href);
+            url.searchParams.set('page', 1);
+            url.searchParams.set('per_page', perPage); 
+            
+            // Preserve status filter
+            let status = $('#status').val();
+            if (status) {
+                url.searchParams.set('status', status);
+            }
+            
+            // Preserve other filters
+            if (url.searchParams.get('district')) {
+                url.searchParams.set('district', url.searchParams.get('district'));
+            }
+            if (url.searchParams.get('division')) {
+                url.searchParams.set('division', url.searchParams.get('division'));
+            }
+            if (url.searchParams.get('lot')) {
+                url.searchParams.set('lot', url.searchParams.get('lot'));
+            }
+            
+            window.location.href = url.toString();
+        }
+
+        $(document).ready(function() {
+            if (performance.navigation.type === 1) {
+                setTimeout(function() {
+                    if ($('#district').length) {
+                        $('#district').val('').prop('selectedIndex', 0);
+                    }
+                    if ($('#division').length) {
+                        $('#division').empty().html(
+                            '<option value="" selected disabled>{{ trans('app.select_division') }}</option>'
+                        );
+                    }
+                    if ($('#lot').length) {
+                        $('#lot').val('');
+                    }
+                    $('#district').off('change.divisionLoader').on('change.divisionLoader', function() {
+                        // Your existing change handler if needed
+                    });
+                }, 50);
+                return;
+            }
+
+            // Handle selected values for search
+            var selectedDistrict = "{{ request('district') }}";
+            var selectedDivision = "{{ request('division') }}";
+
+            if (selectedDistrict) {
+                $('#district').trigger('change');
+                var checkExist = setInterval(function() {
+                    if ($('#division option').length > 1) {
+                        $('#division').val(selectedDivision);
+                        clearInterval(checkExist);
+                    }
+                }, 100);
+            }
+
+            $('.btn-primary.search-btn').click(function(e) {
+                e.preventDefault();
+
+                var district = $('#district').val();
+                var division = $('#division').val();
+                var lot = $('#lot').val();
+                var status = $('#status').val();
+                var per_page = "{{ $perPage }}";
+                var queryParams = [];
+                if (district) queryParams.push('district=' + district);
+                if (division) queryParams.push('division=' + division);
+                if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
+                if (status) queryParams.push('status=' + status);
+                if (per_page) queryParams.push('per_page=' + per_page);
+                window.location.href = window.location.pathname + '?' + queryParams.join('&');
+            });
+            $('.sbtn a.btn-primary').on('click', function(e) {
+                var href = $(this).attr('href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+
+
+            // Add the status change handler HERE
+            $('#status').on('change', function() {
+                $('.btn-primary.search-btn').trigger('click');
+            });
+        });
+    </script>
 @endsection
