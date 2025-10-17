@@ -215,7 +215,7 @@
                             <div class="container">
 
                                 <!-- Application Type Selection - New Field -->
-                                @if($client->accountType == 1 || $client->accountType == 2)
+                                @if($client->accountType == 1 || $client->accountType == 2 || $client->accountType == 4)
                                     <!-- Application Type Selection - Only for Individu and Pemaju -->
                                     <div class="row">
                                         <div class="form-group">
