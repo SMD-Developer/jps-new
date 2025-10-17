@@ -159,6 +159,8 @@
                                                         case 1: $accountTypeText = 'Individu'; break;
                                                         case 2: $accountTypeText = 'Pemaju'; break;
                                                         case 3: $accountTypeText = 'Agensi Kerajaan'; break;
+                                                        case 4: $accountTypeText = 'Perunding'; break;
+
                                                     }
                                                 }
                                             }
