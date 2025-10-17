@@ -217,56 +217,84 @@
                 <!-- Filter Section -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <div class="row search-row align-items-center g-2 mb-5">
-                            <!-- Search Input -->
-                            <div class="col-md-3 col-sm-6 colsm36">
-                                <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
-                                <input type="text" id="search" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.search') }}">
-                            </div>
+                        <form method="GET" action="{{ url()->current() }}">
+                            <div class="row g-2 align-items-end mt-3 mx-1">
+                                <!-- Search Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="search" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.search') }} -
+                                        </label>
+                                        <input type="text" id="search" name="search" class="form-control form-control-sm"
+                                            placeholder="{{ trans('app.search') }}" value="{{ request('search') }}">
+                                    </div>
+                                </div>
 
-                            <!-- District Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
-                                <select id="district" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_district') }}</option>
-                                    @foreach ($district as $value)
-                                        <option value="{{ $value->iddaerah }}"
-                                            {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
-                                            {{ $value->daerah_code }} - {{ $value->daerah }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                <!-- District Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="district" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.district') }} -
+                                        </label>
+                                        <select id="district" name="district" class="form-select form-select-sm">
+                                            <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                            @foreach ($district as $value)
+                                                <option value="{{ $value->iddaerah }}" {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                                    {{ $value->daerah_code }} - {{ $value->daerah }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
 
-                            <!-- Mukim Dropdown -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
-                                <select id="division" class="form-select form-select-sm form-control form-control-sm">
-                                    <option value="" selected disabled>{{ trans('app.select_division') }}</option>
-                                    <!-- Divisions are dynamically populated -->
-                                </select>
-                            </div>
+                                <!-- Division Dropdown -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="division" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.division') }} -
+                                        </label>
+                                        <select id="division" name="division" class="form-select form-select-sm">
+                                            <option value="">{{ trans('app.select_division') }}</option>
+                                            @if(request('district'))
+                                                @php
+                                                    $divisions = DB::table('division')->where('daerah_id', request('district'))->get();
+                                                @endphp
+                                                @foreach ($divisions as $div)
+                                                    <option value="{{ $div->idmukim }}" {{ request('division') == $div->idmukim ? 'selected' : '' }}>
+                                                        {{ $div->mukim_code }} - {{ $div->mukim }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
 
-                            <!-- Lot/PT Input -->
-                            <div class="col-md-3 col-sm-6" id="aside">
-                                <label for="lot"
-                                    class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;
-                                <input type="text" id="lot" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                                <!-- Lot/PT Input -->
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="lot" class="form-label mb-0 me-2" style="white-space: nowrap;">
+                                            {{ trans('app.lot_pt') }} -
+                                        </label>
+                                        <input type="text" id="lot" name="lot" class="form-control form-control-sm"
+                                            placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="col-md-12 col-sm-12 mt-3 text-right">
-                                <a href="#" class="btn btn-primary btn-sm search-btn"
-                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
-                                    <strong>{{ trans('app.search_b') }}</strong>
-                                </a>
-                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
-                                    <strong>{{ trans('app.reset') }}</strong>
-                                </a>
+                            <!-- Second Line for Buttons -->
+                            <div class="row mt-3 mx-1">
+                                <div class="col d-flex justify-content-end gap-2">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <strong>{{ trans('app.search') }}</strong>
+                                    </button>
+                                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                        <strong>{{ trans('app.reset') }}</strong>
+                                    </a>
+                                </div>
                             </div>
-
-                            <div class="d-flex align-items-baseline mb-3 mx-3">
+                        </form>
+                        
+                        <div class="d-flex justify-content-between align-items-baseline mb-3 mx-3">
+                            <div class="d-flex align-items-baseline">
                                 <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
                                 <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
                                     style="width: auto">
@@ -279,6 +307,19 @@
                                 </select>
                             </div>
 
+                            <div class="d-flex align-items-baseline mt-3" id="aside">
+                                <label for="status" class="form-label">{{ trans('app.status') }}:</label>&nbsp;&nbsp;
+                                <select id="status" class="form-select form-select-sm form-control form-control-sm"
+                                    style="width:150px;">
+                                    <option value="">{{ trans('app.all') }}</option>
+                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
+                                        {{ trans('app.rejected') }}
+                                    </option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                        {{ trans('app.pending') }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                         <!-- Table Wrapper for Responsiveness -->
                         <div class="table-responsive">
@@ -287,10 +328,13 @@
                                     <tr>
                                         <th><strong>{{ trans('app.bil') }}</strong></th>
                                         <th><strong>{{ trans('app.date') }}</strong></th>
-                                        <!--<th><strong>{{ trans('app.reference _no') }}</strong></th>-->
+                                        <th><strong>{{ trans('app.reference _no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
+                                        <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
-                                        <th><strong>{{ trans('app.address') }}</strong></th>
+                                        <th><strong>{{ trans('app.lot_pt') }}</strong></th>
+                                        <th><strong>{{ trans('app.status') }}</strong></th>
+                                        <th><strong>{{ trans('app.remarks') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -299,7 +343,7 @@
                                         <tr>
                                             <td>{{ $applications->firstItem() + $key }}</td>
                                             <td>{{ \Carbon\Carbon::parse($application->created_at)->format('d/m/Y') }}</td>
-                                            <!--<td>{{ $application->refference_no ?? '-' }}</td>-->
+                                            <td>{{ $application->refference_no ?? '-' }}</td>
                                             <td>
                                                 @if ($application->client)
                                                     @php
@@ -307,6 +351,7 @@
                                                             1 => 'Individu',
                                                             2 => 'Pemaju',
                                                             3 => 'Agensi Kerajaan',
+                                                            4 => 'Perunding'
                                                         ];
                                                         
                                                         $clientType = $accountTypes[$application->client->accountType] ?? 'N/A';
@@ -322,8 +367,48 @@
                                                     N/A
                                                 @endif
                                             </td>
+                                            <td>
+                                                @switch($application->application_type)
+                                                    @case('reapply')
+                                                        {{ trans('app.reapply') }}
+                                                    @break
+
+                                                    @case('appeal')
+                                                        Appeal
+                                                    @break
+
+                                                    @default
+                                                        {{ trans('app.new') }}
+                                                @endswitch
+                                            </td>
                                             <td>{{ $application->applicant }}</td>
-                                            <td>{{$application->client->registeredAddress}}</td>
+                                            <td>{{ $application->land_lot }}, {{ $application->land_area }},
+                                                {{ $application->landDivision->mukim ?? '' }}, Daerah
+                                                {{ $application->landDistrict->daerah ?? '' }}
+                                            </td>
+                                            <td>
+                                                @switch($application->status)
+                                                    @case('approved')
+                                                        <span
+                                                            class="status-badge status-approved">{{ trans('app.approved') }}</span>
+                                                    @break
+
+                                                    @case('rejected')
+                                                        <span
+                                                            class="status-badge status-rejected">{{ trans('app.rejected') }}</span>
+                                                    @break
+
+                                                    @case('pending')
+                                                        <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
+                                                    @break
+
+                                                    @default
+                                                        <span class="status-badge status-pending">{{ trans('app.pending') }}</span>
+                                                @endswitch
+                                            </td>
+                                            <td>
+                                                {{ $application->status === 'rejected' ? ($application->rejection_reason ?? '-') : '-' }}
+                                            </td>
                                             <td>
                                                 @if($canfinanceAdminViewDetails)
                                                     <a href="{{ route('reviewLetter', ['application_id' => $application->id]) }}"
@@ -352,7 +437,7 @@
 
     <script>
         $(document).ready(function() {
-
+            // District change handler (keep existing)
             $('#district').on('change', function() {
                 const distId = $(this).val();
                 $('#division').html('<option value="">Loading...</option>');
@@ -364,14 +449,12 @@
                         success: function(data) {
                             let options = '<option value="">Sila Pilih</option>';
                             data.forEach(mukin => {
-                                options +=
-                                    `<option value="${mukin.idmukim}">${ mukin.mukim_code +' - '+mukin.mukim}</option>`;
+                                options += `<option value="${mukin.idmukim}">${mukin.mukim_code +' - '+mukin.mukim}</option>`;
                             });
                             $('#division').html(options);
                         },
                         error: function() {
-                            $('#division').html(
-                                '<option value="">Error loading mukin</option>');
+                            $('#division').html('<option value="">Error loading mukin</option>');
                         }
                     });
                 } else {
@@ -379,6 +462,32 @@
                 }
             });
 
+            // Status filter - Auto redirect on change
+            $('#status').on('change', function() {
+                var status = $(this).val();
+                var per_page = "{{ $perPage }}";
+                var queryParams = [];
+
+                if (status) queryParams.push('status=' + status);
+                if (per_page) queryParams.push('per_page=' + per_page);
+
+                // Redirect with status filter
+                window.location.href = window.location.pathname + '?' + queryParams.join('&');
+            });
+
+            // Trigger district change on page load if district is selected
+            var selectedDistrict = "{{ request('district') }}";
+            var selectedDivision = "{{ request('division') }}";
+
+            if (selectedDistrict) {
+                $('#district').trigger('change');
+                var checkExist = setInterval(function() {
+                    if ($('#division option').length > 1) {
+                        $('#division').val(selectedDivision);
+                        clearInterval(checkExist);
+                    }
+                }, 100);
+            }
         });
     </script>
     <script>
@@ -398,6 +507,13 @@
             let url = new URL(window.location.href);
             url.searchParams.set('page', 1);
             url.searchParams.set('per_page', perPage);
+            
+            // Preserve status filter
+            let status = $('#status').val();
+            if (status) {
+                url.searchParams.set('status', status);
+            }
+            
             window.location.href = url.toString();
         }
 
@@ -442,11 +558,13 @@
                 var district = $('#district').val();
                 var division = $('#division').val();
                 var lot = $('#lot').val();
+                var status = $('#status').val();
                 var per_page = "{{ $perPage }}";
                 var queryParams = [];
                 if (district) queryParams.push('district=' + district);
                 if (division) queryParams.push('division=' + division);
                 if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
+                if (status) queryParams.push('status=' + status);
                 if (per_page) queryParams.push('per_page=' + per_page);
                 window.location.href = window.location.pathname + '?' + queryParams.join('&');
             });
@@ -455,6 +573,12 @@
                 if (href) {
                     window.location.href = href;
                 }
+            });
+
+
+            // Add the status change handler HERE
+            $('#status').on('change', function() {
+                $('.btn-primary.search-btn').trigger('click');
             });
         });
     </script>

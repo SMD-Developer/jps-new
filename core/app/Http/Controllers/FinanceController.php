@@ -437,9 +437,14 @@ class financeController extends Controller {
         $perPage = $request->input('per_page', 10);
         $canfinanceAdminViewDetails = auth('admin')->user()->hasPermission('applications.view-details');
         
-        $query = Application::with('client');
-        
+        $query = Application::with('client')
+        ->whereIn('status', ['pending', 'rejected']);
 
+
+        if ($request->filled('status') && in_array($request->status, ['rejected', 'pending'])) {
+            $query->where('status', $request->status);
+        }
+        
         if ($request->has('district') && $request->district) {
             $query->where('land_district', $request->district);
         }
