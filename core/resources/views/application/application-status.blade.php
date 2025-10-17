@@ -648,6 +648,7 @@
                                                                 1 => 'Individu',
                                                                 2 => 'Pemaju',
                                                                 3 => 'Agensi Kerajaan',
+                                                                4 => 'Perunding'
                                                             ];
                                                             
                                                             $clientType = $accountTypes[$application->client->accountType] ?? 'N/A';

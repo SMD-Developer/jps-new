@@ -519,7 +519,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php $grandTotal = 0; @endphp
+                                        @php 
+                                        $grandTotal = 0;
+                                        $totalCharges = 0;
+                                         @endphp
                                         @foreach ($applications as $index => $application)
                                             @php
                                                 $grandTotal += $application->payment_amount;
@@ -535,6 +538,7 @@
                                                     $transactionCategory = 'N/A';
                                                     $charge = 0;
                                                 }
+                                                $totalCharges += $charge;
                                             @endphp
                                             <tr>
                                                 <td rowspan="2">{{ $index + 1 }}</td>
@@ -553,7 +557,9 @@
                                                 <td rowspan="2">
                                                     @php
                                                         $method = $application->methods ?? '';
-                                                        if (stripos($method, 'EFT') !== false || stripos($method, 'transfer') !== false) {
+                                                        if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
+                                                            echo 'Cheque';
+                                                        } elseif (stripos($method, 'EFT') !== false || stripos($method, 'transfer') !== false) {
                                                             echo 'EFT';
                                                         } else {
                                                             echo 'N/A';
@@ -575,7 +581,8 @@
                                         <tr style="background-color: #f0f0f0; font-weight: bold;">
                                             <td colspan="9" style="text-align: right;">JUMLAH :</td>
                                             <td>{{ number_format($grandTotal, 2) }}</td>
-                                            <td colspan="4"></td>
+                                            <td colspan="3" style="text-align: right;">JUMLAH :</td>
+                                            <td>{{ number_format($totalCharges, 2) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -586,7 +593,7 @@
             </table>
 
             <!-- Static Summary Section 2: Ringkasan Terimaan Mengikut Kod Hasil -->
-            <div style="padding: 0 20px;">
+            <div style="padding: 0 20px; margin-top: 10px;" >
                 <h6>Ringkasan Terimaan Mengikut Kod Hasil</h6>
                 <table class="summary-table">
                     <thead>
@@ -611,8 +618,8 @@
                             <td>{{ number_format($grandTotal / 2, 2) }}</td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align:end;">JUMLAH</td>
-                            <td>{{ number_format($grandTotal , 2) }}</td>
+                            <td colspan="3" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                            <td><strong>{{ number_format($grandTotal , 2) }}</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -646,6 +653,20 @@
                                     $eftAmount += $amount;
                                 }
                             }
+
+                            $chequeCount = 0;
+                            $chequeAmount = 0;
+
+                            foreach ($applications as $application) {
+                                    $method = $application->methods ?? '';
+                                    $amount = $application->payment_amount ?? 0;
+                                    
+                                    // Check if method is Cheque (case insensitive)
+                                    if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
+                                        $chequeCount++;
+                                        $chequeAmount += $amount;
+                                    }
+                                }
                         @endphp
                         <tr>
                             <td>1</td>
@@ -655,20 +676,26 @@
                         </tr>
                         <tr>
                             <td>2</td>
+                            <td>Cheque</td>
+                            <td>{{ $chequeCount }}</td>
+                            <td>{{ number_format($chequeAmount, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
                             <td>Kad Kredit</td>
                             <td>N/A</td>
                             <td>N/A</td>
                         </tr>
                         <tr>
-                            <td>3</td>
+                            <td>4</td>
                             <td>Kad Debit</td>
                             <td>N/A</td>
                             <td>N/A</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="text-align:end;">JUMLAH</td>
-                            <td>{{ $eftCount }}</td>
-                            <td>{{ number_format($eftAmount, 2) }}</td>
+                            <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                            <td><strong>{{ $eftCount + $chequeCount }}</strong></td>
+                            <td><strong>{{ number_format($eftAmount + $chequeAmount, 2) }}</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -728,9 +755,9 @@
                         </tr>
                         
                         <tr style="background-color: #f0f0f0;">
-                            <td colspan="2" style="text-align:end;">JUMLAH</td>
-                            <td>{{ $totalCount }}</td>
-                            <td>{{ number_format($totalAmount, 2) }}</td>
+                            <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                            <td><strong>{{ $totalCount }}</strong></td>
+                            <td><strong>{{ number_format($totalAmount, 2) }}</strong></td>
                         </tr>
                     </tbody>
                 </table>

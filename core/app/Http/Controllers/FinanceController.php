@@ -607,6 +607,8 @@ class financeController extends Controller {
             return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
         }
     }
+
+    $query->orderBy('payments.payment_date', 'asc');
     
     $applications = $query->get();
     $applicationCount = $applications->count();
@@ -956,7 +958,7 @@ class financeController extends Controller {
             ->where('payment_date', '<=', $endDate)
             ->where('payment_status', 'completed') 
             ->groupBy(DB::raw('DATE(payment_date)'))
-            ->orderBy('payment_date', 'desc')
+            ->orderBy('payment_date', 'asc') 
             ->get();
 
         $totalAmount = $payments->sum('total_amount');
