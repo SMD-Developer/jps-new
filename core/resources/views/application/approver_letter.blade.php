@@ -338,7 +338,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <p class="mb-0">Tetuan {{ ucwords(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->applicant)) }}</p>
                     <div class="row">
                         <div class="col-6">
                             <p class="mb-0 address-wrap">
@@ -383,8 +383,6 @@
                     <p><b>"BERKHIDMAT UNTUK NEGARA"</b></p>
                     <p>Saya yang menjalankan amanah,</p>
                     <p class="mb-2"><b><!--b.p!--> Pengarah Pengairan dan Saliran Negeri Selangor</b></p>
-                    <!--<p><b>Selangor</b></p>-->
-                    <!--<p class="ml-5">This is print computer and no necessary signed</p>-->
                 </div>
                 <div class="col-md-2"></div>
                 <div class="col-12 col-md-6 d-flex align-items-center">
@@ -394,25 +392,6 @@
                     </p>
                 </div>
             </div>
-            
-            <!--<div class="row last_row align-items-center mt-5" style="justify-content: end;">-->
-            <!--    <div class="col-12 col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">-->
-            <!--        <button type="button" class="btn btn-success mx-2" onclick="window.location.href='{{ route('approvernewApplication', ['id' => $application->id]) }}'">-->
-            <!--            @lang('app.back')-->
-            <!--        </button>-->
-            <!--        @if($application->status == 'approved')-->
-            <!--           <button type="button" class="btn btn-secondary btn3 no-print" onclick="window.print()">-->
-            <!--                @lang('app.print')-->
-            <!--            </button>-->
-            <!--        @elseif($canAdminApproverApproveReject)-->
-            <!--            {{-- Show Approve/Reject buttons if not approved and user has permission --}}-->
-            <!--            <button type="submit" class="btn btn-danger btn1 mx-3" id="rejectButton"-->
-            <!--                data-id="{{ $application->id }}">@lang('app.reject')</button>-->
-            <!--            <button type="submit" class="btn btn-primary btn2" id="approveButton"-->
-            <!--                data-id="{{ $application->id }}">@lang('app.passed')</button>-->
-            <!--        @endif-->
-            <!--    </div>-->
-            <!--</div>-->
             
             <div class="row last_row align-items-center mt-5" style="justify-content: end;">
                 <div class="col-12 col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">

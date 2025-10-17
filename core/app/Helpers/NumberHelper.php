@@ -4,7 +4,38 @@ namespace App\Helpers;
 
 class NumberHelper
 {
-    public static function numberToMalayWords($number)
+    public static function numberToMalayWords($amount)
+    {
+        // Format amount to always have two decimals
+        $amount = number_format((float)$amount, 2, '.', '');
+        list($ringgit, $sen) = explode('.', $amount);
+
+        $words = '';
+        $ringgit = (int)$ringgit;
+        $sen = (int)$sen;
+
+        // Convert ringgit part
+        if ($ringgit > 0) {
+            $words .= self::convertNumberToWords($ringgit) . ' Ringgit';
+        }
+
+        // Convert sen part
+        if ($sen > 0) {
+            if ($ringgit > 0) {
+                $words .= ' dan ';
+            }
+            $words .= self::convertNumberToWords($sen) . ' Sen';
+        }
+
+        // Handle zero case
+        if ($ringgit == 0 && $sen == 0) {
+            $words = 'Sifar Ringgit';
+        }
+
+        return strtoupper(trim($words));
+    }
+
+    private static function convertNumberToWords($number)
     {
         $ones = [
             0 => '', 1 => 'Satu', 2 => 'Dua', 3 => 'Tiga', 4 => 'Empat',
@@ -13,52 +44,40 @@ class NumberHelper
             14 => 'Empat Belas', 15 => 'Lima Belas', 16 => 'Enam Belas',
             17 => 'Tujuh Belas', 18 => 'Lapan Belas', 19 => 'Sembilan Belas'
         ];
+
         $tens = [
             2 => 'Dua Puluh', 3 => 'Tiga Puluh', 4 => 'Empat Puluh', 5 => 'Lima Puluh',
             6 => 'Enam Puluh', 7 => 'Tujuh Puluh', 8 => 'Lapan Puluh', 9 => 'Sembilan Puluh'
         ];
-        $hundreds = 'Ratus';
-        $thousands = 'Ribu';
-        $millions = 'Juta';
 
-        $number = (int)$number; // Convert to integer
-        if ($number === 0) {
+        if ($number == 0) {
             return 'Sifar';
         }
 
         $words = '';
 
-        // Millions
         if ($number >= 1000000) {
-            $millions_part = floor($number / 1000000);
-            $words .= self::numberToMalayWords($millions_part) . ' ' . $millions . ' ';
+            $words .= self::convertNumberToWords(floor($number / 1000000)) . ' Juta ';
             $number %= 1000000;
         }
 
-        // Thousands
         if ($number >= 1000) {
-            $thousands_part = floor($number / 1000);
-            $words .= self::numberToMalayWords($thousands_part) . ' ' . $thousands . ' ';
+            $words .= self::convertNumberToWords(floor($number / 1000)) . ' Ribu ';
             $number %= 1000;
         }
 
-        // Hundreds
         if ($number >= 100) {
-            $hundreds_part = floor($number / 100);
-            $words .= $ones[$hundreds_part] . ' ' . $hundreds . ' ';
+            $words .= self::convertNumberToWords(floor($number / 100)) . ' Ratus ';
             $number %= 100;
         }
 
-        // Tens and Ones
         if ($number > 0) {
             if ($number < 20) {
                 $words .= $ones[$number];
             } else {
-                $tens_part = floor($number / 10);
-                $ones_part = $number % 10;
-                $words .= $tens[$tens_part];
-                if ($ones_part > 0) {
-                    $words .= ' ' . $ones[$ones_part];
+                $words .= $tens[floor($number / 10)];
+                if ($number % 10 > 0) {
+                    $words .= ' ' . $ones[$number % 10];
                 }
             }
         }

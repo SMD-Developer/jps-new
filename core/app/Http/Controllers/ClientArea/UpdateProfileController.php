@@ -172,6 +172,8 @@ class UpdateProfileController extends Controller
                 'new_password_confirmation' => 'required|same:new_password',
             ], [
                 // ✅ Safe fallback messages (no "app.password_validation_message" issue)
+                'new_password.min' => 'Kata laluan baharu mestilah sekurang-kurangnya 8 aksara.',
+                'new_password.max' => 'Kata laluan baharu tidak boleh melebihi 20 aksara.',
                 'new_password.regex' => __('app.password_validation_message', [], 'en') !== 'app.password_validation_message'
                     ? __('app.password_validation_message')
                     : 'Kata laluan mesti mengandungi sekurang-kurangnya satu huruf besar, satu huruf kecil, satu nombor dan satu aksara khas (!@#$%).',

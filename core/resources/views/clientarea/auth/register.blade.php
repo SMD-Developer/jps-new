@@ -889,9 +889,12 @@ document.addEventListener('DOMContentLoaded', function() {
     accountTypeSelect.addEventListener('change', function() {
         const selectedAccountTypeId = parseInt(this.value);
 
-        if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3) {
-            // Company Type
-            userInfoButton.innerText = "Maklumat Syarikat";
+        if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3 || selectedAccountTypeId === 4) {
+            if (selectedAccountTypeId === 4) {
+              userInfoButton.innerText = "Maklumat Syarikat / Agensi Kerajaan";
+            } else {
+                userInfoButton.innerText = "Maklumat Syarikat";
+            }
             if (userNameLabel) userNameLabel.innerText = "Nama Syarikat";
             if (idCardLabel) idCardLabel.innerText = "No Pendaftaran Syarikat";
             if (userNameHintDiv) userNameHintDiv.style.display = 'none';

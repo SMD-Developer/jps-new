@@ -336,7 +336,7 @@
                     <br>
                     <p class="">Tuan,</p>
                     <h6 class="mb-0 text-justify">
-                        <b>{{ strtoupper($application->project_name ?? 'N/A') }} TETUAN {{ strtoupper($application->applicant) }}.</b>
+                        <b>{{ strtoupper($application->project_name ?? 'N/A') }} </b>
                     </h6>
                     <p class="pengesahan"><strong>-Pengesahan Bayaran Caruman Parit</strong></p>
                     <p>Dengan segala hormatnya saya diarahkan merujuk kepada perkara tersebut di atas.</p>
