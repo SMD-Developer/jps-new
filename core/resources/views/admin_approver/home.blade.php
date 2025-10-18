@@ -298,6 +298,7 @@
         display: block;
         font-size: 28px;
         font-weight: bold;
+        margin-top: 2px !important;
         line-height: 1;
     }
 

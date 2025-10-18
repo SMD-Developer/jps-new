@@ -558,7 +558,7 @@
                                                     @php
                                                         $method = $application->methods ?? '';
                                                         if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
-                                                            echo 'Cheque';
+                                                            echo 'Cek';
                                                         } elseif (stripos($method, 'EFT') !== false || stripos($method, 'transfer') !== false) {
                                                             echo 'EFT';
                                                         } else {
@@ -676,7 +676,7 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>Cheque</td>
+                            <td>Cek</td>
                             <td>{{ $chequeCount }}</td>
                             <td>{{ number_format($chequeAmount, 2) }}</td>
                         </tr>
