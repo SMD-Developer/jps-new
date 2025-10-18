@@ -25,7 +25,7 @@ class PaymentSuccessful extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Payment Successful - Order #' . $this->paymentData['order_no'])
+            ->subject('Payment Successful - transactionId #' . $this->paymentData['transaction_id'])
             ->view('emails.fpx-payment-success', [
                 'buyerName' => $this->paymentData['buyer_name'],
                 'orderNo' => $this->paymentData['order_no'],

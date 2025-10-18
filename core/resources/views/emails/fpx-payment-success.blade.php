@@ -221,7 +221,7 @@
             </div>
 
             <div class="message">
-                We're pleased to confirm that your payment has been successfully processed. Thank you for your transaction!
+                Thank you for using portal e-CP . We are pleased to inform you that the following online payment is successful.
             </div>
 
             <!-- Amount Highlight -->
@@ -261,39 +261,14 @@
                 
                 <div class="detail-row">
                     <span class="detail-label">Status- </span>
-                    <span class="detail-value" style="color: #27ae60;"> âœ“Completed</span>
+                    <span class="detail-value" style="color: #27ae60;">  Completed</span>
                 </div>
             </div>
-
-            <!-- Info Box -->
-            <div class="info-box">
-                <p><strong>ðŸ“§ Receipt:</strong> A copy of this receipt has been sent to your registered email address. Please keep it for your records.</p>
-            </div>
-
-            <!-- Action Button -->
-            <!--<div class="button-container">-->
-            <!--    <a href="{{ $dashboardUrl ?? url('/dashboard') }}" class="button">View My Dashboard</a>-->
-            <!--</div>-->
 
             <div class="divider"></div>
 
             <div class="message">
                 If you have any questions regarding this transaction, please don't hesitate to contact our support team.
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p class="footer-text">
-                This is an automated email confirmation. Please do not reply to this email.
-            </p>
-            <p class="footer-text">
-                Â© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
-            </p>
-            <div class="social-links">
-                <a href="#">Support</a> â€¢ 
-                <a href="#">Privacy Policy</a> â€¢ 
-                <a href="#">Terms of Service</a>
             </div>
         </div>
     </div>
