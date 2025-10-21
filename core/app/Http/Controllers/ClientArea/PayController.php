@@ -899,7 +899,7 @@ class PayController extends Controller
             ]);
         }
         
-        return view('clientarea.payments.success', compact('val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 'fpx_txnAmount', 'ErrorCode', 'fpx_buyerBankBranch'));
+        return view('clientarea.payments.success', compact('val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch'));
     }
 	
 
