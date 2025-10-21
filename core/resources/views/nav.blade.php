@@ -46,7 +46,7 @@ i.right.fa.fa-angle-right.mt-2 {
 .brand-link img {
     max-width: 100%;
     height: auto;
-    margin-left: 70px;
+    margin-left: 87px;
 }
 
 .sidebar-header {
@@ -163,17 +163,19 @@ i.right.fa.fa-angle-right.mt-2 {
         }
     @endphp
     
-       <a href="{{ $dashboardRoute }}" class="brand-link">
+      <a href="{{ $dashboardRoute }}" class="brand-link d-flex align-items-center justify-content-center" 
+        style=" padding: 15px;">
             @if(get_setting_value('logo') != '')
                 <img src="{{ image_url(get_setting_value('logo')) }}" 
                     alt="Logo" 
-                    style="max-width: 200px; max-height: 80px; object-fit: contain; display: block; margin: 0 auto;">
+                    style="max-height: 93px; width: auto; object-fit: contain;">
             @else
                 <img src="{{ asset('assets/images/selangor.png') }}" 
                     alt="Logo" 
-                    style="max-width: 200px; max-height: 80px; object-fit: contain; display: block; margin: 0 auto;">
+                    style="max-height: 60px; width: auto; object-fit: contain;">
             @endif
-        </a>
+      </a>
+
     
     </div>
     <div class="sidebar-header">

@@ -152,17 +152,22 @@
 
 </style>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-   <div style="display: flex; justify-content: center; align-items: center;">
-    @if(get_setting_value('logo') != '')
-        <a href="{{ route('update_profile', auth()->guard('user')->user()->uuid) }}" class="brand-link">
-            <img src="{{ image_url(get_setting_value('logo')) }}" alt="Logo" style="max-width: 240px;">
-        </a>
-    @else
-        <a href="{{ route('update_profile', auth()->guard('user')->user()->uuid) }}" class="brand-link">
-            <img src="{{ asset('assets/images/selangor.png') }}" alt="Logo" style="max-width: 200px;">
-        </a>
-    @endif
-</div>
+    <div class="d-flex align-items-center justify-content-center" style="padding: 15px;">
+        @if(get_setting_value('logo') != '')
+            <a href="{{ route('update_profile', auth()->guard('user')->user()->uuid) }}" class="brand-link">
+                <img src="{{ image_url(get_setting_value('logo')) }}" 
+                    alt="Logo" 
+                    style="max-height: 93px; width: auto; object-fit: contain; margin-left: 51px;">
+            </a>
+        @else
+            <a href="{{ route('update_profile', auth()->guard('user')->user()->uuid) }}" class="brand-link">
+                <img src="{{ asset('assets/images/selangor.png') }}" 
+                    alt="Logo" 
+                    style="max-height: 60px; width: auto; object-fit: contain;">
+            </a>
+        @endif
+    </div>
+
     <div class="sidebar-header mb-3">
             <h4 class="">{{ trans('Sistem e-CP (Caruman Parit)') }}</h4>
         </div>
