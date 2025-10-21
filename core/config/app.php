@@ -140,7 +140,8 @@ return [
          */
         'App\Providers\InvoicerServiceProvider',
         App\Providers\MacroServiceProvider::class,
-        QueueServiceProvider::class
+        QueueServiceProvider::class,
+		Kris\LaravelFormBuilder\FormBuilderServiceProvider::class,
 	],
 	/*
 	|--------------------------------------------------------------------------

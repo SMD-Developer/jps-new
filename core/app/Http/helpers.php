@@ -348,14 +348,14 @@ if(! function_exists('getMenus')){
                 ]
             ]
         ];
-        // if(hasPermission('setting.view')){
-        //     $menus['main_menu']['menus'][] = [
-        //         'icon' => 'cogs',
-        //         'text' => trans('app.settings'),
-        //         'route' => url('settings/company'),
-        //         'menu_active' => FormFacade::menu_active('settings')
-        //     ];
-        // }
+        if(hasPermission('setting.view')){
+            $menus['main_menu']['menus'][] = [
+                'icon' => 'cogs',
+                'text' => trans('app.settings'),
+                'route' => url('settings/logo'),
+                'menu_active' => FormFacade::menu_active('settings')
+            ];
+        }
         
         $menus['account_menu'] = [
             'title' => trans('app.account_menu'),

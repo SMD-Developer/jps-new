@@ -336,7 +336,11 @@ Route::group(['middleware' => 'install'], function(){
             Route::get('update_exchange_rates', ['as'=>'update_exchange_rates','uses'=>'CurrencyController@updateCurrencyRates']);
             Route::post('/verify','InstallController@postVerify');
             Route::post('currency_key', 'CurrencyController@save_api_key')->name('post_currency_key');
+            
         });
+
+        Route::get('settings/logo', 'SettingsController@logoPage')->name('settings.logo');
+        Route::post('settings/logo', 'SettingsController@updateLogo')->name('settings.logo.update');
         # expenses resource
         Route::group(array('prefix'=>'expenses'),function(){
             Route::resource('list', 'ExpensesController')->names('expenses');

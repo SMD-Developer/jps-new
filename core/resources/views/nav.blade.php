@@ -163,13 +163,18 @@ i.right.fa.fa-angle-right.mt-2 {
         }
     @endphp
     
-        <a href="{{ $dashboardRoute }}" class="brand-link">
+       <a href="{{ $dashboardRoute }}" class="brand-link">
             @if(get_setting_value('logo') != '')
-                <img src="{{ image_url(get_setting_value('logo')) }}" alt="Logo" width="100%">
+                <img src="{{ image_url(get_setting_value('logo')) }}" 
+                    alt="Logo" 
+                    style="max-width: 200px; max-height: 80px; object-fit: contain; display: block; margin: 0 auto;">
             @else
-                <img src="{{ asset('assets/images/selangor.png') }}" alt="Logo" width="100%">
+                <img src="{{ asset('assets/images/selangor.png') }}" 
+                    alt="Logo" 
+                    style="max-width: 200px; max-height: 80px; object-fit: contain; display: block; margin: 0 auto;">
             @endif
         </a>
+    
     </div>
     <div class="sidebar-header">
         <h4>{{ trans('Sistem e-CP (Caruman Parit)') }}</h4>
