@@ -1032,14 +1032,17 @@ class HomeController extends Controller {
 
             // Find the approver
             $approverRoleId = '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d';
-            $approver = User::where('role_id', $approverRoleId)->first();
+            $approver = User::where('role_id', $approverRoleId)->get();
 
             if (!$approver) {
                 Log::warning('No approver found', ['role_id' => $approverRoleId]);
                 return response()->json(['success' => false, 'message' => 'No approver found'], 404);
             }
 
-            $approver->notify(new NewApplicationSent($application));
+            foreach ($approvers as $approver) {
+                $approver->notify(new NewApplicationSent($application));
+            }
+
             
             ActivityLog::create([
                 'log_name' => 'application',
