@@ -1460,8 +1460,8 @@ class PayController extends Controller
     
         
         $fpx_buyerAccNo = "";
-        $fpx_buyerId = "";
-        $fpx_makerName = "";
+        $fpx_buyerId = "B2BTEST01";
+        $fpx_makerName = "Test Maker";
         $fpx_buyerIban = "";
         // $fpx_productDesc = $application ? "Corporate Payment - {$application->refference_no}" : "B2B Corporate Payment";
         $fpx_productDesc="Card";
