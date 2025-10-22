@@ -1444,9 +1444,9 @@ class PayController extends Controller
         $fpx_msgType = "AR";
         $fpx_msgToken = "02"; 
         $fpx_sellerExId = "EX00014529";
-        $fpx_sellerExOrderNo = date('YmdHis') . substr(microtime(false), 2, 6) . strtoupper(substr(uniqid(), -4));
+        $fpx_sellerExOrderNo = date('YmdHis');
         $fpx_sellerTxnTime = date('YmdHis');
-        $fpx_sellerOrderNo = date('YmdHis') . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
+        $fpx_sellerOrderNo = date('YmdHis');
         $fpx_sellerId = "SE00110559";
         $fpx_sellerBankCode = "01";
         $fpx_txnCurrency = "MYR";
@@ -1460,8 +1460,8 @@ class PayController extends Controller
     
         
         $fpx_buyerAccNo = "";
-        $fpx_buyerId = "B2BTEST01";
-        $fpx_makerName = "Test Maker";
+        $fpx_buyerId = "";
+        $fpx_makerName = "";
         $fpx_buyerIban = "";
         // $fpx_productDesc = $application ? "Corporate Payment - {$application->refference_no}" : "B2B Corporate Payment";
         $fpx_productDesc="Card";
