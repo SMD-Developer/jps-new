@@ -1390,7 +1390,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.application_list'),
+                                'text' => trans('app.list_of_application'),
                                 'route' =>  url('finance-user-approve'),
                                 'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
                                 'permission' => 'applications.view-list'
