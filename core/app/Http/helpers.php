@@ -446,7 +446,7 @@ if(! function_exists('getMenus')){
                     
                       [
                         'icon' => 'line-chart',
-                        'text' => trans('app.list_of_application'),
+                        'text' => trans('app.application'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
@@ -455,7 +455,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.application_list'),
+                                'text' => trans('app.list_of_application'),
                                 'route' =>  url('user-approve'),
                                 'menu_active' => request()->is('user-approve') ? 'active' : '',
                                 'permission' => 'applications.view-list',
@@ -1682,7 +1682,7 @@ if(! function_exists('getMenus')){
                     ],
                       [
                         'icon' => 'line-chart',
-                        'text' => trans('app.list_of_application'),
+                        'text' => trans('app.application'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'block' : 'none',
@@ -1691,7 +1691,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.application_list'),
+                                'text' => trans('app.list_of_application'),
                                 'route' =>  url('user-approve'),
                                 'menu_active' =>  request()->is('user-approve') || request()->is('user-approve/*') ? 'active' : '',
                                 'permission' => 'applications.view-list',
