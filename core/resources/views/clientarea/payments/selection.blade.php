@@ -300,9 +300,9 @@ $(document).ready(function() {
     });
     
     function updateBankListNote(paymentMode) {
-        const noteText = paymentMode === 'b2c' 
-            ? 'Display Bank List via drop-down (B2C)' 
-            : 'Display Corporate Bank List via drop-down (B2B)';
+         const noteText = paymentMode === 'b2c' 
+            ? 'Select your bank from the list' 
+            : 'Select your corporate bank';
         
         $('.bank-list-note strong').text(noteText);
     }
@@ -357,23 +357,8 @@ $(document).ready(function() {
                     bankOptions += `<option value="${bankCode}" ${disabled} class="${className}">${optionText}</option>`;
                 });
             } else {
-                // Fallback test banks
-                const fallbackBanks = [];
-                
-                if (paymentMode === 'b2c') {
-                    fallbackBanks.push(
-                        { code: 'SBI_BANK_A', name: 'SBI Bank A (SBI_BANK_A) - Test Case 1.1 Valid Account' },
-                        { code: 'SBI_BANK_B', name: 'SBI Bank B (SBI_BANK_B) - Test Case 2.3 Insufficient Funds' }
-                    );
-                } else if (paymentMode === 'b2b') {
-                    fallbackBanks.push(
-                        { code: 'SBI_BANK_A', name: 'SBI Bank A (SBI_BANK_A) - Test Case 1.1 Valid Account' },
-                        { code: 'SBI_BANK_B', name: 'SBI Bank B (SBI_BANK_B) - Test Cases 2.1/2.2/2.3 Various Scenarios' }
-                    );
-                }
                 
                 fallbackBanks.sort((a, b) => a.name.localeCompare(b.name));
-                
                 fallbackBanks.forEach(bank => {
                     bankOptions += `<option value="${bank.code}">${bank.name}</option>`;
                 });
@@ -382,8 +367,12 @@ $(document).ready(function() {
             $('#bankSelect').html(bankOptions);
         })
         .catch(error => {
-            console.error('Error loading banks:', error);
-            alert('Failed to load bank list. Please try again.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Unable to load bank list. Please refresh and try again.',
+                confirmButtonText: 'OK'
+            });
         });
     }
 
@@ -548,19 +537,9 @@ $(document).ready(function() {
             return validationResult;
         }
 
-        // Test Case 2.3 - Insufficient Funds
-        if (bankCode === 'SBI_BANK_B') {
-            validationResult.isValid = false;
-            validationResult.errors.push('Insufficient funds in account (Test Scenario)');
-            validationResult.testCase = '2.3 - Negative Scenario (Insufficient Funds)';
-            return validationResult;
-        }
-
         // Test Case 1.1 - Valid Account
         if (amount >= validationRules.minAmount && amount <= validationRules.maxAmount) {
-            validationResult.testCase = bankCode === 'SBI_BANK_A' 
-                ? '1.1 - Positive Scenario (SBI BANK A - Valid Account)' 
-                : '1.1 - Positive Scenario (Valid Account)';
+            validationResult.testCase = 'Payment Validated Successfully';
             return validationResult;
         }
 
@@ -598,19 +577,9 @@ $(document).ready(function() {
             return validationResult;
         }
 
-        // Test Case 2.3 - Insufficient Funds
-        if (bankCode === 'SBI_BANK_B') {
-            validationResult.isValid = false;
-            validationResult.errors.push('Insufficient funds (Test Scenario)');
-            validationResult.testCase = '2.3 - Negative Scenario';
-            return validationResult;
-        }
-
         // Test Case 1.1 - Success
         if (amount >= validationRules.minAmount && amount <= validationRules.maxAmount) {
-            validationResult.testCase = bankCode === 'SBI_BANK_A' 
-                ? '1.1 - Positive Scenario (SBI BANK A)' 
-                : '1.1 - Positive Scenario (Valid Bank)';
+            validationResult.testCase = 'Payment Validated Successfully';
             return validationResult;
         }
 
