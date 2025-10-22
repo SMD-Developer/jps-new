@@ -190,6 +190,7 @@ Route::group(['middleware' => 'install'], function(){
         Route::post('/department/store', [DepartmentController::class, 'store'])->name('departments.store');
         Route::put('/department/update/{id}', [DepartmentController::class, 'update'])->name('departments.update');
         Route::get('staff','UsersController@staff')->name('staff');
+        Route::delete('staff/{uuid}', 'UsersController@destroy')->name('staff.destroy');
         // Route::post('staff-add', [CrudController::class, 'storeStaff'])->name('crud.storeStaff');
         Route::match(['PUT', 'POST'], '/staff/update/{uuid}', 'RolesController@updateStaff')->name('staff.update');
         Route::get('/role', [RolesController::class, 'addRole'])->name('role');

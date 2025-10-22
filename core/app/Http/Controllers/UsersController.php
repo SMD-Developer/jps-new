@@ -152,4 +152,23 @@ class UsersController extends CrudController {
         ));
     }
 
+
+    public function destroy($uuid)
+    {
+        try {
+            $staff = User::where('uuid', $uuid)->firstOrFail();
+            $staff->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Staff deleted successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete staff: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

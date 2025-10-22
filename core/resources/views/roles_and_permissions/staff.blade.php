@@ -18,6 +18,17 @@
 
         font-size:13px;
     }
+
+
+    .btn-group {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .btn-group .btn {
+        margin: 0 !important;
+    }
     
     .profile-img {
     width: 40px; /* Adjust as needed */
@@ -200,6 +211,13 @@
                                                             data-is_blocked="{{ $user->is_blocked ? 'blocked' : 'unblocked' }}">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
+
+                                                         <!-- Add this delete button -->
+                                                        <button class="btn btn-danger btn-sm deleteStaffBtn" 
+                                                            data-staff-id="{{ $user->uuid }}"
+                                                            data-staff-name="{{ $user->username }}">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
                                                     </div>
                                                 @endif
                                         </td>
@@ -765,6 +783,80 @@ $(document).ready(function() {
         });
     });
 });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('.deleteStaffBtn').on('click', function() {
+            var staffId = $(this).data('staff-id');
+            var staffName = $(this).data('staff-name');
+
+            Swal.fire({
+                title: "@lang('app.are_you_sure')",
+                text: "You are about to delete " + staffName + ". This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: "@lang('app.yes')",
+                cancelButtonText: "@lang('app.cancel')"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading indicator
+                    Swal.fire({
+                        title: 'Deleting...',
+                        html: 'Please wait...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('staff.destroy', ['uuid' => ':id']) }}".replace(':id', staffId),
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            Swal.close();
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "@lang('app.success')!",
+                                    text: response.message || "@lang('app.staff_deleted_successfully')",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: "@lang('app.error')",
+                                    text: response.message || "@lang('app.staff_deletion_failed')"
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.close();
+                            var errorMessage = "@lang('app.something_went_wrong')";
+                            
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: "@lang('app.error')",
+                                text: errorMessage
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
 </script>
 
 
