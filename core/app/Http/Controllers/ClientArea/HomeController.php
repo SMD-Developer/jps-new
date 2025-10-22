@@ -454,46 +454,6 @@ class HomeController extends Controller {
                 ->where('applications.id', $application_id)
                 ->firstOrFail();
 
-            if ($application->payment_status !== 'completed') {
-                $currentDate = \Carbon\Carbon::now();
-                $year = $currentDate->format('y');
-                $month = $currentDate->format('m');
-                $day = $currentDate->format('d');
-
-                $row = \DB::table('payments')
-                 ->select(\DB::raw('MAX(CAST(RIGHT(receipt_number,6) AS UNSIGNED)) AS max_seq'))
-                 ->where('receipt_number','like', "{$year}JPSSEL%")
-                 ->first();
-
-                $nextSequence = (($row->max_seq ?? 0) + 1);
-                $sequentialNumber = str_pad($nextSequence, 6, '0', STR_PAD_LEFT);
-                $receiptNumber = "{$year}JPSSEL{$month}{$day}{$sequentialNumber}";
-                $transactionId = 'TXN-' . mt_rand(1000000000, 9999999999);
-
-                // Update applications table
-                $application->update([
-                    'payment_status' => 'completed',
-                    'transaction' => $transactionId,
-                    'reciept_number' => $receiptNumber,
-                    'deposit_date' => \Carbon\Carbon::now(),
-                ]);
-
-                // Create payment record
-                $payment = Payment::create([
-                    'uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
-                    'application_id' => $application->id,
-                    'payment_date' => \Carbon\Carbon::now(),
-                    'amount' => $application->final_amount,
-                    'method' => 'online',
-                    'payment_status' => 'completed',
-                    'transaction_id' => $transactionId,
-                    'receipt_number' => $receiptNumber,
-                    'gateway_transaction_id' => $transactionId,
-                    'payment_gateway' => 'fpx',
-                ]);
-            
-            }
-
             return view('clientarea.application.user-receiptoriginal', compact('application'));
         }
         
