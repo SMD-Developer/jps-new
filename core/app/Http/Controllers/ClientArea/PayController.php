@@ -1456,7 +1456,7 @@ class PayController extends Controller
         $fpx_buyerName = $application ? ($application->applicant ?? "Test Corporate User") : "Test Corporate User";
         
         $fpx_buyerBankId = $bankData['bank_code']; 
-        $fpx_buyerBankBranch = $bankData['bank_name']; 
+        $fpx_buyerBankBranch = ""; 
     
         
         $fpx_buyerAccNo = "";
