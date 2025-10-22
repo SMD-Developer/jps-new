@@ -327,6 +327,62 @@
             });
         });
     </script>
+
+    <script>
+        let inactivityTime = function () {
+            let warningTime;
+            let logoutTime;
+            
+            window.onload = resetTimer;
+            document.onmousemove = resetTimer;
+            document.onkeypress = resetTimer;
+            document.onscroll = resetTimer;
+            document.onclick = resetTimer;
+            document.ontouchstart = resetTimer;
+
+            function showWarning() {
+                Swal.fire({
+                    title: 'Are you still there?',
+                    text: 'You will be logged out in 1 minute due to inactivity.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, I\'m here',
+                    cancelButtonText: 'Logout now',
+                    timer: 60000,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resetTimer();
+                    } else if (result.dismiss === Swal.DismissReason.timer || result.dismiss === Swal.DismissReason.cancel) {
+                        logout();
+                    }
+                });
+            }
+
+            function logout() {
+                Swal.fire({
+                    title: 'Session Expired',
+                    text: 'You have been logged out due to inactivity.',
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false
+                }).then(() => {
+                    window.location.href = "{{ route('client_logout') }}";
+                });
+            }
+
+            function resetTimer() {
+                clearTimeout(warningTime);
+                clearTimeout(logoutTime);
+                warningTime = setTimeout(showWarning, 540000); // 9 minutes
+                logoutTime = setTimeout(logout, 600000); // 10 minutes
+            }
+        };
+
+        window.onload = function() {
+            inactivityTime();
+        }
+    </script>
 <!--    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"-->
 <!--    async defer>-->
 <!--</script>-->
