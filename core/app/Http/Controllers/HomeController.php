@@ -1645,7 +1645,21 @@ class HomeController extends Controller {
         // Load payments relation without filtering for latest
         $query = Application::with(['state', 'landDistrict', 'landDivision', 'client', 'payments'])
             ->where('applications.status', 'approved')
-            ->orderBy('applications.created_at', 'desc');         
+            ->leftJoin('payments as latest_payment', function($join) {
+            $join->on('applications.id', '=', 'latest_payment.application_id')
+                 ->whereRaw('latest_payment.created_at = (
+                     SELECT MAX(p2.created_at) 
+                     FROM payments p2 
+                     WHERE p2.application_id = applications.id
+                 )');
+        })
+        ->orderByRaw("CASE 
+                        WHEN latest_payment.payment_status = 'completed' THEN 1 
+                        ELSE 2 
+                    END, 
+                    COALESCE(latest_payment.payment_date, applications.created_at) DESC")
+        ->select('applications.*')
+        ->select('applications.*');         
 
         $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
 
