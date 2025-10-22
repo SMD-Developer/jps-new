@@ -374,9 +374,7 @@ class HomeController extends Controller {
             $query = Application::with([
                 'client', 
                 'logs', 
-                'latestPayment' => function($query) {
-                    $query->orderBy('created_at', 'desc');
-                }
+                'payments'
             ])
             ->where('user_id', $clientId)
             ->orderBy('created_at', 'desc');

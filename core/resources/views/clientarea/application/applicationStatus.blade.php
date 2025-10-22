@@ -340,70 +340,75 @@
 
                                             
                                             <td>
-                                            @if ($application->status == 'approved')
-                                                @if ($application->latestPayment && $application->latestPayment->payment_status === 'completed')
-                                                    <span class="badge bg-success py-1 px-3 rounded-pill d-inline-block text-center" style="font-size: 0.7rem; line-height: 1.2; white-space: normal; width: 144px; word-break: break-word; hyphens: auto;">
-                                                        {{ trans('app.payment_complete') }}
-                                                    </span>
-                                                        
-                                                @elseif($application->latestPayment && $application->latestPayment->payment_status === 'pending_authorization')
-                                                    <span class="badge bg-secondary py-1 px-3 rounded-pill d-inline-block text-center" style="font-size: 0.7rem; line-height: 1.2; white-space: normal; width: 144px; word-break: break-word; hyphens: auto;">
-                                                        {{ trans('app.payment_pending') }}
-                                                    </span>
-                                        
-                                                @elseif ($application->payment_status === 'in review' && $application->client && $application->client->accountType == 3)
-                                                    <span class="badge bg-info py-1 px-3 rounded-pill d-inline-block text-center" style="font-size: 0.7rem; line-height: 1.2; white-space: normal; width: 144px; word-break: break-word; hyphens: auto;">
-                                                        {{ trans('app.waiting_for_Review') }}
-                                                    </span>
+                                                @if ($application->status == 'approved')
+                                                    @php
+                                                        // Get the latest payment from the payments collection
+                                                        $latestPayment = $application->payments->sortByDesc('created_at')->first();
+                                                    @endphp
                                                     
-                                                @elseif ($application->payment_status === 'rejected')
-                                                    <div class="d-flex flex-column gap-1" style="max-width: 180px;">
-                                                        <button class="btn btn-danger btn-xs py-1 px-3 rounded-pill"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#rejectionReasonModal{{ $application->id }}"
-                                                            style="font-size: 0.75rem;">
-                                                            {{ trans('app.payment_rejected') }}
-                                                        </button>
-                                                        <a href="{{ $application->client && $application->client->accountType == 3
-                                                            ? route('uploadDepositReceipt', ['application_id' => $application->id])
-                                                            : route('user_payment_letter', ['application_id' => $application->id]) }}"
-                                                            class="btn btn-primary btn-sm mt-2 py-1 px-3 rounded-pill"
-                                                            style="font-size: 0.7rem; white-space: normal; line-height: 1.2; height: auto; min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; word-break: break-word;">
-                                                            {{ $application->client && $application->client->accountType == 3
-                                                                ? trans('app.upload_deposit_receipt')
-                                                                : trans('app.please_explain_payment') }}
-                                                        </a>
-                                                    </div>
-                                                @else
-                                                    <div class="sbtnn">
-                                                        <a href="{{ $application->client && $application->client->accountType == 3
-                                                            ? route('uploadDepositReceipt', ['application_id' => $application->id])
-                                                            : route('user_payment_letter', ['application_id' => $application->id]) }}"
-                                                            class="btn btn-primary btn-sm py-1 px-3 rounded-pill"
-                                                            style="font-size: 0.7rem; white-space: normal; line-height: 1.2; height: auto; min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; min-width: 120px; word-break: break-word;">
-                                                            {{ $application->client && $application->client->accountType == 3
-                                                                ? trans('app.upload_deposit_receipt')
-                                                                : trans('app.please_explain_payment') }}
-                                                        </a>
-                                                    </div>
+                                                    @if ($latestPayment && $latestPayment->payment_status === 'completed')
+                                                        <span class="badge bg-success py-1 px-3 rounded-pill d-inline-block text-center" style="font-size: 0.7rem; line-height: 1.2; white-space: normal; width: 144px; word-break: break-word; hyphens: auto;">
+                                                            {{ trans('app.payment_complete') }}
+                                                        </span>
+                                                            
+                                                    @elseif($latestPayment && $latestPayment->payment_status === 'pending_authorization')
+                                                        <span class="badge bg-secondary py-1 px-3 rounded-pill d-inline-block text-center" style="font-size: 0.7rem; line-height: 1.2; white-space: normal; width: 144px; word-break: break-word; hyphens: auto;">
+                                                            {{ trans('app.payment_pending') }}
+                                                        </span>
+
+                                                    @elseif ($application->payment_status === 'in review' && $application->client && $application->client->accountType == 3)
+                                                        <span class="badge bg-info py-1 px-3 rounded-pill d-inline-block text-center" style="font-size: 0.7rem; line-height: 1.2; white-space: normal; width: 144px; word-break: break-word; hyphens: auto;">
+                                                            {{ trans('app.waiting_for_Review') }}
+                                                        </span>
+                                                        
+                                                    @elseif ($application->payment_status === 'rejected')
+                                                        <div class="d-flex flex-column gap-1" style="max-width: 180px;">
+                                                            <button class="btn btn-danger btn-xs py-1 px-3 rounded-pill"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#rejectionReasonModal{{ $application->id }}"
+                                                                style="font-size: 0.75rem;">
+                                                                {{ trans('app.payment_rejected') }}
+                                                            </button>
+                                                            <a href="{{ $application->client && $application->client->accountType == 3
+                                                                ? route('uploadDepositReceipt', ['application_id' => $application->id])
+                                                                : route('user_payment_letter', ['application_id' => $application->id]) }}"
+                                                                class="btn btn-primary btn-sm mt-2 py-1 px-3 rounded-pill"
+                                                                style="font-size: 0.7rem; white-space: normal; line-height: 1.2; height: auto; min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; word-break: break-word;">
+                                                                {{ $application->client && $application->client->accountType == 3
+                                                                    ? trans('app.upload_deposit_receipt')
+                                                                    : trans('app.please_explain_payment') }}
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <div class="sbtnn">
+                                                            <a href="{{ $application->client && $application->client->accountType == 3
+                                                                ? route('uploadDepositReceipt', ['application_id' => $application->id])
+                                                                : route('user_payment_letter', ['application_id' => $application->id]) }}"
+                                                                class="btn btn-primary btn-sm py-1 px-3 rounded-pill"
+                                                                style="font-size: 0.7rem; white-space: normal; line-height: 1.2; height: auto; min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; min-width: 120px; word-break: break-word;">
+                                                                {{ $application->client && $application->client->accountType == 3
+                                                                    ? trans('app.upload_deposit_receipt')
+                                                                    : trans('app.please_explain_payment') }}
+                                                            </a>
+                                                        </div>
+                                                    @endif
+                                                @elseif ($application->status == 'in_process')
+                                                    <span class="badge bg-secondary">In Process</span>
+                                                @elseif ($application->status == 'rejected')
+                                                    @if ($application->rejected_by == 'admin_staff')
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <a href="{{ route('resubmit-application', ['id' => $application->id]) }}"
+                                                                class="btn btn-warning btn-sm py-0 px-2 rounded-pill text-white"
+                                                                style="font-size: 0.8rem; font-weight: normal;white-space:nowrap;">
+                                                                <strong>{{ trans('app.resbumit') }}</strong>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <div class="d-flex flex-column gap-2">
+                                                        </div>
+                                                    @endif
                                                 @endif
-                                            @elseif ($application->status == 'in_process')
-                                                <span class="badge bg-secondary">In Process</span>
-                                            @elseif ($application->status == 'rejected')
-                                                @if ($application->rejected_by == 'admin_staff')
-                                                    <div class="d-flex flex-column gap-2">
-                                                        <a href="{{ route('resubmit-application', ['id' => $application->id]) }}"
-                                                            class="btn btn-warning btn-sm py-0 px-2 rounded-pill text-white"
-                                                            style="font-size: 0.8rem; font-weight: normal;white-space:nowrap;">
-                                                            <strong>{{ trans('app.resbumit') }}</strong>
-                                                        </a>
-                                                    </div>
-                                                @else
-                                                    <div class="d-flex flex-column gap-2">
-                                                    </div>
-                                                @endif
-                                            @endif
-                                        </td>
+                                            </td>
 
                                         </tr>
                                         @empty
