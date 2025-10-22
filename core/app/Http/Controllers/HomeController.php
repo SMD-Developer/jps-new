@@ -1295,6 +1295,39 @@ class HomeController extends Controller {
             'canAdminStaffEditCustomerDetails'
         ));
     }
+
+    public function destroy_user($id)
+    {
+        try {
+            DB::beginTransaction();
+            $clientRegister = ClientRegisterModel::findOrFail($id);
+            $clientId = $clientRegister->client_id;
+            $clientRegister->delete();
+            
+            if ($clientId) {
+                 ClientUser::where('uuid', $clientId)->delete();
+            }
+        
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Client deleted successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            // Rollback the transaction if anything fails
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete client: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    
     
     
     public function applicationStatus(Request $request) 

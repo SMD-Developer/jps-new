@@ -270,6 +270,7 @@ Route::group(['middleware' => 'install'], function(){
         // POST route to save the updated application
         Route::match(['put', 'post'], 'update-application/{id}', 'HomeController@saveUpdatedApplication')->name('updateApplication');
         Route::get('developer-list','HomeController@developer_list')->name('developer_list');
+        Route::delete('client/{id}', 'HomeController@destroy_user')->name('client.destroy');
         Route::get('view-receipt','HomeController@viewReceipt')->name('view.receipt');
         Route::get('receipt-original','HomeController@userReceipt')->name('original_receipt');
          Route::get('receipt-copy','HomeController@adminuserReceiptCopy')->name('copy_receipt');

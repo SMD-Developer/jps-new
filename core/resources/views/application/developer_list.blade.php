@@ -194,6 +194,13 @@
                                                         <a href="{{ route('user_details_update', ['id' => $value->id]) }}"
                                                             class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
                                                     @endif
+                                                     <!-- Add this delete button -->
+                                                    
+                                                        <button class="btn btn-danger btn-sm deleteClientBtn" 
+                                                            data-client-id="{{ $value->id }}"
+                                                            data-client-name="{{ $value->userName }}">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -479,6 +486,80 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: 'An error occurred while processing your request.'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.deleteClientBtn').on('click', function() {
+                var clientId = $(this).data('client-id');
+                var clientName = $(this).data('client-name');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to delete " + clientName + ". This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading indicator
+                        Swal.fire({
+                            title: 'Deleting...',
+                            html: 'Please wait...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
+
+                        $.ajax({
+                            url: "{{ route('client.destroy', ['id' => ':id']) }}".replace(':id', clientId),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.close();
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: response.message || 'Client deleted successfully',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message || 'Failed to delete client'
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.close();
+                                var errorMessage = 'An error occurred while processing your request.';
+                                
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: errorMessage
                                 });
                             }
                         });
