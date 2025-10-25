@@ -434,7 +434,7 @@
                     <!-- File Upload Section -->
                     <div class="form-group">
                         <div class="col-md-4">
-                            <label for="geran-tanah">@lang('app.receipt') <b class="starr">*</b></label>
+                            <label for="geran-tanah">Resit Bayaran Lama <b class="starr">*</b></label>
                         </div>
                         <div class="col-md-8">
                             <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>
@@ -801,7 +801,7 @@
 
             if (file) {
                 if (file.size > 15 * 1024 * 1024) { 
-                    errorDiv.textContent = "Fail belum dimuat naik.Saiz fail melebihi had 15mb. Sila pilih fail yang lebih kecil.";
+                    errorDiv.textContent = "Saiz fail melebihi had 15mb. Sila pilih fail yang lebih kecil.";
                     errorDiv.style.display = 'block';
                     input.value = ''; 
                 } else {

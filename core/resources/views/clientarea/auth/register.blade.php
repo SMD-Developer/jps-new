@@ -891,7 +891,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3 || selectedAccountTypeId === 4) {
             if (selectedAccountTypeId === 4 || selectedAccountTypeId === 3 || selectedAccountTypeId === 2) {
-              userInfoButton.innerText = "Maklumat Syarikat / Agensi Kerajaan";
+                userInfoButton.innerText = "Maklumat Syarikat / Agensi Kerajaan";
             } else {
                 userInfoButton.innerText = "Maklumat Syarikat";
             }
@@ -903,7 +903,15 @@ document.addEventListener('DOMContentLoaded', function() {
             idTypeSelect.style.display = 'none';
             idTypeSelect.value = '';
             
-            if (idCardStar) idCardStar.style.display = 'none';
+            // Show asterisk only for account types 2 and 4, hide for type 3
+            if (idCardStar) {
+                if (selectedAccountTypeId === 2 || selectedAccountTypeId === 4) {
+                    idCardStar.style.display = 'inline';
+                } else if (selectedAccountTypeId === 3) {
+                    idCardStar.style.display = 'none';
+                }
+            }
+            
             if (idCardInput) {
                 idCardInput.placeholder = "";
                 idCardInput.removeEventListener('input', handleInput);
@@ -911,8 +919,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 idCardInput.maxLength = 50;
                 idCardInput.style.setProperty('width', '300px', 'important');
             }
+        } else if (selectedAccountTypeId === 1) {
+            // Account Type 1 - Show "Jenis/Nombor Pengenaian"
+            userInfoButton.innerText = originalTexts.sectionHeader;
+            if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
+            if (idCardLabel) idCardLabel.innerText = "Jenis/Nombor Pengenaian";
+            if (userNameHintDiv) userNameHintDiv.style.display = '';
+            
+            // Restore ID Type dropdown with original options
+            idTypeSelect.innerHTML = originalIdTypeOptions;
+            idTypeSelect.style.display = 'block';
+            idTypeSelect.style.visibility = 'visible';
+            idTypeSelect.value = '';
+            
+            // Show asterisk for account type 1
+            if (idCardStar) idCardStar.style.display = 'inline';
+            
+            if (idCardInput) {
+                idCardInput.placeholder = "Select ID Type First";
+                idCardInput.value = '';
+                idCardInput.maxLength = 14;
+                idCardInput.removeEventListener('input', handleInput);
+            }
         } else {
-            // Individual Type - Restore everything
+            // Individual Type - Restore everything (for other account types)
             userInfoButton.innerText = originalTexts.sectionHeader;
             if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
             if (idCardLabel) idCardLabel.innerText = originalTexts.idCard;
@@ -1103,7 +1133,7 @@ $(document).ready(function () {
         
         if (!$('input[name="userName"]').val()) {
             const selectedAccountType = parseInt($('select[name="accountType"]').val());
-            if (selectedAccountType === 2 || selectedAccountType === 3) {
+            if (selectedAccountType === 2 || selectedAccountType === 3 || selectedAccountType === 4) {
                 $('#userName-error').text('Nama Syarikat diperlukan');
             } else {
                 $('#userName-error').text('Nama pengguna diperlukan');
@@ -1115,7 +1145,7 @@ $(document).ready(function () {
 
         if (selectedAccountType !== 3) { 
             if (!$('input[name="idCardNumber"]').val()) {
-                if (selectedAccountType === 2) {
+                if (selectedAccountType === 2 || selectedAccountType === 4) {
                     $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
                 } else {
                     $('#idCardNumberError').text('Nombor kad pengguna diperlukan');
