@@ -890,7 +890,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedAccountTypeId = parseInt(this.value);
 
         if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3 || selectedAccountTypeId === 4) {
-            if (selectedAccountTypeId === 4) {
+            if (selectedAccountTypeId === 4 || selectedAccountTypeId === 3 || selectedAccountTypeId === 2) {
               userInfoButton.innerText = "Maklumat Syarikat / Agensi Kerajaan";
             } else {
                 userInfoButton.innerText = "Maklumat Syarikat";

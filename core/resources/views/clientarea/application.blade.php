@@ -215,19 +215,19 @@
                             <div class="container">
 
                                 <!-- Application Type Selection - New Field -->
-                                @if($client->accountType == 1 || $client->accountType == 2 || $client->accountType == 4)
+                                @if($client->accountType == 1 || $client->accountType == 2 || $client->accountType == 3 || $client->accountType == 4)
                                     <!-- Application Type Selection - Only for Individu and Pemaju -->
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                            <label for="applicant_type">@lang('Jenis Permohonan') <b class="starr"></b></label>
+                                            <label for="applicant_type">@lang('Permohonan bagi') <b class="starr"></b></label>
                                             </div>
                                             <div class="col-md-8">
                                                 <select id="applicant_type" name="applicant_type" class="form-control form-select" required>
                                                     @php
                                                         $userAccountType = $client->accountType ?? null;
                                                         // Only show account types 1 and 2
-                                                        $allowedAccountTypes = $accountTypes->whereIn('id', [1, 2,4]);
+                                                        $allowedAccountTypes = $accountTypes->whereIn('id', [1, 2, 3, 4]);
                                                     @endphp
                                                     
                                                     @foreach($allowedAccountTypes as $accountType)
@@ -489,50 +489,6 @@
                             
                         </div>
                     </div>
-
-                    <!-- File Upload Section -->
-                    <!--<h4>@lang('app.upload_supporting_documents')</h4>-->
-                    <!-- File Upload Section -->
-                    <!--<div class="form-group">-->
-                    <!--    <div class="col-md-4">-->
-                    <!--       <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>-->
-                    <!--    </div>-->
-                    <!--    <div class="col-md-8">-->
-                    <!--        <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>-->
-                    <!--        <input type="file" id="land_grant" name="land_grant" class="file-input"-->
-                    <!--            accept="application/pdf" onchange="validateFileSize(this)">-->
-                    <!--        <div id="land_grantfileName" class="file-name"></div>-->
-                    <!--    </div>        -->
-                    <!--</div>-->
-
-                    <!--<div class="form-group">-->
-                    <!--    <div class="col-md-4">-->
-                    <!--       <label for="pelan">@lang('app.planning_permission_plan')</label>-->
-                    <!--    </div> -->
-                    <!--    <div class="col-md-8">-->
-                    <!--        <label for="permission_plan" class="submit-button is-invalid">@lang('app.choose_file')</label>-->
-                    <!--        <input type="file" id="permission_plan" name="permission_plan" class="file-input"-->
-                    <!--            accept="application/pdf" onchange="validateFileSize(this)">-->
-                    <!--        <div id="permission_planfileName" class="file-name"></div>-->
-                    <!--    </div>-->
-                    <!--</div>-->
-
-                    <!--<div class="form-group">-->
-                    <!--    <div class="col-md-4">-->
-                    <!--      <label for="sokongan">@lang('app.letter_of_support')</label>-->
-                    <!--    </div>-->
-                    <!--    <div class="col-md-8">-->
-                    <!--        <label for="letter_of_support" class="submit-button is-invalid">@lang('app.choose_file')</label>-->
-                    <!--        <input type="file" id="letter_of_support" name="letter_of_support" class="file-input"-->
-                    <!--            accept="application/pdf" onchange="validateFileSize(this)">-->
-                    <!--        <div id="letter_of_supportfileName" class="file-name"></div>-->
-                    <!--    </div>    -->
-                    <!--</div>-->
-                    <!--<p class="note">-->
-                    <!--    *@lang('app.file_only_pdf_format_size_not_exceed_15mb')-->
-                    <!--</p>-->
-                    
-                    
                        <!-- File Upload Section with Enhanced Validation -->
                     <h4>@lang('app.upload_supporting_documents')</h4>
 
@@ -1015,5 +971,70 @@
 }
 
 
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const applicantTypeSelect = document.getElementById('applicant_type');
+        
+        if (applicantTypeSelect) {
+            // Store the original account type
+            const originalAccountType = '{{ $client->accountType }}';
+            
+            applicantTypeSelect.addEventListener('change', function() {
+                const selectedType = this.value;
+                
+                // Check if selected type is different from original
+                if (selectedType != originalAccountType) {
+                    // Clear personal information fields
+                    document.getElementById('pemohon').value = '';
+                    document.getElementById('ssm').value = '';
+                    document.getElementById('alamat').value = '';
+                    document.getElementById('poskod').value = '';
+                    document.getElementById('bandar').value = '';
+                    document.getElementById('negeri').selectedIndex = 0;
+                    document.getElementById('daerah').selectedIndex = 0;
+                    document.getElementById('emel').value = '';
+                    document.getElementById('telefon').value = '';
+                    
+                    // Clear project information
+                    document.getElementById('project_name').value = '';
+                    
+                    // Clear lot information
+                    document.getElementById('lot-tanah').value = '';
+                    document.getElementById('land-unit').selectedIndex = 0;
+                    document.getElementById('keluasan').value = '';
+                    document.getElementById('hectare-display').value = '';
+                    document.getElementById('land_district').selectedIndex = 0;
+                    document.getElementById('mukim').selectedIndex = 0;
+                    
+                    // Clear file uploads
+                    document.getElementById('land_grant').value = '';
+                    document.getElementById('land_grantfileName').textContent = '';
+                    document.getElementById('permission_plan').value = '';
+                    document.getElementById('permission_planfileName').textContent = '';
+                    document.getElementById('letter_of_support').value = '';
+                    document.getElementById('letter_of_supportfileName').textContent = '';
+                } else {
+                    // Restore original values if switching back to original account type
+                    document.getElementById('pemohon').value = '{{ $client->userName ?? "" }}';
+                    document.getElementById('ssm').value = '{{ $client->idCardNumber ?? "" }}';
+                    document.getElementById('alamat').value = '{{ $client->registeredAddress ?? "" }}';
+                    document.getElementById('poskod').value = '{{ $client->postalCode ?? "" }}';
+                    document.getElementById('bandar').value = '{{ $client->city ?? "" }}';
+                    document.getElementById('emel').value = '{{ $client->email ?? "" }}';
+                    document.getElementById('telefon').value = '{{ $client->mobileNumber ?? "" }}';
+                    
+                    // Restore state and district selections
+                    @if(isset($client->state_id))
+                    document.getElementById('negeri').value = '{{ $client->state_id }}';
+                    @endif
+                    
+                    @if(isset($client->district_id))
+                    document.getElementById('daerah').value = '{{ $client->district_id }}';
+                    @endif
+                }
+            });
+        }
+    });
 </script>
 @endsection

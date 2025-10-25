@@ -231,16 +231,6 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ \Carbon\Carbon::parse($application->created_at)->format('d/m/Y') }}</td>
-                                            <!--<td>-->
-                                            <!--    @if ($application->refference_no)-->
-                                            <!--        <a href="{{ route('user.userDetails', ['id' => $application->id]) }}"-->
-                                            <!--            class="text-primary">-->
-                                            <!--            {{ $application->refference_no }}-->
-                                            <!--        </a>-->
-                                            <!--    @else-->
-                                            <!--        --->
-                                            <!--    @endif-->
-                                            <!--</td>-->
                                             <td style="word-break: break-all;">
                                                 @if ($application->refference_no && $application->status == 'approved')
                                                     <a href="{{ route('user.userDetails', ['id' => $application->id]) }}"
@@ -300,15 +290,21 @@
                                                         {{ trans('app.new') }}
                                                 @endswitch
                                             </td>
-                                            <td>
+                                             <td>
                                                 @if ($application->status == 'approved')
                                                     <div class="status-badge">
                                                         <a href="{{ route('show_approval_letter', ['application_id' => $application->id]) }}"
-                                                            class="badge bg-warning text-dark d-flex align-items-center text-decoration-none">
-                                                            <i class="bi bi-hourglass-split me-2"></i>
+                                                            class="badge bg-success text-white d-flex align-items-center text-decoration-none"
+                                                            title="{{ trans('app.click_to_view_bill') }}"
+                                                            data-bs-toggle="tooltip">
+                                                            <i class="bi bi-check-circle me-2"></i>
                                                             {{ trans('app.approved') }}
+                                                            <i class="bi bi-file-earmark-text ms-2"></i>
                                                         </a>
                                                     </div>
+                                                    <small class="text-muted d-block mt-1">
+                                                        <i class="bi bi-info-circle"></i> {{ trans('app.click_to_view_bill') }}
+                                                    </small>
                                                 @elseif ($application->status == 'in_process')
                                                     <div class="status-badge">
                                                         <span class="badge bg-warning text-dark d-flex align-items-center">
@@ -522,5 +518,13 @@
 
                 window.location.href = url.toString();
             }
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                });
+            });
         </script>
     @endsection
