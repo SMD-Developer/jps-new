@@ -444,6 +444,47 @@
                             <div id="land_grant_error" class="invalid-feedback d-block" style="display:none;"></div>
                         </div>
                     </div>
+
+
+                    <!-- New Receipt Upload - Required -->
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <label for="new-receipt">@lang('Resit Bayaran Baru') <b class="starr">*</b></label>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="new_receipt" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                            <input type="file" id="new_receipt" name="new_receipt" class="file-input"
+                                accept="application/pdf" onchange="validateFileSize(this)">
+                            <div id="new_receiptfileName" class="file-name"></div>
+                            <div id="new_receipt_error" class="invalid-feedback d-block" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Supporting Documents Upload - Optional -->
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <label for="supporting-docs">@lang('Dokumen Sokongan')</label>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="supporting_docs" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                            <input type="file" id="supporting_docs" name="supporting_docs" class="file-input"
+                                accept="application/pdf" onchange="validateFileSize(this)">
+                            <div id="supporting_docsfileName" class="file-name"></div>
+                            <div id="supporting_docs_error" class="invalid-feedback d-block" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Claim Reason Text Area - Optional -->
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <label for="claim-reason">@lang('Nyatakan Alasan Tuntutan')</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea id="claim-reason" name="claim_reason" class="form-control" rows="4" 
+                                placeholder="@lang('Nyatakan alasan tuntutan anda')"></textarea>
+                            <div id="claim_reason_error" class="invalid-feedback d-block" style="display:none;"></div>
+                        </div>
+                    </div>
                     <p class="note">
                         *@lang('app.file_only_pdf_format_size_not_exceed_15mb')
                     </p>
@@ -636,6 +677,36 @@
                         $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
                     }
                 }
+
+
+
+               // Validate new_receipt file (REQUIRED)
+                const newReceiptFile = $('#new_receipt')[0].files[0];
+                if (!newReceiptFile) {
+                    showError('new_receipt', "@lang('Resit Bayaran Baru diperlukan')");
+                    $('#new_receipt_error').text("@lang('Resit Bayaran Baru diperlukan')").show();
+                } else {
+                    if (newReceiptFile.size > 15 * 1024 * 1024) {
+                        showError('new_receipt', "@lang('app.land_grant_max')");
+                        $('#new_receipt_error').text("@lang('app.land_grant_max')").show();
+                    } else if (newReceiptFile.type !== 'application/pdf') {
+                        showError('new_receipt', "@lang('app.land_grant_mimes')");
+                        $('#new_receipt_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+                // Validate supporting_docs file (OPTIONAL - only validate if file is selected)
+                const supportingDocsFile = $('#supporting_docs')[0].files[0];
+                if (supportingDocsFile) {
+                    if (supportingDocsFile.size > 15 * 1024 * 1024) {
+                        showError('supporting_docs', "@lang('app.land_grant_max')");
+                        $('#supporting_docs_error').text("@lang('app.land_grant_max')").show();
+                    } else if (supportingDocsFile.type !== 'application/pdf') {
+                        showError('supporting_docs', "@lang('app.land_grant_mimes')");
+                        $('#supporting_docs_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
 
                 // If validation fails, don't show popup
                 if (hasErrors) {

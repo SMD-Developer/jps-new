@@ -170,7 +170,7 @@
 
 @section('content')
 <div class="col-md-12 content-header">
-    <h5><i class="fa fa-credit-card" aria-hidden="true"></i> Payment Selection</h5>
+    <h5><i class="fa fa-credit-card" aria-hidden="true"></i> Pilihan Pembayaran</h5>
 </div>
 
 <section class="content">

@@ -29,7 +29,10 @@ class ClaimContribution extends Model
         'letter_of_support',
         'uploade_date',
         'status',
-        'is_viewed'
+        'is_viewed',
+        'new_receipt',
+        'supporting_docs',
+        'claim_reason'
     ];
 
     /**

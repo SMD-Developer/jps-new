@@ -241,8 +241,9 @@ class HomeController extends Controller {
                 "land_unit" => "required",
                 "state" => "required",
                 "land_grant" => "required|mimes:pdf|max:15000",
-                // "permission_plan" => "required|mimes:pdf|max:15000",
-                // "letter_of_support" => "required|mimes:pdf|max:15000",
+                "new_receipt" => "required|mimes:pdf|max:15000", // New required field
+                "supporting_docs" => "nullable|mimes:pdf|max:15000", // Optional
+                "claim_reason" => "nullable|string|max:1000",
             ], [
                 "uploade_date.required" => trans('app.uploade_date_required'),
                 "applicant.required" => trans('app.applicant_required'),
@@ -272,6 +273,11 @@ class HomeController extends Controller {
                 "letter_of_support.required" => trans('app.letter_of_support_required'),
                 "letter_of_support.mimes" => trans('app.letter_of_support_mimes'),
                 "letter_of_support.max" => trans('app.letter_of_support_max'),
+                "new_receipt.required" => trans('Resit Bayaran Baru diperlukan'),
+                "new_receipt.mimes" => trans('app.land_grant_mimes'),
+                "new_receipt.max" => trans('app.land_grant_max'),
+                "supporting_docs.mimes" => trans('app.land_grant_mimes'),
+                "supporting_docs.max" => trans('app.land_grant_max'),
             ]);
 
             $client = ClientRegisterModel::where('client_id', $logged_user->uuid)->first();
@@ -298,18 +304,25 @@ class HomeController extends Controller {
                 $uploadedFiles['land_grant'] = 'pdf/' . $landGrantFileName;
             }
     
-            if ($request->hasFile('permission_plan')) {
-                $permissionPlan = $request->file('permission_plan');
-                $permissionPlanFileName = $permissionPlan->getClientOriginalName();
-                $permissionPlan->move($uploadPath, $permissionPlanFileName);
-                $uploadedFiles['permission_plan'] = 'pdf/' . $permissionPlanFileName;
+            // New receipt (Required)
+            if ($request->hasFile('new_receipt')) {
+                $newReceipt = $request->file('new_receipt');
+                $newReceiptFileName = time() . '_new_receipt_' . $newReceipt->getClientOriginalName();
+                $newReceipt->move($uploadPath, $newReceiptFileName);
+                $uploadedFiles['new_receipt'] = 'pdf/' . $newReceiptFileName;
             }
-    
-            if ($request->hasFile('letter_of_support')) {
-                $letterOfSupport = $request->file('letter_of_support');
-                $letterOfSupportFileName = $letterOfSupport->getClientOriginalName();
-                $letterOfSupport->move($uploadPath, $letterOfSupportFileName);
-                $uploadedFiles['letter_of_support'] = 'pdf/' . $letterOfSupportFileName;
+
+            // Supporting documents (Optional)
+            if ($request->hasFile('supporting_docs')) {
+                $supportingDocs = $request->file('supporting_docs');
+                $supportingDocsFileName = time() . '_supporting_docs_' . $supportingDocs->getClientOriginalName();
+                $supportingDocs->move($uploadPath, $supportingDocsFileName);
+                $uploadedFiles['supporting_docs'] = 'pdf/' . $supportingDocsFileName;
+            }
+
+            // Claim reason (Optional)
+            if ($request->filled('claim_reason')) {
+                $uploadedFiles['claim_reason'] = $request->claim_reason;
             }
     
             $requestData = array_merge($request->except('_token'), $uploadedFiles, ['status' => 'pending']);
