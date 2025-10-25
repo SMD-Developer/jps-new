@@ -1111,15 +1111,23 @@ $(document).ready(function () {
             isValid = false;
         }
         
-        if (!$('input[name="idCardNumber"]').val()) {
-            const selectedAccountType = parseInt($('select[name="accountType"]').val());
-            if (selectedAccountType === 2 || selectedAccountType === 3) {
-                $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
+        const selectedAccountType = parseInt($('select[name="accountType"]').val());
+
+        if (selectedAccountType !== 3) { 
+            if (!$('input[name="idCardNumber"]').val()) {
+                if (selectedAccountType === 2) {
+                    $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
+                } else {
+                    $('#idCardNumberError').text('Nombor kad pengguna diperlukan');
+                }
+                isValid = false;
             } else {
-                $('#idCardNumberError').text('Nombor kad pengguna diperlukan');
+                $('#idCardNumberError').text(''); 
             }
-            isValid = false;
+        } else {
+            $('#idCardNumberError').text(''); 
         }
+
         
         if (!$('textarea[name="registeredAddress"]').val()) {
             $('#registeredAddress').text('Alamat Berdaftar diperlukan');
