@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel {
 	protected $commands = [
 		'App\Console\Commands\Inspire',
         'App\Console\Commands\SendRecurringInvoicesCommand',
+		'App\Console\Commands\CheckFPXPaymentStatus',
         //\Torann\Currency\Console\Update::class
 
 	];
@@ -27,5 +28,9 @@ class Kernel extends ConsoleKernel {
 	{
 		$schedule->command('inspire')->hourly();
         $schedule->command('invoicer:recurring-invoices')->dailyAt('00:00');
+		$schedule->command('fpx:check-status')
+             ->everyFiveMinutes()
+             ->withoutOverlapping()
+             ->runInBackground();
 	}
 }
