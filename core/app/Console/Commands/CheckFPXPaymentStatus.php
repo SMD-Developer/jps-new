@@ -31,10 +31,11 @@ class CheckFPXPaymentStatus extends Command
     {
         $this->info('Starting FPX payment status check...');
         
+   
         $pendingPayments = DB::table('payments')
             ->where('payment_status', 'pending_authorization')
             ->where('method', 'FPX_B2B')
-            ->where('created_at', '>=', now()->subHours(48))
+            ->where('created_at', '>=', now()->subHours(4))
             ->get();
         
         if ($pendingPayments->isEmpty()) {
@@ -59,10 +60,9 @@ class CheckFPXPaymentStatus extends Command
     {
         try {
             $this->line("Checking order: {$paymentRecord->seller_order_no}");
-            
-            // Prepare FPX status inquiry parameters
+   
             $fpx_msgType = "AE";
-            $fpx_msgToken = "02"; // B2B
+            $fpx_msgToken = "02"; 
             $fpx_sellerExId = $paymentRecord->seller_ex_id ?? "EX00014529";
             $fpx_sellerExOrderNo = $paymentRecord->seller_order_no;
             $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
@@ -155,9 +155,20 @@ class CheckFPXPaymentStatus extends Command
             
             $fpx_debitAuthCode = $response_value['fpx_debitAuthCode'] ?? '';
             
+            // LOG THE ACTUAL RESPONSE
+            Log::info('FPX Status Response for Order', [
+                'order_no' => $paymentRecord->seller_order_no,
+                'debit_auth_code' => $fpx_debitAuthCode,
+                'full_response' => $response_value,
+                'current_db_status' => $paymentRecord->payment_status
+            ]);
+            
             // Update payment status based on response
             $newPaymentStatus = '';
             $newStatusMessage = '';
+            
+            // Clean the auth code (remove spaces, ensure string)
+            $fpx_debitAuthCode = trim((string)$fpx_debitAuthCode);
             
             if ($fpx_debitAuthCode === '00') {
                 $newPaymentStatus = 'completed';
@@ -168,16 +179,19 @@ class CheckFPXPaymentStatus extends Command
                 $newPaymentStatus = 'pending_authorization';
                 $newStatusMessage = 'Payment is pending for authorizer approval';
                 $this->line("⏳ Order {$paymentRecord->seller_order_no}: Still pending");
+            } elseif ($fpx_debitAuthCode === '76') {
+                // Transaction not found / too old - DON'T mark as failed
+                $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Transaction not found in FPX (Code 76) - possibly too old");
             } else {
                 $newPaymentStatus = 'failed';
                 $newStatusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode);
                 $this->warn("✗ Order {$paymentRecord->seller_order_no}: Payment FAILED (Code: {$fpx_debitAuthCode})");
             }
             
-            // Check if status changed
+            $canUpdate = ($paymentRecord->payment_status === 'pending_authorization');
             $statusChanged = ($paymentRecord->payment_status !== $newPaymentStatus);
             
-            if ($statusChanged) {
+            if ($canUpdate && $statusChanged) {
                 $updateData = [
                     'payment_status' => $newPaymentStatus,
                     'status_message' => $newStatusMessage,
