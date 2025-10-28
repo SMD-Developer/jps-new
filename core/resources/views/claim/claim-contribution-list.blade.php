@@ -230,6 +230,7 @@
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{trans('app.status')}}</strong></th>
+                                        <th><strong>{{trans('app.total_payment')}}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -267,6 +268,7 @@
                                                     N/A
                                                 @endif
                                             </td>
+                                            <td></td>
                                             <td>
                                                 @if ($canAdminStaffEditClaimApplication)
                                                 <div class="sbtn">

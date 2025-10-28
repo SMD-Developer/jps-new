@@ -48,7 +48,7 @@
     .form-group label {
         width: 220px;
         font-weight: 600;
-        margin-right: 15px;
+        margin-right: 78px;
         font-size: 13px;
         color: #555;
     }
@@ -176,6 +176,40 @@
         font-size: 14px;
         color: #555;
     }
+
+
+    .file-input {
+        border: 1px solid #ccc;
+        padding: 8px;
+        border-radius: 6px;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .upload-button {
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin-top: 5px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .offset-area {
+        margin-left: 307px; 
+        margin-top: 5px;
+    }
+
+    .offset-area small a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+
+    .offset-area small a:hover {
+        text-decoration: underline;
+    }
+
+    
 </style>
 <title>@lang('app.claim_contribution') | JPS</title>
 @section('content')
@@ -191,7 +225,8 @@
                     <!-- Personal Information Section -->
                     <div class="section">
                         <h4>@lang('app.claim_contribution')</h4>
-                        <form class="form" method="POST" action="{{ route('client_claim_submit') }}"
+                        <form class="form" method="POST" 
+                            action="{{ route('claims.send_to_finance', ['id' => $claim->id]) }}" 
                             enctype="multipart/form-data" id="registrationForm">
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -452,14 +487,14 @@
                         </div>
                     </div>
 
-                    <h4>@lang('app.payment_receipt')</h4>
+                    <h4>@lang('Muat Naik Dokumen Sokongan')</h4>
                     <div class="form-group">
-                        <label for="geran-tanah">@lang('app.receipt') <b class="starr">*</b></label>
+                        <label for="geran-tanah">@lang('Resit Bayaran Lama') <b class="starr">*</b></label>
                         <input type="file" id="land_grant" name="land_grant" class="file-input"
                             accept="application/pdf">
                         <label for="land_grant" class="upload-button">@lang('app.choose_file')</label>
                         <div id="land_grantfileName" class="file-name"></div>
-                        <div class="col-9 text-center">
+                        <div class="offset-area">
                             @if ($claim->land_grant)
                                 <small class="text-info">Current file:
                                     <a href="{{ url('pdf/' . basename($claim->land_grant)) }}"
@@ -471,34 +506,82 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_receipt">@lang('Resit Bayaran Baru') <b class="starr">*</b></label>
+                        <input type="file" id="new_receipt" name="new_receipt" class="file-input" accept="application/pdf">
+                        <label for="new_receipt" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="new_receiptfileName" class="file-name"></div>
+
+                        <div class="offset-area">
+                            @if ($claim->new_receipt)
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->new_receipt)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->new_receipt) }}
+                                    </a>
+                                </small>
+                            @endif
+                            @error('new_receipt')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="geran-tanah">@lang('Dokumen Sokongan') <b class="starr"></b></label>
+                        <input type="file" id="supporting_docs" name="supporting_docs" class="file-input"
+                            accept="application/pdf">
+                        <label for="supporting_docs" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="supporting_docsfileName" class="file-name"></div>
+                        <div class="offset-area">
+                            @if ($claim->supporting_docs)
+                                <small class="text-info">Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->supporting_docs)) }}"
+                                        target="_blank"><i class="fa fa-file-pdf-o"></i>
+                                        {{ basename($claim->supporting_docs) }}
+                                    </a></small>
+                            @endif
+                            @error('supporting_docs')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <label for="claim-reason">@lang('Nyatakan Alasan Tuntutan')</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea id="claim-reason" name="claim_reason" class="form-control" rows="4" 
+                                placeholder="@lang('Nyatakan alasan tuntutan anda')">{{$claim->claim_reason}}</textarea>
+                            <div id="claim_reason_error" class="invalid-feedback d-block" style="display:none;"></div>
+                        </div>
+                    </div>
 
                 <p class="note">
                     *@lang('app.file_only_pdf_format_size_not_exceed_15mb')
                 </p>
-                
-                
-
 
                 <!-- Submit Section -->
                 <div class="form-actions">
+                        <button type="button" class="btn btn-secondary">@lang('Kembali')</button>
+                        <button type="button" class="btn btn-secondary">@lang('app.reject')</button>
                         @if($isAdminStaff)
                         <button type="button" class="btn btn-info no-print" data-bs-toggle="modal" data-bs-target="#statusModal">
-                            @lang('app.kemaskini')
+                            Hantar ke Kewangan
                         </button>
                         @endif
                         <button type="button" class="btn btn-secondary no-print" onclick="window.print()">
                             <i class="fas fa-print me-1"></i> @lang('app.print')
                         </button>
-                    <!--<button type="button" class="btn btn-secondary">@lang('Kembali')</button>-->
                     <!--<button type="submit" class="btn btn-primary" id="updateButton">@lang('app.update')</button>-->
-                    <!--<button type="submit" class="btn btn-primary">@lang('app.send')</button>-->
+                    <!-- <button type="submit" class="btn btn-primary">@lang('app.send')</button> -->
                 </div>
                 
                 <!-- Status Update Modal -->
-                
-
-                </form>
                     <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -507,26 +590,19 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="statusUpdateForm" action="{{ route('updateClaimStatus', $claim->id ?? '') }}" method="POST">
-                                        @csrf
-                                        <div class="mb-3">
-                                            <label for="status" class="form-label">@lang('app.status')</label>
-                                            <select class="form-select" id="status" name="status" required>
-                                                <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>@lang('app.pending')</option>
-                                                <option value="approve_payment_in_process" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
-                                                <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
-                                                <option value="rejected" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
-                                            </select>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
-                                            <button type="submit" class="btn btn-primary">@lang('app.kemaskini')</button>
-                                        </div>
-                                    </form>
+                                    <p>
+                                        Sila Hadir ke jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan dalam masa 
+                                        7 hari bekerja
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
+                                    <button type="button" class="btn btn-primary" id="sendToFinanceBtn">Hantar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </form>
             </div>
         </div>
         </div>
@@ -601,126 +677,65 @@
                 $(this).next('.invalid-feedback').remove();
             });
 
-            $('#registrationForm').on('submit', function(e) {
-                e.preventDefault();
-
-                if (!formIsReady) {
-                    Swal.fire({
-                        title: "Error",
-                        text: "Please wait for the form to load fully before submitting.",
-                        icon: "error",
-                        confirmButtonText: "OK"
-                    });
-                    return;
-                }
-
-                $('.invalid-feedback').remove();
-                $('.form-control').removeClass('is-invalid');
+            $('#sendToFinanceBtn').on('click', function() {
+                $('#statusModal').modal('hide');
 
                 Swal.fire({
-                    title: "@lang('app.are_you_sure_admin')",
-                    // text: "@lang('app.confirm_submit_application')",
+                    title: "@lang('app.are_you_sure')",
+                    text: "Adakah anda pasti untuk menghantar permohonan ini ke Bahagian Kewangan?",
                     icon: "question",
                     showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
                     confirmButtonText: "@lang('app.yes')",
                     cancelButtonText: "@lang('app.cancel')"
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        $('#send_to_finance').val(1);
+
+                        // Show loading
                         Swal.fire({
-                            title: "@lang('app.processing')",
-                            html: "@lang('app.please_wait')",
+                            title: 'Menghantar...',
+                            text: 'Sila tunggu',
                             allowOutsideClick: false,
                             didOpen: () => {
                                 Swal.showLoading();
                             }
                         });
 
-                        var formData = new FormData(this);
-                        console.log("FormData:", formData);
+                        // Prepare form data for AJAX
+                        let formData = new FormData($('#registrationForm')[0]);
 
                         $.ajax({
-                            url: "{{ route('client_claim_submit') }}",
-                            type: "POST",
+                            url: $('#registrationForm').attr('action'),
+                            method: 'POST',
                             data: formData,
-                            contentType: false,
                             processData: false,
+                            contentType: false,
                             success: function(response) {
-                                Swal.close();
-                                if (response.success) {
-                                    // Send notification to admin staff
-                                    $.ajax({
-                                        url: "{{ route('notify-admin-new-application') }}", // Define this route in your Laravel routes
-                                        type: "POST",
-                                        data: {
-                                            application_id: response
-                                                .application_id,
-                                            _token: $('meta[name="csrf-token"]')
-                                                .attr(
-                                                    'content'
-                                                ) // CSRF token for Laravel
-                                        },
-                                        success: function(
-                                            notificationResponse) {
-                                            console.log(
-                                                'Admin notification sent:',
-                                                notificationResponse);
-                                        },
-                                        error: function(xhr) {
-                                            console.error(
-                                                'Error sending admin notification:',
-                                                xhr);
-                                        }
-                                    });
-
-                                    Swal.fire({
-                                        title: "@lang('app.success')",
-                                        text: response.message,
-                                        icon: "success",
-                                        confirmButtonText: "OK"
-                                    }).then(() => {
-                                        $('#registrationForm')[0].reset();
-                                        window.location.href =
-                                            "{{ route('client_application_status') }}";
-                                    });
-                                }
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berjaya!',
+                                    text: response.message || 'Status berjaya dikemaskini.',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.href = "{{ route('claim.list') }}";
+                                });
                             },
                             error: function(xhr) {
-                                Swal.close();
-                                console.log(xhr);
-                                console.log(xhr.responseJSON);
-
-                                if (xhr.status === 422) {
-                                    let errors = xhr.responseJSON.errors;
-                                    $.each(errors, function(key, value) {
-                                        let inputField = $('[name="' + key +
-                                            '"]');
-                                        inputField.addClass('is-invalid');
-                                        inputField.after(
-                                            '<div class="invalid-feedback d-flex justify-content-end">' +
-                                            value[0] + '</div>'
-                                        );
-                                        if (key === 'land_area') {
-                                            let errorDiv = inputField.next(
-                                                '.invalid-feedback');
-                                            $('.d-flex.align-items-center')
-                                                .after(errorDiv);
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: "Error!",
-                                        text: "@lang('app.unexpected_error_occurred')",
-                                        icon: "error",
-                                        confirmButtonText: "OK"
-                                    });
-                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Ralat!',
+                                    text: xhr.responseJSON?.message || 'Sesuatu kesilapan telah berlaku. Sila cuba lagi.'
+                                });
                             }
                         });
+                    } else {
+                        $('#statusModal').modal('show');
                     }
                 });
             });
+
         });
     </script>
     <script>
@@ -825,34 +840,5 @@
             convertToHectare();
         });
     </script>
-    <script>
-        $(document).ready(function() {
-            $('#statusUpdateForm').submit(function(e) {
-                e.preventDefault();
-                
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#statusModal').modal('hide');
-                        Swal.fire({
-                            icon: 'success',
-                            title: '@lang('app.success')',
-                            text: response.message || '@lang('app.claim_status_updated_successfully')',
-                        }).then(() => {
-                            window.location.href = "{{ route('claim.list') }}";  
-                        });
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '@lang('app.error')',
-                            text: xhr.responseJSON.message || '@lang('app.failed_to_update_status')',
-                        });
-                    }
-                });
-            });
-        });
-    </script>
+ 
 @endsection

@@ -450,6 +450,58 @@ class HomeController extends Controller {
     }
 
 
+    public function sendToFinance(Request $request, $id)
+    {
+        try {
+            $claim = DB::table('claim_contribution')->where('id', $id)->first();
+
+            if (!$claim) {
+                return response()->json(['success' => false, 'message' => 'Claim not found'], 404);
+            }
+
+            // Update the send_to_finance flag
+            DB::table('claim_contribution')
+                ->where('id', $id)
+                ->update([
+                    'send_to_finance' => 1,
+                    'updated_at' => now(),
+                ]);
+
+            // Log the activity
+            $admin = auth('admin')->user();
+            $causerUsername = $admin ? $admin->username : 'System';
+            $causerUuid = $admin ? $admin->uuid : null;
+
+            ActivityLog::create([
+                'log_name' => 'claim_contribution',
+                'description' => 'Claim sent to finance by admin: ' . $causerUsername,
+                'event' => 'sent_to_finance',
+                'subject_type' => 'App\Models\ClaimContribution',
+                'subject_id' => $id,
+                'properties' => ['send_to_finance' => 1],
+                'causer_type' => $admin ? get_class($admin) : null,
+                'causer_id' => $causerUuid,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Permohonan berjaya dihantar ke Bahagian Kewangan')
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Send to Finance Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred. Please try again.'
+            ], 500);
+        }
+    }
+
+
+
     public function approverapplicationList(Request $request)
     {
         $perPage = $request->input('per_page', 10);
@@ -2123,7 +2175,7 @@ class HomeController extends Controller {
             }
             
             // Eager load both relationships
-            $results = $query->with(['applicant', 'division', 'districts'])->get();
+            $results = $query->with(['applicant', 'division', 'districts', 'payment'])->get();
             
         }
         

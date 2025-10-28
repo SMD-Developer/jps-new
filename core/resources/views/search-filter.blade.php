@@ -223,7 +223,7 @@
                                     <th>Tarikh Permohonan</th>
                                     <th>{{ __('app.reference_number') }}</th>
                                     <th>Status</th>
-                                    {{-- <th>{{ __('app.actions') }}</th> --}}
+                                    <th>Untuk Tindakan</th> 
                                 </tr>
                             </thead>
                             <tbody>
@@ -256,6 +256,17 @@
                                                     @default
                                                         N/A
                                                 @endswitch
+                                            </td>
+
+                                            <td>
+                                                @if($result->payment && $result->payment->payment_status === 'completed')
+                                                    <a href="{{ route('user_original_receipts', ['application_id' => $result->id]) }}" 
+                                                        class="btn btn-secondary btn-sm"
+                                                        style="border-radius: 10px; padding: 6px 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+                                                        <strong>{{ trans('app.view_receipt') }}</strong>
+                                                    </a>
+
+                                                @endif
                                             </td>
 
                                         </tr>

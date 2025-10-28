@@ -217,6 +217,9 @@ Route::group(['middleware' => 'install'], function(){
         ->name('check.reference.duplicate');
         Route::post('update-claim-status/{id}', 'HomeController@updateStatus')
         ->name('updateClaimStatus');
+        Route::post('claims/{id}/send-to-finance', 'HomeController@sendToFinance')
+        ->name('claims.send_to_finance');
+
         
         Route::get('mangage-state', 'HomeController@manageState')->name('manage.state');
         Route::post('states/add', 'HomeController@addState')->name('addState');

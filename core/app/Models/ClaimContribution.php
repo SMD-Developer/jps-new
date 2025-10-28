@@ -32,7 +32,8 @@ class ClaimContribution extends Model
         'is_viewed',
         'new_receipt',
         'supporting_docs',
-        'claim_reason'
+        'claim_reason',
+        'send_to_finance'
     ];
 
     /**
