@@ -281,12 +281,12 @@
     </script>
     <script>
         // Live preview for profile image
-    $('#profileImage').on('change', function (e) {
-        const [file] = this.files;
-        if (file) {
-            $('#profileImagePreview').attr('src', URL.createObjectURL(file));
-        }
-    });
+        $('#profileImage').on('change', function (e) {
+            const [file] = this.files;
+            if (file) {
+                $('#profileImagePreview').attr('src', URL.createObjectURL(file));
+            }
+        });
     </script>
     <script>
         document.getElementById('profileImage').addEventListener('change', function(e) {
@@ -346,4 +346,22 @@
             });
         });
     </script> 
+    <script>
+        function updateIdCardLabel() {
+            const accountTypeValue = $('select[name="accountType"]').val();
+            const idCardLabel = $('label[for="idCardNumber"]');
+            
+            if (accountTypeValue == '1') {
+                idCardLabel.text('Jenis/Nombor Pengenalan');
+            } else if (accountTypeValue == '3') {
+                idCardLabel.text('Agensi kerajaan');
+            } else {
+                idCardLabel.text('@lang("app.identification_card_number")');
+            }
+        }
+        
+        $(document).ready(function() {
+            updateIdCardLabel();
+        });
+    </script>
 @endsection

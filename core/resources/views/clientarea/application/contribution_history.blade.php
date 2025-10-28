@@ -29,29 +29,21 @@
         font-weight: 600;
     }
 
-    /* Flex container for buttons */
-    /* Flex container for buttons */
+
     .sbtn {
         display: flex;
         flex-wrap: wrap;
-        /* Allow wrapping for smaller screens */
         justify-content: flex-start;
         gap: 0.5rem;
-        /* Uniform spacing */
     }
 
-    /* Smaller, compact buttons */
+   
     .sbtn a {
         flex: 0 1 auto;
-        /* Prevents buttons from stretching too much */
         max-width: 150px;
-        /* Restrict the button width */
         padding: 4px 8px;
-        /* Reduce padding for a compact size */
         font-size: 0.75rem;
-        /* Smaller font size */
         line-height: 1;
-        /* Compact line height */
         background: #E85B6C !important;
         border: 1px solid #E85B6C;
         border-radius: 25px;
@@ -59,17 +51,13 @@
 
     .btn-sm {
         padding: 4px 8px;
-        /* Ensure consistency with other small buttons */
         font-size: 0.75rem;
         line-height: 1;
-        /* Reduce button height */
 
     }
 
-    /* Adjust button gap for smaller buttons */
     .sbtn {
         gap: 0.25rem;
-        /* Smaller spacing between buttons */
     }
 
 
@@ -77,12 +65,10 @@
     @media (max-width: 768px) {
         .sbtn {
             justify-content: center;
-            /* Center buttons on smaller screens */
         }
 
         .sbtn a {
             flex: 1 1 100%;
-            /* Stack buttons on smaller screens */
             max-width: none;
         }
     }
@@ -90,7 +76,6 @@
     /* Adjust button appearance */
     .btn-sm {
         padding: 6px 10px !important;
-        /* Smaller padding for compact design */
     }
 
 
@@ -123,8 +108,6 @@
         font-size: 13px;
     }
 
-    /*border-radius: 15px !important;*/
-
 
     /* Add extra styling for badges if needed */
     .status-badge {
@@ -146,6 +129,37 @@
         /* Slight transparency */
         cursor: pointer;
     }
+
+    /* Fix table responsiveness */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent table columns from breaking layout */
+    .table {
+        width: 100%;
+        min-width: 500px; 
+        table-layout: auto;
+    }
+
+    /* Fix wrapping issue in status column */
+    .table td, .table th {
+        white-space: nowrap; 
+        vertical-align: middle;
+    }
+
+   
+    .table .sbtn a {
+        white-space: nowrap;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    
+
 </style>
 <title>@lang('app.contribution_history') | JPS</title>
 @section('content')
@@ -174,12 +188,12 @@
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th><strong>{{ trans('app.bil') }}</strong></th>
-                                        <th><strong>{{ trans('app.date') }}</strong></th>
-                                        <th><strong>{{ trans('app.reference _no') }}</strong></th>
-                                        <th><strong>{{ trans('app.account_type') }}</strong></th>
-                                        <th><strong>{{ trans('app.applicant_name') }}</strong></th>
-                                        <th><strong>{{ trans('app.lot/PT') }}</strong></th>
+                                        <th style="width: 5%;"><strong>{{ trans('app.bil') }}</strong></th>
+                                        <th style="width: 10%;"><strong>{{ trans('app.date') }}</strong></th>
+                                        <th style="width: 15%;"><strong>{{ trans('app.reference _no') }}</strong></th>
+                                        <th style="width: 10%;"><strong>{{ trans('app.account_type') }}</strong></th>
+                                        <th style="width: 15%;"><strong>{{ trans('app.applicant_name') }}</strong></th>
+                                        <th style="width: 15%;"><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }}</strong></th>
                                        <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
@@ -310,7 +324,6 @@
                                         </ul>
                                     </nav>
                                 </div>
-                             
                         </div>
                     </div>
                 </div>

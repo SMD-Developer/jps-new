@@ -165,6 +165,7 @@
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <!--<th><strong>Activity</strong></th>-->
                                         <th><strong>{{ trans('app.status') }}</strong></th>
+                                        <th><strong>{{trans('app.total_payment')}}</strong></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -241,6 +242,7 @@
                                                     {{ trans('app.no_status') }}
                                                 @endif
                                             </td>
+                                            <td></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
