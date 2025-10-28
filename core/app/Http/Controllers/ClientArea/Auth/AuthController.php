@@ -335,6 +335,14 @@ class AuthController extends Controller {
         
         if ($request->isMethod('post')) {
             try {
+
+                $isDistrictRequired = true;
+                if ($request->state) {
+                    $stateData = DB::table('state')->where('idnegeri', $request->state)->where('status', 1)->first();
+                    if ($stateData && in_array($stateData->negeri_code, ['14', '15', '16'])) {
+                        $isDistrictRequired = false;
+                    }
+                }
                 // Validate the request
                 $this->validate($request, [
                     'accountType'       => 'required',
@@ -362,7 +370,7 @@ class AuthController extends Controller {
                     'registeredAddress' => 'required|string|max:255',
                     'postalCode'        => 'required|string|max:10',
                     'state'             => 'required',  
-                    'district'          => 'required',  
+                    'district'          => $isDistrictRequired ? 'required' : 'nullable',  
                     'city'              => 'required|string|max:255',
                     'mobileNumber'      => 'required|string|size:10|regex:/^[0-9]{10}$/|unique:client_register,mobileNumber',
                     'landline'          => 'string|min:10|unique:client_register,landline',

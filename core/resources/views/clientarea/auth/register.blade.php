@@ -505,7 +505,7 @@ background-color: red;
                             <div class="row mt-4">
                                         <div class="col-md-3 col-6">
                                             <div class="form-group">
-                                                <label for="idTypeNumber">@lang('app.identification_card_number')</label>
+                                                <label for="idTypeNumber">Jenis/Nombor Pengenalan</label>
                                                 <span class="star">*</span>
                                             </div>
                                         </div>
@@ -528,7 +528,7 @@ background-color: red;
                                                         id="idCardNumber"
                                                         value="{{ old('idCardNumber') }}" 
                                                         maxlength="14"
-                                                        placeholder="Enter ID Number">
+                                                        placeholder="">
                                                 </div>
                                             </div>
                                              <span class="text-dangerr" id="idCardNumberError"></span>
@@ -876,7 +876,7 @@ document.addEventListener('DOMContentLoaded', function() {
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
         } else {
-            idCardInput.placeholder = "Select ID Type First";
+            idCardInput.placeholder = "";
             idCardInput.value = '';
             idCardInput.removeEventListener('input', handleInput);
         }
@@ -923,7 +923,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Account Type 1 - Show "Jenis/Nombor Pengenaian"
             userInfoButton.innerText = originalTexts.sectionHeader;
             if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
-            if (idCardLabel) idCardLabel.innerText = "Jenis/Nombor Pengenaian";
+            if (idCardLabel) idCardLabel.innerText = "Jenis/Nombor Pengenalan";
             if (userNameHintDiv) userNameHintDiv.style.display = '';
             
             // Restore ID Type dropdown with original options
@@ -936,7 +936,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (idCardStar) idCardStar.style.display = 'inline';
             
             if (idCardInput) {
-                idCardInput.placeholder = "Select ID Type First";
+                idCardInput.placeholder = "";
                 idCardInput.value = '';
                 idCardInput.maxLength = 14;
                 idCardInput.removeEventListener('input', handleInput);
@@ -957,7 +957,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (idCardStar) idCardStar.style.display = 'inline';
             
             if (idCardInput) {
-                idCardInput.placeholder = "Select ID Type First";
+                idCardInput.placeholder = "";
                 idCardInput.value = '';
                 idCardInput.maxLength = 14;
                 idCardInput.removeEventListener('input', handleInput);
@@ -983,25 +983,35 @@ $(document).ready(function () {
     // District Loading (State Dropdown)
     $('#negeri').on('change', function () {
         const stateId = $(this).val();
-        $('#daerah').html('<option value="">Loading...</option>');
-
-        if (stateId) {
-            $.ajax({
-                url: `/clientarea/register-districts/${stateId}`,
-                type: 'GET',
-                success: function (data) {
-                    let options = '<option value="">Sila Pilih Daerah</option>';
-                    data.forEach(district => {
-                        options += `<option value="${district.iddaerah}">${district.daerah_code + ' - ' + district.daerah}</option>`;
-                    });
-                    $('#daerah').html(options);
-                },
-                error: function () {
-                    $('#daerah').html('<option value="">Error loading districts</option>');
-                }
-            });
+        const selectedOption = $(this).find('option:selected');
+        const stateCode = selectedOption.text().split(' - ')[0].trim();
+        
+        if (['14', '15', '16'].includes(stateCode)) {
+            $('#daerah').closest('.row').hide();
+            $('#daerah').val('').prop('required', false);
         } else {
-            $('#daerah').html('<option value="">Sila Pilih</option>');
+            $('#daerah').closest('.row').show();
+            $('#daerah').prop('required', true);
+            $('#daerah').html('<option value="">Loading...</option>');
+
+            if (stateId) {
+                $.ajax({
+                    url: `/clientarea/register-districts/${stateId}`,
+                    type: 'GET',
+                    success: function (data) {
+                        let options = '<option value="">Sila Pilih Daerah</option>';
+                        data.forEach(district => {
+                            options += `<option value="${district.iddaerah}">${district.daerah_code + ' - ' + district.daerah}</option>`;
+                        });
+                        $('#daerah').html(options);
+                    },
+                    error: function () {
+                        $('#daerah').html('<option value="">Error loading districts</option>');
+                    }
+                });
+            } else {
+                $('#daerah').html('<option value="">Sila Pilih</option>');
+            }
         }
     });
 
@@ -1147,8 +1157,11 @@ $(document).ready(function () {
             if (!$('input[name="idCardNumber"]').val()) {
                 if (selectedAccountType === 2 || selectedAccountType === 4) {
                     $('#idCardNumberError').text('No Pendaftaran Syarikat diperlukan');
-                } else {
-                    $('#idCardNumberError').text('Nombor kad pengguna diperlukan');
+                } else if(selectedAccountType === 1){
+                    $('#idCardNumberError').text('Jenis/Nombor Pengenalan diperlukan');
+                }
+                else {
+                    $('#idCardNumberError').text('Jenis/Nombor Pengenalan diperlukan');
                 }
                 isValid = false;
             } else {
@@ -1174,7 +1187,11 @@ $(document).ready(function () {
             isValid = false;
         }
         
-        if (!$('select[name="district"]').val()) {
+        const selectedOption = $('#negeri').find('option:selected');
+        const stateCode = selectedOption.text().split(' - ')[0].trim();
+        const isDistrictRequired = !['14', '15', '16'].includes(stateCode);
+    
+        if (isDistrictRequired && !$('select[name="district"]').val()) {
             $('#district').text('Daerah diperlukan');
             isValid = false;
         }
