@@ -114,7 +114,7 @@
 
     .status-badge .badge {
         font-size: 0.8rem;
-        padding: 8px 15px;
+        padding: 8px 29px;
         border-radius: 25px;
         background-color: #1991EE !important;
         color: #fff !important;
@@ -784,6 +784,7 @@
                                             <td>
                                                 @if ($application->status == 'approved')
                                                     <div class="status-badge">
+                                                        
                                                         <a href="{{ $isAdminOrStaff ? route('apporver_view_letter', ['application_id' => $application->id]) : route('approver_letter', ['application_id' => $application->id]) }}"
                                                             style="text-decoration: none;">
                                                             <span
@@ -792,6 +793,7 @@
                                                                 {{ trans('app.completed') }}
                                                             </span>
                                                         </a>
+                                                        <small class="ms-2 text-muted">{{trans('app.click_to_view_bill')}}</small>
                                                     </div>
                                                 @elseif ($application->status == 'pending')
                                                     <div class="sbtn">

@@ -361,7 +361,8 @@
                                         <th><strong>{{ trans('app.applicant_list') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }}</strong></th>
-                                        <th><strong>{{ trans('app.payment_method') }}</strong></th>
+                                        <th><strong>Mod Terimaan EFT</strong></th>
+                                        <th><strong>Mod Transaksi</strong></th>
                                          <th><strong>ID Transaksi</strong></th>
                                         <th><strong>{{ trans('app.payment_status') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
@@ -475,8 +476,20 @@
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}</td>
                                             <td>{{ $item->final_amount ? 'RM ' . number_format($item->final_amount, 2) : 'N/A' }}</td>
+                                            <!-- First Column - EFT ONLY -->
                                             <td>
-                                                @if($paymentMethod !== '-')
+                                                @if($paymentMethod === 'EFT')
+                                                    <span class="payment-method-badge {{ $methodClass }}">
+                                                        {{ $paymentMethod }}
+                                                    </span>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+
+                                            <!-- Second Column - All methods EXCEPT EFT -->
+                                            <td>
+                                                @if($paymentMethod !== '-' && $paymentMethod !== 'EFT')
                                                     <span class="payment-method-badge {{ $methodClass }}">
                                                         {{ $paymentMethod }}
                                                     </span>

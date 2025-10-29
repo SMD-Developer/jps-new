@@ -330,8 +330,8 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #FBFFE0;">
                         <i class="fa fa-file-pdf-o bg-green"></i>
                         <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text2 mb-0">@lang('app.generate_collectors_statement')</span>
-                            <span class="info-box-number">{{$generateCollectorReport}}</span>
+                            <span class="info-box-text text3 text-left text2 mb-0">@lang('app.payment_in_review')</span>
+                            <span class="info-box-number">{{$totalInReviewPayments}}</span>
                         </div>
                     </div>
                     </a>
@@ -341,8 +341,8 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #EEF6FF;">
                         <i class="fa fa-list-alt bg-yellow"></i>
                         <div class="info-box-content pr-0" rowspan="2" >
-                                <span class="info-box-text text3 text-left text2">@lang('app.assignments_not_taken')</span>
-                                <span class="info-box-number">{{$assignmentNotTaken}}</span>
+                                <span class="info-box-text text3 text-left text2">@lang('app.payment_contribution_as_today')</span>
+                                <span class="info-box-number">RM {{$totalTodayContribution}}</span>
                         </div>
                     </div>
                     </a>
@@ -352,8 +352,8 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #FFEFEF;">
                         <i class="fa fa-puzzle-piece bg-red"></i>
                         <div class="info-box-content pr-0" rowspan="2" >
-                            <span class="info-box-text text3 text-left text2">@lang('app.unfinished_tasks')</span>
-                            <span class="info-box-number">0</span>
+                            <span class="info-box-text text3 text-left text2">@lang('app.payment_contribution_month')</span>
+                            <span class="info-box-number">RM {{$totalMonthContribution}}</span>
                         </div>
                     </div>
                     </a>

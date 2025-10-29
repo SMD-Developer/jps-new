@@ -262,16 +262,37 @@
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                             </td>
                                             <td>
-                                                @if($item->status)
-                                                    @lang('app.' . $item->status)
-                                                @else
-                                                    N/A
-                                                @endif
+                                                    @if($item->status)
+                                                        @php
+                                                            switch($item->status) {
+                                                                case 'rejected':
+                                                                    $badgeClass = 'bg-danger';
+                                                                    break;
+                                                                case 'approve_paid':
+                                                                    $badgeClass = 'bg-success';
+                                                                    break;
+                                                                case 'pending':
+                                                                    $badgeClass = 'bg-warning text-dark';
+                                                                    break;
+                                                                case 'approve_payment_in_process':
+                                                                    $badgeClass = 'bg-info text-dark';
+                                                                    break;
+                                                                default:
+                                                                    $badgeClass = 'bg-secondary';
+                                                            }
+                                                        @endphp
 
-                                                @if($item->send_to_finance == 1)
-                                                    <br>
-                                                    <small class="text-info">Forwarded to Finance</small>
-                                                @endif
+                                                        <span class="badge {{ $badgeClass }}">
+                                                            @lang('app.' . $item->status)
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-secondary">N/A</span>
+                                                    @endif
+
+                                                    @if($item->send_to_finance == 1)
+                                                        <br>
+                                                        <small class="text-info">Forwarded to Finance</small>
+                                                    @endif
                                             </td>
 
                                             <td>{{$item->payment_amount}}</td>

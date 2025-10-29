@@ -16,6 +16,7 @@ use App\Models\ClientRegisterModel;
 use App\Models\Client as ClientUser ;
 use App\Models\Payment;
 use App\Models\ReportReview;
+use Carbon\Carbon;
 
 class financeController extends Controller {
     protected $invoice, $product, $client, $estimate, $payment, $expense;
@@ -45,6 +46,20 @@ class financeController extends Controller {
                 ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
                 ->where('client_register.accountType', '=', 3)
                 ->count();
+                $totalInReviewPayments = DB::table('payments')
+                ->where('payment_status', 'in_review')
+                ->count();
+                $totalTodayContribution = DB::table('payments')
+                ->where('payment_status', 'completed')
+                ->whereDate('created_at', Carbon::today())
+                ->sum('amount');
+
+                $totalMonthContribution = DB::table('payments')
+                ->where('payment_status', 'completed')
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
+                ->sum('amount');
+
                 $monthapplication = DB::table('applications')
                     ->whereMonth('created_at', date('m'))
                     ->count(); 
@@ -87,6 +102,9 @@ class financeController extends Controller {
                 'rejected',
                 'applicationsByDistrict',
                 'generateCollectorReport',
+                'totalInReviewPayments',
+                'totalTodayContribution',
+                'totalMonthContribution',
                 'districts'));
           }
     	public function getDistricts($state_id)

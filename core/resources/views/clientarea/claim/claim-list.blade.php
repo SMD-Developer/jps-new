@@ -175,8 +175,15 @@
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
                                             <td>
-                                                {{ $item->client ? ($item->client->accountType == 1 ? 'Individu' : ($item->client->accountType == 2 ? 'Pemaju' : ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 'Unknown'))) : '' }}
+                                                    {{ $item->client 
+                                                        ? ($item->client->accountType == 1 ? 'Individu' 
+                                                        : ($item->client->accountType == 2 ? 'Pemaju' 
+                                                        : ($item->client->accountType == 3 ? 'Agensi Kerajaan' 
+                                                        : ($item->client->accountType == 4 ? 'Perunding' : 'Unknown')))) 
+                                                        : ''  
+                                                    }}
                                             </td>
+
                                             <td>
                                                 @switch($item->application_type)
                                                     @case('reapply')

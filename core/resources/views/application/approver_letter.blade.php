@@ -395,10 +395,14 @@
             
             <div class="row last_row align-items-center mt-5" style="justify-content: end;">
                 <div class="col-12 col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
-                    <button type="button" class="btn btn-success mx-2 no-print" 
-                            onclick="window.location.href='{{ route('approvernewApplication', ['id' => $application->id]) }}'">
+                    <button 
+                        type="button" 
+                        class="btn btn-success mx-2 no-print" 
+                        onclick="window.history.back()"
+                    >
                         @lang('app.back')
                     </button>
+
                     @if($application->status == 'approved')
                        <button type="button" class="btn btn-secondary btn3 no-print" onclick="window.print()">
                             @lang('app.print')
