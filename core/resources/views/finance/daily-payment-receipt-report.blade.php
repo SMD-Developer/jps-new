@@ -721,53 +721,70 @@
                             <th>Amaun(RM)</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @php
-                            // Calculate B2B and B2C payment statistics
-                            $b2bCount = 0;
-                            $b2bAmount = 0;
-                            $b2cCount = 0;
-                            $b2cAmount = 0;
-                            
-                            foreach ($applications as $application) {
-                                $method = $application->methods ?? '';
-                                $amount = $application->payment_amount ?? 0;
-                                
-                                // Check for B2B transactions
-                                if (stripos($method, 'FPX_B2B') !== false) {
-                                    $b2bCount++;
-                                    $b2bAmount += $amount;
+                     <tbody>
+                            @php
+                                // Initialize counters and totals
+                                $b2bCount = 0;
+                                $b2bAmount = 0;
+                                $b2cCount = 0;
+                                $b2cAmount = 0;
+                                $baucarCount = 0;
+                                $baucarAmount = 0;
+
+                                foreach ($applications as $application) {
+                                    $method = $application->methods ?? '';
+                                    $amount = $application->payment_amount ?? 0;
+                                    $accountTypeName = isset($application->account_type_name) 
+                                        ? strtoupper(trim($application->account_type_name)) 
+                                        : '';
+
+                                    // ✅ B2B
+                                    if (stripos($method, 'FPX_B2B') !== false) {
+                                        $b2bCount++;
+                                        $b2bAmount += $amount;
+                                    }
+                                    // ✅ B2C
+                                    elseif (stripos($method, 'FPX_B2C') !== false) {
+                                        $b2cCount++;
+                                        $b2cAmount += $amount;
+                                    }
+                                    // ✅ BAUCAR BAYARAN (for agency users)
+                                    elseif ($accountTypeName === 'AGENSI KERAJAAN') {
+                                        $baucarCount++;
+                                        $baucarAmount += $amount;
+                                    }
                                 }
-                                // Check for B2C transactions
-                                elseif (stripos($method, 'FPX_B2C') !== false) {
-                                    $b2cCount++;
-                                    $b2cAmount += $amount;
-                                }
-                            }
-                            
-                            $totalCount = $b2bCount + $b2cCount;
-                            $totalAmount = $b2bAmount + $b2cAmount;
-                        @endphp
-                        
-                        <tr>
-                            <td>1</td>
-                            <td>B2B</td>
-                            <td>{{ $b2bCount }}</td>
-                            <td>{{ number_format($b2bAmount, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>B2C</td>
-                            <td>{{ $b2cCount }}</td>
-                            <td>{{ number_format($b2cAmount, 2) }}</td>
-                        </tr>
-                        
-                        <tr style="background-color: #f0f0f0;">
-                            <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
-                            <td><strong>{{ $totalCount }}</strong></td>
-                            <td><strong>{{ number_format($totalAmount, 2) }}</strong></td>
-                        </tr>
-                    </tbody>
+
+                                // Grand total (B2B + B2C + Baucar)
+                                $totalCount = $b2bCount + $b2cCount + $baucarCount;
+                                $totalAmount = $b2bAmount + $b2cAmount + $baucarAmount;
+                            @endphp
+
+                            <tr>
+                                <td>1</td>
+                                <td>B2B</td>
+                                <td>{{ $b2bCount }}</td>
+                                <td>{{ number_format($b2bAmount, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>B2C</td>
+                                <td>{{ $b2cCount }}</td>
+                                <td>{{ number_format($b2cAmount, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>BAUCAR BAYARAN AGENSI KERAJAAN</td>
+                                <td>{{ $baucarCount }}</td>
+                                <td>{{ number_format($baucarAmount, 2) }}</td>
+                            </tr>
+                            <tr style="background-color: #f0f0f0;">
+                                <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                                <td><strong>{{ $totalCount }}</strong></td>
+                                <td><strong>{{ number_format($totalAmount, 2) }}</strong></td>
+                            </tr>
+                        </tbody>
+
                 </table>
             </div>
 
