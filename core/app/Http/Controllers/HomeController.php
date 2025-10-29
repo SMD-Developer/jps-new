@@ -402,6 +402,10 @@ class HomeController extends Controller {
                 $updateData['payment_amount'] = $request->payment_amount;
             }
 
+            if ($request->status === 'rejected' && $request->filled('reason')) {
+                $updateData['rejected_reason'] = $request->reason;
+            }
+
             DB::table('claim_contribution')
                 ->where('id', $id)
                 ->update($updateData);

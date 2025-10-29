@@ -34,7 +34,8 @@ class ClaimContribution extends Model
         'supporting_docs',
         'claim_reason',
         'send_to_finance',
-        'payment_amount'
+        'payment_amount',
+        'rejected_reason'
     ];
 
     /**

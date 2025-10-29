@@ -263,11 +263,17 @@
                                             </td>
                                             <td>
                                                 @if($item->status)
-                                                    @lang('app.'.$item->status)
+                                                    @lang('app.' . $item->status)
                                                 @else
                                                     N/A
                                                 @endif
+
+                                                @if($item->send_to_finance == 1)
+                                                    <br>
+                                                    <small class="text-info">Forwarded to Finance</small>
+                                                @endif
                                             </td>
+
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
                                                 @if ($financeStaff)

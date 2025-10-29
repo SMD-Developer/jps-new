@@ -567,24 +567,33 @@
 
                 <!-- Submit Section -->
                 <div class="form-actions">
-                        <button type="button" class="btn btn-secondary">@lang('Kembali')</button>
-                        <button type="button" class="btn btn-secondary">@lang('app.reject')</button>
-                        @if($isAdminStaff)
-                        <button type="button" class="btn btn-info no-print" data-bs-toggle="modal" data-bs-target="#statusModal">
-                            Hantar ke Kewangan
-                        </button>
-                        @endif
-                        @if($isFinanceStaff)
-                            <button type="button" class="btn btn-success no-print" data-bs-toggle="modal" data-bs-target="#financeStatusModal">
-                                <i class="fas fa-edit me-1"></i> @lang('app.update_status')
+                    @if($isAdminStaff)
+                        <button type="button" class="btn btn-info" onclick="window.history.back()">@lang('Kembali')</button>
+                        
+                        @if($claim->status == 'approve_paid')
+                            <button type="button" class="btn btn-danger" disabled>@lang('app.reject')</button>
+                            <button type="button" class="btn btn-info no-print" disabled>
+                                Hantar ke Kewangan
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-danger" onclick="rejectClaim({{ $claim->id }})">@lang('app.reject')</button>
+                            <button type="button" class="btn btn-info no-print" data-bs-toggle="modal" data-bs-target="#statusModal">
+                                Hantar ke Kewangan
                             </button>
                         @endif
-                        <button type="button" class="btn btn-secondary no-print" onclick="window.print()">
-                            <i class="fas fa-print me-1"></i> @lang('app.print')
+                    @endif
+
+                    @if($isFinanceStaff)
+                        <button type="button" class="btn btn-success no-print" data-bs-toggle="modal" data-bs-target="#financeStatusModal">
+                            <i class="fas fa-edit me-1"></i> @lang('app.kemaskini')
                         </button>
-                    <!--<button type="submit" class="btn btn-primary" id="updateButton">@lang('app.update')</button>-->
-                    <!-- <button type="submit" class="btn btn-primary">@lang('app.send')</button> -->
+                    @endif
+
+                    <button type="button" class="btn btn-secondary no-print" onclick="window.print()">
+                        <i class="fas fa-print me-1"></i> @lang('app.print')
+                    </button>
                 </div>
+
                 </form>
 
                 <!-- Send to Finance Modal (for Admin Staff) -->
@@ -885,6 +894,66 @@
                 }
             }
         }
+
+        function rejectClaim(claimId) {
+            Swal.fire({
+                title: 'Reject Claim',
+                text: 'Please enter the reason for rejection:',
+                input: 'textarea',
+                inputPlaceholder: '',
+                showCancelButton: true,
+                confirmButtonText: 'Submit',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#d33',
+                preConfirm: (reason) => {
+                    if (!reason) {
+                        Swal.showValidationMessage('Reason is required');
+                    }
+                    return reason;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Please wait while we reject the claim.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ url('update-claim-status') }}/" + claimId,
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            reason: reason,
+                            status: 'rejected'
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Claim Rejected',
+                                text: 'The claim has been rejected successfully!',
+                            }).then(() => {
+                                window.location.href = "{{ route('claim.list') }}";
+                            });
+                        },
+                        error: function(xhr) {
+                            // Close the loading alert and show error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong while rejecting the claim.'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
 
         document.addEventListener('DOMContentLoaded', function() {
             updateConversionMessage();
