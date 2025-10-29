@@ -147,6 +147,7 @@
     .main-data-table td {
         padding: 8px;
         border: 1px solid #ccc;
+        text-align: center;
         vertical-align: middle;
         background: white;
     }
@@ -443,7 +444,7 @@
 
     <section>
         <div class="report-container">
-            <table class="report-wrapper">
+           <table class="main-data-table" style="width: 100%; border-collapse: collapse; text-align: center;">
                 <thead>
                     <tr>
                         <td>
@@ -535,7 +536,12 @@
                                                     $transactionCategory = 'B2C';
                                                     $charge = 0.5;
                                                 } else {
-                                                    $transactionCategory = 'N/A';
+                                                    if (isset($application->account_type_name) && 
+                                                        strtoupper(trim($application->account_type_name)) === 'AGENSI KERAJAAN') {
+                                                        $transactionCategory = 'BAUCAR BAYARAN';
+                                                    } else {
+                                                        $transactionCategory = 'N/A';
+                                                    }
                                                     $charge = 0;
                                                 }
                                                 $totalCharges += $charge;
@@ -545,24 +551,24 @@
                                                 <td rowspan="2">{{ $application->receipt_numbers ?? 'N/A' }}</td>
                                                 <td rowspan="2">{{ $application->payment_date ? date('d/m/Y', strtotime($application->payment_date)) : 'N/A' }}</td>
                                                 <td rowspan="2">{{ $application->payment_created_at ? date('H:i:s', strtotime($application->payment_created_at)) : 'N/A' }}</td>
-                                                <td rowspan="2">{{ $application->land_lot }},
-                                                    {{ $application->division_name }},
-                                                    DAERAH {{ $application->district_name }}, SELANGOR
+                                                <td rowspan="2">
+                                                    {{ strtoupper($application->land_lot) }},
+                                                    {{ strtoupper($application->division_name) }},
+                                                    DAERAH {{ strtoupper($application->district_name) }}, SELANGOR
                                                 </td>
-                                                <td rowspan="2">{{ $application->applicant ?? 'N/A' }}</td>
-                                                <td rowspan="2">{{ $application->account_type_name }}</td>
+                                                <td rowspan="2">{{ strtoupper($application->applicant ?? 'N/A') }}</td>
+                                                <td rowspan="2">{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>G001</td>
                                                 <td>H0161304</td>
                                                 <td>{{ number_format($amount, 2) }}</td>
                                                 <td rowspan="2">
                                                     @php
                                                         $method = $application->methods ?? '';
+
                                                         if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
                                                             echo 'Cek';
-                                                        } elseif (stripos($method, 'EFT') !== false || stripos($method, 'transfer') !== false) {
-                                                            echo 'EFT';
                                                         } else {
-                                                            echo 'N/A';
+                                                            echo 'EFT';
                                                         }
                                                     @endphp
                                                 </td>
@@ -639,35 +645,37 @@
                     <tbody>
                         
                           @php
-                            // Calculate EFT payment statistics only
+                            // Initialize EFT payment statistics
                             $eftCount = 0;
                             $eftAmount = 0;
-                            
-                            foreach ($applications as $application) {
-                                $method = $application->methods ?? '';
-                                $amount = $application->payment_amount ?? 0;
-                                
-                                // Check if method is EFT (case insensitive)
-                                if (stripos($method, 'EFT') !== false || stripos($method, 'transfer') !== false) {
-                                    $eftCount++;
-                                    $eftAmount += $amount;
-                                }
-                            }
 
+                            // Initialize Cheque payment statistics
                             $chequeCount = 0;
                             $chequeAmount = 0;
 
                             foreach ($applications as $application) {
-                                    $method = $application->methods ?? '';
-                                    $amount = $application->payment_amount ?? 0;
-                                    
-                                    // Check if method is Cheque (case insensitive)
-                                    if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
-                                        $chequeCount++;
-                                        $chequeAmount += $amount;
-                                    }
+                                $method = $application->methods ?? '';
+                                $amount = $application->payment_amount ?? 0;
+
+                                // Count all EFT (including FPX_B2B, FPX_B2C, and normal EFT)
+                                if (
+                                    stripos($method, 'EFT') !== false || 
+                                    stripos($method, 'transfer') !== false || 
+                                    stripos($method, 'FPX_B2B') !== false || 
+                                    stripos($method, 'FPX_B2C') !== false
+                                ) {
+                                    $eftCount++;
+                                    $eftAmount += $amount;
                                 }
+
+                                // Count all Cheque payments
+                                if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
+                                    $chequeCount++;
+                                    $chequeAmount += $amount;
+                                }
+                            }
                         @endphp
+
                         <tr>
                             <td>1</td>
                             <td>EFT</td>
@@ -676,19 +684,19 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>Cek</td>
+                            <td>CEK</td>
                             <td>{{ $chequeCount }}</td>
                             <td>{{ number_format($chequeAmount, 2) }}</td>
                         </tr>
                         <tr>
                             <td>3</td>
-                            <td>Kad Kredit</td>
+                            <td>KAD KREDIT</td>
                             <td>N/A</td>
                             <td>N/A</td>
                         </tr>
                         <tr>
                             <td>4</td>
-                            <td>Kad Debit</td>
+                            <td>KAD DEBIT</td>
                             <td>N/A</td>
                             <td>N/A</td>
                         </tr>
