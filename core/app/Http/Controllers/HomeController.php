@@ -281,7 +281,8 @@ class HomeController extends Controller {
             $financeStaff = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');       
         }                  
 
-        $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client']); 
+        $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client'])
+        ->where('status', '!=', 'approve_paid'); 
         
         if ($financeStaff) {
             $query->where('send_to_finance', 1);
@@ -324,6 +325,71 @@ class HomeController extends Controller {
         ];
         
         return view('claim.claim-contribution-list', compact( 'list',              
+            'district',              
+            'perPage',              
+            'isAdminOrStaff', 
+            'financeStaff',             
+            'canAdminStaffViewApplication',
+            'statuses',              
+            'canAdminStaffEditClaimApplication',
+            'currentUserId'));
+    }
+
+
+     public function approvedClaimList(Request $request){
+        $perPage = $request->input('per_page', 10);         
+        $isAuthenticated = auth('admin')->check();                  
+        $canAdminStaffViewApplication = auth('admin')->user()->hasPermission('applications.view-details');         
+        $canAdminStaffEditClaimApplication = auth('admin')->user()->hasPermission('claim-contribution.edit');                  
+        $isAdminOrStaff = false;         
+        $financeStaff = false;
+        if ($isAuthenticated) {             
+            $roleId = auth('admin')->user()->role_id;             
+            $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa'); 
+            $financeStaff = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');       
+        }                  
+
+        $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client'])
+        ->where('status', 'approve_paid'); 
+    
+
+        if ($request->has('district') && $request->district) {             
+            $query->where('land_district', $request->district);         
+        }                  
+
+        if ($request->has('division') && $request->division) {             
+            $query->where('land_state', $request->division);         
+        }                  
+
+        if ($request->has('lot') && $request->lot) {             
+            $query->where('land_lot', 'LIKE', '%' . $request->lot . '%');         
+        }   
+        
+        if ($request->has('status') && $request->status && $request->status !== 'all') {             
+            $query->where('status', $request->status);         
+        }    
+
+        // Get the paginated results with activity tracking
+        $list = $query->latest()
+            ->paginate($perPage)
+            ->appends($request->except('page'));
+
+        // Get current user ID for highlighting
+        $currentUserId = auth('admin')->id();
+
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get(); 
+
+        $statuses = [
+            'all' => 'Semua',
+            'pending' => 'Belum Selesai',
+            'approve_payment_in_process' => 'Lulus-Dalam Proses Pembayaran',
+            'approve_paid' => 'Lulus-Sudah Bayar',
+            'rejected' => 'Ditolak'
+        ];
+        
+        return view('claim.approved-claim-list', compact( 'list',              
             'district',              
             'perPage',              
             'isAdminOrStaff', 

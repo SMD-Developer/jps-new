@@ -252,6 +252,7 @@ Route::group(['middleware' => 'install'], function(){
         Route::post('land-categories/{id}', 'HomeController@update')->name('updateLandCategory');;
         Route::delete('land-categories/{id}', 'HomeController@update')->name('deleteLandCategory');
         Route::get('claim-list','HomeController@claimList')->name('claim.list');
+        Route::get('approved-claim-list','HomeController@approvedClaimList')->name('claim.approved.list');
         Route::post('track-claim-view', 'HomeController@trackClaimView')->name('claim.track');
         Route::get('claim/view/{id}','HomeController@claimView')->name('claimEdit');
         
