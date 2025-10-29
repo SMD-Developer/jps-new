@@ -33,7 +33,8 @@ class ClaimContribution extends Model
         'new_receipt',
         'supporting_docs',
         'claim_reason',
-        'send_to_finance'
+        'send_to_finance',
+        'payment_amount'
     ];
 
     /**

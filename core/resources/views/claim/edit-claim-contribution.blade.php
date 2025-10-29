@@ -574,14 +574,20 @@
                             Hantar ke Kewangan
                         </button>
                         @endif
+                        @if($isFinanceStaff)
+                            <button type="button" class="btn btn-success no-print" data-bs-toggle="modal" data-bs-target="#financeStatusModal">
+                                <i class="fas fa-edit me-1"></i> @lang('app.update_status')
+                            </button>
+                        @endif
                         <button type="button" class="btn btn-secondary no-print" onclick="window.print()">
                             <i class="fas fa-print me-1"></i> @lang('app.print')
                         </button>
                     <!--<button type="submit" class="btn btn-primary" id="updateButton">@lang('app.update')</button>-->
                     <!-- <button type="submit" class="btn btn-primary">@lang('app.send')</button> -->
                 </div>
-                
-                <!-- Status Update Modal -->
+                </form>
+
+                <!-- Send to Finance Modal (for Admin Staff) -->
                     <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -602,7 +608,52 @@
                             </div>
                         </div>
                     </div>
-                </form>
+
+                    <!-- Status Update Modal (for Finance Staff) - MOVED OUTSIDE MAIN FORM -->
+                    @if($isFinanceStaff)
+                        <div class="modal fade" id="financeStatusModal" tabindex="-1" aria-labelledby="financeStatusModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="financeStatusModalLabel">@lang('app.payment_status')</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="statusUpdateForm" action="{{ route('updateClaimStatus', $claim->id ?? '') }}" method="POST">
+                                            @csrf
+                                            <div class="mb-3">
+                                                <label for="status" class="form-label">@lang('app.status')</label>
+                                                <select class="form-select" id="status" name="status" required>
+                                                    <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
+                                                    <option value="approve_payment_in_process" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
+                                                    <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
+                                                    <option value="rejected" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Payment Amount Field (Hidden by default) -->
+                                            <div class="mb-3" id="paymentAmountField" style="display: none;">
+                                                <label for="payment_amount" class="form-label">Jumlah Bayaran: <span class="text-danger">*</span></label>
+                                                <input type="number" 
+                                                    class="form-control" 
+                                                    id="payment_amount" 
+                                                    name="payment_amount" 
+                                                    placeholder="Masukkan jumlah bayaran"
+                                                    step="0.01"
+                                                    min="0">
+                                                <small class="text-muted">Contoh: 1500.00</small>
+                                            </div>
+                                            
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
+                                                <button type="submit" class="btn btn-primary">@lang('app.kemaskini')</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
             </div>
         </div>
         </div>
@@ -840,5 +891,106 @@
             convertToHectare();
         });
     </script>
+     <script>
+    $(document).ready(function() {
+        // Show/hide payment amount field based on status selection
+        $('#status').on('change', function() {
+            if ($(this).val() === 'approve_paid') {
+                $('#paymentAmountField').slideDown();
+                $('#payment_amount').attr('required', true);
+            } else {
+                $('#paymentAmountField').slideUp();
+                $('#payment_amount').attr('required', false);
+                $('#payment_amount').val(''); // Clear the value
+            }
+        });
+        
+        // Trigger on page load if approve_paid is already selected
+        if ($('#status').val() === 'approve_paid') {
+            $('#paymentAmountField').show();
+            $('#payment_amount').attr('required', true);
+        }
+        
+        // Status Update Form Submit
+        $('#statusUpdateForm').submit(function(e) {
+            e.preventDefault();
+            
+            // Validate payment amount if approve_paid is selected
+            if ($('#status').val() === 'approve_paid') {
+                const paymentAmount = $('#payment_amount').val();
+                if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Perhatian!',
+                        text: 'Sila masukkan jumlah bayaran yang sah.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#f39c12'
+                    });
+                    return false;
+                }
+            }
+            
+            // Show loading state
+            Swal.fire({
+                title: 'Memproses...',
+                text: 'Sila tunggu',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    // Close the modal
+                    $('#financeStatusModal').modal('hide');
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berjaya!',
+                        text: response.message || 'Status tuntutan berjaya dikemaskini',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6'
+                    }).then((result) => {
+                        // Redirect after user clicks OK
+                        window.location.href = "{{ route('claim.list') }}";
+                    });
+                },
+                error: function(xhr) {
+                    // Close the modal
+                    $('#financeStatusModal').modal('hide');
+                    
+                    let errorMessage = 'Gagal mengemaskini status';
+                    
+                    // Parse error message
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseJSON.errors) {
+                            // Handle validation errors
+                            const errors = xhr.responseJSON.errors;
+                            errorMessage = Object.values(errors).flat().join('<br>');
+                        }
+                    }
+                    
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        html: errorMessage,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            });
+        });
+    });
+</script>
  
 @endsection

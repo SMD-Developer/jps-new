@@ -268,9 +268,9 @@
                                                     N/A
                                                 @endif
                                             </td>
-                                            <td></td>
+                                            <td>{{$item->payment_amount}}</td>
                                             <td>
-                                                @if ($canAdminStaffEditClaimApplication)
+                                                @if ($financeStaff)
                                                 <div class="sbtn">
                                                     <a href="{{ route('claimEdit', ['id' => $item->id]) }}" 
                                                        class="btn btn-warning btn-sm edit-btn {{ isset($item->is_viewed) && $item->is_viewed ? 'btn-viewed' : '' }}" 

@@ -274,12 +274,18 @@ class HomeController extends Controller {
         $canAdminStaffViewApplication = auth('admin')->user()->hasPermission('applications.view-details');         
         $canAdminStaffEditClaimApplication = auth('admin')->user()->hasPermission('claim-contribution.edit');                  
         $isAdminOrStaff = false;         
+        $financeStaff = false;
         if ($isAuthenticated) {             
             $roleId = auth('admin')->user()->role_id;             
-            $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
+            $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa'); 
+            $financeStaff = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');       
         }                  
 
-        $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client']);                  
+        $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client']); 
+        
+        if ($financeStaff) {
+            $query->where('send_to_finance', 1);
+        }
 
         if ($request->has('district') && $request->district) {             
             $query->where('land_district', $request->district);         
@@ -320,7 +326,8 @@ class HomeController extends Controller {
         return view('claim.claim-contribution-list', compact( 'list',              
             'district',              
             'perPage',              
-            'isAdminOrStaff',              
+            'isAdminOrStaff', 
+            'financeStaff',             
             'canAdminStaffViewApplication',
             'statuses',              
             'canAdminStaffEditClaimApplication',
@@ -334,10 +341,11 @@ class HomeController extends Controller {
             
             $isAuthenticated = auth('admin')->check();
             $isAdminStaff = false;
+            $isFinanceStaff = false;
             if ($isAuthenticated) {
-                // Get the role_id
                 $roleId = auth('admin')->user()->role_id;
                 $isAdminStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');
+                $isFinanceStaff= ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');
             }
             $claim = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client'])
                 ->findOrFail($id);
@@ -355,7 +363,8 @@ class HomeController extends Controller {
                 'district',
                 'landMeasurement',
                 'division',
-                'isAdminStaff'
+                'isAdminStaff',
+                'isFinanceStaff'
             ));
             
         } catch (\Exception $e) {
@@ -368,21 +377,34 @@ class HomeController extends Controller {
     {
         try {
             $validated = $request->validate([
-                'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid'
+                'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid',
+                'payment_amount' => 'required_if:status,approve_paid|nullable|numeric|min:0'
             ]);
-    
+
             $claim = DB::table('claim_contribution')->where('id', $id)->first();
             if (!$claim) {
-                return response()->json(['message' => 'Claim not found'], 404);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tuntutan tidak dijumpai'
+                ], 404);
             }
-    
+
             $oldData = (array) $claim;
             $oldStatus = $claim->status;
-    
+
+            $updateData = [
+                'status' => $request->status,
+                'updated_at' => now()
+            ];
+            
+            // Add payment amount if status is approve_paid
+            if ($request->status === 'approve_paid' && $request->payment_amount) {
+                $updateData['payment_amount'] = $request->payment_amount;
+            }
+
             DB::table('claim_contribution')
                 ->where('id', $id)
-                ->update(['status' => $request->status]);
-    
+                ->update($updateData);
 
             $updatedClaim = DB::table('claim_contribution')->where('id', $id)->first();
             $newData = (array) $updatedClaim;
@@ -401,18 +423,19 @@ class HomeController extends Controller {
                     }
                 }
             }
-    
+
             $admin = auth('admin')->user();
             $causerUsername = $admin ? $admin->username : 'System';
             $causerUuid = $admin ? $admin->uuid : null;
-    
+
             ActivityLog::create([
                 'log_name' => 'claim_contribution',
-                'description' => 'Claim status updated by admin: ' . $causerUsername . ' from "' . $oldStatus . '" to "' . $request->status . '"',
+                'description' => 'Claim status updated by admin: ' . $causerUsername . ' from "' . $oldStatus . '" to "' . $request->status . '"' . 
+                            ($request->status === 'approve_paid' && $request->payment_amount ? ' with payment amount: RM ' . number_format($request->payment_amount, 2) : ''),
                 'event' => 'status_updated',
-                'subject_type' => 'App\Models\ClaimContribution', // Adjust model name as needed
+                'subject_type' => 'App\Models\ClaimContribution',
                 'subject_id' => $id,
-                'properties' => $changes, // This will contain all changed fields
+                'properties' => $changes,
                 'causer_type' => $admin ? get_class($admin) : null,
                 'causer_id' => $causerUuid,
                 'ip_address' => request()->ip(),
@@ -421,30 +444,41 @@ class HomeController extends Controller {
                 'updated_at' => now()
             ]);
 
-            $client = ClientRegisterModel::where('client_id', $claim->user_id)->first();
-            if ($client) {
-                $claimModel = ClaimContribution::find($id);
-                $client->notify(new ClaimStatusUpdated($claimModel));
-            } else {
-                Log::warning('Client not found for claim', ['claim_id' => $id, 'user_id' => $claim->user_id]);
+            // Send notification
+            try {
+                $client = ClientRegisterModel::where('client_id', $claim->user_id)->first();
+                if ($client) {
+                    $claimModel = ClaimContribution::find($id);
+                    $client->notify(new ClaimStatusUpdated($claimModel));
+                } else {
+                    Log::warning('Client not found for claim', ['claim_id' => $id, 'user_id' => $claim->user_id]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to send notification: ' . $e->getMessage());
             }
-    
-            return response()->json(['message' => __('Status Pemohonan berjaya dikemaskini')]);
-    
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status tuntutan berjaya dikemaskini' . 
+                            ($request->status === 'approve_paid' && $request->payment_amount ? ' dengan jumlah bayaran RM ' . number_format($request->payment_amount, 2) : '')
+            ], 200);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Log specific validation errors
-            \Log::error('Validation Errors: ', $e->errors());
+            Log::error('Validation Errors: ', $e->errors());
             
             return response()->json([
                 'success' => false,
                 'errors' => $e->errors(),
-                'message' => 'Validation failed. Please check your inputs.'
+                'message' => 'Pengesahan gagal. Sila semak input anda.'
             ], 422);
+            
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error('Update Status Error: ' . $e->getMessage());
+            Log::error('Stack Trace: ' . $e->getTraceAsString());
+            
             return response()->json([
                 'success' => false,
-                'message' => 'An unexpected error occurred. Please try again.'
+                'message' => 'Ralat tidak dijangka berlaku. Sila cuba lagi.'
             ], 500);
         }
     }
