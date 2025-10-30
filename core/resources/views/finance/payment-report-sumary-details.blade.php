@@ -381,18 +381,25 @@
         }
     }
 
-    /* Print styles - Fixed */
     @media print {
         body {
             background: white;
-            font-size: 11px;
+            font-size: 12px !important;
+            background-color: #fff !important;
+            color: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        * {
+            color: #000 !important;
         }
 
         .form-container,
         .summary-box,
         .header-info {
             box-shadow: none;
-            border: 1px solid #000;
+            border: 2px solid #000 !important;
             background: white !important;
         }
 
@@ -400,60 +407,363 @@
             display: none;
         }
 
-        /* Preserve header table layout in print */
-        .header-table,
-        .dept-table {
-            box-shadow: none;
-            page-break-inside: avoid;
+        .report-header {
+            padding: 15px;
+            background: white !important;
+            border-bottom: 3px solid #000 !important;
         }
 
-        .header-table td,
-        .dept-table td,
-        .dept-table th {
-            border: 1px solid #000 !important;
-            background: white !important;
+        .date-time-info {
+            font-size: 13px !important;
+        }
+
+        .date-time-info strong,
+        .date-time-info p {
+            color: #000 !important;
+            font-weight: 700 !important;
+        }
+
+        .main-title h1 {
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+            margin-bottom: 8px;
+        }
+
+        .main-title p,
+        .main-title p strong {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+        }
+
+        .page-info p,
+        .page-info strong {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+        }
+
+        .department-info-table {
+            border-collapse: collapse !important;
+            border: 2px solid #000 !important;
+            font-size: 13px !important;
+            margin: 15px 0 !important;
+            width: 100% !important;
+        }
+
+        .department-info-table thead {
+            display: table-header-group !important;
+        }
+
+        .department-info-table tbody {
+            display: table-row-group !important;
+        }
+
+        .department-info-table tr {
+            border: 2px solid #000 !important;
+        }
+
+        .department-info-table th {
+            background: #e0e0e0 !important;
+            color: #000 !important;
+            font-weight: 700 !important;
+            border: 2px solid #000 !important;
+            border-collapse: collapse !important;
+            padding: 10px !important;
+            font-size: 13px !important;
             position: static !important;
         }
 
-        .header-table td::after,
-        .dept-table td::after,
-        .dept-table th::after {
+        .department-info-table th::after, .department-info-table th::before {
             display: none !important;
+            content: none !important;
         }
 
-        /* Ensure main table prints correctly */
+        .department-info-table td {
+            border: 2px solid #000 !important;
+            border-collapse: collapse !important;
+            padding: 10px !important;
+            color: #000 !important;
+            font-size: 13px !important;
+            position: static !important;
+        }
+
+        .department-info-table td::after, .department-info-table td::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        .department-info-table td strong {
+            font-weight: 700 !important;
+            color: #000 !important;
+        }
+
+
         table {
-            box-shadow: none;
+            box-shadow: none !important;
             page-break-inside: auto;
+            border-collapse: collapse !important;
+            border: 2px solid #000 !important;
+            width: 100% !important;
         }
 
-        th, td {
-            border: 1px solid #000 !important;
-            background: white !important;
+        thead {
+            display: table-header-group !important;
+        }
+
+        tbody {
+            display: table-row-group !important;
+        }
+
+        tr {
+            page-break-inside: avoid !important;
+            border: 2px solid #000 !important;
+        }
+
+        th {
+            background: #d0d0d0 !important;
+            color: #000 !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            border: 2px solid #000 !important;
+            border-collapse: collapse !important;
+            padding: 10px 8px !important;
+            text-align: center !important;
             position: static !important;
         }
 
-        th::after, td::after {
+        th::after, th::before {
             display: none !important;
+            content: none !important;
         }
 
-        .excel-column {
-            background: #f0f0f0 !important;
+        td {
+            border: 2px solid #000 !important;
+            border-collapse: collapse !important;
+            background: white !important;
+            color: #000 !important;
+            font-size: 12px !important;
+            padding: 8px !important;
+            font-weight: 500 !important;
+            position: static !important;
         }
 
+        td::after, td::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        /* Make amount columns more prominent */
+        .amount-column {
+            text-align: right !important;
+            font-weight: 700 !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 13px !important;
+            color: #000 !important;
+        }
+
+        .transaction-column {
+            text-align: center !important;
+            font-weight: 600 !important;
+            font-size: 12px !important;
+            color: #000 !important;
+        }
+
+        /* Total row - Make it stand out */
         .total-row {
-            background: #28a745 !important;
+            background: #333 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .total-row td {
-            background: #28a745 !important;
-            color: white !important;
+            background: #333 !important;
+            color: #fff !important;
+            border: 2px solid #000 !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            padding: 12px 8px !important;
         }
 
-        .summary-box {
-            background: #667eea !important;
-            color: white !important;
+        .total-row td strong {
+            color: #fff !important;
+            font-weight: 700 !important;
         }
+
+        /* Remove hover effects in print */
+        tbody tr:hover,
+        tbody tr:hover td,
+        td:hover {
+            background-color: white !important;
+        }
+
+        /* Zebra striping for better readability */
+        tbody tr:nth-child(even) td {
+            background-color: #f5f5f5 !important;
+        }
+
+        /* Method and Status Summary Cards - Display in single row */
+        .card {
+            border: 2px solid #000 !important;
+            page-break-inside: avoid;
+            margin-bottom: 10px;
+            display: inline-block !important;
+            width: auto !important;
+            min-width: 200px !important;
+            vertical-align: top !important;
+        }
+
+        .card-body {
+            padding: 10px !important;
+        }
+
+        .card-title {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+            margin-bottom: 8px;
+        }
+
+        .card-text {
+            font-size: 12px !important;
+            color: #000 !important;
+        }
+
+        .card-text small {
+            font-size: 11px !important;
+            color: #000 !important;
+            font-weight: 500 !important;
+        }
+
+        .card-text strong {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+        }
+
+        /* Make rows display inline */
+        .row {
+            display: block !important;
+            width: 100% !important;
+        }
+
+        .col-md-3 {
+            display: inline-block !important;
+            width: 32% !important;
+            margin-right: 1% !important;
+            vertical-align: top !important;
+            page-break-inside: avoid !important;
+        }
+
+        .col-md-3:last-child {
+            margin-right: 0 !important;
+        }
+
+        /* Summary section headings */
+        h6 {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+            margin: 15px 0 10px 0 !important;
+        }
+
+        /* Page breaks */
+        .page-header {
+            page-break-after: avoid;
+        }
+
+        table {
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        /* Ensure borders are visible - CRITICAL */
+        * {
+            box-sizing: border-box !important;
+        }
+        
+        table, thead, tbody, th, td, tr {
+            border-collapse: collapse !important;
+            border-spacing: 0 !important;
+        }
+        
+        table {
+            border: 2px solid #000 !important;
+        }
+        
+        th, td {
+            border: 2px solid #000 !important;
+        }
+        
+        /* Remove all pseudo-elements that might interfere with borders */
+        *::before, *::after {
+            display: none !important;
+            content: none !important;
+        }
+    }
+
+    /* Additional screen styles to match */
+    .amount-column {
+        text-align: right;
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+    }
+
+    .transaction-column {
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .total-row {
+        background: linear-gradient(to bottom, #333 0%, #444 100%) !important;
+        font-weight: bold;
+        color: white;
+    }
+
+    .total-row td {
+        background: transparent !important;
+        border-color: #000;
+        border-width: 2px;
+        font-weight: 700;
+        color: white;
+        font-size: 13px;
+    }
+
+    /* Department info table screen styles */
+    .department-info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 13px;
+    }
+
+    .department-info-table th {
+        background: #f0f0f0;
+        color: #000;
+        padding: 12px 15px;
+        text-align: center;
+        font-weight: 700;
+        border: 2px solid #999;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+
+    .department-info-table td {
+        padding: 10px 15px;
+        border: 2px solid #999;
+        vertical-align: middle;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .department-info-table td strong {
+        font-weight: 700;
     }
 </style>
 
