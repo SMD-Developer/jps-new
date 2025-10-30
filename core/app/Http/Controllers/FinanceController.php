@@ -497,188 +497,84 @@ class financeController extends Controller {
       public function checkbook_receipt_finance(){
         return view('finance.checkbook_receipt_finance');
     }
-    //   public function dailyPaymentReceiptReport(Request $request){
-    //     $request->validate([
-    //         'start_date' => 'required|date_format:Y-m-d',
-    //         'end_date' => 'required|date_format:Y-m-d|after_or_equal:start_date',
-    //         'print_type' => 'nullable|string',
-    //     ]);
-
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-    //     $printType = $request->input('print_type');
-
-    //     $query = DB::table('applications')
-    //         ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
-    //         ->join('district', 'applications.district', '=', 'district.iddaerah')
-    //         ->join('state', 'applications.state', '=', 'state.idnegeri')
-    //         ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
-    //         ->select(
-    //             'applications.*',
-    //             'client_register.userName as client_name',
-    //             'district.daerah as district_name',
-    //             'state.negeri as state_name',
-    //             'account_types.name as account_type_name'
-    //         );
-
-    //     if ($startDate && $endDate) {
-    //         try {
-    //             $startDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay()->toDateTimeString();
-    //             $endDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()->toDateTimeString();
-    //             $query->whereBetween('applications.created_at', [$startDateParsed, $endDateParsed]);
-    //         } catch (\Exception $e) {
-    //             \Log::error('Invalid date format: ' . $e->getMessage());
-    //             return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
-    //         }
-    //     }
-
-    //     $applications = $query->get();
-    //     $applicationCount = $applications->count();
-    //     \Log::info('Applications Count: ' . $applications->count());
-    //     \Log::info('Applications created_at: ' . json_encode($applications->pluck('created_at')->toArray()));
-    //     if ($startDate && $endDate) {
-    //         $outOfRange = $applications->filter(function ($app) use ($startDateParsed, $endDateParsed) {
-    //             return \Carbon\Carbon::parse($app->created_at)->lt($startDateParsed) || \Carbon\Carbon::parse($app->created_at)->gt($endDateParsed);
-    //         });
-    //         if ($outOfRange->isNotEmpty()) {
-    //             \Log::warning('Out-of-range records: ' . json_encode($outOfRange->toArray()));
-    //         }
-    //     }
-        
-    //     $currentDateTime = \Carbon\Carbon::now();
-    //     $currentDate = $currentDateTime->format('d/m/Y');
-    //     $currentTime = $currentDateTime->format('h:i:s A');
-
-    //     return view('finance.daily-payment-receipt-report',[
-    //         'applications' => $applications,
-    //         'printType' => $printType,
-    //         'startDate' => $startDate,
-    //         'endDate' => $endDate,
-    //         'currentDate' => $currentDate,
-    //         'currentTime' => $currentTime,
-    //         'applicationCount' => $applicationCount,
-    //     ]
-    //      );
-    // }
     
     public function dailyPaymentReceiptReport(Request $request)
-{
-    $request->validate([
-        'start_date' => 'required|date_format:Y-m-d',
-        'end_date' => 'required|date_format:Y-m-d|after_or_equal:start_date',
-        'print_type' => 'nullable|string',
-    ]);
-    
-    $startDate = $request->input('start_date');
-    $endDate = $request->input('end_date');
-    $printType = $request->input('print_type');
-    
-    // Build the base query
-    $query = DB::table('applications')
-        ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
-        ->join('district', 'applications.district', '=', 'district.iddaerah')
-        ->join('state', 'applications.state', '=', 'state.idnegeri')
-        ->join('division', 'applications.land_state', '=', 'division.idmukim')
-        ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
-        ->leftJoin('payments', 'applications.id', '=', 'payments.application_id') // Left join with payments table
-        ->select(
-            'applications.*',
-            'client_register.userName as client_name',
-            'district.daerah as district_name',
-            'division.mukim as division_name',
-            'state.negeri as state_name',
-            'account_types.name as account_type_name',
-            'payments.uuid as payment_id',
-            'payments.receipt_number as receipt_numbers',
-            'payments.amount as payment_amount',
-            'payments.payment_date',
-            'payments.method as methods',
-            'payments.created_at as payment_created_at'
-            
-        )
-        ->where('payments.payment_status', 'completed');
-    
-    // Apply date filtering if dates are provided
-    if ($startDate && $endDate) {
-        try {
-            // Use your application's timezone (adjust as needed)
-            $timezone = config('app.timezone', 'UTC');
-            
-            // Create start and end datetime with proper timezone
-            $startDateTime = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate, $timezone)
-                ->startOfDay();
-            $endDateTime = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate, $timezone)
-                ->endOfDay();
-            
-            // Apply the date filter to both applications and payments
-            $query->where(function($q) use ($startDateTime, $endDateTime) {
-                $q->whereBetween('applications.created_at', [
-                    $startDateTime->toDateTimeString(),
-                    $endDateTime->toDateTimeString()
-                ])->orWhereBetween('payments.payment_date', [
+    {
+        $request->validate([
+            'start_date' => 'required|date_format:Y-m-d',
+            'end_date' => 'required|date_format:Y-m-d|after_or_equal:start_date',
+            'print_type' => 'nullable|string',
+        ]);
+        
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $printType = $request->input('print_type');
+        
+        // Build the base query with LEFT JOINs to include all payments
+        $query = DB::table('payments')
+            ->leftJoin('applications', 'payments.application_id', '=', 'applications.id')
+            ->leftJoin('client_register', 'applications.user_id', '=', 'client_register.client_id')
+            ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+            ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+            ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+            ->leftJoin('account_types', 'client_register.accountType', '=', 'account_types.id')
+            ->select(
+                'applications.*',
+                'client_register.userName as client_name',
+                'district.daerah as district_name',
+                'division.mukim as division_name',
+                'state.negeri as state_name',
+                'account_types.name as account_type_name',
+                'payments.uuid as payment_id',
+                'payments.receipt_number as receipt_numbers',
+                'payments.amount as payment_amount',
+                'payments.payment_date',
+                'payments.method as methods',
+                'payments.created_at as payment_created_at',
+                'payments.application_id' // Add this to check for orphaned payments
+            )
+            ->where('payments.payment_status', 'completed');
+
+        if ($startDate && $endDate) {
+            try {
+                $timezone = config('app.timezone', 'UTC');
+                
+                $startDateTime = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate, $timezone)
+                    ->startOfDay();
+                $endDateTime = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate, $timezone)
+                    ->endOfDay();
+                
+                $query->whereBetween('payments.created_at', [
                     $startDateTime->toDateTimeString(),
                     $endDateTime->toDateTimeString()
                 ]);
-            });
-            
-        } catch (\Exception $e) {
-            return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
+                
+            } catch (\Exception $e) {
+                return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
+            }
         }
-    }
 
-    $query->orderBy('payments.payment_date', 'asc');
-    
-    $applications = $query->get();
-    $applicationCount = $applications->count();
-    
-    // Calculate total payment amount
-    $totalPaymentAmount = $applications->sum('payment_amount');
-    
-    
-    // Additional debugging for date range issues
-    if ($startDate && $endDate && $applications->isEmpty()) {
-        // Check if there are any applications in the table at all
-        $totalApplications = DB::table('applications')->count();
+        $query->orderBy('payments.created_at', 'asc');
         
-        // Check the actual date range of applications in the database
-        $dateRange = DB::table('applications')
-            ->selectRaw('MIN(created_at) as earliest, MAX(created_at) as latest')
-            ->first();
+        $applications = $query->get();
+        $applicationCount = $applications->count();
+        $totalPaymentAmount = $applications->sum('payment_amount');
+        
+        $currentDateTime = \Carbon\Carbon::now();
+        $currentDate = $currentDateTime->format('d/m/Y');
+        $currentTime = $currentDateTime->format('h:i:s A');
+        
+        return view('finance.daily-payment-receipt-report', [
+            'applications' => $applications,
+            'printType' => $printType,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'currentDate' => $currentDate,
+            'currentTime' => $currentTime,
+            'applicationCount' => $applicationCount,
+            'totalPaymentAmount' => $totalPaymentAmount,
+        ]);
     }
-    
-
-    if ($startDate && $endDate && $applications->isNotEmpty()) {
-        $startDateTime = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
-        $endDateTime = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
-        
-        $outOfRange = $applications->filter(function ($app) use ($startDateTime, $endDateTime) {
-            $createdAt = \Carbon\Carbon::parse($app->created_at);
-            $paymentDate = $app->payment_date ? \Carbon\Carbon::parse($app->payment_date) : null;
-            
-            return ($createdAt->lt($startDateTime) || $createdAt->gt($endDateTime)) &&
-                   (!$paymentDate || $paymentDate->lt($startDateTime) || $paymentDate->gt($endDateTime));
-        });
-        
-        if ($outOfRange->isNotEmpty()) {
-            \Log::warning('Out-of-range records found: ', $outOfRange->toArray());
-        }
-    }
-    
-    $currentDateTime = \Carbon\Carbon::now();
-    $currentDate = $currentDateTime->format('d/m/Y');
-    $currentTime = $currentDateTime->format('h:i:s A');
-    
-    return view('finance.daily-payment-receipt-report', [
-        'applications' => $applications,
-        'printType' => $printType,
-        'startDate' => $startDate,
-        'endDate' => $endDate,
-        'currentDate' => $currentDate,
-        'currentTime' => $currentTime,
-        'applicationCount' => $applicationCount,
-        'totalPaymentAmount' => $totalPaymentAmount,
-    ]);
-}
 
     public function dailyReceiptReportTypeFinance(){
         return view('finance.daily-receipt-report-type-finance');
