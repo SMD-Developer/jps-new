@@ -238,7 +238,7 @@
             <div class="form-row">
                 <label class="form-label">Amount:</label>
                 <input type="text" class="form-control" 
-                       value="RM {{ request()->get('type') === 'reprint' ? '10.00' : number_format($application->final_amount, 2) }}" 
+                       value="RM {{ request()->get('type') === 'reprint' ? '1.00' : number_format($application->final_amount, 2) }}" 
                        readonly style="background-color: #f8f9fa;">
             </div>
 
@@ -263,7 +263,7 @@
             <div class="btn-section">
                 <button type="submit" class="btn-proceed" id="proceedBtn" disabled>
                     @if(request()->get('type') === 'reprint')
-                        Pay RM 10.00 for Reprint
+                        Pay RM 1.00 for Reprint
                     @else
                         Proceed
                     @endif
@@ -282,7 +282,7 @@
 <script>
 $(document).ready(function() {
     const isReprint = $('input[name="payment_type"]').val() === 'reprint';
-    const paymentAmount = isReprint ? 10.00 : {{ $application->final_amount ?? 0 }};
+    const paymentAmount = isReprint ? 1.00 : {{ $application->final_amount ?? 0 }};
 
     // Payment mode selection change
     $('#paymentModeSelect').change(function() {

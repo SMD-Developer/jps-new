@@ -1538,14 +1538,14 @@ class PayController extends Controller
         
          $isReprint = $request->get('type') === 'reprint';
         if ($isReprint) {
-        $application->final_amount = 10.00;
+        $application->final_amount = 1.00;
         $application->payment_type = 'reprint';
         $application->original_application_id = $applicationId; 
         
         // Store reprint-specific data in session
         session([
             'application_id' => $applicationId, 
-            'payment_amount' => 10.00,
+            'payment_amount' => 1.00,
             'payment_type' => 'reprint'
         ]);
     } else {
