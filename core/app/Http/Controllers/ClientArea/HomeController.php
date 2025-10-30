@@ -220,11 +220,14 @@ class HomeController extends Controller {
     }
     
     
-    public function claimSubmit(Request $request){
+    public function claimSubmit(Request $request)
+    {
         $logged_user = auth()->guard('user')->user();
-    
+
         try {
-            // Validate the request
+            $isReapply = $request->has('is_reapply') && $request->is_reapply == 1;
+            $fileValidationRules = $isReapply ? 'nullable' : 'required';
+            
             $this->validate($request, [
                 "uploade_date" => "required",
                 "applicant" => "required",
@@ -240,10 +243,11 @@ class HomeController extends Controller {
                 "land_area" => "required",
                 "land_unit" => "required",
                 "state" => "required",
-                "land_grant" => "required|mimes:pdf|max:15000",
-                "new_receipt" => "required|mimes:pdf|max:15000", // New required field
-                "supporting_docs" => "nullable|mimes:pdf|max:15000", // Optional
+                "land_grant" => "{$fileValidationRules}|mimes:pdf|max:15000",
+                "new_receipt" => "{$fileValidationRules}|mimes:pdf|max:15000",
+                "supporting_docs" => "nullable|mimes:pdf|max:15000",
                 "claim_reason" => "nullable|string|max:1000",
+                "payment_amount" => "required|numeric|min:0",
             ], [
                 "uploade_date.required" => trans('app.uploade_date_required'),
                 "applicant.required" => trans('app.applicant_required'),
@@ -251,7 +255,7 @@ class HomeController extends Controller {
                 "address.required" => trans('app.address_required'),
                 "postal_code.required" => trans('app.postal_code_required'),
                 "postal_code.numeric" => trans('app.postal_code_numeric'),
-                "postal_code.digits" => trans('app.postal_code_digits'),
+                "postal_code.digits_between" => trans('app.postal_code_digits'),
                 "phone.required" => trans('app.phone_required'),
                 "phone.numeric" => trans('app.phone_numeric'),
                 "phone.digits_between" => trans('app.phone_digits_between'),
@@ -267,17 +271,14 @@ class HomeController extends Controller {
                 "land_grant.required" => trans('app.land_grant_required'),
                 "land_grant.mimes" => trans('app.land_grant_mimes'),
                 "land_grant.max" => trans('app.land_grant_max'),
-                "permission_plan.required" => trans('app.permission_plan_required'),
-                "permission_plan.mimes" => trans('app.permission_plan_mimes'),
-                "permission_plan.max" => trans('app.permission_plan_max'),
-                "letter_of_support.required" => trans('app.letter_of_support_required'),
-                "letter_of_support.mimes" => trans('app.letter_of_support_mimes'),
-                "letter_of_support.max" => trans('app.letter_of_support_max'),
                 "new_receipt.required" => trans('Resit Bayaran Baru diperlukan'),
                 "new_receipt.mimes" => trans('app.land_grant_mimes'),
                 "new_receipt.max" => trans('app.land_grant_max'),
                 "supporting_docs.mimes" => trans('app.land_grant_mimes'),
                 "supporting_docs.max" => trans('app.land_grant_max'),
+                "payment_amount.required" => trans('app.claim_amount_required'),
+                "payment_amount.numeric" => trans('app.claim_amount_numeric'),
+                "payment_amount.min" => trans('app.claim_amount_positive'),
             ]);
 
             $client = ClientRegisterModel::where('client_id', $logged_user->uuid)->first();
@@ -289,55 +290,105 @@ class HomeController extends Controller {
             $request['user_id'] = $client->client_id;
             $uploadedFiles = [];
             $uploadPath = public_path('pdf');
-    
+
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0775, true);
             }
             if (!is_writable($uploadPath)) {
                 throw new \Exception("Upload path is not writable: " . $uploadPath);
             }
-    
-            if ($request->hasFile('land_grant')) {
-                $landGrant = $request->file('land_grant');
-                $landGrantFileName = $landGrant->getClientOriginalName();
-                $landGrant->move($uploadPath, $landGrantFileName);
-                $uploadedFiles['land_grant'] = 'pdf/' . $landGrantFileName;
-            }
-    
-            // New receipt (Required)
-            if ($request->hasFile('new_receipt')) {
-                $newReceipt = $request->file('new_receipt');
-                $newReceiptFileName = time() . '_new_receipt_' . $newReceipt->getClientOriginalName();
-                $newReceipt->move($uploadPath, $newReceiptFileName);
-                $uploadedFiles['new_receipt'] = 'pdf/' . $newReceiptFileName;
+
+            // Handle file uploads
+            $fileFields = ['land_grant', 'new_receipt', 'supporting_docs'];
+            
+            foreach ($fileFields as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '_' . $file->getClientOriginalName();
+                    $file->move($uploadPath, $fileName);
+                    $uploadedFiles[$field] = 'pdf/' . $fileName;
+                }
             }
 
-            // Supporting documents (Optional)
-            if ($request->hasFile('supporting_docs')) {
-                $supportingDocs = $request->file('supporting_docs');
-                $supportingDocsFileName = time() . '_supporting_docs_' . $supportingDocs->getClientOriginalName();
-                $supportingDocs->move($uploadPath, $supportingDocsFileName);
-                $uploadedFiles['supporting_docs'] = 'pdf/' . $supportingDocsFileName;
-            }
-
-            // Claim reason (Optional)
+            // Handle claim_reason (Optional)
             if ($request->filled('claim_reason')) {
                 $uploadedFiles['claim_reason'] = $request->claim_reason;
             }
-    
-            $requestData = array_merge($request->except('_token'), $uploadedFiles, ['status' => 'pending']);
-    
-            $applicationId = DB::table('claim_contribution')->insertGetId($requestData);
 
+            // Prepare data for insertion/update
+            $requestData = array_merge(
+                $request->except(['_token', 'is_reapply', 'original_claim_id']), 
+                $uploadedFiles, 
+                [
+                    'updated_at' => now(),
+                ]
+            );
 
-            try {
-                $claim = DB::table('claim_contribution')->where('id', $applicationId)->first();
+            // **KEY CHANGE: Update existing record for reapplication**
+            if ($isReapply && $request->has('original_claim_id')) {
+                $originalClaimId = $request->original_claim_id;
                 
-                $admins = User::where('role_id', '9e032984-8ef0-4e00-b7b9-439679a4d1aa')->get();
+                // Verify the claim belongs to the current user
+                $existingClaim = DB::table('claim_contribution')
+                    ->where('id', $originalClaimId)
+                    ->where('user_id', $client->client_id)
+                    ->first();
+                    
+                if (!$existingClaim) {
+                    throw new \Exception("Invalid claim for reapplication.");
+                }
                 
-                if ($admins->isNotEmpty()) {
+                // Update the existing record
+                DB::table('claim_contribution')
+                    ->where('id', $originalClaimId)
+                    ->update(array_merge($requestData, [
+                        'status' => 'pending', // Reset status to pending
+                        'reapplication_count' => ($existingClaim->reapplication_count ?? 0) + 1,
+                        'last_reapplied_at' => now(),
+                    ]));
+                    
+                $applicationId = $originalClaimId;
+                
+                // Send notification for reapplication
+                try {
+                    $updatedClaim = DB::table('claim_contribution')->where('id', $applicationId)->first();
+                    $admins = User::where('role_id', '9e032984-8ef0-4e00-b7b9-439679a4d1aa')->get();
+                    
+                    if ($admins->isNotEmpty()) {
                         foreach ($admins as $admin) {
-                            // Check if notification already exists for this admin and claim
+                            // Check if notification already exists for this reapplication
+                            $existingNotification = $admin->notifications()
+                                ->where('type', 'App\Notifications\AdminNewClaimNotification')
+                                ->where('data->claim_id', $applicationId)
+                                ->where('data->is_reapplication', true)
+                                ->first();
+                            
+                            if (!$existingNotification) {
+                                $admin->notify(new AdminNewClaimNotification($updatedClaim, true));
+                            }
+                        }
+                    }
+                } catch (\Exception $notificationError) {
+                    Log::error('Error notifying admin staff about reapplication: ', [
+                        'claim_id' => $applicationId,
+                        'message' => $notificationError->getMessage()
+                    ]);
+                }
+                
+            } else {
+                // Create new record for new applications
+                $requestData['status'] = 'pending';
+                $requestData['created_at'] = now();
+                
+                $applicationId = DB::table('claim_contribution')->insertGetId($requestData);
+
+                // Send notifications for new application
+                try {
+                    $claim = DB::table('claim_contribution')->where('id', $applicationId)->first();
+                    $admins = User::where('role_id', '9e032984-8ef0-4e00-b7b9-439679a4d1aa')->get();
+                    
+                    if ($admins->isNotEmpty()) {
+                        foreach ($admins as $admin) {
                             $existingNotification = $admin->notifications()
                                 ->where('type', 'App\Notifications\AdminNewClaimNotification')
                                 ->where('data->claim_id', $applicationId)
@@ -347,34 +398,37 @@ class HomeController extends Controller {
                                 $admin->notify(new AdminNewClaimNotification($claim));
                             }
                         }
-
-                } else {
-                        Log::warning('No admin staff found to notify', ['claim_id' => $applicationId]);
-                }
-            } catch (\Exception $notificationError) {
-                    // Log notification error but don't fail the claim submission
+                    }
+                } catch (\Exception $notificationError) {
                     Log::error('Error notifying admin staff about claim: ', [
                         'claim_id' => $applicationId,
                         'message' => $notificationError->getMessage()
                     ]);
+                }
             }
+
+            $message = $isReapply 
+                ? __('Permohonan semula telah berjaya dihantar')
+                : __('app.the_application_has_been_sent');
         
-                return response()->json([
-                    'success' => true,
-                    'message' => __('app.the_application_has_been_sent'),
-                    'application_id' => $applicationId
-                ]);
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'application_id' => $applicationId,
+                'is_reapply' => $isReapply
+            ]);
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $e->validator->errors()
-                ], 422);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ], 500);
-            }
+            return response()->json([
+                'success' => false,
+                'errors' => $e->validator->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 		
     
@@ -560,7 +614,45 @@ class HomeController extends Controller {
             ->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
             $division = DB::table('division')->where('status', 1)->orderBy('mukim_code', 'asc')->get();
             $landMeasurement = DB::table('land_measurement_unit')->get();
-            return view('clientarea.application.contribution_claims', compact('state', 'district', 'division', 'client','landMeasurement'));
+            $accountTypes = DB::table('account_types')->get();
+            return view('clientarea.application.contribution_claims', compact('state', 'district', 'division', 'client', 'accountTypes','landMeasurement'));
+        }
+
+        public function claimReapply($id)
+        {
+            $clientId = auth('user')->id();
+            
+            $claim = DB::table('claim_contribution') 
+                ->where('id', $id)
+                ->where('user_id', $clientId) 
+                ->first();
+            if (!$claim) {
+                return redirect()->back()->with('error', 'Application not found.');
+            }
+            
+            if ($claim->status != 'rejected') {
+                return redirect()->back()->with('error', 'Only rejected applications can be reapplied.');
+            }
+            
+            $client = DB::table('client_register')->where('client_id', $clientId)->first();
+            $state = DB::table('state')->where('status', 1)->orderBy('negeri_code', 'asc')->get();
+            $district = DB::table('district')
+                ->where('idnegeri', 1)
+                ->where('stat', 1)
+                ->orderBy('daerah_code', 'asc')
+                ->get();
+            $division = DB::table('division')->where('status', 1)->orderBy('mukim_code', 'asc')->get();
+            $landMeasurement = DB::table('land_measurement_unit')->get();
+            $accountTypes = DB::table('account_types')->get();
+            return view('clientarea.application.contribution_claims', compact(
+                'state', 
+                'district', 
+                'division', 
+                'client', 
+                'accountTypes',
+                'landMeasurement',
+                'claim' 
+            ));
         }
         
         

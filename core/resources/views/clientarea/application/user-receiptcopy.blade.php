@@ -170,7 +170,7 @@
                                     @if(request()->get('type') === 'reprint')
                                         SALINAN
                                     @else
-                                        ASAL
+                                        SALINAN
                                     @endif
                                 </strong>
                             </p>

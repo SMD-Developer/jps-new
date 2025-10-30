@@ -35,7 +35,10 @@ class ClaimContribution extends Model
         'claim_reason',
         'send_to_finance',
         'payment_amount',
-        'rejected_reason'
+        'rejected_reason',
+        'account_types',
+        'reapplication_count',
+        'last_reapplied_at'
     ];
 
     /**

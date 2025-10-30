@@ -250,13 +250,16 @@
                                             </td>
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
-                                                @if ($item->status == 'rejected')
-                                                    {{ $item->rejected_reason }}
-                                                @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
-                                                    Sila Hadir ke Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan dalam masa 7 hari bekerja
-                                                @endif
-                                            </td>
-
+                                                    @if ($item->status == 'rejected')
+                                                        <div class="mb-2">{{ $item->rejected_reason }}</div>
+                                                        <a href="{{ route('claim.application.reapply', $item->id) }}" 
+                                                        class="btn btn-primary btn-sm">
+                                                            <i class="fa fa-refresh"></i> Mohon Semula
+                                                        </a>
+                                                    @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
+                                                        Sila Hadir ke Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan dalam masa 7 hari bekerja
+                                                    @endif
+                                                </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

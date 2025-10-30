@@ -897,13 +897,13 @@
 
         function rejectClaim(claimId) {
             Swal.fire({
-                title: 'Reject Claim',
-                text: 'Please enter the reason for rejection:',
+                title: 'Tolak Tuntutan',
+                text: 'Nyatakan Alasan',
                 input: 'textarea',
                 inputPlaceholder: '',
                 showCancelButton: true,
-                confirmButtonText: 'Submit',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal',
                 confirmButtonColor: '#d33',
                 preConfirm: (reason) => {
                     if (!reason) {
@@ -917,7 +917,7 @@
 
                     Swal.fire({
                         title: 'Processing...',
-                        text: 'Please wait while we reject the claim.',
+                        text: 'Sila tunggu sementara kami menolak tuntutan',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -935,8 +935,8 @@
                         success: function(response) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Claim Rejected',
-                                text: 'The claim has been rejected successfully!',
+                                title: 'Tuntutan Ditolak',
+                                text: '',
                             }).then(() => {
                                 window.location.href = "{{ route('claim.list') }}";
                             });

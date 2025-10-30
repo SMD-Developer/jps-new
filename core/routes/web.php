@@ -92,6 +92,7 @@ Route::group(['middleware' => 'install'], function(){
             Route::get('contribution-history','ClientArea\HomeController@contribution_history')->name('contribution_history');
             Route::get('contribution-claim','ClientArea\HomeController@contributionClaim')->name('contribution_claim');
             Route::get('claim-contribution-list','ClientArea\HomeController@userClaimList')->name('claim.contribution.list');
+            Route::get('claim-application-reapply/{id}', 'ClientArea\HomeController@claimReapply')->name('claim.application.reapply');
             Route::get('faq','ClientArea\HomeController@faq')->name('faq');
             Route::get('contact-support','ClientArea\HomeController@contactSupport')->name('contact_support');
             Route::get('update-profile','ClientArea\HomeController@updateprofile')->name('update.profile');

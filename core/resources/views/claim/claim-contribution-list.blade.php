@@ -291,7 +291,7 @@
 
                                                     @if($item->send_to_finance == 1)
                                                         <br>
-                                                        <small class="text-info">Forwarded to Finance</small>
+                                                        <small class="text-info">Hantar ke Kewangan</small>
                                                     @endif
                                             </td>
 
