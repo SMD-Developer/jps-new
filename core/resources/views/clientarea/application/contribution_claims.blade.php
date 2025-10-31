@@ -506,7 +506,7 @@
                                         <small class="text-muted">
                                             <i class="fa fa-file-pdf-o text-danger"></i> 
                                             Fail Sebelum: 
-                                            <a href="{{ asset('storage/' . $claim->land_grant) }}" target="_blank" class="text-primary">
+                                            <a href="{{ url('pdf/' . basename($claim->land_grant)) }}" target="_blank" class="text-primary">
                                                 <i class="fa fa-eye"></i> Lihat Fail
                                             </a>
                                         </small>
@@ -532,7 +532,7 @@
                                         <small class="text-muted">
                                             <i class="fa fa-file-pdf-o text-danger"></i> 
                                             Fail Sebelum: 
-                                            <a href="{{ asset('storage/' . $claim->new_receipt) }}" target="_blank" class="text-primary">
+                                            <a href="{{ url('pdf/' . basename($claim->new_receipt)) }}" target="_blank" class="text-primary">
                                                 <i class="fa fa-eye"></i> Lihat Fail
                                             </a>
                                         </small>
@@ -557,7 +557,7 @@
                                         <small class="text-muted">
                                             <i class="fa fa-file-pdf-o text-danger"></i> 
                                             Fail Sebelum: 
-                                            <a href="{{ asset('storage/' . $claim->supporting_docs) }}" target="_blank" class="text-primary">
+                                            <a href="{{ url('pdf/' . basename($claim->supporting_docs)) }}" target="_blank" class="text-primary">
                                                 <i class="fa fa-eye"></i> Lihat Fail
                                             </a>
                                         </small>

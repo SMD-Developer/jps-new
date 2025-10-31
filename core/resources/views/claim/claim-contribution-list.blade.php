@@ -132,6 +132,41 @@
         font-size: 0.95rem;   
         padding: 0.45em 0.8em; 
     }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: capitalize;
+        color: #fff;
+        white-space: nowrap; 
+        line-height: 1;  
+    }
+
+    /* Status colors */
+    .status-rejected {
+        background-color: #dc3545; 
+    }
+
+    .status-approved {
+        background-color: #28a745; 
+    }
+
+    .status-pending {
+        background-color: #ffc107; 
+        color: #000;
+    }
+
+    .status-inprocess {
+        background-color: #17a2b8; 
+        color: #000;
+    }
+
+    .status-unknown {
+        background-color: #6c757d; 
+    }
+
 </style>
 <title>{{ trans('app.claim_contribution') }} | JPS</title>
 @section('content')
@@ -244,8 +279,18 @@
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
                                             <td>
-                                                {{ $item->client ? ($item->client->accountType == 1 ? 'Individu' : ($item->client->accountType == 2 ? 'Pemaju' : ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 'Unknown'))) : '' }}
+                                                {{ 
+                                                    $item->client 
+                                                        ? (
+                                                            $item->client->accountType == 1 ? 'Individu' : 
+                                                            ($item->client->accountType == 2 ? 'Pemaju' : 
+                                                            ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 
+                                                            ($item->client->accountType == 4 ? 'Perunding' : 'Unknown')))
+                                                        ) 
+                                                        : '' 
+                                                }}
                                             </td>
+
                                             <td>
                                                 @switch($item->application_type)
                                                     @case('reapply')
@@ -270,27 +315,27 @@
                                                     @php
                                                         switch($item->status) {
                                                             case 'rejected':
-                                                                $badgeClass = 'badge badge-danger'; // Red
+                                                                $badgeClass = 'status-badge status-rejected';
                                                                 $badgeText = 'Ditolak';
                                                                 break;
 
                                                             case 'approve_paid':
-                                                                $badgeClass = 'badge badge-success'; // Green
+                                                                $badgeClass = 'status-badge status-approved';
                                                                 $badgeText = 'Diluluskan';
                                                                 break;
 
                                                             case 'pending':
-                                                                $badgeClass = 'badge badge-warning text-dark'; // Yellow
+                                                                $badgeClass = 'status-badge status-pending';
                                                                 $badgeText = 'Belum Selesai';
                                                                 break;
 
                                                             case 'approve_payment_in_process':
-                                                                $badgeClass = 'badge badge-info text-dark'; // Blue
+                                                                $badgeClass = 'status-badge status-inprocess';
                                                                 $badgeText = 'Dalam Proses';
                                                                 break;
 
                                                             default:
-                                                                $badgeClass = 'badge badge-secondary'; // Gray
+                                                                $badgeClass = 'status-badge status-unknown';
                                                                 $badgeText = 'Tidak Diketahui';
                                                         }
                                                     @endphp
@@ -299,7 +344,7 @@
                                                         {{ $badgeText }}
                                                     </span>
                                                 @else
-                                                    <span class="badge badge-secondary">N/A</span>
+                                                    <span class="status-badge status-unknown">N/A</span>
                                                 @endif
 
                                                 @if($item->send_to_finance == 1)
@@ -307,6 +352,7 @@
                                                     <small class="text-info">Hantar ke Kewangan</small>
                                                 @endif
                                             </td>
+
 
 
                                             <td>{{$item->payment_amount}}</td>

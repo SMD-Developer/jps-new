@@ -570,7 +570,7 @@
                     @if($isAdminStaff)
                         <button type="button" class="btn btn-info" onclick="window.history.back()">@lang('Kembali')</button>
                         
-                        @if($claim->status == 'approve_paid')
+                        @if($claim->status == 'approve_paid' || $claim->send_to_finance == 1)
                             <button type="button" class="btn btn-danger" disabled>@lang('app.reject')</button>
                             <button type="button" class="btn btn-info no-print" disabled>
                                 Hantar ke Kewangan

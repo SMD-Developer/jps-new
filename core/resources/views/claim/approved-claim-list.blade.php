@@ -128,6 +128,40 @@
         background-color: #fff3cd;
         color: #856404;
     }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: capitalize;
+        color: #fff;
+        white-space: nowrap; 
+        line-height: 1;      
+    }
+
+    /* Status Colors */
+    .status-success {
+        background-color: #28a745;
+    }
+
+    .status-danger {
+        background-color: #dc3545; 
+    }
+
+    .status-warning {
+        background-color: #ffc107; 
+        color: #000; 
+    }
+
+    .status-info {
+        background-color: #17a2b8; 
+    }
+
+    .status-secondary {
+        background-color: #6c757d; 
+    }
+
 </style>
 <title>{{ trans('app.claim_contribution') }} | JPS</title>
 @section('content')
@@ -240,8 +274,18 @@
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
                                             <td>
-                                                {{ $item->client ? ($item->client->accountType == 1 ? 'Individu' : ($item->client->accountType == 2 ? 'Pemaju' : ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 'Unknown'))) : '' }}
+                                                {{ 
+                                                    $item->client 
+                                                        ? (
+                                                            $item->client->accountType == 1 ? 'Individu' : 
+                                                            ($item->client->accountType == 2 ? 'Pemaju' : 
+                                                            ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 
+                                                            ($item->client->accountType == 4 ? 'Perunding' : 'Unknown')))
+                                                        ) 
+                                                        : '' 
+                                                }}
                                             </td>
+
                                             <td>
                                                 @switch($item->application_type)
                                                     @case('reapply')
@@ -262,38 +306,44 @@
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                             </td>
                                             <td>
-                                                    @if($item->status)
-                                                        @php
+                                                @if($item->status)
+                                                    @php
+                                                        $statusClass = ''; 
+                                                        $statusText = '';
+
+                                                        // Check status and send_to_finance
+                                                        if ($item->status == 'approve_paid' || $item->send_to_finance == 1) {
+                                                            $statusClass = 'status-success'; 
+                                                            $statusText = __('app.' . $item->status);
+                                                        } else {
                                                             switch($item->status) {
                                                                 case 'rejected':
-                                                                    $badgeClass = 'bg-danger';
+                                                                    $statusClass = 'status-danger'; 
                                                                     break;
                                                                 case 'approve_paid':
-                                                                    $badgeClass = 'bg-success';
+                                                                    $statusClass = 'status-success'; 
                                                                     break;
                                                                 case 'pending':
-                                                                    $badgeClass = 'bg-warning text-dark';
+                                                                    $statusClass = 'status-warning'; 
                                                                     break;
                                                                 case 'approve_payment_in_process':
-                                                                    $badgeClass = 'bg-info text-dark';
+                                                                    $statusClass = 'status-info'; // Blue
                                                                     break;
                                                                 default:
-                                                                    $badgeClass = 'bg-secondary';
+                                                                    $statusClass = 'status-secondary'; // Gray
                                                             }
-                                                        @endphp
+                                                            $statusText = __('app.' . $item->status);
+                                                        }
+                                                    @endphp
 
-                                                        <span class="badge {{ $badgeClass }}">
-                                                            @lang('app.' . $item->status)
-                                                        </span>
-                                                    @else
-                                                        <span class="badge bg-secondary">N/A</span>
-                                                    @endif
-
-                                                    @if($item->send_to_finance == 1)
-                                                        <br>
-                                                        <small class="text-info">Forwarded to Finance</small>
-                                                    @endif
+                                                    <span class="status-badge {{ $statusClass }}">
+                                                        {{ $statusText }}
+                                                    </span>
+                                                @else
+                                                    <span class="status-badge status-secondary">N/A</span>
+                                                @endif
                                             </td>
+
 
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
