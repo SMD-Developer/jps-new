@@ -60,33 +60,53 @@ class CheckFPXPaymentStatus extends Command
     {
         try {
             $this->line("Checking order: {$paymentRecord->seller_order_no}");
+            
+            // Get original request data from gateway_response
             $originalRequest = null;
             if (!empty($paymentRecord->gateway_response)) {
                 $gatewayData = json_decode($paymentRecord->gateway_response, true);
-                $originalRequest = $gatewayData['fpx_response_data'] ?? $gatewayData['latest_status_inquiry'] ?? null;
+                $originalRequest = $gatewayData['fpx_response_data'] 
+                                ?? $gatewayData['latest_status_inquiry'] 
+                                ?? $gatewayData['fpx_request_params']  
+                                ?? null;
             }
             
-            // Use the EXACT sellerExOrderNo from the original transaction
-            $fpx_sellerExOrderNo = $paymentRecord->seller_order_no;
-            
-            // If we have the original response, use that exact order number
-            if ($originalRequest && !empty($originalRequest['fpx_sellerExOrderNo'])) {
-                $fpx_sellerExOrderNo = $originalRequest['fpx_sellerExOrderNo'];
-                $this->line("Using original FPX order number: {$fpx_sellerExOrderNo}");
-            }
-            
-            // Also get the exact transaction time from original request
-            $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
-            if ($originalRequest && !empty($originalRequest['fpx_sellerTxnTime'])) {
-                $fpx_sellerTxnTime = $originalRequest['fpx_sellerTxnTime'];
-                $this->line("Using original transaction time: {$fpx_sellerTxnTime}");
-            }
-            
-            // Get exact seller order number (not exchange order number)
+            // ============================================
+            // CRITICAL FIX: Use seller_ex_order_no first!
+            // ============================================
+            $fpx_sellerExOrderNo = $paymentRecord->seller_ex_order_no ?? $paymentRecord->seller_order_no;
             $fpx_sellerOrderNo = $paymentRecord->seller_order_no;
-            if ($originalRequest && !empty($originalRequest['fpx_sellerOrderNo'])) {
-                $fpx_sellerOrderNo = $originalRequest['fpx_sellerOrderNo'];
+            $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
+            
+            // If we have original request data, verify and use it
+            if ($originalRequest) {
+                // Check for mismatches and use the correct values
+                if (!empty($originalRequest['fpx_sellerExOrderNo'])) {
+                    if ($originalRequest['fpx_sellerExOrderNo'] !== $fpx_sellerExOrderNo) {
+                        $this->warn("⚠ Order number mismatch!");
+                        $this->line("  DB seller_ex_order_no: {$fpx_sellerExOrderNo}");
+                        $this->line("  Gateway response: {$originalRequest['fpx_sellerExOrderNo']}");
+                        $this->line("  Using gateway response value");
+                    }
+                    $fpx_sellerExOrderNo = $originalRequest['fpx_sellerExOrderNo'];
+                }
+                
+                if (!empty($originalRequest['fpx_sellerOrderNo'])) {
+                    if ($originalRequest['fpx_sellerOrderNo'] !== $fpx_sellerOrderNo) {
+                        $this->warn("⚠ Seller order number mismatch!");
+                        $this->line("  DB seller_order_no: {$fpx_sellerOrderNo}");
+                        $this->line("  Gateway response: {$originalRequest['fpx_sellerOrderNo']}");
+                    }
+                    $fpx_sellerOrderNo = $originalRequest['fpx_sellerOrderNo'];
+                }
+                
+                if (!empty($originalRequest['fpx_sellerTxnTime'])) {
+                    $fpx_sellerTxnTime = $originalRequest['fpx_sellerTxnTime'];
+                }
             }
+            
+            $this->line("Query params: OrderNo={$fpx_sellerOrderNo}, ExOrderNo={$fpx_sellerExOrderNo}, TxnTime={$fpx_sellerTxnTime}");
+            // ============================================
 
             $fpx_msgType = "AE";
             $fpx_msgToken = "02"; 
