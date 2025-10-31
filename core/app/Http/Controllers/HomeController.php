@@ -444,7 +444,6 @@ class HomeController extends Controller {
         try {
             $validated = $request->validate([
                 'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid',
-                'payment_amount' => 'required_if:status,approve_paid|nullable|numeric|min:0'
             ]);
 
             $claim = DB::table('claim_contribution')->where('id', $id)->first();

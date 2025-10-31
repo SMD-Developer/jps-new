@@ -642,7 +642,7 @@
                                             
                                             <!-- Payment Amount Field (Hidden by default) -->
                                             <div class="mb-3" id="paymentAmountField" style="display: none;">
-                                                <label for="payment_amount" class="form-label">Jumlah Bayaran: <span class="text-danger">*</span></label>
+                                                <label for="payment_amount" class="form-label">Jumlah Bayaran: <span class="text-danger"></span></label>
                                                 <input type="number" 
                                                     class="form-control" 
                                                     id="payment_amount" 
@@ -960,106 +960,81 @@
             convertToHectare();
         });
     </script>
-     <script>
-    $(document).ready(function() {
-        // Show/hide payment amount field based on status selection
-        $('#status').on('change', function() {
-            if ($(this).val() === 'approve_paid') {
-                $('#paymentAmountField').slideDown();
-                $('#payment_amount').attr('required', true);
-            } else {
-                $('#paymentAmountField').slideUp();
-                $('#payment_amount').attr('required', false);
-                $('#payment_amount').val(''); // Clear the value
-            }
-        });
-        
-        // Trigger on page load if approve_paid is already selected
-        if ($('#status').val() === 'approve_paid') {
-            $('#paymentAmountField').show();
-            $('#payment_amount').attr('required', true);
-        }
-        
-        // Status Update Form Submit
-        $('#statusUpdateForm').submit(function(e) {
-            e.preventDefault();
+    <script>
+        $(document).ready(function() {
+            $('#status').on('change', function() {
+                if ($(this).val() === 'approve_paid') {
+                    $('#paymentAmountField').slideDown();
+                    // Removed required attribute
+                } else {
+                    $('#paymentAmountField').slideUp();
+                    $('#payment_amount').val(''); // Clear the value
+                }
+            });
             
-            // Validate payment amount if approve_paid is selected
             if ($('#status').val() === 'approve_paid') {
-                const paymentAmount = $('#payment_amount').val();
-                if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Perhatian!',
-                        text: 'Sila masukkan jumlah bayaran yang sah.',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#f39c12'
-                    });
-                    return false;
-                }
+                $('#paymentAmountField').show();
             }
-            
-            // Show loading state
-            Swal.fire({
-                title: 'Memproses...',
-                text: 'Sila tunggu',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    // Close the modal
-                    $('#financeStatusModal').modal('hide');
-                    
-                    // Show success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berjaya!',
-                        text: response.message || 'Status tuntutan berjaya dikemaskini',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#3085d6'
-                    }).then((result) => {
-                        // Redirect after user clicks OK
-                        window.location.href = "{{ route('claim.list') }}";
-                    });
-                },
-                error: function(xhr) {
-                    // Close the modal
-                    $('#financeStatusModal').modal('hide');
-                    
-                    let errorMessage = 'Gagal mengemaskini status';
-                    
-                    // Parse error message
-                    if (xhr.responseJSON) {
-                        if (xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        } else if (xhr.responseJSON.errors) {
-                            // Handle validation errors
-                            const errors = xhr.responseJSON.errors;
-                            errorMessage = Object.values(errors).flat().join('<br>');
-                        }
+
+            $('#statusUpdateForm').submit(function(e) {
+                e.preventDefault();
+                
+                Swal.fire({
+                    title: 'Memproses...',
+                    text: 'Sila tunggu',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
                     }
-                    
-                    // Show error message
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Ralat!',
-                        html: errorMessage,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#d33'
-                    });
-                }
+                });
+                
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        $('#financeStatusModal').modal('hide');
+                        
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berjaya!',
+                            text: response.message || 'Status tuntutan berjaya dikemaskini',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3085d6'
+                        }).then((result) => {
+                            window.location.href = "{{ route('claim.approved.list') }}";
+                        });
+                    },
+                    error: function(xhr) {
+                        // Close the modal
+                        $('#financeStatusModal').modal('hide');
+                        
+                        let errorMessage = 'Gagal mengemaskini status';
+                        
+                        if (xhr.responseJSON) {
+                            if (xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.responseJSON.errors) {
+                                const errors = xhr.responseJSON.errors;
+                                errorMessage = Object.values(errors).flat().join('<br>');
+                            }
+                        }
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ralat!',
+                            html: errorMessage,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
+
  
 @endsection
