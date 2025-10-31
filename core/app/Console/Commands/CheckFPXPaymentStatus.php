@@ -60,22 +60,63 @@ class CheckFPXPaymentStatus extends Command
     {
         try {
             $this->line("Checking order: {$paymentRecord->seller_order_no}");
-   
+            $originalRequest = null;
+            if (!empty($paymentRecord->gateway_response)) {
+                $gatewayData = json_decode($paymentRecord->gateway_response, true);
+                $originalRequest = $gatewayData['fpx_response_data'] ?? $gatewayData['latest_status_inquiry'] ?? null;
+            }
+            
+            // Use the EXACT sellerExOrderNo from the original transaction
+            $fpx_sellerExOrderNo = $paymentRecord->seller_order_no;
+            
+            // If we have the original response, use that exact order number
+            if ($originalRequest && !empty($originalRequest['fpx_sellerExOrderNo'])) {
+                $fpx_sellerExOrderNo = $originalRequest['fpx_sellerExOrderNo'];
+                $this->line("Using original FPX order number: {$fpx_sellerExOrderNo}");
+            }
+            
+            // Also get the exact transaction time from original request
+            $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
+            if ($originalRequest && !empty($originalRequest['fpx_sellerTxnTime'])) {
+                $fpx_sellerTxnTime = $originalRequest['fpx_sellerTxnTime'];
+                $this->line("Using original transaction time: {$fpx_sellerTxnTime}");
+            }
+            
+            // Get exact seller order number (not exchange order number)
+            $fpx_sellerOrderNo = $paymentRecord->seller_order_no;
+            if ($originalRequest && !empty($originalRequest['fpx_sellerOrderNo'])) {
+                $fpx_sellerOrderNo = $originalRequest['fpx_sellerOrderNo'];
+            }
+
             $fpx_msgType = "AE";
             $fpx_msgToken = "02"; 
             $fpx_sellerExId = $paymentRecord->seller_ex_id ?? "EX00014529";
-            $fpx_sellerExOrderNo = $paymentRecord->seller_order_no;
-            $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
-            $fpx_sellerOrderNo = $paymentRecord->seller_order_no;
             $fpx_sellerId = $paymentRecord->seller_id ?? "SE00110559";
             $fpx_sellerBankCode = "01";
             $fpx_txnCurrency = $paymentRecord->currency ?? "MYR";
             $fpx_txnAmount = number_format((float)$paymentRecord->amount, 2, '.', '');
             
+            // Use EXACT buyer details from original transaction
             $fpx_buyerEmail = $paymentRecord->buyer_email ?? "";
             $fpx_buyerName = $paymentRecord->buyer_name ?? "";
             $fpx_buyerBankId = $paymentRecord->buyer_bank_id ?? "";
             $fpx_buyerBankBranch = $paymentRecord->buyer_bank_branch ?? "";
+            
+            // If we have original request, use those exact values
+            if ($originalRequest) {
+                if (!empty($originalRequest['fpx_buyerEmail'])) {
+                    $fpx_buyerEmail = $originalRequest['fpx_buyerEmail'];
+                }
+                if (!empty($originalRequest['fpx_buyerName'])) {
+                    $fpx_buyerName = $originalRequest['fpx_buyerName'];
+                }
+                if (!empty($originalRequest['fpx_buyerBankId'])) {
+                    $fpx_buyerBankId = $originalRequest['fpx_buyerBankId'];
+                }
+                if (!empty($originalRequest['fpx_buyerBankBranch'])) {
+                    $fpx_buyerBankBranch = $originalRequest['fpx_buyerBankBranch'];
+                }
+            }
             
             $fpx_checkSum = "";
             $fpx_buyerAccNo = "";
@@ -84,6 +125,17 @@ class CheckFPXPaymentStatus extends Command
             $fpx_buyerIban = "";
             $fpx_productDesc = $paymentRecord->product_desc ?? "Payment";
             $fpx_version = "6.0";
+            
+            // Log what we're sending to FPX
+            Log::info('FPX Status Query Parameters', [
+                'order_no' => $paymentRecord->seller_order_no,
+                'fpx_sellerExOrderNo' => $fpx_sellerExOrderNo,
+                'fpx_sellerOrderNo' => $fpx_sellerOrderNo,
+                'fpx_sellerTxnTime' => $fpx_sellerTxnTime,
+                'fpx_txnAmount' => $fpx_txnAmount,
+                'fpx_buyerName' => $fpx_buyerName,
+                'fpx_buyerBankId' => $fpx_buyerBankId,
+            ]);
             
             // Generate checksum
             $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
@@ -159,8 +211,14 @@ class CheckFPXPaymentStatus extends Command
             Log::info('FPX Status Response for Order', [
                 'order_no' => $paymentRecord->seller_order_no,
                 'debit_auth_code' => $fpx_debitAuthCode,
+                'fpx_transaction_id' => $response_value['fpx_fpxTxnId'] ?? 'N/A',
                 'full_response' => $response_value,
-                'current_db_status' => $paymentRecord->payment_status
+                'current_db_status' => $paymentRecord->payment_status,
+                'query_used' => [
+                    'fpx_sellerExOrderNo' => $fpx_sellerExOrderNo,
+                    'fpx_sellerOrderNo' => $fpx_sellerOrderNo,
+                    'fpx_sellerTxnTime' => $fpx_sellerTxnTime
+                ]
             ]);
             
             // Update payment status based on response
@@ -180,12 +238,39 @@ class CheckFPXPaymentStatus extends Command
                 $newStatusMessage = 'Payment is pending for authorizer approval';
                 $this->line("⏳ Order {$paymentRecord->seller_order_no}: Still pending");
             } elseif ($fpx_debitAuthCode === '76') {
-                // Transaction not found / too old - DON'T mark as failed
-                $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Transaction not found in FPX (Code 76) - possibly too old");
+                // Transaction not found - but we have a transaction ID from before!
+                if (!empty($originalRequest['fpx_fpxTxnId'])) {
+                    $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Code 76 but transaction ID exists ({$originalRequest['fpx_fpxTxnId']})");
+                    $this->warn("   This might be a completed transaction. Manual verification recommended.");
+                    
+                    Log::warning('FPX Code 76 with Existing Transaction ID', [
+                        'order_no' => $paymentRecord->seller_order_no,
+                        'fpx_txn_id' => $originalRequest['fpx_fpxTxnId'],
+                        'last_known_status' => $originalRequest['fpx_debitAuthCode'] ?? 'unknown',
+                        'action' => 'REQUIRES MANUAL VERIFICATION - Transaction may be completed but not queryable'
+                    ]);
+                    
+                    // Don't mark as failed - keep pending for manual review
+                    return;
+                }
+                
+                $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Transaction not found in FPX (Code 76)");
+                // Don't update status - manual verification needed
+                return;
+                
+            } elseif (in_array($fpx_debitAuthCode, ['09', 'A0', 'U7'])) {
+                $newPaymentStatus = 'pending_authorization';
+                $newStatusMessage = 'Payment is pending for authorizer approval';
+                $this->line("⏳ Order {$paymentRecord->seller_order_no}: Pending authorization");
             } else {
                 $newPaymentStatus = 'failed';
                 $newStatusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode);
                 $this->warn("✗ Order {$paymentRecord->seller_order_no}: Payment FAILED (Code: {$fpx_debitAuthCode})");
+            }
+            
+            // Only update if we have a definitive status
+            if (empty($newPaymentStatus)) {
+                return;
             }
             
             $canUpdate = ($paymentRecord->payment_status === 'pending_authorization');
@@ -214,11 +299,17 @@ class CheckFPXPaymentStatus extends Command
                     ]);
                 }
                 
+                // Preserve original request data in gateway_response
                 $updateData['gateway_response'] = json_encode([
                     'latest_status_inquiry' => $response_value,
                     'status_checked_at' => now(),
                     'checked_by' => 'cron_job',
-                    'previous_response' => $paymentRecord->gateway_response ? json_decode($paymentRecord->gateway_response, true) : null
+                    'original_fpx_request' => $originalRequest,
+                    'query_parameters_used' => [
+                        'fpx_sellerExOrderNo' => $fpx_sellerExOrderNo,
+                        'fpx_sellerOrderNo' => $fpx_sellerOrderNo,
+                        'fpx_sellerTxnTime' => $fpx_sellerTxnTime
+                    ]
                 ]);
                 
                 DB::table('payments')
@@ -235,7 +326,8 @@ class CheckFPXPaymentStatus extends Command
             $this->error("Error checking {$paymentRecord->seller_order_no}: {$e->getMessage()}");
             Log::error('FPX Cron Status Check Failed', [
                 'order_no' => $paymentRecord->seller_order_no,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }

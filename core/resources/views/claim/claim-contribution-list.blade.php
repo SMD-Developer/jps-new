@@ -128,6 +128,10 @@
         background-color: #fff3cd;
         color: #856404;
     }
+    .badge-lg-text {
+        font-size: 0.95rem;   
+        padding: 0.45em 0.8em; 
+    }
 </style>
 <title>{{ trans('app.claim_contribution') }} | JPS</title>
 @section('content')
@@ -262,38 +266,48 @@
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                             </td>
                                             <td>
-                                                    @if($item->status)
-                                                        @php
-                                                            switch($item->status) {
-                                                                case 'rejected':
-                                                                    $badgeClass = 'bg-danger';
-                                                                    break;
-                                                                case 'approve_paid':
-                                                                    $badgeClass = 'bg-success';
-                                                                    break;
-                                                                case 'pending':
-                                                                    $badgeClass = 'bg-warning text-dark';
-                                                                    break;
-                                                                case 'approve_payment_in_process':
-                                                                    $badgeClass = 'bg-info text-dark';
-                                                                    break;
-                                                                default:
-                                                                    $badgeClass = 'bg-secondary';
-                                                            }
-                                                        @endphp
+                                                @if($item->status)
+                                                    @php
+                                                        switch($item->status) {
+                                                            case 'rejected':
+                                                                $badgeClass = 'badge badge-danger'; // Red
+                                                                $badgeText = 'Ditolak';
+                                                                break;
 
-                                                        <span class="badge {{ $badgeClass }}">
-                                                            @lang('app.' . $item->status)
-                                                        </span>
-                                                    @else
-                                                        <span class="badge bg-secondary">N/A</span>
-                                                    @endif
+                                                            case 'approve_paid':
+                                                                $badgeClass = 'badge badge-success'; // Green
+                                                                $badgeText = 'Diluluskan';
+                                                                break;
 
-                                                    @if($item->send_to_finance == 1)
-                                                        <br>
-                                                        <small class="text-info">Hantar ke Kewangan</small>
-                                                    @endif
+                                                            case 'pending':
+                                                                $badgeClass = 'badge badge-warning text-dark'; // Yellow
+                                                                $badgeText = 'Belum Selesai';
+                                                                break;
+
+                                                            case 'approve_payment_in_process':
+                                                                $badgeClass = 'badge badge-info text-dark'; // Blue
+                                                                $badgeText = 'Dalam Proses';
+                                                                break;
+
+                                                            default:
+                                                                $badgeClass = 'badge badge-secondary'; // Gray
+                                                                $badgeText = 'Tidak Diketahui';
+                                                        }
+                                                    @endphp
+
+                                                    <span class="{{ $badgeClass }}">
+                                                        {{ $badgeText }}
+                                                    </span>
+                                                @else
+                                                    <span class="badge badge-secondary">N/A</span>
+                                                @endif
+
+                                                @if($item->send_to_finance == 1)
+                                                    <br>
+                                                    <small class="text-info">Hantar ke Kewangan</small>
+                                                @endif
                                             </td>
+
 
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
