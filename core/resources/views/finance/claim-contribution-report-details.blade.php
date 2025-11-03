@@ -139,6 +139,7 @@
         border-collapse: collapse;
         margin: 20px 0;
         font-size: 12px;
+        text-align: center;
     }
 
     .main-data-table th {
@@ -152,6 +153,7 @@
         text-transform: uppercase;
         line-height: 1.2;
         vertical-align: middle;
+        text-align: center;
     }
 
     .main-data-table td {
@@ -159,6 +161,7 @@
         border: 1px solid #ccc;
         vertical-align: middle;
         background: white;
+        text-align: center;
     }
 
     .main-data-table tbody tr:nth-child(even) {
@@ -504,7 +507,7 @@
                                     <div class="main-title">
                                         <h1>KERAJAAN NEGERI SELANGOR DARUL EHSAN</h1>
                                         <p><strong>
-                                            LAPORAN BAYARAN TUNTUTAN CARUMAN PARIT PADA
+                                            LAPORAN BAYARAN PULANG BALIK HASIL CARUMAN PADA
                                             {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }}
                                             HINGGA {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
                                         </strong></p>
@@ -554,6 +557,7 @@
                                              <th>@lang('app.applicant_list')</th>
                                             <th>@lang('app.lot_pt')</th>
                                             <th>@lang('app.status')</th>
+                                            <th>JUMLAH BAYARAN (RM)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -574,16 +578,20 @@
 
                                                 </td>
 
-                                                <td>{{ $contribution->account_type_name ?? 'N/A' }}</td>
-                                                <td>{{ $contribution->applicant ?? 'N/A' }}</td>
-                                                <td>{{ $contribution->land_lot ?? 'N/A' }}</td>
+                                                <td>{{ strtoupper($contribution->account_type_name ?? 'N/A') }}</td>
+                                                <td>{{ strtoupper($contribution->applicant ?? 'N/A') }}</td>
+                                                <td>{{ strtoupper($contribution->land_lot ?? 'N/A') }}, {{ strtoupper($contribution->division_name) }}, DAERAH {{strtoupper($contribution->district_name) }}, SELANGOR</td>
                                                 <td>
                                                     @if($contribution->status)
-                                                        @lang('app.'.$contribution->status)
+                                                        {{ strtoupper(trans('app.' . $contribution->status)) }}
                                                     @else
-                                                      N/A
+                                                        N/A
                                                     @endif
                                                 </td>
+                                                 <td>
+                                                    {{ $contribution->payment_amount ? number_format($contribution->payment_amount, 2) : '0.00' }}
+                                                </td>
+
                                             </tr>
                                         @endforeach
                                     </tbody>

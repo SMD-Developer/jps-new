@@ -225,6 +225,13 @@
                                                                     {{trans('app.rejected')}}
                                                                 </span>
                                                             </div>
+
+                                                            {{-- ✅ Show reason below --}}
+                                                            @if(!empty($item->rejected_reason))
+                                                                <p style="padding-top: 5px; font-size: 12px; color: #dc3545; font-weight: 500;">
+                                                                    {{ trans('app.reason') }}: {{ $item->rejected_reason }}
+                                                                </p>
+                                                            @endif
                                                         
                                                         @break
                                                         @case('approve_payment_in_process')
@@ -251,7 +258,6 @@
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
                                                     @if ($item->status == 'rejected')
-                                                        <div class="mb-2">{{ $item->rejected_reason }}</div>
                                                         <a href="{{ route('claim.application.reapply', $item->id) }}" 
                                                         class="btn btn-primary btn-sm">
                                                             <i class="fa fa-refresh"></i> Mohon Semula

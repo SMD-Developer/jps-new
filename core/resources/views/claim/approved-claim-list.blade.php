@@ -264,7 +264,7 @@
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{trans('app.status')}}</strong></th>
-                                        <th><strong>{{trans('app.total_payment')}}</strong></th>
+                                        <th><strong>{{trans('app.total_payment')}}(RM)</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -273,32 +273,48 @@
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>{{ date('d/m/Y', strtotime($item->uploade_date)) }}</td>
-                                            <td>
-                                                {{ 
-                                                    $item->client 
-                                                        ? (
-                                                            $item->client->accountType == 1 ? 'Individu' : 
-                                                            ($item->client->accountType == 2 ? 'Pemaju' : 
-                                                            ($item->client->accountType == 3 ? 'Agensi Kerajaan' : 
-                                                            ($item->client->accountType == 4 ? 'Perunding' : 'Unknown')))
-                                                        ) 
-                                                        : '' 
-                                                }}
+                                             <td>
+                                                @php
+                                                    $clientType = '';
+                                                    $account_types = '';
+
+                                                    if ($item->client) {
+                                                        switch ($item->client->accountType) {
+                                                            case 1: $clientType = 'Individu'; break;
+                                                            case 2: $clientType = 'Pemaju'; break;
+                                                            case 3: $clientType = 'Agensi Kerajaan'; break;
+                                                            case 4: $clientType = 'Perunding'; break;
+                                                            default: $clientType = 'Unknown';
+                                                        }
+                                                    }
+
+                                                    // Get applicant type from applicant_type field
+                                                    switch ($item->account_types) {
+                                                        case 1: $account_types = 'Individu'; break;
+                                                        case 2: $account_types = 'Pemaju'; break;
+                                                        case 3: $account_types = 'Agensi Kerajaan'; break;
+                                                        case 4: $account_types = 'Perunding'; break;
+                                                    }
+
+                                                    // Show logic
+                                                    if ($account_types && $clientType && $account_types != $clientType) {
+                                                        echo strtoupper($clientType . '-' . $account_types);
+                                                    } else {
+                                                        echo strtoupper($clientType ?: $account_types ?: 'N/A');
+                                                    }
+                                                @endphp
                                             </td>
 
-                                            <td>
-                                                @switch($item->application_type)
-                                                    @case('reapply')
-                                                        {{ trans('app.reapply') }}
-                                                    @break
+                                             <td>
+                                                @php
+                                                    if (!empty($item->reapplication_count) && $item->reapplication_count > 0 && !empty($item->last_reapplied_at)) {
+                                                        $applicationType = trans('app.reapply');
+                                                    } else {
+                                                        $applicationType = trans('app.new');
+                                                    }
+                                                @endphp
 
-                                                    @case('appeal')
-                                                        Appeal
-                                                    @break
-
-                                                    @default
-                                                        {{ trans('app.new') }}
-                                                @endswitch
+                                                {{ strtoupper($applicationType) }}
                                             </td>
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},

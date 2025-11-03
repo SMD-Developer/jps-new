@@ -1023,7 +1023,7 @@ class financeController extends Controller {
     
      public function claimContributionReportSearch()
     {
-        $title = __("app.claim_contribution_report");
+        $title = __("Laporan Bayaran Pulang Balik Hasil Caruman Parit");
         return view('finance.claim-report-search',[
             'title' => $title,
         ]);
@@ -1044,10 +1044,15 @@ class financeController extends Controller {
         $query = DB::table('claim_contribution')
             ->leftJoin('client_register', 'claim_contribution.user_id', '=', 'client_register.client_id')
             ->leftJoin('account_types', 'client_register.accountType', '=', 'account_types.id')
+            ->join('district', 'claim_contribution.land_district', '=', 'district.iddaerah')
+            ->join('division', 'claim_contribution.land_state', '=', 'division.idmukim')
             ->select(
                 'claim_contribution.*',
-                'account_types.name as account_type_name'
-            );
+                'account_types.name as account_type_name',
+                'district.daerah as district_name',
+                'division.mukim as division_name',
+            )
+            ->where('claim_contribution.status', '=', 'approve_paid');
 
         if ($startDate && $endDate) {
             try {
@@ -1060,22 +1065,18 @@ class financeController extends Controller {
                     
                 $query->whereBetween('claim_contribution.created_at', [$startDateParsed, $endDateParsed]);
             } catch (\Exception $e) {
-                \Log::error('Invalid date format: ' . $e->getMessage());
                 return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
             }
         }
 
         $contributions = $query->get();
 
-        \Log::info('Contributions Count: ' . $contributions->count());
-        \Log::info('Contributions Date Range: ' . $startDate . ' to ' . $endDate);
-
         $currentDateTime = \Carbon\Carbon::now();
         $currentDate = $currentDateTime->format('d/m/Y');
         $currentTime = $currentDateTime->format('h:i:s A');
 
         return view('finance.claim-contribution-report-details', [
-            'title' => __("app.claim_contribution_report_details"),
+            'title' => __("Laporan Bayaran Pulang Balik Hasil Caruman Parit"),
             'contributions' => $contributions,
             'printType' => $printType,
             'startDate' => $startDate,
