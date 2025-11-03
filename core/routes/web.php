@@ -323,7 +323,7 @@ Route::group(['middleware' => 'install'], function(){
         ->name('mark.notification.read');
         Route::post('notifications/mark-all-as-read','HomeController@markAllAsRead' )->name('notifications.mark_all_as_read');
         
-// Finance-Approver
+        // Finance-Approver
          Route::get('approver-receiptoriginal','ApproverController@approver_receiptoriginal')->name('approver-receiptoriginal');
          Route::get('new-assignment-approver','ApproverController@approved_statement_approver')->name('approved_statement_approver');
          Route::get('collectors-statement-report-approver','ApproverController@collectors_statement_report_approver')->name('collectors_statement_report_approver');
