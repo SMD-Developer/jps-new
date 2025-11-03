@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
     <!-- Bootstrap CSS -->
@@ -100,6 +101,15 @@
                                             @else
                                                 <span class="badge bg-secondary">{{ ucfirst($app->status) }}</span>
                                             @endif
+
+                                            <a href="javascript:void(0);"
+                                                class="btn btn-sm btn-primary {{ $app->print_status_count > 0 ? 'reprint-receipt-third-party' : 'print-receipt-third-party' }}"
+                                                data-application-id="{{ $app->id }}"
+                                                style="white-space: nowrap;">
+                                                <i class="fas fa-print"></i>
+                                                <strong>{{ $app->print_status_count > 0 ? 'Reprint' : 'Print' }}</strong>
+                                            </a>
+
                                         </td>
                                         <td>
                                             <!-- Add action buttons here if needed -->
@@ -146,7 +156,141 @@
     </div>
 </div>
 
+<!-- Third Party Info Modal -->
+<div class="modal fade" id="thirdPartyInfoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Third Party Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="thirdPartyForm">
+                <div class="modal-body">
+                    <input type="hidden" id="modal_application_id" name="application_id">
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Printing fee: <strong>RM 10.00</strong>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="third_party_name" class="form-label">Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="third_party_name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="third_party_id" class="form-label">ID Number <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="third_party_id" name="id_number" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="third_party_address" class="form-label">Address <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="third_party_address" name="address" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="third_party_email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="third_party_email" name="email" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit & Proceed to Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const thirdPartyModal = new bootstrap.Modal(document.getElementById('thirdPartyInfoModal'));
+        
+        // Handle both print and reprint clicks for third party (same behavior for both)
+        document.querySelectorAll('.print-receipt-third-party, .reprint-receipt-third-party').forEach(button => {
+            button.addEventListener('click', function() {
+                const applicationId = this.getAttribute('data-application-id');
+                
+                Swal.fire({
+                    title: 'Print Receipt',
+                    text: 'Note: Receipt printing is subject to a charge of RM 10.00',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Continue',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show modal to collect third party info
+                        document.getElementById('modal_application_id').value = applicationId;
+                        document.getElementById('thirdPartyForm').reset();
+                        thirdPartyModal.show();
+                    }
+                });
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('thirdPartyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const applicationId = document.getElementById('modal_application_id').value;
+            
+            // Show loading
+            Swal.fire({
+                title: 'Processing...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Submit third party info - CORRECTED ROUTE
+            fetch('{{ route("third.party.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    application_id: applicationId,
+                    name: formData.get('name'),
+                    id_number: formData.get('id_number'),
+                    address: formData.get('address'),
+                    email: formData.get('email')
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    thirdPartyModal.hide();
+                    
+                    // CORRECTED ROUTE - Use the proper third party payment selection route
+                    window.location.href = '{{ route("third.party.payment.selection", "__ID__") }}'.replace('__ID__', applicationId);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to save information'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while processing your request'
+                });
+            });
+        });
+    });
+</script>
 </body>
 </html>

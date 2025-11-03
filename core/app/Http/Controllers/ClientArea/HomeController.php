@@ -21,6 +21,7 @@ use App\Models\District;
 use App\Models\Division;
 use Illuminate\Support\Str;
 use App\Models\Payment;
+use App\Models\ThirdPartyPrint;
 use App\Models\ClaimContribution;
 use App\Notifications\AdminNewClaimNotification;
 
@@ -1282,6 +1283,11 @@ class HomeController extends Controller {
                       'division.mukim as division_name'
                   );
 
+            $query->with('payment')
+              ->whereHas('payment', function($q) {
+                  $q->where('payment_status', 'completed');
+            });
+
             // Retrieve filters from session or query parameters
             $filters = $request->session()->get('search_filters', $request->query());
 
@@ -1329,10 +1335,6 @@ class HomeController extends Controller {
             // Append query parameters to pagination links
             $applications->appends($filters);
 
-            // Log for debugging
-            Log::info('searchResult Filters:', $filters);
-            Log::info('searchResult Applications:', $applications->toArray());
-
             return view('clientarea.application.search-results', compact(
                 'applications',
                 'states',
@@ -1345,5 +1347,8 @@ class HomeController extends Controller {
             return redirect()->route('applications.search')->with('error', 'No search criteria found. Please perform a new search.');
         }
     }
+
+
+   
  
 }

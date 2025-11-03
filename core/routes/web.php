@@ -14,6 +14,7 @@ use App\Http\Controllers\CrudController;
 use App\Http\Controllers\ClientArea\UpdateProfileController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ReportReviewController;
+use App\Http\Controllers\ThirdPartyController;
 
 Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
     Route::get('/','InstallController@index');
@@ -33,6 +34,20 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
   Route::get('divisions/{dist_id}', 'ClientArea\HomeController@getDivisions')->name('divisions');
   Route::post('search-applications', 'ClientArea\HomeController@searchApplications')->name('applications.search');
   Route::get('search-appplication-results', 'ClientArea\HomeController@searchResult')->name('search.results');
+  
+
+
+    // Add these to your existing routes
+    Route::prefix('third-party')->name('third.party.')->group(function () {
+        Route::post('/store', 'ThirdPartyController@storeThirdPartyInfo')->name('store');
+        Route::get('/payment-selection/{application}', 'ThirdPartyController@paymentSelection')->name('payment.selection');
+        Route::post('/process-payment-selection', 'ThirdPartyController@processPaymentSelection')->name('process.payment.selection');
+        Route::get('/pay-details-b2c', 'ThirdPartyController@b2c')->name('pay.details.b2c');
+        Route::get('/pay-details-b2b', 'ThirdPartyController@b2b')->name('pay.details.b2b');
+        Route::get('/print/{application}/{transaction}', 'ThirdPartyController@printReceipt')->name('print');
+        Route::post('/fpx/callback', 'ThirdPartyController@handleFpxCallback')->name('fpx.callback');
+        Route::get('/fpx/return', 'ThirdPartyController@handleFpxReturn')->name('fpx.return');
+    });
    
  
 
