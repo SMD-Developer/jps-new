@@ -265,6 +265,16 @@
                                                             <i class="fa fa-refresh"></i> Mohon Semula
                                                         </a>
                                                     @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
+                                                           @if(!empty($item->sent_to_finance_at))
+                                                                <div class="mb-1">
+                                                                    <small class="text-muted">
+                                                                        Tarikh Kelulusan pada: 
+                                                                        <strong>
+                                                                            {{ \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y') }}
+                                                                        </strong>
+                                                                    </small>
+                                                                </div>
+                                                            @endif
                                                             <small>
                                                                 Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
                                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>

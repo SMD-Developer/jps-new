@@ -138,7 +138,6 @@
             <div class="col-md-8">
                 <!-- Header -->
                 <div class="text-center mb-4">
-                    <h3 class="text-white mb-2">JPS - Third Party Services</h3>
                     <p class="text-white mb-0">Document Print Payment Selection</p>
                 </div>
 

@@ -103,11 +103,11 @@
                                             @endif
 
                                             <a href="javascript:void(0);"
-                                                class="btn btn-sm btn-primary {{ $app->print_status_count > 0 ? 'reprint-receipt-third-party' : 'print-receipt-third-party' }}"
+                                                class="btn btn-sm btn-primary print-receipt-third-party"
                                                 data-application-id="{{ $app->id }}"
                                                 style="white-space: nowrap;">
                                                 <i class="fas fa-print"></i>
-                                                <strong>{{ $app->print_status_count > 0 ? 'Reprint' : 'Print' }}</strong>
+                                                <strong>cetak resit</strong>
                                             </a>
 
                                         </td>
@@ -161,7 +161,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Third Party Information</h5>
+                <h5 class="modal-title">Borang Pendaftaran Pengguna</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="thirdPartyForm">
@@ -169,32 +169,32 @@
                     <input type="hidden" id="modal_application_id" name="application_id">
                     
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Printing fee: <strong>RM 10.00</strong>
+                        <i class="fas fa-info-circle"></i> Caj Dikenakan: <strong>RM 10.00</strong>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="third_party_name" class="form-label">Name <span class="text-danger">*</span></label>
+                        <label for="third_party_name" class="form-label">Nama <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="third_party_name" name="name" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="third_party_id" class="form-label">ID Number <span class="text-danger">*</span></label>
+                        <label for="third_party_id" class="form-label">No. kad Pengenalan/No. Daftar Perniagaan <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="third_party_id" name="id_number" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="third_party_address" class="form-label">Address <span class="text-danger">*</span></label>
+                        <label for="third_party_address" class="form-label">Alamat <span class="text-danger">*</span></label>
                         <textarea class="form-control" id="third_party_address" name="address" rows="3" required></textarea>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="third_party_email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <label for="third_party_email" class="form-label">Emel <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="third_party_email" name="email" required>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit & Proceed to Payment</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Hantar dan Membuat Pembayaran</button> 
                 </div>
             </form>
         </div>
@@ -216,14 +216,14 @@
                 const applicationId = this.getAttribute('data-application-id');
                 
                 Swal.fire({
-                    title: 'Print Receipt',
-                    text: 'Note: Receipt printing is subject to a charge of RM 10.00',
+                    title: 'Cetak Resit',
+                    text: 'Nota: Cetakan semula resit dikenakan caj RM 10.00',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Continue',
-                    cancelButtonText: 'Cancel'
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Show modal to collect third party info
