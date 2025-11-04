@@ -562,18 +562,21 @@ class HomeController extends Controller {
                 return response()->json(['success' => false, 'message' => 'Claim not found'], 404);
             }
 
+             // Get current admin info
+            $admin = auth('admin')->user();
+            $causerUsername = $admin ? $admin->username : 'System';
+            $causerUuid = $admin ? $admin->uuid : null;
+
             // Update the send_to_finance flag
             DB::table('claim_contribution')
                 ->where('id', $id)
                 ->update([
                     'send_to_finance' => 1,
+                    'sent_by' => $causerUsername,
+                    'sent_to_finance_at' => now(),
                     'updated_at' => now(),
                 ]);
 
-            // Log the activity
-            $admin = auth('admin')->user();
-            $causerUsername = $admin ? $admin->username : 'System';
-            $causerUuid = $admin ? $admin->uuid : null;
 
             ActivityLog::create([
                 'log_name' => 'claim_contribution',

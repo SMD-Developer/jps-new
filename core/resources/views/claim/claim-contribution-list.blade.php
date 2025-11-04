@@ -366,12 +366,16 @@
                                                 @endif
 
                                                 @if($item->send_to_finance == 1)
-                                                    <br>
-                                                    <small class="text-info">Hantar ke Kewangan</small>
+                                                   <br><br>
+                                                    <small class="text-info d-block">Sahkan oleh - Verify by</small>
+                                                    <strong>{{ $item->sent_by ?? 'N/A' }}</strong><br>
+                                                    <small class="text-muted">
+                                                        {{ $item->sent_to_finance_at 
+                                                            ? \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y h:i A') 
+                                                            : '-' }}
+                                                    </small>
                                                 @endif
                                             </td>
-
-
 
                                             <td>{{$item->payment_amount}}</td>
                                             <td>

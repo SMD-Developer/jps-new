@@ -573,12 +573,12 @@
                         @if($claim->status == 'approve_paid' || $claim->send_to_finance == 1)
                             <button type="button" class="btn btn-danger" disabled>@lang('app.reject')</button>
                             <button type="button" class="btn btn-info no-print" disabled>
-                                Hantar ke Kewangan
+                                Sahkan
                             </button>
                         @else
                             <button type="button" class="btn btn-danger" onclick="rejectClaim({{ $claim->id }})">@lang('app.reject')</button>
                             <button type="button" class="btn btn-info no-print" data-bs-toggle="modal" data-bs-target="#statusModal">
-                                Hantar ke Kewangan
+                                Sahkan
                             </button>
                         @endif
                     @endif
