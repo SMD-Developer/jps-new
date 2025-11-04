@@ -1852,24 +1852,43 @@ class HomeController extends Controller {
 
         // Filter based on payment method (latest payment only)
         if ($methodFilter !== 'all') {
+
+            // Mapping for normal methods
             $methodMapping = [
                 'B2B' => 'FPX_B2B',
                 'B2C' => 'FPX_B2C',
                 'EFT' => 'EFT',
                 'Cheque' => 'cheque',
+                'Bank Transfer' => 'bank_transfer',
             ];
 
-            $exactMethod = $methodMapping[$methodFilter] ?? null;
 
-            if ($exactMethod) {
-                $query->whereHas('payments', function($q) use ($exactMethod) {
-                    $q->where('payments.method', '=', $exactMethod)
-                        ->where('payments.created_at', function($q2) {
-                            $q2->selectRaw('MAX(created_at)')
-                                ->from('payments as p2')
-                                ->whereColumn('p2.application_id', 'payments.application_id');
-                        });
+            if ($methodFilter === 'BAUCAR BAYARAN') {
+                $query->whereHas('payments', function($q) {
+                    $q->where('payments.method', 'EFT')
+                    ->whereRaw('payments.created_at = (
+                        SELECT MAX(p2.created_at)
+                        FROM payments p2
+                        WHERE p2.application_id = payments.application_id
+                    )');
+                })
+                ->whereHas('client', function($clientQuery) {
+                    $clientQuery->where('accountType', 3);
                 });
+
+            } else {
+                $exactMethod = $methodMapping[$methodFilter] ?? null;
+
+                if ($exactMethod) {
+                    $query->whereHas('payments', function($q) use ($exactMethod) {
+                        $q->where('payments.method', '=', $exactMethod)
+                            ->where('payments.created_at', function($q2) {
+                                $q2->selectRaw('MAX(created_at)')
+                                    ->from('payments as p2')
+                                    ->whereColumn('p2.application_id', 'payments.application_id');
+                            });
+                    });
+                }
             }
         }
 

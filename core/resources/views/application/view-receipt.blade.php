@@ -330,13 +330,17 @@
 
                                 <div>
                                     <select id="methodFilter" class="form-select form-select-sm" onchange="changeMethodFilter()" style="width: auto; min-width: 150px;">
-                                        <option value="all" {{ ($methodFilter ?? 'all') == 'all' ? 'selected' : '' }}> @lang('app.all_payments')</option>
+                                        <option value="all" {{ ($methodFilter ?? 'all') == 'all' ? 'selected' : '' }}>@lang('app.all_payments')</option>
                                         <option value="B2B" {{ ($methodFilter ?? 'all') == 'B2B' ? 'selected' : '' }}>B2B</option>
                                         <option value="B2C" {{ ($methodFilter ?? 'all') == 'B2C' ? 'selected' : '' }}>B2C</option>
                                         <option value="EFT" {{ ($methodFilter ?? 'all') == 'EFT' ? 'selected' : '' }}>EFT</option>
                                         <option value="Cheque" {{ ($methodFilter ?? 'all') == 'Cheque' ? 'selected' : '' }}>@lang('app.cheque')</option>
+                                        <option value="KAD KREDIT" {{ ($methodFilter ?? 'all') == 'KAD KREDIT' ? 'selected' : '' }}>KAD KREDIT</option>
+                                        <option value="KAD DEBIT" {{ ($methodFilter ?? 'all') == 'KAD DEBIT' ? 'selected' : '' }}>KAD DEBIT</option>
+                                        <option value="BAUCAR BAYARAN" {{ ($methodFilter ?? 'all') == 'BAUCAR BAYARAN' ? 'selected' : '' }}>BAUCAR BAYARAN</option>
                                     </select>
                                 </div>
+
                             </div>
 
                             <!-- Search Box - Right End -->
@@ -407,19 +411,13 @@
                                 <tbody>
                                    @foreach ($list as $item)
                                         @php
-                                            // Get latest payment ONCE at the top
+                                            // Get latest payment
                                             $latestPayment = $item->payments->sortByDesc('created_at')->first();
-                                            
-                                            $isFinanceAdmin = auth('admin')->check() && 
-                                                            auth('admin')->user()->role_id === '9e032970-5f48-4d2b-b88e-abb9da79140f';
-                                            
-                                            // Initialize default values
+
                                             $paymentMethod = '-';
                                             $methodClass = 'method-pending';
-                                            
-                                            // If latest payment exists
+
                                             if ($latestPayment) {
-                                                // Determine payment method
                                                 switch ($latestPayment->method) {
                                                     case 'FPX_B2C':
                                                         $paymentMethod = 'B2C';
@@ -446,8 +444,8 @@
                                                             $methodClass = 'method-online';
                                                         }
                                                 }
-                                                
-                                                // Special case for government agencies - always show as EFT if payment exists
+
+                                                // Government agency — always show as EFT
                                                 if ($item->client && $item->client->accountType == 3) {
                                                     $paymentMethod = 'EFT';
                                                     $methodClass = 'method-offline';
@@ -512,20 +510,20 @@
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}</td>
                                             <td>{{ $item->final_amount ? 'RM ' . number_format($item->final_amount, 2) : 'N/A' }}</td>
-                                            <!-- First Column - EFT ONLY -->
+                                            <!-- ✅ First Column - EFT ONLY -->
                                             <td>
-                                                @if($paymentMethod === 'EFT')
-                                                    <span class="payment-method-badge {{ $methodClass }}">
-                                                        {{ $paymentMethod }}
-                                                    </span>
+                                                @if(in_array($paymentMethod, ['EFT', 'B2B', 'B2C']))
+                                                    <span class="payment-method-badge method-offline">EFT</span>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
 
-                                            <!-- Second Column - All methods EXCEPT EFT -->
+                                            <!-- ✅ Second Column - Show Original Method (like B2B, B2C, Cheque, etc.) -->
                                             <td>
-                                                @if($paymentMethod !== '-' && $paymentMethod !== 'EFT')
+                                                @if($paymentMethod === 'EFT' && $item->client && $item->client->accountType == 3)
+                                                    <span class="payment-method-badge {{ $methodClass }}">Baucar Bayaran</span>
+                                                @elseif($paymentMethod !== '-' && $paymentMethod !== 'EFT')
                                                     <span class="payment-method-badge {{ $methodClass }}">
                                                         {{ $paymentMethod }}
                                                     </span>

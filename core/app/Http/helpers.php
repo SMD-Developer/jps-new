@@ -132,7 +132,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.new_applications'),
+                                'text' => 'Permohonan Baru',
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -510,7 +510,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.new_applications'),
+                                'text' => 'Permohonan Baru',
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -815,7 +815,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.new_applications'),
+                                'text' => 'Permohonan Baru',
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1164,7 +1164,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.new_applications'),
+                                'text' => 'Permohonan Baru',
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1511,7 +1511,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.new_applications'),
+                                'text' =>  'Permohonan Baru',
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1830,7 +1830,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.new_applications'),
+                                'text' => 'Permohonan Baru',
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
