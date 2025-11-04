@@ -377,7 +377,7 @@
                     <div class="section">
                         <h4>@lang('app.project_information')</h4>
                             <div class="form-group">
-                                <label for="project_name">@lang('Nama Projek')</label>
+                                <label for="project_name">@lang('Nama dan Butiran Projek')</label>
                                 <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{ $application->project_name }}</textarea>
                             </div>
                     </div>

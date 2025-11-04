@@ -1805,6 +1805,8 @@ class HomeController extends Controller {
         $statusFilter = $request->input('status_filter', 'all'); 
         $methodFilter = $request->input('method_filter', 'all'); 
         $search = $request->input('q');
+        $dateFrom = $request->input('date_from'); // Add this
+        $dateTo = $request->input('date_to');
         
         // Load payments relation without filtering for latest
         $query = Application::with(['state', 'landDistrict', 'landDivision', 'client', 'payments'])
@@ -1870,6 +1872,26 @@ class HomeController extends Controller {
                 });
             }
         }
+
+        // ============ ADD DATE RANGE FILTER HERE ============
+        if ($dateFrom || $dateTo) {
+            $query->whereHas('payments', function($q) use ($dateFrom, $dateTo) {
+                // Only filter on latest payment
+                $q->whereRaw('payments.created_at = (
+                    SELECT MAX(p2.created_at) FROM payments p2 
+                    WHERE p2.application_id = payments.application_id
+                )');
+                
+                if ($dateFrom) {
+                    $q->whereDate('payments.payment_date', '>=', $dateFrom);
+                }
+                
+                if ($dateTo) {
+                    $q->whereDate('payments.payment_date', '<=', $dateTo);
+                }
+            });
+        }
+
 
         // Search filter
         if ($search) {

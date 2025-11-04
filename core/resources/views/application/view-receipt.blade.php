@@ -255,6 +255,23 @@
             transform: rotate(360deg);
         }
     }
+
+    .date-filter-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .date-filter-container input[type="date"] {
+        padding: 4px 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .date-filter-container .btn-sm {
+        padding: 4px 12px;
+    }
 </style>
 <title>{{ trans('app.list_of_payments') }} | JPS</title>
 @section('content')
@@ -265,8 +282,9 @@
         <div class="row">
             <div class="col-md-12">
                 <!-- Filter Section -->
-                 <div class="card mb-3">
+                <div class="card mb-3">
                     <div class="card-body">
+                        <!-- First Row: Existing Filters -->
                         <div class="d-flex justify-content-between align-items-center mb-3 mx-3">
                             <div class="d-flex align-items-center gap-3">
                                 <!-- Per Page Selector -->
@@ -289,33 +307,27 @@
                                     </label>
                                     <select id="statusFilter" class="form-select form-select-sm"
                                         onchange="changeStatusFilter()" style="width: auto; min-width: 150px;">
-                                        
                                         <option value="all" {{ ($statusFilter ?? 'all') == 'all' ? 'selected' : '' }}>
                                             @lang('app.all_payments')
                                         </option>
-                                        
                                         <option value="completed" {{ ($statusFilter ?? 'all') == 'completed' ? 'selected' : '' }}>
                                             @lang('app.completed')
                                         </option>
-                                        
                                         <option value="pending" {{ ($statusFilter ?? 'all') == 'pending' ? 'selected' : '' }}>
                                             @lang('app.pending')
                                         </option>
-                                        
                                         <option value="failed" {{ ($statusFilter ?? 'all') == 'failed' ? 'selected' : '' }}>
                                             @lang('app.failed')
                                         </option>
-                                        
                                         <option value="incomplete" {{ ($statusFilter ?? 'all') == 'incomplete' ? 'selected' : '' }}>
                                             @lang('app.incomplete')
                                         </option>
-                                        
                                         <option value="in_review" {{ ($statusFilter ?? 'all') == 'in_review' ? 'selected' : '' }}>
                                             @lang('app.in_review')
                                         </option>
-                                        
                                     </select>
                                 </div>
+
                                 <div>
                                     <select id="methodFilter" class="form-select form-select-sm" onchange="changeMethodFilter()" style="width: auto; min-width: 150px;">
                                         <option value="all" {{ ($methodFilter ?? 'all') == 'all' ? 'selected' : '' }}> @lang('app.all_payments')</option>
@@ -325,12 +337,15 @@
                                         <option value="Cheque" {{ ($methodFilter ?? 'all') == 'Cheque' ? 'selected' : '' }}>@lang('app.cheque')</option>
                                     </select>
                                 </div>
-
                             </div>
-                               <!-- Search Box - Right End -->
-                            <form method="GET" class="d-flex align-items-center mt-3">
+
+                            <!-- Search Box - Right End -->
+                            <form method="GET" class="d-flex align-items-center">
                                 <input type="hidden" name="per_page" value="{{ $perPage }}">
                                 <input type="hidden" name="status_filter" value="{{ $statusFilter ?? 'all' }}">
+                                <input type="hidden" name="method_filter" value="{{ $methodFilter ?? 'all' }}">
+                                <input type="hidden" name="date_from" value="{{ request('date_from') }}">
+                                <input type="hidden" name="date_to" value="{{ request('date_to') }}">
 
                                 <div class="input-group" style="max-width: 300px;">
                                     <input type="search" name="q" value="{{ request('q') }}"
@@ -340,7 +355,7 @@
                                         <i class="fa fa-search"></i>
                                     </button>
                                     @if (request('q'))
-                                        <a href="{{ request()->url() }}?per_page={{ $perPage }}&status_filter={{ $statusFilter ?? 'all' }}"
+                                        <a href="{{ request()->url() }}?per_page={{ $perPage }}&status_filter={{ $statusFilter ?? 'all' }}&method_filter={{ $methodFilter ?? 'all' }}"
                                             class="btn btn-sm btn-outline-secondary" title="Clear search">
                                             <i class="fa fa-times"></i>
                                         </a>
@@ -348,7 +363,28 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
+
+                        <!-- Second Row: Date Range Filter -->
+                        <div class="d-flex align-items-center mx-3 mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <label for="dateFrom" class="me-2" style="white-space: nowrap;">{{ trans('app.date_range') }}:</label>
+                                <input type="date" id="dateFrom" class="form-control form-control-sm" 
+                                    value="{{ request('date_from') }}" 
+                                    style="width: 150px;">
+                                <span>-</span>
+                                <input type="date" id="dateTo" class="form-control form-control-sm" 
+                                    value="{{ request('date_to') }}" 
+                                    style="width: 150px;">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="applyDateFilter()">
+                                    <i class="fa fa-filter"></i> Apply
+                                </button>
+                                @if(request('date_from') || request('date_to'))
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearDateFilter()" title="Clear date filter">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
                         <!-- Table Wrapper for Responsiveness -->
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
@@ -361,7 +397,7 @@
                                         <th><strong>{{ trans('app.applicant_list') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }}</strong></th>
-                                        <th><strong>Mod Terimaan EFT</strong></th>
+                                        <th><strong>Mod Terimaan </strong></th>
                                         <th><strong>Mod Transaksi</strong></th>
                                          <th><strong>ID Transaksi</strong></th>
                                         <th><strong>{{ trans('app.payment_status') }}</strong></th>
@@ -607,7 +643,7 @@
                                     {{-- First Page --}}
                                     <li class="page-item {{ $list->onFirstPage() ? 'disabled' : '' }}">
                                         <a class="page-link"
-                                            href="{{ $list->url(1) }}&per_page={{ $perPage }}&status_filter={{ $statusFilter ?? 'all' }}"
+                                            href="{{ $list->url(1) }}&per_page={{ $perPage }}&status_filter={{ $statusFilter ?? 'all' }}&method_filter={{ $methodFilter ?? 'all' }}{{ request('date_from') ? '&date_from='.request('date_from') : '' }}{{ request('date_to') ? '&date_to='.request('date_to') : '' }}{{ request('q') ? '&q='.request('q') : '' }}"
                                             title="@lang('app.first')">
                                             <span class="d-inline-flex align-items-center justify-content-center">
                                                 <i class="fas fa-angle-double-left"></i>
@@ -660,11 +696,9 @@
                                 </ul>
                             </nav>
                         </div>
-                        </div> 
-                    </div>
-                </div>
+                   </div>
+               </div>
             </div>
-        </div>
     </section>
 
     <!-- Enhanced Edit Payment Modal -->
@@ -1100,5 +1134,43 @@
                 });
             }
         });
+    </script>
+    <script>
+        function applyDateFilter() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const perPage = document.getElementById('perPageSelect').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const methodFilter = document.getElementById('methodFilter').value;
+            const searchQuery = document.querySelector('input[name="q"]')?.value || '';
+            
+            let url = window.location.pathname + '?per_page=' + perPage + 
+                    '&status_filter=' + statusFilter + 
+                    '&method_filter=' + methodFilter;
+            
+            if (dateFrom) url += '&date_from=' + dateFrom;
+            if (dateTo) url += '&date_to=' + dateTo;
+            if (searchQuery) url += '&q=' + encodeURIComponent(searchQuery);
+            
+            window.location.href = url;
+        }
+
+        function clearDateFilter() {
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            applyDateFilter();
+        }
+
+        function changePerPage() {
+            applyDateFilter();
+        }
+
+        function changeStatusFilter() {
+            applyDateFilter();
+        }
+
+        function changeMethodFilter() {
+            applyDateFilter();
+        }
     </script>
 @endsection

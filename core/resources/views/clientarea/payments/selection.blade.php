@@ -318,7 +318,6 @@ $(document).ready(function() {
             }
         })
         .then(response => response.json())
-        console.log("apiResponse:", response);
         .then(data => {
             let bankOptions = '<option value="">Select Bank</option>';
             

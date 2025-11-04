@@ -123,7 +123,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('claim_contribution'),
+                        'text' => trans('app.claim_contribution'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -132,7 +132,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.claim_contribution'),
+                                'text' => trans('app.new_applications'),
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -501,7 +501,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('claim_contribution'),
+                        'text' => trans('app.claim_contribution'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -510,7 +510,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.claim_contribution'),
+                                'text' => trans('app.new_applications'),
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -806,7 +806,7 @@ if(! function_exists('getMenus')){
 
                     [
                         'icon' => 'money',
-                        'text' => trans('claim_contribution'),
+                        'text' => trans('app.claim_contribution'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -815,7 +815,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.claim_contribution'),
+                                'text' => trans('app.new_applications'),
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1155,7 +1155,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('claim_contribution'),
+                        'text' => trans('app.claim_contribution'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -1164,7 +1164,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.claim_contribution'),
+                                'text' => trans('app.new_applications'),
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1502,7 +1502,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('claim_contribution'),
+                        'text' => trans('app.claim_contribution'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -1511,7 +1511,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.claim_contribution'),
+                                'text' => trans('app.new_applications'),
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1821,7 +1821,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('claim_contribution'),
+                        'text' => trans('app.claim_contribution'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -1830,7 +1830,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.claim_contribution'),
+                                'text' => trans('app.new_applications'),
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
