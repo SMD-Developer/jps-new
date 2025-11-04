@@ -107,7 +107,7 @@
                                                 data-application-id="{{ $app->id }}"
                                                 style="white-space: nowrap;">
                                                 <i class="fas fa-print"></i>
-                                                <strong>cetak resit</strong>
+                                                <strong>Cetak Resit</strong>
                                             </a>
 
                                         </td>
