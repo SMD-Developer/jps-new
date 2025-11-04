@@ -1,4 +1,6 @@
 @extends('clientarea.app')
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
     /* Flex container for buttons */
     .sbtn {
@@ -263,7 +265,10 @@
                                                             <i class="fa fa-refresh"></i> Mohon Semula
                                                         </a>
                                                     @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
-                                                        Sila Hadir ke Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan dalam masa 7 hari bekerja
+                                                            <small>
+                                                                Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
+                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>
+                                                            </small>
                                                     @endif
                                                 </td>
                                         </tr>
@@ -345,8 +350,55 @@
                 </div>
             </div>
         </div>
+        <!-- Read More Modal -->
+        <div class="modal fade" id="readMoreModal" tabindex="-1" aria-labelledby="readMoreModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="readMoreModalLabel">Maklumat Lanjut</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <p class="mb-3">
+                            Sila hadir ke <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor</strong>
+                            dalam masa <strong>7 hari bekerja</strong> dari tarikh Kelulusan Permohonan Tuntutan Pemulangan Bayaran Balik
+                            pada waktu operasi kaunter seperti berikut:
+                        </p>
+
+                        <div class="ms-3">
+                            <h6 class="fw-bold text-decoration-underline">KAUNTER CARUMAN PARIT</h6>
+
+                            <p class="mb-1"><strong>Hari Isnin – Khamis:</strong></p>
+                            <ul class="mb-2">
+                                <li>8.30 pagi – 12.30 tengahari</li>
+                                <li>2.30 petang – 3.30 petang</li>
+                            </ul>
+
+                            <p class="mb-1"><strong>Hari Jumaat:</strong></p>
+                            <ul class="mb-2">
+                                <li>8.30 pagi – 12.00 tengahari</li>
+                                <li>2.45 petang – 3.30 petang</li>
+                            </ul>
+
+                            <p class="mb-1"><strong>Rehat:</strong></p>
+                            <ul>
+                                <li>12.30 tengahari – 2.30 petang (Isnin – Khamis)</li>
+                                <li>12.00 tengahari – 2.45 petang (Jumaat)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -467,15 +519,4 @@
             });
         });
     </script>
-    {{-- <script>
-        $(document).ready(function() {
-            $('.sbtn a.btn-primary').on('click', function(e) {
-                var href = $(this).attr('href');
-                if (href) {
-                    window.location.href = href;
-                }
-            });
-            */
-        });
-    </script> --}}
 @endsection

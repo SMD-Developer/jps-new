@@ -604,12 +604,37 @@
                                     <h5 class="modal-title" id="statusModalLabel">@lang('app.payment_status')</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                
                                 <div class="modal-body">
-                                    <p>
-                                        Sila Hadir ke jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan dalam masa 
-                                        7 hari bekerja
+                                    <p class="mb-3">
+                                        Sila hadir ke <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor</strong>
+                                        dalam masa <strong>7 hari bekerja</strong> dari tarikh Kelulusan Permohonan Tuntutan Pemulangan Bayaran Balik
+                                        pada waktu operasi kaunter seperti berikut:
                                     </p>
+
+                                    <div class="ms-3">
+                                        <h6 class="fw-bold text-decoration-underline">KAUNTER CARUMAN PARIT</h6>
+
+                                        <p class="mb-1"><strong>Hari Isnin – Khamis:</strong></p>
+                                        <ul class="mb-2">
+                                            <li>8.30 pagi – 12.30 tengahari</li>
+                                            <li>2.30 petang – 3.30 petang</li>
+                                        </ul>
+
+                                        <p class="mb-1"><strong>Hari Jumaat:</strong></p>
+                                        <ul class="mb-2">
+                                            <li>8.30 pagi – 12.00 tengahari</li>
+                                            <li>2.45 petang – 3.30 petang</li>
+                                        </ul>
+
+                                        <p class="mb-1"><strong>Rehat:</strong></p>
+                                        <ul>
+                                            <li>12.30 tengahari – 2.30 petang (Isnin – Khamis)</li>
+                                            <li>12.00 tengahari – 2.45 petang (Jumaat)</li>
+                                        </ul>
+                                    </div>
                                 </div>
+
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
                                     <button type="button" class="btn btn-primary" id="sendToFinanceBtn">Hantar</button>
