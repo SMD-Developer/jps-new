@@ -652,6 +652,14 @@
                                                     min="0">
                                                 <small class="text-muted">Contoh: 1500.00</small>
                                             </div>
+
+                                            <div class="mb-3" id="verificationDateField" style="display: none;">
+                                                <label for="verification_date" class="form-label">Tarikh Bayaran:</label>
+                                                <input type="date" 
+                                                    class="form-control" 
+                                                    id="verification_date" 
+                                                    name="verification_date">
+                                            </div>
                                             
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
@@ -962,20 +970,33 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('#status').on('change', function() {
-                if ($(this).val() === 'approve_paid') {
+            function toggleFields() {
+                const status = $('#status').val();
+
+                // Show/hide amount field
+                if (status === 'approve_paid') {
                     $('#paymentAmountField').slideDown();
-                    // Removed required attribute
                 } else {
                     $('#paymentAmountField').slideUp();
-                    $('#payment_amount').val(''); // Clear the value
+                    $('#payment_amount').val('');
                 }
-            });
-            
-            if ($('#status').val() === 'approve_paid') {
-                $('#paymentAmountField').show();
-            }
 
+                // Show/hide date field for approve_paid (and you can add other statuses if needed)
+                if (status === 'approve_paid') {
+                    $('#verificationDateField').slideDown();
+                } else {
+                    $('#verificationDateField').slideUp();
+                    $('#verification_date').val('');
+                }
+            }
+            toggleFields();
+
+            // Run every time status changes
+            $('#status').on('change', function() {
+                toggleFields();
+            });
+
+            // Handle form submission
             $('#statusUpdateForm').submit(function(e) {
                 e.preventDefault();
                 
@@ -997,19 +1018,17 @@
                     success: function(response) {
                         $('#financeStatusModal').modal('hide');
                         
-                        // Show success message
                         Swal.fire({
                             icon: 'success',
                             title: 'Berjaya!',
                             text: response.message || 'Status tuntutan berjaya dikemaskini',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#3085d6'
-                        }).then((result) => {
+                        }).then(() => {
                             window.location.href = "{{ route('claim.approved.list') }}";
                         });
                     },
                     error: function(xhr) {
-                        // Close the modal
                         $('#financeStatusModal').modal('hide');
                         
                         let errorMessage = 'Gagal mengemaskini status';
@@ -1034,6 +1053,7 @@
                 });
             });
         });
+
     </script>
 
  

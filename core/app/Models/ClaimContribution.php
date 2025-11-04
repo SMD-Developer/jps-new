@@ -40,7 +40,8 @@ class ClaimContribution extends Model
         'reapplication_count',
         'last_reapplied_at',
         'sent_by',
-        'sent_to_finance_at'
+        'sent_to_finance_at',
+        'verified_date'
     ];
 
     /**

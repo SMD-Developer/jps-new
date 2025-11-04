@@ -444,6 +444,8 @@ class HomeController extends Controller {
         try {
             $validated = $request->validate([
                 'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid',
+                'payment_amount' => 'nullable|numeric|min:0',
+                'verification_date' => 'nullable|date',
             ]);
 
             $claim = DB::table('claim_contribution')->where('id', $id)->first();
@@ -465,6 +467,10 @@ class HomeController extends Controller {
             // Add payment amount if status is approve_paid
             if ($request->status === 'approve_paid' && $request->payment_amount) {
                 $updateData['payment_amount'] = $request->payment_amount;
+            }
+
+            if ($request->status === 'approve_paid' && $request->verification_date) {
+                $updateData['verified_date'] = $request->verification_date;
             }
 
             if ($request->status === 'rejected' && $request->filled('reason')) {
