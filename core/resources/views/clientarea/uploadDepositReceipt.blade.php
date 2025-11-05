@@ -264,6 +264,14 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="form-group">
+                                <label for="voucher_number">No Baucar Bayaran<span class="text-danger">*</span></label>
+                                <input type="text" id="voucher_number" name="voucher_number" class="form-control @error('voucher_number') is-invalid @enderror" required>
+                                @error('voucher_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                             
                              <div class="form-group">
                                 <label for="receipt">@lang('app.upload_receipt')*</label>
@@ -302,6 +310,7 @@
             const errorMessages = {
                 'deposit_date': 'Medan ini wajib diisi.',
                 'transaction': 'Medan ini wajib diisi.',
+                'voucher_number': 'Medan ini wajib diisi.',
                 'receipt': 'Fail wajib dimuatnaik.'
             };
         
@@ -339,6 +348,18 @@
                 errorDiv.classList.add('invalid-feedback');
                 errorDiv.textContent = errorMessages['transaction'];
                 transaction.closest('.form-group').appendChild(errorDiv);
+            }
+
+
+            // Check voucher_number
+            const voucherNumber = document.querySelector('[name="voucher_number"]');
+            if (!voucherNumber.value) {
+                hasErrors = true;
+                voucherNumber.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('invalid-feedback');
+                errorDiv.textContent = 'Medan ini wajib diisi.';
+                voucherNumber.closest('.form-group').appendChild(errorDiv);
             }
             
             // Check receipt file

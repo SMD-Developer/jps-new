@@ -48,7 +48,8 @@ class Payment extends Model
         'fpx_transaction_id',
         'fpx_checksum',
         'status_message',
-        'user_id'
+        'user_id',
+        'voucher_number'
     ];
     
     

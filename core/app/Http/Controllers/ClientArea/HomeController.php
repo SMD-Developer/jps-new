@@ -864,6 +864,11 @@ class HomeController extends Controller {
                     'max:50',
                     'unique:applications,transaction,' . $request->application_id,
                 ],
+                'voucher_number' => [  
+                    'required',
+                    'regex:/^[A-Za-z0-9\-]+$/',
+                    'max:50',
+                ],
                 'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:15360',
                 'note' => 'nullable|string|max:500'
             ],
@@ -872,6 +877,8 @@ class HomeController extends Controller {
                 'deposit_date.before_or_equal' => 'Tarikh bayaran tidak boleh melebihi hari ini.',
                 'transaction.required' => 'Medan ini wajib diisi.',
                 'transaction.unique' => 'Nombor transaksi ini telah digunakan.',
+                'voucher_number.required' => 'Medan ini wajib diisi.', 
+                'voucher_number.unique' => 'Nombor baucar ini telah digunakan.', 
                 'receipt.required' => 'Fail wajib dimuatnaik.',
                 'receipt.mimes' => 'Fail mestilah dalam format PDF, JPG, JPEG, atau PNG.',
                 'receipt.max' => 'Saiz fail tidak boleh melebihi 2MB.',
@@ -923,6 +930,7 @@ class HomeController extends Controller {
                 'payment_date' => $validated['deposit_date'],
                 'receipt_path' => $receiptPath,
                 'payment_status' => 'in_review',
+                'voucher_number' => $validated['voucher_number'],
                 'method' => 'EFT',
                 'amount' => $application->final_amount ?? null, 
             ]);
