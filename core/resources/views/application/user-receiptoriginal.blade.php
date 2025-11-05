@@ -316,6 +316,7 @@
         <div class="container pb-5">
             <div class="row mb-5">
                 <div class="col-md-5">
+                    <button class="btn btn-success float-right" onClick="window.history.back()">Kembali</button>
                 </div>
                 <div class="col-md-4">
                     <button type="button" id="downloadButton" class="btn btn-danger float-right mx-3">@lang('app.download')</button>

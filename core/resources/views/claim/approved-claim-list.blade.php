@@ -296,11 +296,10 @@
                                                         case 4: $account_types = 'Perunding'; break;
                                                     }
 
-                                                    // Show logic
                                                     if ($account_types && $clientType && $account_types != $clientType) {
-                                                        echo strtoupper($clientType . '-' . $account_types);
+                                                        echo ucfirst(strtolower($clientType)) . '-' . ucfirst(strtolower($account_types));
                                                     } else {
-                                                        echo strtoupper($clientType ?: $account_types ?: 'N/A');
+                                                        echo ucfirst(strtolower($clientType ?: $account_types ?: 'N/A'));
                                                     }
                                                 @endphp
                                             </td>
@@ -314,7 +313,7 @@
                                                     }
                                                 @endphp
 
-                                                {{ strtoupper($applicationType) }}
+                                                {{$applicationType }}
                                             </td>
                                             <td>{{ $item->applicant }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},

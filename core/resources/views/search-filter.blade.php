@@ -212,7 +212,7 @@
                             </form>
                         </div>
 
-                        <table class="table table-bordered mt-4">
+                        <table class="table table-bordered mt-4 table-responsive" style="font-size: 14px;">
                             <thead class="table-header">
                                 <tr>
                                     <th>Bil</th>
@@ -232,7 +232,7 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $result->applicant ?? 'N/A' }}</td>
-                                            <td>{{ $result->land_lot ?? 'N/A' }}</td>
+                                            <td>{{ $result->land_lot ?? 'N/A' }},{{ $result->division->mukim ?? 'N/A' }}, DAERAH {{$result->districts->daerah ?? 'N/A'}}</td>
                                            <td>{{ $result->districts->daerah ?? 'N/A' }}</td>
                                             <td>{{ $result->division->mukim ?? 'N/A' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
@@ -261,10 +261,26 @@
                                             <td>
                                                 @if($result->payment && $result->payment->payment_status === 'completed')
                                                     <a href="{{ route('user_original_receipts', ['application_id' => $result->id]) }}" 
-                                                        class="btn btn-secondary btn-sm"
-                                                        style="border-radius: 10px; padding: 6px 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+                                                        class="btn btn-sm"
+                                                        style="
+                                                            background-color: #f4a100;
+                                                            color: #fff;
+                                                            border-radius: 20px;
+                                                            padding: 6px 16px;
+                                                            font-weight: 600;
+                                                            white-space: nowrap;
+                                                            font-size: 13px;
+                                                            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                                                            text-decoration: none;
+                                                            border: none;
+                                                            display: inline-block;
+                                                            transition: background-color 0.3s ease;
+                                                        "
+                                                        onmouseover="this.style.backgroundColor='#d88f00';"
+                                                        onmouseout="this.style.backgroundColor='#f4a100';">
                                                         <strong>{{ trans('app.view_receipt') }}</strong>
                                                     </a>
+
 
                                                 @endif
                                             </td>

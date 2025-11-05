@@ -293,7 +293,6 @@
                                                         }
                                                     }
 
-                                                    // Get applicant type from applicant_type field
                                                     switch ($item->account_types) {
                                                         case 1: $account_types = 'Individu'; break;
                                                         case 2: $account_types = 'Pemaju'; break;
@@ -301,14 +300,14 @@
                                                         case 4: $account_types = 'Perunding'; break;
                                                     }
 
-                                                    // Show logic
                                                     if ($account_types && $clientType && $account_types != $clientType) {
-                                                        echo strtoupper($clientType . '-' . $account_types);
+                                                        echo ucfirst(strtolower($clientType)) . '-' . ucfirst(strtolower($account_types));
                                                     } else {
-                                                        echo strtoupper($clientType ?: $account_types ?: 'N/A');
+                                                        echo ucfirst(strtolower($clientType ?: $account_types ?: 'N/A'));
                                                     }
                                                 @endphp
                                             </td>
+
 
 
                                             <td>
@@ -320,7 +319,7 @@
                                                     }
                                                 @endphp
 
-                                                {{ strtoupper($applicationType) }}
+                                                {{ $applicationType }}
                                             </td>
 
                                             <td>{{ $item->applicant }}</td>

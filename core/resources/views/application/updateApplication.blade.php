@@ -727,6 +727,7 @@
                     <!--Submit Section -->
                     <div class="form-actions">
                         <!--<button type="submit" class="btn btn-secondary btn1" id="rejectButton">@lang('app.reject')</button>-->
+                        <button class="btn btn-success btn1" onClick="window.history.back()">Kembali</button>
                         <button type="submit" class="btn btn-primary btn2"
                             id="updatetButton">@lang('app.update')</button>
                         <a href="javascript:void(0);" class="btn btn-secondary btn3"
