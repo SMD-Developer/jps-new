@@ -51,7 +51,7 @@ class ThirdPartyController extends Controller
 
     public function paymentSelection(Application $application)
     {
-        $amount = 10.00;
+        $amount = 1.00;
         
         $thirdPartyData = session('third_party_data');
         if (!$thirdPartyData || $thirdPartyData['application_id'] != $application->id) {
@@ -98,7 +98,7 @@ class ThirdPartyController extends Controller
             'payment_mode' => $request->payment_mode,
             'selected_bank' => $request->selected_bank,
             'buyer_email' => $request->email,
-            'payment_amount' => 10.00,
+            'payment_amount' => 1.00,
             'payment_type' => 'third_party',
             'application_id' => $applicationId
         ]);
@@ -106,12 +106,12 @@ class ThirdPartyController extends Controller
         // Redirect based on payment mode
         if ($request->payment_mode === 'b2c') {
             return redirect()->route('third.party.pay.details.b2c', [
-                'amount' => 10.00,
+                'amount' => 1.00,
                 'bank' => $request->selected_bank
             ]);
         } else {
             return redirect()->route('third.party.pay.details.b2b', [
-                'amount' => 10.00,
+                'amount' => 1.00,
                 'bank' => $request->selected_bank
             ]);
         }
