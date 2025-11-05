@@ -111,7 +111,7 @@ class ThirdPartyController extends Controller
             ]);
         } else {
             return redirect()->route('third.party.pay.details.b2b', [
-                'amount' => 1.00,
+                'amount' => 10.00,
                 'bank' => $request->selected_bank
             ]);
         }
