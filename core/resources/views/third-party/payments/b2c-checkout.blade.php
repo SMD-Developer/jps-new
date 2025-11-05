@@ -83,7 +83,7 @@
                                     <h6 class="font-weight-bold">Description</h6>
                                     <p class="text-muted mb-1">Third Party Corporate Document Print Service</p>
                                     <p class="text-muted mb-0">No Rujukan: {{ $referenceNo ?? 'Corporate Third Party Print' }}</p>
-                                    <p class="text-muted mb-0">Service: Corporate Document Printing (RM 1.00)</p>
+                                    <p class="text-muted mb-0">Service: Corporate Document Printing (RM 10.00)</p>
                                 </div>
                                 <div class="col-md-4 text-right">
                                     <h6 class="font-weight-bold">Total Amount</h6>
@@ -128,7 +128,7 @@
                                 <!-- Payment Button -->
                                 <div class="text-center mb-4">
                                     <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
-                                        <i class="fa fa-print mr-2"></i>Proceed to Corporate FPX Payment - RM 1.00
+                                        <i class="fa fa-print mr-2"></i>Proceed to Corporate FPX Payment - RM 10.00
                                     </button>
                                 </div>
 
