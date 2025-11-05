@@ -187,10 +187,11 @@
             @lang('app.dashboard')
         </a>
       @endif
-
-      <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
-          <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk muat turun dan cetak resit untuk tujuan rekod.
-      </p>
+      @if($transactionStatus == 'SUCCESSFUL')
+        <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+            <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk muat turun dan cetak resit untuk tujuan rekod.
+        </p>
+      @endif
     </div>
     
   </div>
