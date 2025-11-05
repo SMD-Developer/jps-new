@@ -371,7 +371,7 @@
                         <!-- Second Row: Date Range Filter -->
                         <div class="d-flex align-items-center mx-3 mb-3">
                             <div class="d-flex align-items-center gap-2">
-                                <label for="dateFrom" class="me-2" style="white-space: nowrap;">{{ trans('app.date_range') }}:</label>
+                                <label for="dateFrom" class="me-2" style="white-space: nowrap;">Tarikh:</label>
                                 <input type="date" id="dateFrom" class="form-control form-control-sm" 
                                     value="{{ request('date_from') }}" 
                                     style="width: 150px;">

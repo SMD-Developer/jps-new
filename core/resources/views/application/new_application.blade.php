@@ -348,6 +348,7 @@
                     <div class="form-actions">
                         <!--<button type="submit" class="btn btn-secondary btn1" id="rejectButton"-->
                         <!--    data-id="{{ $application->id }}" style="background-color: red; border-color: red;">@lang('app.reject')</button>-->
+                            <button class="btn btn-success btn3" onClick="window.history.back()">Kembali</button>
                             <button type="submit" class="btn btn-secondary btn1" id="rejectButton"
                                 data-id="{{ $application->id }}" 
                                 style="@if($application->status === 'approved' || $application->status === 'rejected') background-color: #ccc; border-color: #ccc; color: #666; @else background-color: red; border-color: red; @endif"
