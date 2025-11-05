@@ -178,8 +178,11 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="third_party_id" class="form-label">No. kad Pengenalan/No. Daftar Perniagaan <span class="text-danger">*</span></label>
+                        <label for="third_party_id" class="form-label">No. Kad Pengenalan/No. Daftar Perniagaan <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="third_party_id" name="id_number" required>
+                        <small class="form-text text-muted">
+                            Kad Pengenalan Baru perlu letak (-)
+                        </small>
                     </div>
                     
                     <div class="mb-3">

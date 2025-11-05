@@ -1472,21 +1472,21 @@ if(! function_exists('getMenus')){
                         // 'badge_count' => $applicationCount,
                         'is_dropdown' => true,
                         'submenus' => [
-                            [
-                                'icon' => 'list',
-                                'text' => trans('app.list_of_application'),
-                                'route' =>  url('finance-user-approve'),
-                                'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
-                                'permission' => 'applications.view-list'
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.list_of_application'),
+                            //     'route' =>  url('finance-user-approve'),
+                            //     'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
+                            //     'permission' => 'applications.view-list'
 
-                            ],
-                            [
-                                'icon' => 'list',
-                                'text' => trans('app.approved_application'),
-                                'route' => url('approved-application-list'),
-                                'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
-                            ],
+                            // ],
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.approved_application'),
+                            //     'route' => url('approved-application-list'),
+                            //     'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                            //     'permission' => 'applications.view-list' 
+                            // ],
                             [
                                 'icon' => 'line-chart',
                                 'text' => trans('app.application_status'),
