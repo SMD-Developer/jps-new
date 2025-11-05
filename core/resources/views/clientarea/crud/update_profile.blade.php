@@ -113,11 +113,13 @@
                                     </div>
 
                                     <!-- ID Card Number -->
-                                    <div class="form-group">
-                                        <label for="idCardNumber">@lang('app.identification_card_number')</label>
-                                        <input type="text" name="idCardNumber" id="idCardNumber" class="form-control" value="{{ old('idCardNumber', $client->idCardNumber) }}" required>
-                                        @error('idCardNumber') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
+                                    @if($client->accountType != 3)
+                                        <div class="form-group">
+                                            <label for="idCardNumber">@lang('app.identification_card_number')</label>
+                                            <input type="text" name="idCardNumber" id="idCardNumber" class="form-control" value="{{ old('idCardNumber', $client->idCardNumber) }}" required>
+                                            @error('idCardNumber') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    @endif
 
                                     <!-- Postal Code -->
                                     <div class="form-group">

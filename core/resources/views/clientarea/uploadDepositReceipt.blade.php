@@ -258,7 +258,7 @@
                             </div>
                         
                             <div class="form-group">
-                                <label for="transaction" >@lang('app.transaction_no')<span class="text-danger">*</span></label>
+                                <label for="transaction" >No Transaksi EFT<span class="text-danger">*</span></label>
                                 <input type="text" id="transaction" name="transaction" class="form-control @error('transaction') is-invalid @enderror" required>
                                 @error('transaction')
                                     <div class="invalid-feedback">{{ $message }}</div>
