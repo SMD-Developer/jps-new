@@ -126,7 +126,7 @@
     }
     
     @media print {
-        #printButton, #downloadButton {
+        #printButton, #downloadButton, #backButton {
             display: none !important;
         }
         
@@ -314,18 +314,19 @@
             </div>
         </div>
         <div class="container pb-5">
-            <div class="row mb-5">
-                <div class="col-md-5">
-                    <button class="btn btn-success float-right" onClick="window.history.back()">Kembali</button>
+            <div class="row mb-5 justify-content-end">
+                <div class="col-auto">
+                    <button class="btn btn-success" id="backButton" onClick="window.history.back()">Kembali</button>
                 </div>
-                <div class="col-md-4">
-                    <button type="button" id="downloadButton" class="btn btn-danger float-right mx-3">@lang('app.download')</button>
+                <div class="col-auto">
+                    <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
                 </div>
-                <div class="col-md-3">
-                    <button type="button" id="printButton" class="btn btn-primary float-right">@lang('app.print_receipt')</button>
+                <div class="col-auto">
+                    <button type="button" id="printButton" class="btn btn-primary">@lang('app.print_receipt')</button>
                 </div>
             </div>
         </div>
+
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
