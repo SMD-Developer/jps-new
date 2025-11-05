@@ -68,16 +68,18 @@ class ThirdPartyController extends Controller
     {
         $request->validate([
             'payment_mode' => 'required|in:b2c,b2b',
-            'selected_bank' => 'required_if:payment_mode,b2c',
-            'email' => 'required|email'
+            'selected_bank' => 'required',
+            'email' => 'required|email',
+            'application_id' => 'required|exists:applications,id'
         ]);
 
         // Get third party data from session
         $thirdPartyData = session('third_party_data');
-        $applicationId = session('application_id');
+        $applicationId = $request->application_id;
         
         if (!$thirdPartyData || !$applicationId) {
-            return redirect()->route('applications.search')->with('error', 'Session expired. Please start over.');
+            return redirect()->route('applications.search')
+                ->with('error', 'Session expired. Please start over.');
         }
 
         // Update third party email if different
@@ -87,21 +89,31 @@ class ThirdPartyController extends Controller
             ]);
             
             // Update session
-            session(['third_party_data.email' => $request->email]);
+            $thirdPartyData['email'] = $request->email;
+            session(['third_party_data' => $thirdPartyData]);
         }
 
         // Store payment selection in session
         session([
             'payment_mode' => $request->payment_mode,
             'selected_bank' => $request->selected_bank,
-            'buyer_email' => $request->email
+            'buyer_email' => $request->email,
+            'payment_amount' => 10.00,
+            'payment_type' => 'third_party',
+            'application_id' => $applicationId
         ]);
 
         // Redirect based on payment mode
         if ($request->payment_mode === 'b2c') {
-            return redirect()->route('third.party.pay.details.b2c');
+            return redirect()->route('third.party.pay.details.b2c', [
+                'amount' => 10.00,
+                'bank' => $request->selected_bank
+            ]);
         } else {
-            return redirect()->route('third.party.pay.details.b2b');
+            return redirect()->route('third.party.pay.details.b2b', [
+                'amount' => 10.00,
+                'bank' => $request->selected_bank
+            ]);
         }
     }
 
@@ -109,42 +121,49 @@ class ThirdPartyController extends Controller
 
     public function b2c(Request $request)
     {
-        // Get data from session
         $thirdPartyData = session('third_party_data');
         $applicationId = session('application_id');
-        $amount = session('payment_amount', 10.00);
-        $bankCode = session('selected_bank', 'TEST0021');
         
         if (!$thirdPartyData || !$applicationId) {
-            return redirect()->route('applications.search')->with('error', 'Session expired. Please start over.');
+            Log::warning('Third party B2C payment attempted without valid session data');
+            return redirect()->route('applications.search')
+                ->with('error', 'Session expired. Please start over.');
         }
-
+        
+        $amount = 1.00;
+        $bankCode = $request->get('bank', session('selected_bank'));
+        $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
+        
+        $fpx_callbackUrl = route('third.party.fpx.callback'); 
+        $fpx_returnUrl = route('third.party.fpx.return');   
+        
         $application = Application::find($applicationId);
+        
         if (!$application) {
-            return redirect()->route('applications.search')->with('error', 'Application not found.');
+            return redirect()->route('applications.search')
+                ->with('error', 'Application not found.');
         }
-
+        
         $referenceNo = $application->refference_no;
         
-        // Use existing PayController to get bank data
-        $payController = app('App\Http\Controllers\ClientArea\PayController');
-        $bankData = $payController->getDynamicBankData($bankCode);
+        $bankData = $this->getDynamicBankData($bankCode);
         
-        // FPX parameters
+        // FPX Parameters
         $fpx_msgType = "AR";
         $fpx_msgToken = "01";
         $fpx_sellerExId = "EX00014529";
-        $fpx_sellerExOrderNo = date('YmdHis') . substr(microtime(false), 2, 6) . strtoupper(substr(uniqid(), -4));
+        $fpx_sellerExOrderNo = 'TP' . date('YmdHis') . substr(microtime(false), 2, 6) . strtoupper(substr(uniqid(), -4));
         $fpx_sellerTxnTime = date('YmdHis');
-        $fpx_sellerOrderNo = date('YmdHis') . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
+        $fpx_sellerOrderNo = 'TP' . date('YmdHis') . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
         $fpx_sellerId = "SE00110559";
         $fpx_sellerBankCode = "01";
         $fpx_txnCurrency = "MYR";
         $fpx_txnAmount = number_format($amount, 2, '.', '');
         
-        // Use third party data
-        $fpx_buyerEmail = $thirdPartyData['email'];
+        // Use third party info from session
+        $fpx_buyerEmail = session('buyer_email', $thirdPartyData['email']);
         $fpx_buyerName = $thirdPartyData['name'];
+        
         $fpx_buyerBankId = $bankData['bank_code']; 
         $fpx_buyerBankBranch = $bankData['bank_name']; 
         
@@ -155,65 +174,1017 @@ class ThirdPartyController extends Controller
         $fpx_productDesc = "Third Party Document Print";
         $fpx_version = "6.0";
         
+        // Create checksum data string
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
 
-        // Generate signature
+        // Generate checksum
         $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
         $pkeyid = openssl_get_privatekey($priv_key);
         openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
         $fpx_checkSum = strtoupper(bin2hex($binary_signature));
         
         $actionUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
-        $fpx_callbackUrl = route('third.party.fpx.callback'); 
-        $fpx_returnUrl = route('third.party.fpx.return');
         
-        $receiptNumber = $this->generateReceiptNumber();
+        $receiptNumber = $this->generateReceiptNumber('TP');
         
-        // Store payment with third_party_id (Option 1)
-        $paymentId = DB::table('payments')->insertGetId([
-            'uuid' => (string) Str::uuid(),
-            'user_id' => null, 
-            'third_party_id' => $thirdPartyData['id'], 
+        // Store payment data for third party
+        $this->storePaymentData([
+            'user_id' => null,
+            'third_party_id' => $thirdPartyData['id'],
+            'payment_type' => 'third_party',
             'application_id' => $applicationId,
-            'payment_date' => now()->toDateString(),
             'amount' => $fpx_txnAmount,
             'currency' => $fpx_txnCurrency,
             'method' => 'FPX_B2C',
-            'payment_status' => 'pending',
-            'seller_order_no' => $fpx_sellerOrderNo,
-            'seller_ex_order_no' => $fpx_sellerExOrderNo,
+            'test_case' => $testCase,
             'bank_code' => $bankCode,
             'bank_name' => $fpx_buyerBankBranch,
             'buyer_bank_id' => $fpx_buyerBankId,
             'buyer_email' => $fpx_buyerEmail,
             'buyer_name' => $fpx_buyerName,
-            'receipt_number' => $receiptNumber,
+            'seller_order_no' => $fpx_sellerOrderNo,
+            'seller_ex_order_no' => $fpx_sellerExOrderNo,
+            'transaction_id' => null, 
+            'payment_status' => 'pending',
             'payment_gateway' => 'FPX',
             'fpx_checksum' => $fpx_checkSum,
+            'receipt_number' => $receiptNumber,
             'gateway_response' => json_encode([
                 'fpx_data' => $data,
                 'action_url' => $actionUrl,
                 'timestamp' => now(),
-                'payment_type' => 'third_party_print'
+                'third_party_info' => [
+                    'id' => $thirdPartyData['id'],
+                    'name' => $thirdPartyData['name'],
+                    'ic_number' => $thirdPartyData['ic_number'],
+                    'phone' => $thirdPartyData['phone']
+                ]
             ]),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        // Store transaction in session for tracking
-        session([
-            'current_payment_id' => $paymentId,
-            'seller_order_no' => $fpx_sellerOrderNo
+            'payment_date' => now()->toDateString()
         ]);
         
-        return view('third-party.payments.b2c', compact(
-            'fpx_msgType', 'fpx_msgToken', 'fpx_sellerExId', 'fpx_sellerExOrderNo',
-            'fpx_sellerTxnTime', 'fpx_sellerOrderNo', 'fpx_sellerId', 'fpx_sellerBankCode',
-            'fpx_txnCurrency', 'fpx_txnAmount', 'fpx_buyerEmail', 'fpx_checkSum',
-            'fpx_buyerName', 'fpx_buyerBankId', 'fpx_buyerBankBranch', 'fpx_buyerAccNo',
-            'fpx_buyerId', 'fpx_makerName', 'fpx_buyerIban', 'fpx_productDesc', 'fpx_version',
-            'actionUrl', 'fpx_callbackUrl', 'fpx_returnUrl', 'referenceNo'
+        // Store transaction details
+        $this->storeTransactionDetails([
+            'third_party_id' => $thirdPartyData['id'],
+            'order_no' => $fpx_sellerOrderNo,
+            'amount' => $fpx_txnAmount,
+            'bank_code' => $bankCode,
+            'test_case' => $testCase,
+            'application_id' => $applicationId,
+            'bank_id' => $fpx_buyerBankId
+        ]);
+    
+        
+        return view('third-party.payments.b2c-checkout', compact(
+            'fpx_msgType', 'fpx_msgToken', 'fpx_sellerTxnTime', 'fpx_sellerExId', 
+            'fpx_sellerExOrderNo', 'fpx_sellerOrderNo', 'fpx_sellerId', 
+            'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 
+            'fpx_buyerEmail', 'fpx_checkSum', 'fpx_buyerName', 'fpx_buyerBankId', 
+            'fpx_buyerBankBranch', 'fpx_buyerAccNo', 'fpx_buyerId', 'fpx_makerName', 
+            'fpx_buyerIban', 'fpx_productDesc', 'fpx_version', 'actionUrl',
+            'fpx_callbackUrl', 'fpx_returnUrl', 'referenceNo'
         ));
+    }
+
+
+    private function generateReceiptNumber()
+    {
+        $year = date('y');
+        $month = date('m'); 
+        $day = date('d');
+        $prefix = 'JPSSEL';
+        
+        // Get the last receipt number regardless of date
+        $lastReceipt = DB::table('payments')
+            ->whereNotNull('receipt_number')
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        $sequenceNumber = 1; // Default starting number
+        
+        if ($lastReceipt && $lastReceipt->receipt_number) {
+            // Extract the numeric portion (last 6 digits)
+            $lastSequence = (int) substr($lastReceipt->receipt_number, -6);
+            $sequenceNumber = $lastSequence + 1;
+        }
+        
+        // Format sequence with leading zeros (6 digits)
+        $formattedSequence = str_pad($sequenceNumber, 6, '0', STR_PAD_LEFT);
+        
+        return "{$year}{$prefix}{$month}{$day}{$formattedSequence}";
+    }
+    
+    
+    private function storePaymentData($paymentData)
+    {
+        try {
+            $paymentId = DB::table('payments')->insertGetId([
+                'uuid' => (string) Str::uuid(),
+                'user_id' => $paymentData['user_id'] ?? null,
+                'third_party_id' => $paymentData['third_party_id'] ?? null, 
+                'application_id' => $paymentData['application_id'] ?? null,
+                'payment_type' => $paymentData['payment_type'] ?? 'user', 
+                'payment_date' => now()->toDateString(),
+                'amount' => $paymentData['amount'] ?? null,
+                'currency' => $paymentData['currency'] ?? 'MYR',
+                'method' => $paymentData['method'] ?? null,
+                'payment_status' => $paymentData['payment_status'],
+                'transaction_id' => $paymentData['transaction_id'] ?? null,
+                'seller_order_no' => $paymentData['seller_order_no'] ?? null,
+                'seller_ex_order_no' => $paymentData['seller_ex_order_no'] ?? null,
+                'bank_code' => $paymentData['bank_code'] ?? null,
+                'bank_name' => $paymentData['bank_name'] ?? null,
+                'buyer_bank_id' => $paymentData['buyer_bank_id'] ?? null,
+                'buyer_email' => $paymentData['buyer_email'] ?? null,
+                'buyer_name' => $paymentData['buyer_name'] ?? null,
+                'receipt_number'=> $paymentData['receipt_number'] ?? null,
+                'payment_gateway' => 'FPX',
+                'fpx_checksum' => $paymentData['fpx_checksum'] ?? null,
+                'gateway_response' => $paymentData['gateway_response'] ?? null,
+                'test_case' => $paymentData['test_case'] ?? null, 
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            
+            return $paymentId;
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to store payment data', [
+                'error' => $e->getMessage(),
+                'data' => $paymentData
+            ]);
+            throw $e;
+        }
+    }
+    
+    
+    public function bankDetails() 
+    {
+        $enhanced_bank_list = [];
+        $all_test_cases = [];
+
+        $b2c_result = $this->fetchBankListWithStatus('01', 'BE');
+        if ($b2c_result['success']) {
+            $enhanced_bank_list = array_merge($enhanced_bank_list, $b2c_result['banks']);
+            $all_test_cases['B2C'] = $b2c_result['test_cases'];
+        }
+        
+        // Fetch B2B banks (msgToken = 02) - ALL BANKS (active + inactive)
+        $b2b_result = $this->fetchBankListWithStatus('02', 'BE');
+        if ($b2b_result['success']) {
+            $enhanced_bank_list = array_merge($enhanced_bank_list, $b2b_result['banks']);
+            $all_test_cases['B2B'] = $b2b_result['test_cases'];
+        }
+    
+        
+        return response()->json([
+            'success' => true,
+            'banks' => $enhanced_bank_list, 
+            'test_cases' => $all_test_cases,
+            'validation_rules' => [
+                'min_amount' => 1.00,
+                'max_amount' => 30000.00,
+                'currency' => 'RM'
+            ]
+        ]);
+    }
+
+    private function fetchBankListWithStatus($msgToken, $msgType)
+    {
+        $fpx_msgToken = $msgToken;
+        $fpx_msgType = $msgType;
+        $fpx_sellerExId = "EX00014529";
+        $fpx_version = "6.0";
+
+        $data = $fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_version;
+        
+        try {
+            $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
+            
+            if (!$priv_key) {
+                throw new \Exception("Private key file not found or not readable");
+            }
+            
+            $pkeyid = openssl_get_privatekey($priv_key);
+            
+            if (!$pkeyid) {
+                throw new \Exception("Invalid private key format");
+            }
+            
+            openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
+            $fpx_checkSum = strtoupper(bin2hex($binary_signature));
+            
+        } catch (\Exception $e) {
+            
+            return [
+                'success' => false,
+                'error' => 'Private key error: ' . $e->getMessage(),
+                'error_type' => 'PRIVATE_KEY_ERROR',
+                'banks' => [],
+                'test_cases' => []
+            ];
+        }
+        
+        $url = 'https://www.mepsfpx.com.my/FPXMain/RetrieveBankList';
+        
+        $fields = array(
+            'fpx_msgToken' => urlencode($fpx_msgToken),
+            'fpx_msgType' => urlencode($fpx_msgType),
+            'fpx_sellerExId' => urlencode($fpx_sellerExId),
+            'fpx_checkSum' => urlencode($fpx_checkSum),
+            'fpx_version' => urlencode($fpx_version)
+        );
+        
+        $response_value = array();
+        $bank_list = array();
+        
+        try {
+            $fields_string = http_build_query($fields);
+            
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            
+            $result = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curl_error = curl_error($ch);
+            $curl_errno = curl_errno($ch);
+            
+            curl_close($ch);
+            
+            // Check for CURL errors
+            if ($curl_errno) {
+                
+                throw new \Exception("Connection error: " . $curl_error . " (Code: " . $curl_errno . ")");
+            }
+            
+            // Check HTTP response code
+            if ($http_code !== 200) {
+                
+                throw new \Exception("HTTP Error: " . $http_code);
+            }
+            
+            // Check if response is empty
+            if (empty($result)) {
+                
+                throw new \Exception("Empty response from FPX server");
+            }
+            
+            // Parse the response
+            $token = strtok($result, "&");
+            while ($token !== false) {
+                if (strpos($token, '=') !== false) {
+                    list($key1, $value1) = explode("=", $token, 2);
+                    $value1 = urldecode($value1);
+                    $response_value[$key1] = $value1;
+                }
+                $token = strtok("&");
+            }
+            
+            // Check if required fields exist
+            if (!isset($response_value['fpx_bankList']) || 
+                !isset($response_value['fpx_checkSum']) ||
+                !isset($response_value['fpx_msgToken'])) {
+                
+                throw new \Exception("Invalid response structure from FPX. Missing required fields.");
+            }
+            
+            // Verify the signature
+            $data = $response_value['fpx_bankList']."|".$response_value['fpx_msgToken']."|".$response_value['fpx_msgType']."|".$response_value['fpx_sellerExId'];
+            $val = $this->verifySign_fpx($response_value['fpx_checkSum'], $data);
+            
+            if (!$val) {
+                \Log::warning('FPX Signature Verification Failed', [
+                    'checksum' => $response_value['fpx_checkSum']
+                ]);
+            }
+            
+            // Process bank list with status from API
+            $token = strtok($response_value['fpx_bankList'], ",");
+            while ($token !== false) {
+                if (strpos($token, '~') !== false) {
+                    list($bank_code, $api_status) = explode("~", $token);
+                    $api_status = urldecode($api_status);
+                    $bank_list[$bank_code] = $api_status;
+                }
+                $token = strtok(",");
+            }
+            
+            if (empty($bank_list)) {
+                \Log::warning('FPX No Banks Found', [
+                    'bank_list_string' => $response_value['fpx_bankList']
+                ]);
+                
+                throw new \Exception("No banks found in response");
+            }
+            
+            \Log::info('FPX Banks Retrieved', [
+                'bank_count' => count($bank_list),
+                'msg_token' => $msgToken
+            ]);
+            
+            // Format the bank list with proper bank data and status
+            $enhanced_bank_list = [];
+            foreach ($bank_list as $bank_code => $api_status) {
+                $bank_data = $this->getBankData($bank_code, $msgToken);
+                
+                $enhanced_bank_list[] = [
+                    'bank_code' => $bank_code,
+                    'bank_name' => $bank_data['bank_name'],
+                    'display_name' => $bank_data['display_name'],
+                    'status' => ($api_status == 'A') ? 'active' : 'inactive',
+                    'test_scenario' => $this->getTestScenario($bank_code),
+                    'type' => ($msgToken == '01') ? 'B2C' : 'B2B'
+                ];
+            }
+            
+            return [
+                'success' => true,
+                'banks' => $enhanced_bank_list,
+                'test_cases' => [
+                    ($msgToken == '01' ? '1.1' : '2.1') => ($msgToken == '01' ? 'B2C Positive Scenario - Valid Account' : 'B2B Positive Scenario - Valid Account'),
+                    ($msgToken == '01' ? '1.2' : '2.2') => ($msgToken == '01' ? 'B2C Maximum Scenario - Exceeded Amount' : 'B2B Maximum Scenario - Exceeded Amount'),
+                    ($msgToken == '01' ? '1.3' : '2.3') => ($msgToken == '01' ? 'B2C Minimum Scenario - Below Minimum' : 'B2B Minimum Scenario - Below Minimum'),
+                    ($msgToken == '01' ? '1.4' : '2.4') => ($msgToken == '01' ? 'B2C Negative Scenario - Insufficient Funds' : 'B2B Negative Scenario - Insufficient Funds'),
+                    '3.1' => 'Re-query Scenario - AE message',
+                    '4.1' => 'Retrieved Bank List - BE message'
+                ]
+            ];
+            
+        } catch(\Exception $e) {
+            \Log::error('FPX Bank List Fetch Failed', [
+                'error' => $e->getMessage(),
+                'msg_token' => $msgToken,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'error_type' => 'API_ERROR',
+                'banks' => [],
+                'test_cases' => []
+            ];
+        }
+    }
+
+    
+    private function getBankName($bankCode, $msgToken)
+    {
+        $bankData = $this->getBankData($bankCode, $msgToken);
+        return $bankData['bank_name'] ?? $bankCode;
+    }
+    
+    private function getBankDisplayName($bankCode, $msgToken)
+    {
+        $bankData = $this->getBankData($bankCode, $msgToken);
+        return $bankData['display_name'] ?? $bankCode;
+    }
+    
+    private function getBankData($bankCode, $msgToken)
+    {
+        $b2cBanks = [
+            'ABB0234' => [
+                'bank_name' => 'Affin Bank Berhad B2C - Test ID',
+                'display_name' => 'Affin B2C - Test ID'
+            ],
+            'ABB0233' => [
+                'bank_name' => 'Affin Bank Berhad',
+                'display_name' => 'Affin Bank'
+            ],
+            'ABMB0212' => [
+                'bank_name' => 'Alliance Bank Malaysia Berhad',
+                'display_name' => 'Alliance Bank (Personal)'
+            ],
+            'AGRO01' => [
+                'bank_name' => 'BANK PERTANIAN MALAYSIA BERHAD (AGROBANK)',
+                'display_name' => 'AGRONet'
+            ],
+            'AMBB0209' => [
+                'bank_name' => 'AmBank Malaysia Berhad',
+                'display_name' => 'Ambank'
+            ],
+            'BIMB0340' => [
+                'bank_name' => 'Bank Islam Malaysia Berhad',
+                'display_name' => 'Bank Islam'
+            ],
+            'BMMB0341' => [
+                'bank_name' => 'Bank Muamalat Malaysia Berhad',
+                'display_name' => 'Bank Muamalat'
+            ],
+            'BKRM0602' => [
+                'bank_name' => 'Bank Kerjasama Rakyat Malaysia Berhad',
+                'display_name' => 'Bank Rakyat'
+            ],
+            'BOCM01' => [
+                'bank_name' => 'Bank Of China (M) Berhad',
+                'display_name' => 'Bank Of China'
+            ],
+            'BSN0601' => [
+                'bank_name' => 'Bank Simpanan Nasional',
+                'display_name' => 'BSN'
+            ],
+            'BCBB0235' => [
+                'bank_name' => 'CIMB Bank Berhad',
+                'display_name' => 'CIMB Clicks'
+            ],
+            'CIT0219' => [
+                'bank_name' => 'CITI Bank Berhad',
+                'display_name' => 'Citibank'
+            ],
+            'HLB0224' => [
+                'bank_name' => 'Hong Leong Bank Berhad',
+                'display_name' => 'Hong Leong Bank'
+            ],
+            'HSBC0223' => [
+                'bank_name' => 'HSBC Bank Malaysia Berhad',
+                'display_name' => 'HSBC Bank'
+            ],
+            'KFH0346' => [
+                'bank_name' => 'Kuwait Finance House (Malaysia) Berhad',
+                'display_name' => 'KFH'
+            ],
+            'LOAD001' => [
+                'bank_name' => 'LOAD001',
+                'display_name' => 'LOADOO1'
+            ],
+            'MBB0228' => [
+                'bank_name' => 'Malayan Banking Berhad (M2E)',
+                'display_name' => 'Maybank2E'
+            ],
+            'MB2U0227' => [
+                'bank_name' => 'Malayan Banking Berhad (M2U)',
+                'display_name' => 'Maybank2U'
+            ],
+            'OCBC0229' => [
+                'bank_name' => 'OCBC Bank Malaysia Berhad',
+                'display_name' => 'OCBC Bank'
+            ],
+            'PBB0233' => [
+                'bank_name' => 'Public Bank Berhad',
+                'display_name' => 'Public Bank'
+            ],
+            'RHB0218' => [
+                'bank_name' => 'RHB Bank Berhad',
+                'display_name' => 'RHB Bank'
+            ],
+            'TEST0021' => [
+                'bank_name' => 'SBI Bank A',
+                'display_name' => 'SBI Bank A'
+            ],
+            'TEST0022' => [
+                'bank_name' => 'SBI Bank B',
+                'display_name' => 'SBI Bank B'
+            ],
+            'TEST0023' => [
+                'bank_name' => 'SBI Bank C',
+                'display_name' => 'SBI Bank C'
+            ],
+            'SCB0216' => [
+                'bank_name' => 'Standard Chartered Bank',
+                'display_name' => 'Standard Chartered'
+            ],
+            'UOB0226' => [
+                'bank_name' => 'United Overseas Bank',
+                'display_name' => 'UOB Bank'
+            ],
+            'UOB0229' => [
+                'bank_name' => 'United Overseas Bank - B2C Test',
+                'display_name' => 'UOB Bank - Test ID'
+            ]
+        ];
+        
+        $b2bBanks = [
+            'ABB0235' => [
+                'bank_name' => 'Affin Bank Berhad B2B',
+                'display_name' => 'AFFINMAX'
+            ],
+            'ABB0232' => [
+                'bank_name' => 'Affin Bank Berhad ',
+                'display_name' => 'Affin Bank'
+            ],
+            'ABMB0213' => [
+                'bank_name' => 'Alliance Bank Malaysia Berhad',
+                'display_name' => 'Alliance Bank (Business)'
+            ],
+            'AGRO02' => [
+                'bank_name' => 'BANK PERTANIAN MALAYSIA BERHAD (AGROBANK)',
+                'display_name' => 'AGRONetBIZ'
+            ],
+            'AMBB0208' => [
+                'bank_name' => 'AmBank Malaysia Berhad',
+                'display_name' => 'AmBank'
+            ],
+            'BIMB0340' => [
+                'bank_name' => 'Bank Islam Malaysia Berhad',
+                'display_name' => 'Bank Islam'
+            ],
+            'BMMB0342' => [
+                'bank_name' => 'Bank Muamalat Malaysia Berhad',
+                'display_name' => 'Bank Muamalat'
+            ],
+            'BNP003' => [
+                'bank_name' => 'BNP Paribas Malaysia Berhad',
+                'display_name' => 'BNP Paribas'
+            ],
+            'BCBB0235' => [
+                'bank_name' => 'CIMB Bank Berhad',
+                'display_name' => 'CIMB Bank'
+            ],
+            'CIT0218' => [
+                'bank_name' => 'CITI Bank Berhad',
+                'display_name' => 'Citibank Corporate Banking'
+            ],
+            'DBB0199' => [
+                'bank_name' => 'Deutsche Bank Berhad',
+                'display_name' => 'Deutsche Bank'
+            ],
+            'HLB0224' => [
+                'bank_name' => 'Hong Leong Bank Berhad',
+                'display_name' => 'Hong Leong Bank'
+            ],
+            'HSBC0223' => [
+                'bank_name' => 'HSBC Bank Malaysia Berhad',
+                'display_name' => 'HSBC Bank'
+            ],
+            'BKRM0602' => [
+                'bank_name' => 'Bank Kerjasama Rakyat Malaysia Berhad',
+                'display_name' => 'i-bizRAKYAT'
+            ],
+            'KFH0346' => [
+                'bank_name' => 'Kuwait Finance House (Malaysia) Berhad',
+                'display_name' => 'KFH'
+            ],
+            'MBB0228' => [
+                'bank_name' => 'Malayan Banking Berhad (M2E)',
+                'display_name' => 'Maybank2E'
+            ],
+            'OCBC0229' => [
+                'bank_name' => 'OCBC Bank Malaysia Berhad',
+                'display_name' => 'OCBC Bank'
+            ],
+            'PBB0233' => [
+                'bank_name' => 'Public Bank Berhad',
+                'display_name' => 'Public Bank PBe'
+            ],
+            'PBB0234' => [
+                'bank_name' => 'Public Bank Enterprise',
+                'display_name' => 'Public Bank PB enterprise'
+            ],
+            'RHB0218' => [
+                'bank_name' => 'RHB Bank Berhad',
+                'display_name' => 'RHB Bank'
+            ],
+            'TEST0021' => [
+                'bank_name' => 'SBI Bank A',
+                'display_name' => 'SBI Bank A'
+            ],
+            'TEST0022' => [
+                'bank_name' => 'SBI Bank B',
+                'display_name' => 'SBI Bank B'
+            ],
+            'TEST0023' => [
+                'bank_name' => 'SBI Bank C',
+                'display_name' => 'SBI Bank C'
+            ],
+            'SCB0215' => [
+                'bank_name' => 'Standard Chartered Bank',
+                'display_name' => 'Standard Chartered'
+            ],
+            'UOB0228' => [
+                'bank_name' => 'United Overseas Bank EKB Regional',
+                'display_name' => 'UOB Regional'
+            ],
+            'HSBC0223' => [
+                'bank_name' => 'HSBC Bank Malaysia Berhad',
+                'display_name' => 'HSBC Bank'
+            ]
+        ];
+    
+        if ($msgToken == '01') { // B2C
+            return $b2cBanks[$bankCode] ?? ['bank_name' => $bankCode, 'display_name' => $bankCode];
+        } else { // B2B
+            return $b2bBanks[$bankCode] ?? ['bank_name' => $bankCode, 'display_name' => $bankCode];
+        }
+    }
+
+    
+    private function getTestScenario($bank_code) 
+    {
+        $test_scenarios = [
+            'SBI_BANK_A' => 'valid_account',
+            'SBI_BANK_B' => 'insufficient_funds'
+        ];
+        
+        return $test_scenarios[$bank_code] ?? 'normal';
+    }
+
+    
+    private function getDynamicBankData($bankCode)
+    {
+        // Get cached bank details to avoid multiple API calls
+        if (!session()->has('cached_bank_details')) {
+            $response = $this->bankDetails();
+            $data = $response->getData(true);
+            session(['cached_bank_details' => $data]);
+        }
+        
+        $bankDetails = session('cached_bank_details');
+        $banks = $bankDetails['banks'] ?? [];
+        
+        // Find the bank in dynamic data
+        foreach ($banks as $bank) {
+            if ($bank['bank_code'] === $bankCode) {
+                return $bank;
+            }
+        }
+        
+        // Fallback for unknown banks
+        return [
+            'bank_code' => $bankCode,
+            'bank_name' => 'Unknown Bank',
+            'test_scenario' => 'normal'
+        ];
+    }
+    
+    private function findBankInDynamicList($bankCode)
+    {
+        $bankDetailsResponse = $this->getBankDetailsData();
+        $banks = $bankDetailsResponse['banks'] ?? [];
+        
+        foreach ($banks as $bank) {
+            if ($bank['bank_code'] === $bankCode) {
+                return $bank;
+            }
+        }
+        
+        return [
+            'bank_code' => $bankCode,
+            'bank_name' => 'Unknown Bank',
+            'test_scenario' => 'normal'
+        ];
+    }
+    
+    private function getBankDetailsData()
+    {
+        if (!session()->has('cached_bank_details')) {
+            $response = $this->bankDetails();
+            $data = $response->getData(true);
+            session(['cached_bank_details' => $data]);
+            return $data;
+        }
+        
+        return session('cached_bank_details');
+    }
+
+
+   private function getActionUrl($testCase, $bankCode)
+    {
+        $baseUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
+    
+        if (strpos($testCase, '2.1') !== false) {
+            return $baseUrl . '?testcase=maximum';
+        } elseif (strpos($testCase, '2.2') !== false) {
+            return $baseUrl . '?testcase=minimum';
+        } elseif (strpos($testCase, '2.3') !== false || $bankCode === 'SBI_BANK_B') {
+            return $baseUrl . '?testcase=insufficient_funds';
+        } elseif (strpos($testCase, '3.1') !== false) {
+            return $baseUrl . '?testcase=ae_message';
+        } elseif (strpos($testCase, '1.1') !== false || $bankCode === 'SBI_BANK_A') {
+            return $baseUrl . '?testcase=valid_account';
+        }
+        return $baseUrl;
+    }
+    
+    
+
+    private function storeTransactionDetails($details)
+    {
+        // Store in session for tracking
+        session([
+            'transaction_details' => $details,
+            'transaction_time' => now(),
+            'test_case_log' => [
+                'case' => $details['test_case'],
+                'amount' => $details['amount'],
+                'bank' => $details['bank_code'],
+                'timestamp' => now()
+            ]
+        ]);
+        
+        // Optional: Store in database for audit trail
+        // TransactionLog::create($details);
+    }
+
+
+    public function indirect(Request $request)
+    {
+        $fpx_buyerBankBranch = $request->input('fpx_buyerBankBranch');
+        $fpx_buyerBankId = $request->input('fpx_buyerBankId');
+        $fpx_buyerIban = $request->input('fpx_buyerIban');
+        $fpx_buyerId = $request->input('fpx_buyerId');
+        $fpx_buyerName = $request->input('fpx_buyerName');
+        $fpx_creditAuthCode = $request->input('fpx_creditAuthCode');
+        $fpx_creditAuthNo = $request->input('fpx_creditAuthNo');
+        $fpx_debitAuthCode = $request->input('fpx_debitAuthCode');
+        $fpx_debitAuthNo = $request->input('fpx_debitAuthNo');
+        $fpx_fpxTxnId = $request->input('fpx_fpxTxnId');
+        $fpx_fpxTxnTime = $request->input('fpx_fpxTxnTime');
+        $fpx_makerName = $request->input('fpx_makerName');
+        $fpx_msgToken = $request->input('fpx_msgToken');
+        $fpx_msgType = $request->input('fpx_msgType');
+        $fpx_sellerExId = $request->input('fpx_sellerExId');
+        $fpx_sellerExOrderNo = $request->input('fpx_sellerExOrderNo');
+        $fpx_sellerId = $request->input('fpx_sellerId');
+        $fpx_sellerOrderNo = $request->input('fpx_sellerOrderNo');
+        $fpx_sellerTxnTime = $request->input('fpx_sellerTxnTime');
+        $fpx_txnAmount = $request->input('fpx_txnAmount');
+        $fpx_txnCurrency = $request->input('fpx_txnCurrency');
+        $fpx_checkSum = $request->input('fpx_checkSum');
+        
+        $data = $fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_creditAuthCode."|".$fpx_creditAuthNo."|".$fpx_debitAuthCode."|".$fpx_debitAuthNo."|".$fpx_fpxTxnId."|".$fpx_fpxTxnTime."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency;
+        $val = $this->verifySign_fpx($fpx_checkSum, $data);
+        
+        $paymentStatus = '';
+        $errorCode = '';
+        $statusMessage = '';
+        
+        // Check if this is B2B transaction (fpx_msgToken = "02")
+        $isB2B = ($fpx_msgToken === '02');
+        
+        // Handle status based on transaction type (B2B vs B2C)
+        if ($fpx_debitAuthCode === '00') {
+            $paymentStatus = 'completed';
+            $statusMessage = 'Payment completed successfully';
+        } elseif ($isB2B && $fpx_debitAuthCode === '99') {
+            // For B2B: Code 99 means "Pending Authorization" (as per FPX docs page 24)
+            $paymentStatus = 'pending_authorization';
+            $statusMessage = 'Payment is pending for authorizer approval';
+        } elseif ($fpx_debitAuthCode === '09' || $fpx_debitAuthCode === 'A0' || $fpx_debitAuthCode === 'U7') {
+            // Common pending codes for both B2B and B2C
+            $paymentStatus = 'pending_authorization';
+            $statusMessage = 'Payment is pending for authorizer approval';
+        } elseif (!$isB2B && $fpx_debitAuthCode === '99') {
+            // For B2C: Code 99 means "Failed"
+            $paymentStatus = 'failed';
+            $errorCode = $fpx_debitAuthCode;
+            $statusMessage = 'Transaction declined by bank';
+        } else {
+            // All other codes are failures
+            $paymentStatus = 'failed';
+            $errorCode = $fpx_debitAuthCode;
+            $statusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode, $isB2B);
+        }
+        
+        try {
+            $paymentRecord = DB::table('payments') 
+                ->where('seller_order_no', $fpx_sellerOrderNo)
+                ->first();
+                
+            if ($paymentRecord) {
+                
+                  if (!auth('user')->check() && $paymentRecord->user_id) {
+                        $client = Client::where('uuid', $paymentRecord->user_id)->first();
+            
+                        if ($client) {
+                            auth('user')->login($client);
+                        } else {
+                            Log::warning('Stale payment user reference', [
+                                'stored_uuid' => $paymentRecord->user_id,
+                                'payment_id' => $paymentRecord->id
+                            ]);
+                        }
+                    }
+                DB::table('payments')
+                    ->where('seller_order_no', $fpx_sellerOrderNo)
+                    ->update([
+                        'transaction_id' => $fpx_fpxTxnId,
+                        'payment_status' => $paymentStatus,
+                        'status_message' => $statusMessage,
+                        'gateway_response' => json_encode([
+                            'fpx_response_data' => $request->all(),
+                            'signature_valid' => $val,
+                            'msg_type' => $fpx_msgType,
+                            'msg_token' => $fpx_msgToken,
+                            'is_b2b' => $isB2B,
+                            'processed_at' => now()
+                        ]),
+                        'updated_at' => now()
+                    ]);
+
+                if ($paymentStatus === 'completed' && $paymentRecord->user_id) {
+                        $client = \App\Models\Client::where('uuid', $paymentRecord->user_id)->first();
+                        
+                        if ($client) {
+                            $client->notify(new \App\Notifications\PaymentSuccessful([
+                                'order_no' => $fpx_sellerOrderNo,
+                                'transaction_id' => $fpx_fpxTxnId,
+                                'amount' => $fpx_txnAmount,
+                                'currency' => $fpx_txnCurrency,
+                                'buyer_name' => $fpx_buyerName,
+                                'bank_name' => $fpx_buyerBankBranch,
+                                'payment_date' => now()->format('Y-m-d H:i:s')
+                            ]));
+                        
+                        }
+                }
+                    
+                    
+                    
+                session(['fpx_order_no' => $fpx_sellerOrderNo]);
+                
+            } else {
+                \Log::error('FPX Payment Record Not Found', [
+                    'order_no' => $fpx_sellerOrderNo,
+                    'transaction_id' => $fpx_fpxTxnId
+                ]);
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('FPX Payment Update Failed', [
+                'order_no' => $fpx_sellerOrderNo,
+                'error' => $e->getMessage()
+            ]);
+        }
+        
+        return view('third-party.payments.success', compact('val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch'));
+    }
+	
+
+
+
+    private function getFPXErrorMessage($code, $isB2B = false) 
+    {
+      
+        if ($isB2B) {
+            $b2bMessages = [
+                '00' => 'Payment completed successfully',
+                '99' => 'Pending authorization - Waiting for authorizer approval',
+                '09' => 'Pending authorization',
+                'A0' => 'Pending authorization',
+                'U7' => 'Transaction pending approval from bank authorizer',
+                '98' => 'Transaction timeout',
+                '97' => 'Invalid signature',
+                '96' => 'System error',
+                '95' => 'Insufficient funds',
+                '48' => 'Exception - Contact bank',
+                '2A' => 'Exception - Contact bank',
+            ];
+            
+            return $b2bMessages[$code] ?? "B2B Transaction error (Code: {$code})";
+        }
+        
+        $b2cMessages = [
+            '00' => 'Payment completed successfully',
+            '99' => 'Transaction declined by bank',
+            '98' => 'Transaction timeout',
+            '97' => 'Invalid signature',
+            '96' => 'System error',
+            '95' => 'Insufficient funds',
+            '09' => 'Pending authorization',
+            'A0' => 'Pending authorization',
+            'U7' => 'Transaction pending approval',
+            '48' => 'Exception - Contact bank',
+            '2A' => 'Exception - Contact bank',
+        ];
+        
+        return $b2cMessages[$code] ?? "Transaction error (Code: {$code})";
+    }
+	
+	public function verifySign_fpx($sign,$toSign) 
+    {
+        $path = '/var/www/html/core/public/';
+
+    	$d_ate = date("Y");
+    	$fpxcert = array($path."fpxprod_smi_20241219.cer");
+    	$certs = $this->checkCertExpiry($fpxcert);
+    	$signdata = $this->hextobin($sign);
+    	
+        if(count($certs) == 1)
+        {
+            $pkeyid = openssl_pkey_get_public($certs[0]);
+            $ret = openssl_verify($toSign, $signdata, $pkeyid);	// 0
+            if($ret != 1) 
+            {
+                $ErrorCode = "09";
+                return $ErrorCode;	  
+            }
+        }elseif(count($certs) == 2){
+            $pkeyid =openssl_pkey_get_public($certs[0]);
+            $ret = openssl_verify($toSign, $signdata, $pkeyid);	
+            if($ret!=1)
+            {
+        	    $pkeyid =openssl_pkey_get_public($certs[1]);
+           	    $ret = openssl_verify($toSign, $signdata, $pkeyid);	
+                if($ret!=1) 
+                {
+                    $ErrorCode = "09";
+                    return $ErrorCode;	  
+                }
+            }
+    	}
+    	
+        if($ret == 1)
+        {
+            $ErrorCode = "00";
+            return $ErrorCode;	  
+        }
+    	return $ErrorCode;
+    }
+    
+    public function checkCertExpiry($path)
+    {
+        $stack = array();
+        $t_ime= time();
+        $curr_date=date("Ymd",$t_ime);
+        for($x=0;$x<2;$x++)
+        {
+            error_reporting(0);
+            $key_id = file_get_contents($path[$x]);
+            if($key_id==null)
+            {
+                $cert_exists++;
+                continue;
+            }	 
+            $certinfo = openssl_x509_parse($key_id);
+            $s= $certinfo['validTo_time_t']; 
+            $crtexpirydate=date("Ymd",$s-86400);
+            if($crtexpirydate > $curr_date)
+            {
+                if ($x > 0)
+                {
+                    if($this->certRollOver($path[$x], $path[$x-1])=="true")
+                    {  
+                        array_push($stack,$key_id);
+                        return $stack;
+                    }
+                }	
+                array_push($stack,$key_id);
+                return $stack;
+            }elseif($crtexpirydate == $curr_date){
+                if ($x > 0 && (file_exists($path[$x-1])!=1))  
+                {	   
+                    if($this->certRollOver($path[$x], $path[$x-1])=="true")
+                    {  
+                        array_push($stack,$key_id);
+                        return $stack;
+                    }
+                }else if(file_exists($path[$x+1])!=1){
+                    array_push($stack,file_get_contents($path[$x]),$key_id);
+                    return $stack;
+                }
+                
+                array_push($stack,file_get_contents($path[$x+1]),$key_id);
+                return $stack;
+    	    }
+    	}
+    	
+        if ($cert_exists == 2){
+            $ErrorCode="06";
+            return $ErrorCode;
+        }else if ($stack.Count == 0 && $cert_exists == 1){
+            $ErrorCode="07";  
+            return $ErrorCode;
+        }else if ($stack.Count == 0 && $cert_exists == 0){
+           $ErrorCode="08"; 
+           return $ErrorCode;
+        }
+        return $stack;
+    }
+    
+    public function certRollOver($old_crt,$new_crt)
+    { 
+        if (file_exists($new_crt)==1)
+        {
+            rename($new_crt,$new_crt."_".date("YmdHis", time()));
+        }
+		if ((file_exists($new_crt)!=1) && (file_exists($old_crt)==1))
+        {
+            rename($old_crt,$new_crt);
+        }
+		return "true";
+    }
+    
+    public function hextobin($hexstr) 
+    { 
+    	$n = strlen($hexstr); 
+    	$sbin="";   
+    	$i=0; 
+    	while($i<$n) 
+    	{       
+    		$a =substr($hexstr,$i,2);           
+    		$c = pack("H*",$a); 
+    		if ($i==0){$sbin=$c;} 
+    		else {$sbin.=$c;} 
+    		$i+=2; 
+    	} 
+    	return $sbin; 
     }
 
 
@@ -316,31 +1287,6 @@ class ThirdPartyController extends Controller
             'fpx_buyerId', 'fpx_makerName', 'fpx_buyerIban', 'fpx_productDesc', 'fpx_version',
             'actionUrl', 'fpx_callbackUrl', 'fpx_returnUrl', 'referenceNo'
         ));
-    }
-
-
-    private function generateReceiptNumber()
-    {
-        $year = date('y');
-        $month = date('m'); 
-        $day = date('d');
-        $prefix = 'JPSSEL';
-        
-        $lastReceipt = DB::table('payments')
-            ->whereNotNull('receipt_number')
-            ->orderBy('created_at', 'desc')
-            ->first();
-        
-        $sequenceNumber = 1;
-        
-        if ($lastReceipt && $lastReceipt->receipt_number) {
-            $lastSequence = (int) substr($lastReceipt->receipt_number, -6);
-            $sequenceNumber = $lastSequence + 1;
-        }
-        
-        $formattedSequence = str_pad($sequenceNumber, 6, '0', STR_PAD_LEFT);
-        
-        return "{$year}{$prefix}{$month}{$day}{$formattedSequence}";
     }
 
 
