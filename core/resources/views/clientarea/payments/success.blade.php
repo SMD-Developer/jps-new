@@ -79,7 +79,7 @@
            class="img-fluid" alt="JPS Logo" width="111px">
         @elseif($transactionStatus == 'PENDING')
             <!-- Pending Image -->
-            <img src="{{ asset('assets/images/uploads/client_images/pending-icon.png') }}" 
+            <img src="{{ asset('assets/images/pending-icon.png') }}" 
                  class="img-fluid status-image" alt="Pending" width="120px">
         @else
             <!-- Unsuccessful Image (Your new image goes here) -->
