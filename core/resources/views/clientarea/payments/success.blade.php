@@ -55,11 +55,6 @@
   @endif
 
   <div class="container text-center py-4">
-    <!--<div class="mb-4">-->
-    <!--  <img src="{{ asset('assets/images/uploads/client_images/image (1).png') }}" -->
-    <!--       class="img-fluid" alt="JPS Logo" width="111px">-->
-    <!--</div>-->
-    
     @php
         // Determine transaction status for image display
         $transactionStatus = '';
@@ -192,6 +187,10 @@
             @lang('app.dashboard')
         </a>
       @endif
+
+      <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+          <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk muat turun dan cetak resit untuk tujuan rekod.
+      </p>
     </div>
     
   </div>

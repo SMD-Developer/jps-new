@@ -141,6 +141,30 @@
         white-space: nowrap;     
     }
 
+    .btn-reapply {
+        display: inline-block;
+        background-color: #ffc107; 
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 50px; 
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 12px;
+        white-space: nowrap;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-reapply:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn-reapply i {
+        margin-right: 5px;
+    }
+
+
 </style>
 <title>{{ trans('app.claim_contribution_list_user') }} | JPS</title>
 @section('content')
@@ -259,28 +283,27 @@
                                             </td>
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
-                                                    @if ($item->status == 'rejected')
-                                                        <a href="{{ route('claim.application.reapply', $item->id) }}" 
-                                                        class="btn btn-primary btn-sm">
-                                                            <i class="fa fa-refresh"></i> Mohon Semula
-                                                        </a>
-                                                    @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
-                                                           @if(!empty($item->sent_to_finance_at))
-                                                                <div class="mb-1">
-                                                                    <small class="text-muted">
-                                                                        Tarikh Kelulusan pada: 
-                                                                        <strong>
-                                                                            {{ \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y') }}
-                                                                        </strong>
-                                                                    </small>
-                                                                </div>
-                                                            @endif
-                                                            <small>
-                                                                Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
-                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>
+                                                @if ($item->status == 'rejected')
+                                                    <a href="{{ route('claim.application.reapply', $item->id) }}" 
+                                                    class="btn-reapply">
+                                                     Mohon semula
+                                                    </a>
+                                                @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
+                                                    @if(!empty($item->sent_to_finance_at))
+                                                        <div class="mb-1">
+                                                            <small class="text-muted">
+                                                                Tarikh Kelulusan pada: 
+                                                                <strong>{{ \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y') }}</strong>
                                                             </small>
+                                                        </div>
                                                     @endif
-                                                </td>
+                                                    <small>
+                                                        Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>
+                                                    </small>
+                                                @endif
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>

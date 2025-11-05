@@ -266,7 +266,9 @@
                                             </td>
 
                                             <td>{{ $application->applicant }}</td>
-                                            <td>{{ $application->land_lot }}</td>
+                                            <td>{{ $application->land_lot }}, {{$application->landDivision->mukim ?? ''}}, Daerah 
+                                                {{ $application->landDistrict->daerah ?? '' }}
+                                            </td>
                                             <!--<td>{{ $application->client ? 'RM ' . number_format($application->final_amount, 2) : 'N/A' }}-->
                                             <!--</td>-->
                                             <td>

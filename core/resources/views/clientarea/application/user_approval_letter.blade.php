@@ -375,11 +375,15 @@
              <div class="container">
                 <div class="row print-button-row">
                     <div class="col-md-12 mb-2 no-print" style="display:flex; justify-content:end;">
-                        <button class="print-button btn btn-primary" onclick="window.print()">
+                        <button class="btn btn-success" style="margin-right:10px;" onclick="window.history.back();">
+                            <i class="bi bi-arrow-left-circle-fill"></i> Kembali
+                        </button>
+                        <button class="print-button btn btn-primary" onclick="window.print();">
                             <i class="bi bi-printer-fill"></i> @lang('app.print')
                         </button>
                     </div>
                 </div>
+
           </div>
         </div>
     </section>

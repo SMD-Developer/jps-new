@@ -442,7 +442,9 @@ class HomeController extends Controller {
             $query = Application::with([
                 'client', 
                 'logs', 
-                'payments'
+                'payments',
+                'landDistrict', 
+                'landDivision'
             ])
             ->where('user_id', $clientId)
             ->orderBy('created_at', 'desc');
@@ -461,8 +463,10 @@ class HomeController extends Controller {
                     return $application;
                 })
                 ->appends($request->except('page'));
+
+                $district = DB::table('district')->where('stat', 1)->orderBy('daerah_code', 'asc')->get();
             
-            return view('clientarea.application.applicationStatus', compact('applications', 'perPage'));
+            return view('clientarea.application.applicationStatus', compact('applications', 'perPage', 'district'));
         }
         
 		
