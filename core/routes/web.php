@@ -34,6 +34,10 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
   Route::get('divisions/{dist_id}', 'ClientArea\HomeController@getDivisions')->name('divisions');
   Route::post('search-applications', 'ClientArea\HomeController@searchApplications')->name('applications.search');
   Route::get('search-appplication-results', 'ClientArea\HomeController@searchResult')->name('search.results');
+
+  Route::get('/guest/receipt/{application_id}', 'ThirdPartyController@guestReceipt')
+    ->name('guest.receipt')
+    ->middleware('signed');
   
 
 

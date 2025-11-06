@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\PaymentSuccessful;
+use Illuminate\Support\Facades\URL;
+use Carbon\Carbon;
 
 class ThirdPartyController extends Controller
 {
@@ -1315,5 +1317,84 @@ class ThirdPartyController extends Controller
         
         return app('App\Http\Controllers\ClientArea\PayController')
             ->initiateFpxPayment($transaction);
+    }
+
+
+    public function guestReceipt(Request $request, $application_id)
+    {
+        if (!$request->hasValidSignature()) {
+            abort(403, 'Invalid or expired receipt link.');
+        }
+        
+        $orderNo = $request->query('order_no');
+        
+        $payment = DB::table('payments')
+            ->where('application_id', $application_id)
+            ->where('seller_order_no', $orderNo)
+            ->where('payment_status', 'completed')
+            ->first();
+        
+        if (!$payment) {
+            abort(404, 'Receipt not found or payment not successful.');
+        }
+        
+        // Use the same logic as userReceiptCopy but without auth check
+        $application = Application::with(['payment' => function($query) {
+                $query->where('payment_status', 'completed')
+                    ->latest('created_at');
+            }])
+            ->select(
+                'applications.*', 
+                'state.negeri', 
+                'district.daerah',
+                'division.mukim as land_mukim'
+            )
+            ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+            ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+            ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+            ->where('applications.id', $application_id)
+            ->firstOrFail();
+        
+        
+        $completedPayment = $application->payment()
+            ->where('payment_status', 'completed')
+            ->latest('created_at')
+            ->first();
+        
+        if ($completedPayment) {
+            $application->payment_status = $completedPayment->payment_status;
+            $application->payment_method = $completedPayment->method;
+            $application->payment_amount = $completedPayment->amount;
+            $application->transaction_id = $completedPayment->transaction_id;
+            $application->receipt_number = $completedPayment->receipt_number;
+            $application->payment_date = $completedPayment->created_at;
+            $application->gateway_response = $completedPayment->gateway_response;
+            
+            if ($completedPayment->gateway_response) {
+                $gatewayResponse = is_array($completedPayment->gateway_response) 
+                    ? $completedPayment->gateway_response 
+                    : json_decode($completedPayment->gateway_response, true);
+                    
+                if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                    $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                    
+                    $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+                elseif (isset($gatewayResponse['processed_at'])) {
+                    $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                        ->setTimezone('Asia/Kuala_Lumpur')
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+            }
+        }
+
+        // Return the same view but mark it as guest access
+        return view('clientarea.application.user-receiptcopy', compact('application'))
+            ->with('is_guest_access', true);
     }
 }

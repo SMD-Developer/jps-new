@@ -159,7 +159,6 @@
     
     <div class="mt-4">
         @php
-            // Get the application_id from the payments table using fpx_sellerOrderNo
             $paymentRecord = DB::table('payments')
                               ->where('seller_order_no', $fpx_sellerOrderNo)
                               ->first();
@@ -168,25 +167,27 @@
         @endphp
         
       @if($transactionStatus == 'SUCCESSFUL')
-        <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
-        <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
-           class="btn btn-outline-primary me-2 rounded-pill px-5">
-            @lang('app.view_receipts')
-        </a>
-        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
-            @lang('app.dashboard')
-        </a>
-      @elseif($transactionStatus == 'PENDING')
-        <a href="{{ route('pay.status') }}" class="btn btn-warning me-2">Check Status</a>
-        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
-            @lang('app.dashboard')
-        </a>
-      @else
-        <!-- Unsuccessful - Show retry options -->
-        <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
-            @lang('app.dashboard')
-        </a>
-      @endif
+
+        @php
+
+          $isAuthenticated = auth('user')->check();
+          
+          if ($isAuthenticated) {
+              $receiptUrl = route('user_copy_receipt', ['id' => $application_id]);
+          } else {
+              $receiptUrl = URL::temporarySignedRoute(
+                  'guest.receipt',
+                  now()->addHours(48),
+                  ['application_id' => $application_id, 'order_no' => $fpx_sellerOrderNo]
+              );
+          }
+        @endphp
+         <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
+          <a href="{{ $receiptUrl }}" 
+            class="btn btn-outline-primary me-2 rounded-pill px-5"
+            target="_blank">
+              @lang('app.view_receipts')
+          </a>
       @if($transactionStatus == 'SUCCESSFUL')
         <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
             <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk muat turun dan cetak resit untuk tujuan rekod.
