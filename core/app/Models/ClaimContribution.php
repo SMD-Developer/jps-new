@@ -41,7 +41,9 @@ class ClaimContribution extends Model
         'last_reapplied_at',
         'sent_by',
         'sent_to_finance_at',
-        'verified_date'
+        'verified_date',
+        'visit_date',
+        'process_remarks'
     ];
 
     /**

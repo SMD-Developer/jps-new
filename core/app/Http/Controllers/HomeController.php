@@ -445,6 +445,8 @@ class HomeController extends Controller {
             $validated = $request->validate([
                 'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid',
                 'payment_amount' => 'nullable|numeric|min:0',
+                'process_remarks' => 'nullable|string|max:1000',
+                'visit_date' => 'nullable|date',
                 'verification_date' => 'nullable|date',
             ]);
 
@@ -476,6 +478,17 @@ class HomeController extends Controller {
             if ($request->status === 'rejected' && $request->filled('reason')) {
                 $updateData['rejected_reason'] = $request->reason;
             }
+
+           if ($request->status === 'pending') {
+                if ($request->filled('visit_date')) {
+                    $updateData['visit_date'] = $request->visit_date;
+                }
+
+                if ($request->filled('process_remarks')) {
+                    $updateData['process_remarks'] = $request->process_remarks;
+                }
+            }
+
 
             DB::table('claim_contribution')
                 ->where('id', $id)

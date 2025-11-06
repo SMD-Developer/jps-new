@@ -284,25 +284,46 @@
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
                                                 @if ($item->status == 'rejected')
-                                                    <a href="{{ route('claim.application.reapply', $item->id) }}" 
-                                                    class="btn-reapply">
-                                                     Mohon semula
+                                                    <a href="{{ route('claim.application.reapply', $item->id) }}" class="btn-reapply">
+                                                        Mohon semula
                                                     </a>
                                                 @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
-                                                    @if(!empty($item->sent_to_finance_at))
+                                                    @if(!empty($item->visit_date) || !empty($item->process_remarks))
+                                                        {{-- ✅ Show visit date and remarks if available --}}
                                                         <div class="mb-1">
-                                                            <small class="text-muted">
-                                                                Tarikh Kelulusan pada: 
-                                                                <strong>{{ \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y') }}</strong>
-                                                            </small>
+                                                            @if(!empty($item->visit_date))
+                                                                <small class="text-muted">
+                                                                    <strong>Tarikh Lawatan:</strong>
+                                                                    {{ \Carbon\Carbon::parse($item->visit_date)->format('d/m/Y') }}
+                                                                </small>
+                                                            @endif
                                                         </div>
+                                                        @if(!empty($item->process_remarks))
+                                                            <div>
+                                                                <small class="text-muted">
+                                                                    <strong>Catatan:</strong> <strong>{{ $item->process_remarks }}</strong>
+                                                                </small>
+                                                            </div>
+
+                                                        @endif
+                                                    @else
+                                                        {{-- ❌ If no visit_date or remarks, show the original finance message --}}
+                                                        @if(!empty($item->sent_to_finance_at))
+                                                            <div class="mb-1">
+                                                                <small class="text-muted">
+                                                                    Tarikh Kelulusan pada: 
+                                                                    <strong>{{ \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y') }}</strong>
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                        <small>
+                                                            Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>
+                                                        </small>
                                                     @endif
-                                                    <small>
-                                                        Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
-                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>
-                                                    </small>
                                                 @endif
                                             </td>
+
 
                                         </tr>
                                     @endforeach
