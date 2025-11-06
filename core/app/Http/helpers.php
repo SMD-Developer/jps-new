@@ -1577,6 +1577,13 @@ if(! function_exists('getMenus')){
                                 ],
                                 [
                                 'icon' => 'money',
+                                'text' => 'Cetakan Semula Resit Caruman Parit',
+                                'route' =>  url('report-collection-method-search'),
+                                'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
+                                'permission' => 'report.district'
+                                ],
+                                [
+                                'icon' => 'money',
                                 'text' => trans('app.collection_payment_report'),
                                 'route' =>  url('#'),
                                 'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'menu-is-opening menu-open' : '',

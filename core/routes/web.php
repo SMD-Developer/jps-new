@@ -466,6 +466,8 @@ Route::group(['middleware' => 'install'], function(){
     Route::get('treasury-receipt-show', 'FinanceController@treasury_receipt_show')->name('treasury_receipt_show');
     Route::get('report-list-all-application-contribution-ditch', 'FinanceController@reportListApplicationContributionDitch')->name('report-list-all-application-contribution-ditch');
     Route::get('report-list-all-application-contribution-ditch-search', 'FinanceController@reportListApplicationContributionDitchSearch')->name('report-list-all-application-contribution-ditch-search');
+    Route::get('report-collection-method-search', 'FinanceController@reportCollectionMethodSearh')->name('report-collection-contribution-method-search');
+    Route::get('report-collection-method-contribution-details', 'FinanceController@reportCollectionByPayment')->name('report-collection-by-method');
     Route::get('report-collection-contribution-ditch-by-district-search', 'FinanceController@reportCollectionContributionDistrictSearch')->name('report-collection-contribution-ditch-by-district-search');
     
     Route::get('report-collection-contribution-ditch-by-district', 'FinanceController@reportCollectionContributionDistrict')->name('report-collection-contribution-ditch-by-district');

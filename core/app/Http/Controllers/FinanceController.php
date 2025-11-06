@@ -664,7 +664,8 @@ class financeController extends Controller {
             'currentTime' => $currentTime
         ]);
     }
-    
+
+
     public function reportListApplicationContributionDitchSearch()
     {
         $title = __("app.report_list_application_ditch_contribution");
@@ -672,6 +673,150 @@ class financeController extends Controller {
         return view('finance.report-list-all-application-contribution-ditch-search',[
             'title' => $title,
             'accountTypes' => $accountTypes
+        ]);
+    }
+    
+    public function reportCollectionMethodSearh()
+    {
+        $title = __("Cetakan Semula Resit Caruman Parit");
+        return view('finance.report-list-all-method-search',[
+            'title' => $title,
+        ]);
+    }
+
+    public function reportCollectionByPayment(Request $request)
+    {
+        $request->validate([
+            'payment_method' => 'nullable|string',
+            'payment_status' => 'nullable|string',
+            'start_date' => 'required|date_format:Y-m-d',
+            'end_date' => 'required|date_format:Y-m-d|after_or_equal:start_date',
+            'print_type' => 'nullable|string',
+        ]);
+        
+        $paymentMethod = $request->input('payment_method');
+        $paymentStatus = $request->input('payment_status');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $printType = $request->input('print_type');
+        
+        // Get payment method display name
+        $selectedPaymentMethodName = 'Semua';
+        if ($paymentMethod && $paymentMethod != '') {
+            $paymentMethods = [
+                'EFT' => 'EFT',
+                'FPX_B2B' => 'FPX B2B',
+                'FPX_B2C' => 'FPX B2C',
+                'cheque'  =>  'Cek',
+                'kad_kredit' => 'Kad Kredit',
+                'kad_debit' => 'Kad Debit'
+            ];
+            $selectedPaymentMethodName = $paymentMethods[$paymentMethod] ?? $paymentMethod;
+        }
+        
+        // Get payment status display name
+        $selectedPaymentStatusName = 'Semua';
+        if ($paymentStatus && $paymentStatus != '') {
+            $paymentStatuses = [
+                'completed' => 'Completed',
+                'pending' => 'Pending',
+                'failed' => 'Failed'
+            ];
+            $selectedPaymentStatusName = $paymentStatuses[$paymentStatus] ?? ucfirst($paymentStatus);
+        }
+        
+        $query = DB::table('applications')
+            ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
+            ->join('district', 'applications.district', '=', 'district.iddaerah')
+            ->join('division', 'applications.land_state', '=', 'division.idmukim')
+            ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
+            ->join('payments', 'payments.application_id', '=', 'applications.id')
+            ->select(
+                'applications.*',
+                'client_register.userName as client_name',
+                'district.daerah as district_name',
+                'division.mukim as division_name',
+                'account_types.name as account_type_name',
+                'payments.payment_status',
+                'payments.method as payment_method',
+                'payments.amount as payment_amount',
+                'payments.transaction_id',
+                'payments.receipt_number',
+                'payments.seller_order_no',
+                'payments.created_at as payment_created_at'
+            );
+        
+        // Filter by payment method if selected
+        if ($paymentMethod && $paymentMethod != '') {
+            $query->where('payments.method', $paymentMethod);
+        }
+        
+        // Filter by payment status if selected
+        if ($paymentStatus && $paymentStatus != '') {
+            $query->where('payments.payment_status', $paymentStatus);
+        }
+        
+        // Date range filter
+        if ($startDate && $endDate) {
+            try {
+                $startDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay()->toDateTimeString();
+                $endDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()->toDateTimeString();
+                $query->whereBetween('payments.created_at', [$startDateParsed, $endDateParsed]);
+            } catch (\Exception $e) {
+                \Log::error('Invalid date format: ' . $e->getMessage());
+                return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
+            }
+        }
+        
+        $applications = $query->orderBy('payments.created_at', 'desc')->get();
+    
+        
+        $currentDateTime = \Carbon\Carbon::now();
+        $currentDate = $currentDateTime->format('d/m/Y');
+        $currentTime = $currentDateTime->format('h:i:s A');
+        
+        // Format dates for display
+        $formattedStartDate = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
+        $formattedEndDate = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        
+        // Calculate summary statistics
+        $totalAmount = $applications->sum('payment_amount');
+        $totalRecords = $applications->count();
+        
+        // Group by payment method for summary
+        $paymentMethodSummary = $applications->groupBy('payment_method')->map(function ($group) {
+            return [
+                'count' => $group->count(),
+                'total' => $group->sum('payment_amount')
+            ];
+        });
+        
+        // Group by payment status for summary
+        $paymentStatusSummary = $applications->groupBy('payment_status')->map(function ($group) {
+            return [
+                'count' => $group->count(),
+                'total' => $group->sum('payment_amount')
+            ];
+        });
+        
+        return view('finance.report-collection-by-payment', [
+            'title' => __("Laporan Status Pembayaran Caruman Parit"),
+            'applications' => $applications,
+            'printType' => $printType,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'formattedStartDate' => $formattedStartDate,
+            'formattedEndDate' => $formattedEndDate,
+            'currentDate' => $currentDate,
+            'currentTime' => $currentTime,
+            'selectedPaymentMethodName' => $selectedPaymentMethodName,
+            'selectedPaymentStatusName' => $selectedPaymentStatusName,
+            'isFilteredByMethod' => ($paymentMethod && $paymentMethod != ''),
+            'isFilteredByStatus' => ($paymentStatus && $paymentStatus != ''),
+            'totalAmount' => $totalAmount,
+            'totalRecords' => $totalRecords,
+            'paymentMethodSummary' => $paymentMethodSummary,
+            'paymentStatusSummary' => $paymentStatusSummary,
         ]);
     }
     
