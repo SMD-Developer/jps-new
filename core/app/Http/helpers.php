@@ -891,9 +891,9 @@ if(! function_exists('getMenus')){
                             'icon' => 'line-chart',
                             'text' => trans('app.reports'),
                             'route' => url('#'),
-                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance')  ? 'menu-is-opening menu-open' : '',
-                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'block' : 'none',
-                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') ? 'active' : '',
+                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search')  ? 'menu-is-opening menu-open' : '',
+                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'block' : 'none',
+                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') ? 'active' : '',
                             'permission' => 'reports.view-list',
                             'is_dropdown' => true,
                             'submenus' => [
@@ -911,6 +911,13 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
                                 'permission' => 'report.district'
+                                ],
+                                [
+                                    'icon' => 'money',
+                                    'text' => 'Cetakan Semula Resit Caruman Parit',
+                                    'route' =>  url('report-collection-method-search'),
+                                    'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                    'permission' => 'report.district'
                                 ],
                                 [
                                 'icon' => 'money',
@@ -1283,9 +1290,9 @@ if(! function_exists('getMenus')){
                                 'icon' => 'money',
                                 'text' => trans('app.collection_payment_report'),
                                 'route' =>  url('#'),
-                                'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'menu-is-opening menu-open' : '',
-                                'active_dropdown_menu' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance')  ? 'block' : 'none',
-                                'menu_active' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'active' : '',
+                                'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'menu-is-opening menu-open' : '',
+                                'active_dropdown_menu' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'block' : 'none',
+                                'menu_active' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'active' : '',
                                 'permission' => 'collection-payment.view-list',
                                 'is_dropdown' => true,
                                 'submenus' => [ // Second-level submenu
@@ -1320,6 +1327,14 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
+                            ],
+
+                            [
+                                'icon' => 'money',
+                                'text' => 'Cetakan Semula Resit Caruman Parit',
+                                'route' =>  url('report-collection-method-search'),
+                                'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                'permission' => 'report.district'
                             ],
                             
                             [
@@ -1554,9 +1569,9 @@ if(! function_exists('getMenus')){
                             'icon' => 'line-chart',
                             'text' => trans('app.reports'),
                             'route' => url('#'),
-                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance')  ? 'menu-is-opening menu-open' : '',
-                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'block' : 'none',
-                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') ? 'active' : '',
+                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'menu-is-opening menu-open' : '',
+                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'block' : 'none',
+                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'active' : '',
                             'permission' => 'reports.view-list',
                             'is_dropdown' => true,
                             'submenus' => [
@@ -1579,7 +1594,7 @@ if(! function_exists('getMenus')){
                                 'icon' => 'money',
                                 'text' => 'Cetakan Semula Resit Caruman Parit',
                                 'route' =>  url('report-collection-method-search'),
-                                'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
+                                'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
                                 'permission' => 'report.district'
                                 ],
                                 [
@@ -1629,7 +1644,7 @@ if(! function_exists('getMenus')){
                                 'icon' => 'money',
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
-                                'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
+                                'menu_active' => request()->is('payment-summary-report-search' ,'payment-summary-report-search') ? 'active' : '',
                                 'permission'  => 'payment.summary.report'
 
                             ],
@@ -1650,7 +1665,7 @@ if(! function_exists('getMenus')){
                                 'icon' => 'money',
                                 'text' => trans('app.contribution_payment_report'),
                                 'route' =>  url('claim-contribution-report-search'),
-                                'menu_active' => request()->is('') ? 'active' : '',
+                                'menu_active' => request()->is('claim-contribution-report-search', 'claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
                             // [

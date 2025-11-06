@@ -161,6 +161,12 @@
         background: white;
     }
 
+
+    .main-data-table tbody td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
     .main-data-table tbody tr:nth-child(even) {
         background: #f9f9f9;
     }
@@ -631,18 +637,18 @@
                                                 </td>
 
                                                 <td>{{ $application->refference_no ?? 'N/A' }}</td>
-                                                <td>{{ $application->account_type_name }}</td>
-                                                <td>{{ $application->applicant ?? 'N/A' }}</td>
-                                                <td>{{ $application->district_name }}</td>
-                                                 <td>{{ $application->land_lot ?? 'N/A' }},{{ $application->division_name }}, DAERAH {{ $application->district_name }}, SELANGOR</td>
-                                                 <td style="text-align: right;">{{ number_format($application->final_amount, 2) }}</td>
+                                                <td>{{ strtoupper($application->account_type_name) }}</td>
+                                                <td>{{ strtoupper($application->applicant ?? 'N/A') }}</td>
+                                                <td>{{ strtoupper($application->district_name) }}</td>
+                                                 <td>{{ $application->land_lot ?? 'N/A' }},{{ strtoupper($application->division_name) }}, DAERAH {{ strtoupper($application->district_name) }}, SELANGOR</td>
+                                                 <td>{{ number_format($application->final_amount, 2) }}</td>
                                             </tr>
                                         @endforeach
 
                                         <!-- Grand Total Row -->
                                         <tr style="background-color: #f0f0f0; font-weight: bold;">
                                             <td colspan="7" style="text-align: right;">JUMLAH :</td>
-                                            <td style="text-align: right;"> RM {{ number_format($applications->sum('final_amount'), 2) }}</td>
+                                            <td> RM {{ number_format($applications->sum('final_amount'), 2) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
