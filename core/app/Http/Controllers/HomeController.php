@@ -1926,6 +1926,10 @@ class HomeController extends Controller {
             });
         }
 
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
+
         $list = $query->paginate($perPage)->withQueryString();
 
         return view('application.view-receipt', compact(
@@ -1934,7 +1938,8 @@ class HomeController extends Controller {
             'perPage', 
             'isFinanceAdmin',
             'statusFilter',
-            'methodFilter' 
+            'methodFilter' ,
+            'district'
         ));     
     }
 

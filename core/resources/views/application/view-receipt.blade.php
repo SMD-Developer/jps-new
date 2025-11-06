@@ -508,7 +508,10 @@
                                                 @endphp
                                             </td>
                                             <td>{{ $item->applicant }}</td>
-                                            <td>{{ $item->land_lot }}</td>
+                                            <td>{{ $item->land_lot }}, {{ $item->land_area }}, {{ $item->landDivision->mukim ?? '' }},
+                                                Daerah
+                                                {{ $item->landDistrict->daerah ?? '' }}
+                                            </td>
                                             <td>{{ $item->final_amount ? 'RM ' . number_format($item->final_amount, 2) : 'N/A' }}</td>
                                             <!-- ✅ First Column - EFT ONLY -->
                                             <td>
