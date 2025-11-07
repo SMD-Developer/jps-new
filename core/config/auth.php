@@ -17,6 +17,11 @@ return [
             'driver' => 'session',
             'provider' => 'clients',
         ],
+
+        'third_party' => [
+            'driver' => 'session',
+            'provider' => 'third_party_users',
+        ],
         
         
         
@@ -33,7 +38,11 @@ return [
         'clients' => [
             'driver' => 'eloquent',
             'model' => App\Models\Client::class,
-        ]
+        ],
+        'third_party_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ThirdPartyUser::class,
+        ],
     ],
     'passwords' => [
         'admin' => [

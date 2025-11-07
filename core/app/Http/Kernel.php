@@ -54,5 +54,6 @@ class Kernel extends HttpKernel {
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'check.account.lock' => \App\Http\Middleware\CheckAccountLock::class,
         'check.admin.account.lock' => \App\Http\Middleware\CheckAdminAccountLock::class,
+        'third.party.auth' => \App\Http\Middleware\ThirdPartyAuth::class
     ];
 }

@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Client;
+use App\Models\ThirdPartyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -15,6 +16,11 @@ use Illuminate\Support\Facades\Mail;
 use App\Notifications\PaymentSuccessful;
 use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class ThirdPartyController extends Controller
 {
@@ -1397,4 +1403,190 @@ class ThirdPartyController extends Controller
         return view('clientarea.application.user-receiptcopy', compact('application'))
             ->with('is_guest_access', true);
     }
+
+
+    // route for third party user registration 
+
+    public function register(Request $request)
+    {
+        try {
+            // Validate the request
+            $validator = Validator::make($request->all(), [
+                'name'             => 'required|string|max:255',
+                'email'            => [
+                    'required',
+                    'email',
+                    'max:255',
+                    function ($attribute, $value, $fail) {
+                        // Check if email already exists in third_party_users table
+                        $exists = DB::table('third_party_users')->where('email', $value)->exists();
+                        if ($exists) {
+                            $fail('This email is already registered.');
+                        }
+                    },
+                ],
+                'id_card_number'   => [
+                    'required',
+                    'string',
+                    'max:50',
+                    function ($attribute, $value, $fail) {
+                        // Check if ID card number already exists
+                        $exists = DB::table('third_party_users')->where('id_card_number', $value)->exists();
+                        if ($exists) {
+                            $fail('This ID card number is already registered.');
+                        }
+                    },
+                ],
+                'address'          => 'required|string',
+                'password'         => 'required|string|min:8',
+                'confirm_password' => 'required|same:password',
+                'terms'            => 'required|accepted',
+            ], [
+                'name.required'             => 'Name is required.',
+                'email.required'            => 'Email is required.',
+                'email.email'               => 'Please enter a valid email address.',
+                'id_card_number.required'   => 'ID card number is required.',
+                'address.required'          => 'Address is required.',
+                'password.required'         => 'Password is required.',
+                'password.min'              => 'Password must be at least 8 characters.',
+                'confirm_password.required' => 'Please confirm your password.',
+                'confirm_password.same'     => 'Passwords do not match.',
+                'terms.required'            => 'You must accept the terms and conditions.',
+                'terms.accepted'            => 'You must accept the terms and conditions.',
+            ]);
+
+            // If validation fails
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            // Use database transaction
+            DB::beginTransaction();
+
+            try {
+                // Create third party user
+                $thirdPartyUser = ThirdPartyUser::create([
+                    'name'           => $request->name,
+                    'email'          => $request->email,
+                    'id_card_number' => $request->id_card_number,
+                    'address'        => $request->address,
+                    'password'       => Hash::make($request->password),
+                    'status'         => 1, 
+                ]);
+
+                // Commit the transaction
+                DB::commit();
+
+                // Return success response
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Registration successful! You can now login.',
+                    'data'    => [
+                        'user_id' => $thirdPartyUser->id,
+                        'email'   => $thirdPartyUser->email,
+                    ]
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred. Please try again later.',
+                'error'   => $e->getMessage(), // Remove this in production
+            ], 500);
+        }
+    }
+
+    public function showLoginForm()
+    {
+        return view('third-party.default');
+    }
+
+
+   
+
+
+    public function login(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email'    => 'required|email',
+                'password' => 'required|string|min:8',
+            ]);
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+            $user = ThirdPartyUser::where('email', $request->email)->first();
+
+            if (!$user) {
+                return back()->with('error', 'Account not found.');
+            }
+
+            if ($user->status != 1) {
+                return back()->with('error', 'Your account is inactive.');
+            }
+
+            if (!Hash::check($request->password, $user->password)) {
+                return back()->with('error', 'Invalid password.');
+            }
+
+            $request->session()->put([
+                'third_party_user_id' => $user->id,
+                'third_party_user_name' => $user->name,
+                'third_party_user_email' => $user->email,
+            ]);
+
+            $request->session()->save();
+
+            return redirect()->intended(route('third.party.dashboard'))
+                ->with('success', 'Login successful!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'An error occurred.');
+        }
+    }
+
+
+    public function dashboard(Request $request)
+    {
+        $userId = $request->session()->get('third_party_user_id');
+        
+        if (!$userId) {
+            return redirect()->route('third.party.login')
+                ->with('error', 'Please login first.');
+        }
+
+        $user = ThirdPartyUser::find($userId);
+        
+        if (!$user) {
+            $request->session()->flush();
+            return redirect()->route('third.party.login')
+                ->with('error', 'User not found.');
+        }
+        
+        return view('third-party.dashboard', compact('user'));
+    }
+
+
+    public function logout(Request $request)
+    {
+        try {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('third.party.login')->with('success', 'You have been logged out successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong while logging out.');
+        }
+    }
+
+
 }

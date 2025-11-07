@@ -360,98 +360,98 @@ body {
     overflow: hidden; /* Prevents scrolling if unnecessary */
 }
 
-@media (max-width: 768px) {
-  body {
-    /*background-size: contain; */
-    
-    /*background-attachment: scroll;*/
-    
-  }
-}
-.w3-xxlarge {
-    font-size: 30px !important;
-}
-.w3-button:hover {
-    color: #000 !important;
-    background-color: #ccc !important;
-}
-@media (min-width: 1200px) {
-    .h2, h2 {
-        font-size: 1.83rem;
+    @media (max-width: 768px) {
+    body {
+        /*background-size: contain; */
+        
+        /*background-attachment: scroll;*/
         
     }
-    .footerForMobile{
-        display: none !important;
     }
-}
-
-@media (min-width: 600px) {
-    .footerForMobile{
-        display: none !important;
+    .w3-xxlarge {
+        font-size: 30px !important;
     }
-}
+    .w3-button:hover {
+        color: #000 !important;
+        background-color: #ccc !important;
+    }
+    @media (min-width: 1200px) {
+        .h2, h2 {
+            font-size: 1.83rem;
+            
+        }
+        .footerForMobile{
+            display: none !important;
+        }
+    }
 
-#canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1; /* Ensures it's behind other elements */
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Prevents interference with user interactions */
-}
-.form-check {
-    font-size: 15px;
-}
-.filterform{
-    padding: 20px 45px;
-    border: 1px solid #DDDDDD;
-    border-radius: 5px;
-}
-.modal-dialog.modal-lg{
-    padding: 0px 55px;
-}
-.modal-header {
-    padding: 0px 20px;
-    border-bottom: none;
-    background: #fff !important;
-}
-h5#searchModalLabel {
-    color: #000;
-}
-label:not(.form-check-label):not(.custom-file-label) {
-    font-weight: 400;
-    font-size: 13px;
-}
-button.btn.btn-primary {
-    background: #5B90E1;
-    border: 1px solid #5B90E1;
-}
-button.btn.btn-warning {
-    background: #FF9B46;
-    border: 1px solid #FF9B46;
-    color: #000;
-}
-button.btn.btn-outline-secondary {
-    background: #FF9B46;
-    color: #000;
-}
-.form-select{
-    font-size:13px;
-}
-.form-control{
-    font-size:13px;
-}
-input#captcha {
-    margin: 0px 5px 0px 0px;
-}
-.important {
-  color: red;
-  font-weight: bold;
-}
+    @media (min-width: 600px) {
+        .footerForMobile{
+            display: none !important;
+        }
+    }
 
-/* Ensure modal background is not overriding */
- .modal-content {
+    #canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1; /* Ensures it's behind other elements */
+        width: 100%;
+        height: 100%;
+        pointer-events: none; /* Prevents interference with user interactions */
+    }
+    .form-check {
+        font-size: 15px;
+    }
+    .filterform{
+        padding: 20px 45px;
+        border: 1px solid #DDDDDD;
+        border-radius: 5px;
+    }
+    .modal-dialog.modal-lg{
+        padding: 0px 55px;
+    }
+    .modal-header {
+        padding: 0px 20px;
+        border-bottom: none;
+        background: #fff !important;
+    }
+    h5#searchModalLabel {
+        color: #000;
+    }
+    label:not(.form-check-label):not(.custom-file-label) {
+        font-weight: 400;
+        font-size: 13px;
+    }
+    button.btn.btn-primary {
+        background: #5B90E1;
+        border: 1px solid #5B90E1;
+    }
+    button.btn.btn-warning {
+        background: #FF9B46;
+        border: 1px solid #FF9B46;
+        color: #000;
+    }
+    button.btn.btn-outline-secondary {
+        background: #FF9B46;
+        color: #000;
+    }
+    .form-select{
+        font-size:13px;
+    }
+    .form-control{
+        font-size:13px;
+    }
+    input#captcha {
+        margin: 0px 5px 0px 0px;
+    }
+    .important {
+        color: red;
+        font-weight: bold;
+    }
+
+   /* Ensure modal background is not overriding */
+    .modal-content {
         background-color: #fff !important;
         border-radius: 10px;
         padding: 20px;
@@ -464,38 +464,38 @@ input#captcha {
     }
 
     .ag-courses_box {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px 0;
-    max-width: 100%;
-    overflow: hidden;
-}
-
-.ag-courses_item {
-    flex: 1 1 calc(33.333% - 20px); /* 3 cards per row */
-    max-width: calc(33.333% - 20px); /* Prevents overflow */
-    border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    padding: 10px;
-}
-
-@media (max-width: 992px) {
-    .ag-courses_item {
-        flex: 1 1 calc(50% - 20px); /* 2 cards per row on medium screens */
-        max-width: calc(50% - 20px);
-    }
-}
-
-@media (max-width: 576px) {
-    .ag-courses_item {
-        flex: 1 1 100%; /* 1 card per row on small screens */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px 0;
         max-width: 100%;
+        overflow: hidden;
     }
-}
+
+    .ag-courses_item {
+        flex: 1 1 calc(33.333% - 20px); /* 3 cards per row */
+        max-width: calc(33.333% - 20px); /* Prevents overflow */
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        padding: 10px;
+    }
+
+    @media (max-width: 992px) {
+        .ag-courses_item {
+            flex: 1 1 calc(50% - 20px); /* 2 cards per row on medium screens */
+            max-width: calc(50% - 20px);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .ag-courses_item {
+            flex: 1 1 100%; /* 1 card per row on small screens */
+            max-width: 100%;
+        }
+    }
     .ag-courses_item:hover {
         transform: scale(1.05);
     }
@@ -523,24 +523,24 @@ input#captcha {
     }
 
     
-.modal-fullscreen .modal-content {
-    height: 90%;
-    border: 0;
-    border-radius: 0;
-    width: 90%;
-    display: flex;
-}
+    .modal-fullscreen .modal-content {
+        height: 90%;
+        border: 0;
+        border-radius: 0;
+        width: 90%;
+        display: flex;
+    }
 
-.modal-fullscreen {
-    width: 100vw;
-    max-width: none;
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-}
+    .modal-fullscreen {
+        width: 100vw;
+        max-width: none;
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+    }
 
-.accordion-title:before {
+    .accordion-title:before {
         float: right !important;
         font-family: FontAwesome;
         content: "\f068";
@@ -550,23 +550,23 @@ input#captcha {
     .accordion-title.collapsed:before {
         content: "\f067";
     }
-   a.card-link.accordion-title {
-    text-decoration: none;
-}
+    a.card-link.accordion-title {
+        text-decoration: none;
+    }
     .card-link:hover {
-    text-decoration: none !important;
-}
-.heading1{
-    font-size: 24px
-}
-.heading2{
-        font-size: 19px
-}
-.fill{
-    margin-top: 48px
-}
+        text-decoration: none !important;
+    }
+    .heading1{
+        font-size: 24px
+    }
+    .heading2{
+            font-size: 19px
+    }
+    .fill{
+        margin-top: 48px
+    }
 
-   @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 600px) {
         .heading1{
             font-size: 13px;
             margin-top: 15px;
@@ -594,35 +594,49 @@ input#captcha {
                 height: 12px;
         }
         
-}     
-i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middle-y.me-3.pe-4.text-muted.cursor-pointer{
-    cursor: pointer !important;
-    padding-bottom: 35px !important;
-}
+    } 
 
-.cursor-pointer{
-    
-}
-@media (min-width: 426px) and (max-width: 768px) {
-  .cursor-pointer {
+    i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middle-y.me-3.pe-4.text-muted.cursor-pointer{
+        cursor: pointer !important;
+        padding-bottom: 35px !important;
+    }
 
-  }
-}
 
-.alert.alert-danger {
-            position: absolute;
-            top: -50px;
-            left: 0px;
-            right: 0px;
-            z-index: 11; /* Above form content */
-            margin: 0;
-            padding: 0 10px;
-            font-size: 14px;
-            background-color: rgba(220, 53, 69, 0.9); /* Semi-transparent for visibility */
-            color: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    @media (min-width: 426px) and (max-width: 768px) {
+        .cursor-pointer {
+
         }
+    }
+
+   .alert.alert-danger {
+        position: absolute;
+        top: -50px;
+        left: 0px;
+        right: 0px;
+        z-index: 11; /* Above form content */
+        margin: 0;
+        padding: 0 10px;
+        font-size: 14px;
+        background-color: rgba(220, 53, 69, 0.9); /* Semi-transparent for visibility */
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+      /* Ensure Third Party Modal appears on top */
+    #thirdPartyRegisterModal,
+    #thirdPartyRegisterModal.modal {
+        z-index: 99999 !important;
+    }
+    
+    #thirdPartyRegisterModal + .modal-backdrop {
+        z-index: 99998 !important;
+    }
+    
+    /* Ensure login form stays behind modals */
+    .login-page {
+        z-index: 1 !important;
+    }
 </style>
 </head>
 <body class="login-page">
@@ -634,6 +648,12 @@ i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middl
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
+                <!-- Add this button where you want (in navbar or main page) -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#thirdPartyRegisterModal">
+                        <i class="fa fa-user-plus"></i> Third Party Register
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i> @lang('app.search_c')</a>
                 </li>
@@ -1106,6 +1126,8 @@ i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middl
     </div>
 </div>
 
+
+
 <!-- Modal -->
 <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -1176,6 +1198,189 @@ i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middl
 
     </div>
     </div>
+
+<!-- Third Party Registration Modal -->
+<div class="modal fade" id="thirdPartyRegisterModal" tabindex="-1" aria-labelledby="thirdPartyRegisterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="thirdPartyRegisterModalLabel" style="color:#000;">
+                    <i class="fa fa-user-plus"></i> Third Party Registration
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Success/Error Messages -->
+                <div id="thirdPartyRegisterMessage"></div>
+                
+                <form id="thirdPartyRegisterForm" method="POST" action="{{ route('third.party.register.submit') }}">
+                    @csrf
+                    
+                    <!-- Name -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="tp_name" class="col-form-label">
+                                Name:<span class="text-danger">*</span>
+                            </label>
+                        </div>    
+                        <div class="col-md-9">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="tp_name" 
+                                   name="name" 
+                                   placeholder="Enter your full name" 
+                                   required>
+                            <div class="invalid-feedback">Please enter your name.</div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="tp_email" class="col-form-label">
+                                Email:<span class="text-danger">*</span>
+                            </label>
+                        </div>    
+                        <div class="col-md-9">
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="tp_email" 
+                                   name="email" 
+                                   placeholder="Enter your email" 
+                                   required>
+                            <div class="invalid-feedback">Please enter a valid email.</div>
+                        </div>
+                    </div>
+
+                    <!-- ID Card Number -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="tp_id_card" class="col-form-label">
+                                ID Card Number:<span class="text-danger">*</span>
+                            </label>
+                        </div>    
+                        <div class="col-md-9">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="tp_id_card" 
+                                   name="id_card_number" 
+                                   placeholder="Enter your ID card number" 
+                                   required>
+                            <div class="invalid-feedback">Please enter your ID card number.</div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="tp_address" class="col-form-label">
+                                Address:<span class="text-danger">*</span>
+                            </label>
+                        </div>    
+                        <div class="col-md-9">
+                            <textarea class="form-control" 
+                                      id="tp_address" 
+                                      name="address" 
+                                      rows="3" 
+                                      placeholder="Enter your full address" 
+                                      required></textarea>
+                            <div class="invalid-feedback">Please enter your address.</div>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="tp_password" class="col-form-label">
+                                Password:<span class="text-danger">*</span>
+                            </label>
+                        </div>    
+                        <div class="col-md-9">
+                            <div class="position-relative">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="tp_password" 
+                                       name="password" 
+                                       placeholder="Enter password (min 8 characters)" 
+                                       minlength="8"
+                                       required>
+                                <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" 
+                                   data-target="tp_password" 
+                                   style="position: absolute; right: 10px; top: 50%; cursor: pointer;"></i>
+                            </div>
+                            <small class="form-text text-muted">Minimum 8 characters</small>
+                            <div class="invalid-feedback">Password must be at least 8 characters.</div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="tp_confirm_password" class="col-form-label">
+                                Confirm Password:<span class="text-danger">*</span>
+                            </label>
+                        </div>    
+                        <div class="col-md-9">
+                            <div class="position-relative">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="tp_confirm_password" 
+                                       name="confirm_password" 
+                                       placeholder="Re-enter password" 
+                                       minlength="8"
+                                       required>
+                                <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" 
+                                   data-target="tp_confirm_password" 
+                                   style="position: absolute; right: 10px; top: 50%; cursor: pointer;"></i>
+                            </div>
+                            <div class="invalid-feedback">Passwords do not match.</div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="tp_terms" 
+                                       name="terms" 
+                                       required>
+                                <label class="form-check-label" for="tp_terms">
+                                    I agree to the <a href="#" target="_blank">Terms and Conditions</a>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="invalid-feedback">You must agree to terms and conditions.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-primary" id="tp_submit_btn">
+                            <i class="fa fa-user-plus"></i> Register
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fa fa-refresh"></i> Reset
+                        </button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <!-- Already have account link -->
+                    <div class="text-center mt-3">
+                        <p>Already have an account? 
+                            <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#thirdPartyLoginModal">
+                                Login here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {!! Html::script(asset('assets/js/jquery.min.js')) !!}
 {!! Html::script(asset('assets/js/bootstrap.min.js')) !!}
 {!! Html::script(asset('assets/js/validator.min.js')) !!}
@@ -1547,6 +1752,86 @@ $(document).ready(function() {
         form.reset(); // clears inputs
     }
 }
+</script>
+<script>
+    // Third Party Registration Form Validation
+    document.getElementById('thirdPartyRegisterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('thirdPartyRegisterMessage').innerHTML = '';
+        const password = document.getElementById('tp_password').value;
+        const confirmPassword = document.getElementById('tp_confirm_password').value;
+        if (password !== confirmPassword) {
+            document.getElementById('thirdPartyRegisterMessage').innerHTML = 
+                '<div class="alert alert-danger">Passwords do not match!</div>';
+            document.getElementById('tp_confirm_password').classList.add('is-invalid');
+            return false;
+        }
+        document.getElementById('tp_confirm_password').classList.remove('is-invalid');
+        
+        // Show loading state
+        const submitBtn = document.getElementById('tp_submit_btn');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Registering...';
+    
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('thirdPartyRegisterMessage').innerHTML = 
+                    '<div class="alert alert-success">' + data.message + '</div>';
+                document.getElementById('thirdPartyRegisterForm').reset();
+                setTimeout(() => {
+                    window.location.href = '{{ route("third.party.login") }}';
+                }, 2000);
+            } else {
+                let errorMsg = '<div class="alert alert-danger"><ul class="mb-0">';
+                if (data.errors) {
+                    Object.values(data.errors).forEach(error => {
+                        errorMsg += '<li>' + error + '</li>';
+                    });
+                } else {
+                    errorMsg += '<li>' + data.message + '</li>';
+                }
+                errorMsg += '</ul></div>';
+                document.getElementById('thirdPartyRegisterMessage').innerHTML = errorMsg;
+            }
+        })
+        .catch(error => {
+            document.getElementById('thirdPartyRegisterMessage').innerHTML = 
+                '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        });
+    });
+
+    // Password toggle functionality (reuse your existing code)
+    document.querySelectorAll('.toggle-password').forEach(item => {
+        item.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.remove('bi-eye-slash');
+                this.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                this.classList.remove('bi-eye');
+                this.classList.add('bi-eye-slash');
+            }
+        });
+    });
 </script>
 </body>
 </html>

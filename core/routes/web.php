@@ -43,12 +43,26 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
 
     // Add these to your existing routes
     Route::prefix('third-party')->name('third.party.')->group(function () {
-        Route::post('/store', 'ThirdPartyController@storeThirdPartyInfo')->name('store');
-        Route::get('/payment-selection/{application}', 'ThirdPartyController@paymentSelection')->name('payment.selection');
-        Route::post('/process-payment-selection', 'ThirdPartyController@processPaymentSelection')->name('process.payment.selection');
-        Route::get('/pay-details-b2c', 'ThirdPartyController@b2c')->name('pay.details.b2c');
-        Route::get('/pay-details-b2b', 'ThirdPartyController@b2b')->name('pay.details.b2b');
-        Route::get('/print/{application}/{transaction}', 'ThirdPartyController@printReceipt')->name('print');
+    
+        // ===== NEW: Authentication Routes (No Middleware) =====
+        Route::get('/register', 'ThirdPartyController@showRegisterForm')->name('register');
+        Route::post('/register', 'ThirdPartyController@register')->name('register.submit');
+        Route::get('/login', 'ThirdPartyController@showLoginForm')->name('login');
+        Route::post('/login', 'ThirdPartyController@login')->name('login.submit');
+        Route::post('/logout', 'ThirdPartyController@logout')->name('logout');
+        
+        // ===== EXISTING Routes - Now Protected with Middleware =====
+        Route::middleware(['third.party.auth'])->group(function () {
+            Route::get('/dashboard', 'ThirdPartyController@dashboard')->name('dashboard'); 
+            Route::post('/store', 'ThirdPartyController@storeThirdPartyInfo')->name('store');
+            Route::get('/payment-selection/{application}', 'ThirdPartyController@paymentSelection')->name('payment.selection');
+            Route::post('/process-payment-selection', 'ThirdPartyController@processPaymentSelection')->name('process.payment.selection');
+            Route::get('/pay-details-b2c', 'ThirdPartyController@b2c')->name('pay.details.b2c');
+            Route::get('/pay-details-b2b', 'ThirdPartyController@b2b')->name('pay.details.b2b');
+            Route::get('/print/{application}/{transaction}', 'ThirdPartyController@printReceipt')->name('print');
+        });
+        
+        // ===== Payment Callbacks (No Middleware - External calls) =====
         Route::post('/fpx/callback', 'ThirdPartyController@handleFpxCallback')->name('fpx.callback');
         Route::get('/fpx/return', 'ThirdPartyController@handleFpxReturn')->name('fpx.return');
     });
