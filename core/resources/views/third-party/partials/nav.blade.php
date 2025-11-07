@@ -131,9 +131,9 @@ i.right.fa.fa-angle-right.mt-2 {
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('third.party.search')}}" class="nav-link">
                         <i class="fa fa-file-alt nav-icon"></i>
-                        <p>Applications</p>
+                        <p>Carian</p>
                     </a>
                 </li>
 

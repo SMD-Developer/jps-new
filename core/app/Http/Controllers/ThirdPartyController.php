@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\ClientRegisterModel;
 use App\Models\ThirdPartyPrint;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -1587,6 +1589,115 @@ class ThirdPartyController extends Controller
             return redirect()->back()->with('error', 'Something went wrong while logging out.');
         }
     }
+
+
+    public function searchFilter(Request $request)
+    {
+        $title = __("app.search");
+        
+        $divisions = DB::table('division')
+            ->where('status', 1)
+            ->orderBy('mukim_code', 'asc')
+            ->get();
+            
+        $districts = DB::table('district')
+            ->where('idnegeri', 1)
+            ->where('stat', 1)
+            ->orderBy('daerah_code', 'asc')
+            ->get();
+            
+        $applicants = ClientRegisterModel::select('client_id', 'userName')->get();
+        
+        $lotPts = Application::select('id', 'land_lot as lot_number')
+            ->whereNotNull('land_lot')
+            ->distinct('land_lot')
+            ->orderBy('land_lot', 'asc')
+            ->get();
+            
+        // If it's a POST request, redirect to results page with search parameters
+        if ($request->isMethod('post')) {
+            return redirect()->route('search-results')->withInput();
+        }
+        
+        // For GET request, show the search form
+        return view('third-party.search-filter', [
+            'title' => $title,
+            'divisions' => $divisions,
+            'districts' => $districts,
+            'applicants' => $applicants,
+            'lotPts' => $lotPts,
+            'request' => $request
+        ]);
+    }
+
+
+    public function searchResults(Request $request)
+    {
+        $title = __("app.search_results");
+        
+        $query = Application::query();
+
+        // Build search query
+        if ($request->filled('lot_pt_grant')) {
+            $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
+        }
+        
+        if ($request->filled('division')) {
+            $query->where('land_state', $request->division);
+        }
+        
+        if ($request->filled('district')) {
+            $query->where('land_district', $request->district);
+        }
+        
+        if ($request->filled('applicant_id')) {
+            $query->where('user_id', $request->applicant_id);
+        }
+        
+        if ($request->filled('reference_number')) {
+            $query->where('refference_no', 'like', '%' . $request->reference_number . '%');
+        }
+        
+        if ($request->filled('application_date')) {
+            $query->whereDate('created_at', $request->application_date);
+        }
+
+
+        $query->whereHas('payment', function ($q) {
+            $q->where('payment_status', 'completed');
+        });
+        
+        // Get results with pagination
+        $applications = $query->with(['applicant', 'division', 'districts', 'payment'])
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(10);
+        
+        // Get filter data for display
+        $filters = [
+            'district' => $request->district,
+            'division' => $request->division,
+            'applicant_name' => $request->applicant_id ? ClientRegisterModel::find($request->applicant_id)->userName ?? '' : '',
+            'lot_number' => $request->lot_pt_grant,
+            'reference_number' => $request->reference_number,
+            'application_date' => $request->application_date
+        ];
+        
+        // Get districts and divisions for filter display
+        $districts = DB::table('district')->get()->keyBy('iddaerah');
+        $divisions = DB::table('division')->get()->keyBy('idmukim');
+        
+        return view('third-party.search-results', [
+            'title' => $title,
+            'applications' => $applications,
+            'filters' => $filters,
+            'districts' => $districts,
+            'divisions' => $divisions,
+            'request' => $request
+        ]);
+    }
+
+
+
 
 
 }
