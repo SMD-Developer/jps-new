@@ -62,13 +62,13 @@
                 <!-- Header -->
                 <div class="text-center mb-4">
                     <h3 class="text-white mb-2">JPS - Third Party Services</h3>
-                    <p class="text-white mb-0">Document Print Payment Gateway</p>
+                    <p class="text-white mb-0">Document Reprint Payment Gateway</p>
                 </div>
 
                 <!-- Payment Card -->
                 <div class="card">
-                    <div class="card-header bg-info text-white text-center py-3">
-                        <h5 class="mb-0"><i class="fas fa-print me-2"></i><strong>THIRD PARTY DOCUMENT PRINT PAYMENT</strong></h5>
+                    <div class="card-header bg-warning text-dark text-center py-3">
+                        <h5 class="mb-0"><i class="fas fa-print me-2"></i><strong>THIRD PARTY DOCUMENT REPRINT PAYMENT</strong></h5>
                     </div>
                     
                     <div class="card-body p-0">
@@ -81,14 +81,14 @@
                             <div class="row mb-4">
                                 <div class="col-md-8">
                                     <h6 class="font-weight-bold text-dark">Service Description</h6>
-                                    <p class="text-muted mb-1">Third Party Document Print Service</p>
+                                    <p class="text-muted mb-1">Third Party Document Reprint Service</p>
                                     <p class="text-muted mb-0">Reference No: <strong>{{ $referenceNo ?? 'N/A' }}</strong></p>
-                                    <p class="text-muted mb-0">Service Type: Document Printing</p>
+                                    <p class="text-muted mb-0">Service Type: Document Reprinting</p>
                                 </div>
                                 <div class="col-md-4 text-right">
                                     <h6 class="font-weight-bold text-dark">Total Amount</h6>
                                     <p class="h4 text-primary mb-0">MYR {{ number_format($fpx_txnAmount, 2) }}</p>
-                                    <small class="text-muted">Fixed printing fee</small>
+                                    <small class="text-muted">Reprint service fee</small>
                                 </div>
                             </div>
 
@@ -97,7 +97,7 @@
                                 <h6 class="alert-heading"><i class="fas fa-user me-2"></i>Third Party Information</h6>
                                 <p class="mb-1"><strong>Name:</strong> {{ $fpx_buyerName }}</p>
                                 <p class="mb-1"><strong>Email:</strong> {{ $fpx_buyerEmail }}</p>
-                                <p class="mb-0"><strong>Service Fee:</strong> RM 10.00 per document print</p>
+                                <p class="mb-0"><strong>Service Fee:</strong> RM 1.00 per document reprint</p>
                             </div>
 
                             <!-- FPX Payment Form -->
@@ -136,8 +136,8 @@
 
                                 <!-- Payment Button -->
                                 <div class="text-center mb-4">
-                                    <button type="submit" class="btn btn-payment btn-lg">
-                                        <i class="fas fa-lock me-2"></i>Proceed to FPX Payment - RM 10.00
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
+                                        <i class="fas fa-lock me-2"></i>Proceed to FPX Payment - RM 1.00
                                     </button>
                                 </div>
 
@@ -152,12 +152,12 @@
                             <div class="alert alert-warning">
                                 <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Important Instructions</h6>
                                 <ul class="mb-0 ps-3">
-                                    <li>This is a <strong>third party document print service</strong> with fixed fee of RM 10.00</li>
+                                    <li>This is a <strong>third party document reprint service</strong> with fixed fee of RM 1.00</li>
                                     <li>You must have an Internet Banking account to make transactions using FPX</li>
                                     <li>Please disable your browser's pop-up blocker to avoid interruptions</li>
                                     <li>Do not close the browser or refresh the page until you receive a response</li>
-                                    <li>After successful payment, you can download/print the document immediately</li>
-                                    <li><strong>Each print requires a separate payment of RM 10.00</strong></li>
+                                    <li>After successful payment, you can download/print the receipt immediately</li>
+                                    <li><strong>Each reprint requires a separate payment of RM 1.00</strong></li>
                                 </ul>
                             </div>
 
@@ -165,18 +165,12 @@
                             <div class="alert alert-primary">
                                 <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Third Party Service Notice</h6>
                                 <p class="mb-0">
-                                    <strong>Note:</strong> This payment is for third party document printing service. 
-                                    You are not the original applicant but requesting to print documents as a third party. 
-                                    Each print session requires a separate payment of RM 10.00.
+                                    <strong>Note:</strong> This payment is for third party document reprint service. 
+                                    You are requesting to reprint a receipt as an authorized third party. 
+                                    Each reprint session requires a separate payment of RM 10.00.
                                 </p>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="card-footer text-center py-3 bg-light">
-                        <a href="{{ route('applications.search') }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-arrow-left me-1"></i>Back to Search
-                        </a>
                     </div>
                 </div>
 
@@ -189,6 +183,44 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        }
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .alert-primary {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+    </style>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

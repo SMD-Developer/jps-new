@@ -147,7 +147,7 @@
                     <div class="third-party-notice">
                         <i class="bi bi-info-circle-fill"></i>
                         <strong>Third Party Document Print Service</strong><br>
-                        You are about to pay RM 10.00 for printing documents as a third party. This is a fixed service charge for document printing.
+                        You are about to pay RM 1.00 for printing documents as a third party. This is a fixed service charge for document printing.
                     </div>
                     
                     <!-- FPX Header -->
@@ -172,7 +172,7 @@
                                    value="{{ auth('third_party')->user()->email ?? '' }}" 
                                    placeholder="Enter your email address" required>
                         </div>
-                        
+
                         <!-- Payment Mode Dropdown -->
                         <div class="form-row">
                             <label class="form-label">Payment Mode:</label>
@@ -226,7 +226,7 @@
                         <!-- Action Buttons -->
                         <div class="btn-section">
                             <button type="submit" class="btn-proceed" id="proceedBtn" disabled>
-                                Proceed to Pay RM 10.00
+                                Proceed to Pay RM 1.00
                             </button>
                             <button type="button" class="btn-cancel" onclick="window.history.back()">
                                 Cancel
