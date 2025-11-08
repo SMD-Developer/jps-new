@@ -678,7 +678,7 @@ body {
 
 <div class="container-fluid ps-0 mt-5">
         <div class="row ">
-            <div class="col-md-2 col-4 pe-0 icon-text ">
+            <div class="col-md-2 col-4 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
                     @if(get_setting_value('logo') != '')
                     <img src="{{ image_url(get_setting_value('logo')) }}" 

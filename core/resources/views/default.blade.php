@@ -549,22 +549,8 @@ input#captcha {
 
 <body class="login-page">
     <canvas id="canvas"></canvas>
-    <!--<div class="login-box">-->
-    <!--    <div class="login-logo">-->
-    <!--        {{get_company_name()}}-->
-    <!--    </div>-->
-    <!--    <div class="login-box-body bg-white p-4">-->
-    <!--        @yield('content')-->
-    <!--    </div>-->
-    <!--    <section class="panel-footer">-->
-    <!--        <a href="{{ url('password/reset') }}">@lang('app.lost_password')</a>-->
-    <!--    </section>-->
-    <!--</div>-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-        <!--<a class="navbar-brand" href="{{ url('/') }}">-->
-        <!--    <img src="{{ asset('assets/images/selangor.png') }}" alt="Logo" width="40">-->
-        <!--</a>-->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -593,7 +579,7 @@ input#captcha {
 </nav>
     <div class="container-fluid ps-0 mt-5">
         <div class="row ">
-            <div class="col-md-2 col-5 pe-0 icon-text ">
+            <div class="col-md-2 col-5 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
                     @if(get_setting_value('logo') != '')
                     <img src="{{ image_url(get_setting_value('logo')) }}" 
@@ -650,36 +636,12 @@ input#captcha {
                         <p style="color: white;">Belum mempunyai akaun ? <a href="{{ url('clientarea/register') }}">@lang('Daftar di sini')</a></p>
                     </div>
                 </div>
-        <!--        <div class="col-md-6 col-3 side-icon pe-0">-->
-        <!--            <div class="container-fluid pe-0">-->
-        <!--                <div class="row">-->
-        <!--                    <div class="col-md-12">-->
-        <!--                         <a href="#" class="w3-bar-item w3-button" style="background: white; color:black; float: inline-end; border-radius: 5px; padding: 10px;"><i class="fa fa-search"> Carian</i></a>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--                <div class="row">-->
-        <!--                    <div class="col-md-12">-->
-        <!--                        <div class="w3-sidebar w3-bar-block w3-black w3-xxlarge" style="width:55px; float: inline-end;">-->
-        <!--                            <a href="#" class="w3-bar-item w3-button" style="background: #E53D3E;color: #fff;"><i class="bi bi-question-square-fill"></i></a>-->
-        <!--                            <a href="#" class="w3-bar-item w3-button" style="background: #EDC006;color: #fff;"><i class="fa fa-phone"></i></a>-->
-        <!--                            <a href="#" class="w3-bar-item w3-button" style="background: #337ABB;color: #fff;"><i class="fa fa-edit"></i></a>-->
-        <!--                            <a href="#" class="w3-bar-item w3-button" style="background: #000000;color: #fff;"><i class="bi bi-people-fill"></i></i></a>-->
-        <!--                            <a href="#" class="w3-bar-item w3-button" style="background: #00A353;color: #fff;"><i class="fa fa-download"></i></a>-->
-        <!--                        </div>-->
-        <!--                    </div>-->
-        <!--                <div>       -->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--    </div>-->
-
-
-        <!--</div>-->
 
         
     </div>
     <footer>
         <div class="row">
-            <div class="col-md-12  text-center text-light pt-3">
+            <div class="col-md-12  text-center text-light pt-3 mt-5">
                 <p>Hak Cipta Terpelihara @ 2025 , Jabatan Pengairan Dan Saliran Negeri Selangor <br>
                 Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768</p>
             </div>
@@ -921,21 +883,6 @@ input#captcha {
                       </div>
                     </div>
                   </div>
-                
-                <!--<div class="card">-->
-                <!--    <div class="card-header">-->
-                <!--      <a class="collapsed card-link accordion-title" data-toggle="collapse" href="#collapseTwelve">-->
-                <!--       <h6>Collapsible Group Item #3</h6> -->
-                <!--      </a>-->
-                <!--    </div>-->
-                <!--    <div id="collapseTwelve" class="collapse" data-parent="#accordion">-->
-                <!--      <div class="card-body">-->
-                <!--        <p>Lorem ipsum..</p>-->
-                <!--      </div>-->
-                <!--    </div>-->
-                <!--  </div>-->
-                
-                <!--</div>-->
                 </div>
                 </section>
             </div>
@@ -954,23 +901,6 @@ input#captcha {
             </div>
             <div class="modal-body">
                 <form id="filterSearchForm"  class="filterform">
-                    <!--<div class="mb-3">-->
-                    <!--    <label class="form-label">@lang('app.tax_review'):</label>-->
-                    <!--    <div class="d-flex gap-3">-->
-                    <!--        <div class="form-check">-->
-                    <!--            <input class="form-check-input" type="radio" name="taxCheck" id="taxLand" value="Hakmilik Tanah" checked>-->
-                    <!--            <label class="form-check-label" for="taxLand">@lang('app.land_title')</label>-->
-                    <!--        </div>-->
-                    <!--        <div class="form-check">-->
-                    <!--            <input class="form-check-input" type="radio" name="taxCheck" id="taxStrata" value="Hakmilik Strata">-->
-                    <!--            <label class="form-check-label" for="taxStrata">@lang('app.strata_ownership')</label>-->
-                    <!--        </div>-->
-                    <!--        <div class="form-check">-->
-                    <!--            <input class="form-check-input" type="radio" name="taxCheck" id="taxAccount" value="No. Akaun / ID Hakmilik">-->
-                    <!--            <label class="form-check-label" for="taxAccount">@lang('app.no_account_ownership_id')</label>-->
-                    <!--        </div>-->
-                    <!--    </div>-->
-                    <!--</div>-->
 
                     <div class="row align-items-center mb-3">
                          <div class="col-md-3">
@@ -978,10 +908,6 @@ input#captcha {
                         </div>
                         <div class="col-md-9">
                             <input type="text" class="form-control" id="state" value="Selangor" disabled>
-                            
-                                <!--<option selected disabled>- Sila Pilih -</option>-->
-                                <!--<option value="1" selected disabled>Selangor</option>-->
-                                <!--<option value="2">District 2</option>-->
                         </div>
                     </div>
 
@@ -1016,11 +942,6 @@ input#captcha {
                             <label for="lot" class="col-md-3 col-form-label">@lang('app.no_lot_pt'):</label>
                         </div>
                             <input type="text"  class="form-control">
-                            <!--<select class="form-select" id="lot">-->
-                            <!--    <option selected disabled>- Sila Pilih -</option>-->
-                            <!--    <option value="1">Lot 1</option>-->
-                            <!--    <option value="2">Lot 2</option>-->
-                            <!--</select>-->
                         </div>
                     </div>
 
