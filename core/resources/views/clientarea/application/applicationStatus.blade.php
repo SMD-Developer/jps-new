@@ -20,6 +20,27 @@
         border: 1px solid #ddd;
     }
 
+    table.table.table-bordered.table-striped th:nth-child(6),
+    table.table.table-bordered.table-striped td:nth-child(6) {
+        width: 80px;
+        max-width: 80px;
+        min-width: 80px;
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 12px;
+    }
+
+
+    table.table.table-bordered.table-striped th:nth-child(8),
+    table.table.table-bordered.table-striped td:nth-child(8) {
+        width: 80px;
+        max-width: 80px;
+        min-width: 80px;
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 12px;
+    }
+
     /* Headings */
     h2,
     h3,
@@ -184,6 +205,8 @@
             /* Blinking color */
         }
     }
+    
+    
 </style>
 <title>@lang('app.application_status') | JPS</title>
 @section('content')
@@ -219,7 +242,7 @@
                                         <th><strong>{{ trans('app.reference _no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
-                                        <th><strong>{{ trans('app.lot/PT') }}</strong></th>
+                                        <th style="width: 10px;"><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
