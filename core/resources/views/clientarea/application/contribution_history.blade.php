@@ -130,36 +130,6 @@
         cursor: pointer;
     }
 
-    /* Fix table responsiveness */
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Prevent table columns from breaking layout */
-    .table {
-        width: 100%;
-        min-width: 500px; 
-        table-layout: auto;
-    }
-
-    /* Fix wrapping issue in status column */
-    .table td, .table th {
-        white-space: nowrap; 
-        vertical-align: middle;
-    }
-
-   
-    .table .sbtn a {
-        white-space: nowrap;
-        max-width: 100%;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    
-
 </style>
 <title>@lang('app.contribution_history') | JPS</title>
 @section('content')
