@@ -640,7 +640,7 @@ background-color: red;
                             <div class="row mt-4">
                                 <div class="col-md-3 col-6">
                                     <div class="form-group">
-                                        <label for="landline">@lang('app.telephone_no')(P)</label>
+                                        <label for="landline">@lang('app.telephone_no') (P)</label>
                                         <span class="star"></span>
                                     </div>
                                 </div>

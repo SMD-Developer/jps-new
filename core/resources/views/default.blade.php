@@ -595,7 +595,15 @@ input#captcha {
         <div class="row ">
             <div class="col-md-2 col-5 pe-0 icon-text ">
                 <a href="{{url('/')}}">
-                    <img src="{{ asset('assets/images/selangor.png') }}" class="img-fluid" alt="Responsive image">
+                    @if(get_setting_value('logo') != '')
+                    <img src="{{ image_url(get_setting_value('logo')) }}" 
+                        alt="Logo" 
+                        style="max-height: 93px; width: auto; object-fit: contain;">
+                    @else
+                        <img src="{{ asset('assets/images/selangor.png') }}" 
+                            alt="Logo" 
+                            style="max-height: 60px; width: auto; object-fit: contain;">
+                    @endif
                 </a>    
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
