@@ -630,7 +630,7 @@ background-color: red;
                                         <span class="pe-3"><b> : </b></span>
                                         <input type="tel" class="form-control" name="mobileNumber" value="{{old('mobileNumber')}}">                                            
                                     </div>
-                                    <span id="mobileNumber-error" class="text-dangerr"></span>
+                                    <span id="mobileNumber-error" class="text-dangerr text-end"></span>
                                 </div>
                                 <div class="col-md-5">
                                     <span class="star d-inline"><b></b></span>
