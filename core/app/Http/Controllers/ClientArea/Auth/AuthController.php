@@ -355,7 +355,7 @@ class AuthController extends Controller {
                             $existsInClients = DB::table('clients')->where('email', $value)->exists();
     
                             if ($existsInClientRegister || $existsInClients) {
-                                $fail('This email is already registered. Please use a different email.');
+                                $fail('Alamat e-mel ini telah berdaftar dalam sistem.');
                             }
                         },
                     ],
@@ -582,7 +582,7 @@ class AuthController extends Controller {
                                 $existsInClients = DB::table('clients')->where('email', $value)->exists();
 
                                 if ($existsInClientRegister || $existsInClients) {
-                                    $fail("This email is already registered.");
+                                    $fail("Alamat e-mel ini telah berdaftar dalam sistem.");
                                 }
                             },
                         ],

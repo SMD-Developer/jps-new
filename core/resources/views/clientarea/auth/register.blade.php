@@ -686,12 +686,12 @@ background-color: red;
                                 <div class="col-md-12 d-inline text-end large-screen">
                                     <button type="submit" class="btn btn-success btn1 " id="submitButton">@lang('app.register')</button>
                                     <button type="button" id="resetButton" class="btn btn-primary btn2 ms-4" disabled>@lang('app.reset')</button>
-                                    <button type="button" class="btn btn-secondary btn3 ms-4">@lang('app.get_out')</button>
+                                    <button type="button" class="btn btn-secondary btn3 ms-4" onclick="window.location='{{ route('client_login') }}'">@lang('app.get_out')</button>
                                 </div>
                                 <div class="col-md-12 d-inline text-end mobile-only px-0">
                                     <button type="submit" class="btn btn-success btn1 btn-sm" id="submitButton">@lang('app.register')</button>
                                     <button type="button" id="resetButton" class="btn btn-primary btn2 btn-sm" disabled>@lang('app.reset')</button>
-                                    <button type="button" class="btn btn-secondary btn3 btn-sm">@lang('app.get_out')</button>
+                                    <button type="button" class="btn btn-secondary btn3 btn-sm" onclick="window.location='{{ route('client_login') }}'">@lang('app.get_out')</button>
                                 </div>
                             </div>
                         </div>
