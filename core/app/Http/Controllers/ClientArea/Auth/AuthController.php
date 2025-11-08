@@ -412,7 +412,7 @@ class AuthController extends Controller {
                     'mobileNumber.required'      => __('app.mobileNumber_required'),
                     'mobileNumber.string'        => __('app.mobileNumber_string'),
                     'mobileNumber.max'           => __('app.mobileNumber_max'),
-                    'mobileNumber.unique'        => __('app.mobileNumber_unique'),
+                    'mobileNumber.unique'        => __('Nombor telefon bimbit ini telah berdaftar dalam sistem'),
                     'landline.required'          => __('app.landline_required'),
                     'landline.string'            => __('app.landline_string'),
                     'landline.max'               => __('app.landline_max'),
@@ -591,13 +591,18 @@ class AuthController extends Controller {
             'landline' => 'string|max:15|unique:client_register,landline',
         ];
 
+        $messages = [
+            'mobileNumber.unique' => 'Nombor telefon bimbit ini telah berdaftar dalam sistem.',
+        ];
+        
+
         // Ensure the field has a validation rule
         if (!isset($rules[$field])) {
             return response()->json(['valid' => false, 'message' => 'Invalid field name.'], 400);
         }
 
         // Validate the specific field
-        $validator = Validator::make([$field => $value], [$field => $rules[$field]]);
+        $validator = Validator::make([$field => $value], [$field => $rules[$field]], $messages);
 
         if ($validator->fails()) {
             return response()->json([
