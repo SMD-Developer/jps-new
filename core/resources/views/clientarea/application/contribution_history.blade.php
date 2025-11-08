@@ -164,7 +164,7 @@
                                         <th style="width: 10%;"><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th style="width: 15%;"><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th style="width: 15%;"><strong>{{ trans('app.lot/PT') }}</strong></th>
-                                        <th><strong>{{ trans('app.total_contribution') }}</strong></th>
+                                        <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
                                        <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
                                     </tr>
@@ -191,7 +191,7 @@
                                             </td>
                                             <td>{{ $application->applicant }}</td>
                                             <td>{{ $application->land_lot }}</td>
-                                            <td>RM {{ number_format($application->final_amount, 2) }}</td>
+                                            <td>{{ number_format($application->final_amount, 2) }}</td>
                                             <td>
                                                 @switch($application->application_type)
                                                     @case('reapply')

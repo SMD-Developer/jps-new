@@ -220,7 +220,7 @@
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
-                                        <th><strong>{{ trans('app.total_contribution') }}</strong></th>
+                                        <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.status') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
@@ -273,7 +273,7 @@
                                             <!--</td>-->
                                             <td>
                                                 @if ($application->client && $application->status == 'approved')
-                                                    RM {{ number_format($application->final_amount, 2) }}
+                                                    {{ number_format($application->final_amount, 2) }}
                                                 @else
                                                     -
                                                 @endif
