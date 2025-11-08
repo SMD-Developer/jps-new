@@ -61,14 +61,20 @@ class ThirdPartyController extends Controller
 
     public function paymentSelection(Application $application)
     {
-        $amount = 1.00;
-        
-        $thirdPartyData = session('third_party_data');
-        if (!$thirdPartyData || $thirdPartyData['application_id'] != $application->id) {
-            return redirect()->route('applications.search')->with('error', 'Please provide third party information first.');
+        if (!auth('third_party')->check()) {
+            return redirect()->route('third.party.login')->with('error', 'Please login first.');
         }
 
-        session(['application_id' => $application->id]);
+        $amount = 10.00;
+        $thirdPartyUser = auth('third_party')->user();
+        
+        // Store necessary data in session
+        session([
+            'application_id' => $application->id,
+            'payment_amount' => 10.00,
+            'payment_type' => 'third_party_reprint',
+            'third_party_id' => $thirdPartyUser->id
+        ]);
         
         return view('third-party.payment-selection', compact('application', 'amount'));
     }
@@ -76,6 +82,11 @@ class ThirdPartyController extends Controller
 
     public function processPaymentSelection(Request $request)
     {
+        if (!auth('third_party')->check()) {
+            return redirect()->route('third.party.login')
+                ->with('error', 'Session expired. Please login again.');
+        }
+
         $request->validate([
             'payment_mode' => 'required|in:b2c,b2b',
             'selected_bank' => 'required',
@@ -83,45 +94,31 @@ class ThirdPartyController extends Controller
             'application_id' => 'required|exists:applications,id'
         ]);
 
-        // Get third party data from session
-        $thirdPartyData = session('third_party_data');
+        // Get logged in third party user
+        $thirdPartyUser = auth('third_party')->user();
         $applicationId = $request->application_id;
-        
-        if (!$thirdPartyData || !$applicationId) {
-            return redirect()->route('applications.search')
-                ->with('error', 'Session expired. Please start over.');
-        }
 
-        // Update third party email if different
-        if ($thirdPartyData['email'] !== $request->email) {
-            ThirdPartyPrint::where('id', $thirdPartyData['id'])->update([
-                'email' => $request->email
-            ]);
-            
-            // Update session
-            $thirdPartyData['email'] = $request->email;
-            session(['third_party_data' => $thirdPartyData]);
-        }
 
         // Store payment selection in session
         session([
             'payment_mode' => $request->payment_mode,
             'selected_bank' => $request->selected_bank,
             'buyer_email' => $request->email,
-            'payment_amount' => 1.00,
-            'payment_type' => 'third_party',
-            'application_id' => $applicationId
+            'payment_amount' => 10.00,
+            'payment_type' => 'third_party_reprint',
+            'application_id' => $applicationId,
+            'third_party_id' => $thirdPartyUser->id
         ]);
 
         // Redirect based on payment mode
         if ($request->payment_mode === 'b2c') {
             return redirect()->route('third.party.pay.details.b2c', [
-                'amount' => 1.00,
+                'amount' => 10.00,
                 'bank' => $request->selected_bank
             ]);
         } else {
             return redirect()->route('third.party.pay.details.b2b', [
-                'amount' => 1.00,
+                'amount' => 10.00,
                 'bank' => $request->selected_bank
             ]);
         }
@@ -131,16 +128,21 @@ class ThirdPartyController extends Controller
 
     public function b2c(Request $request)
     {
-        $thirdPartyData = session('third_party_data');
-        $applicationId = session('application_id');
-        
-        if (!$thirdPartyData || !$applicationId) {
-            Log::warning('Third party B2C payment attempted without valid session data');
-            return redirect()->route('applications.search')
-                ->with('error', 'Session expired. Please start over.');
+        if (!auth('third_party')->check()) {
+            return redirect()->route('third.party.login')
+                ->with('error', 'Session expired. Please login again.');
         }
         
-        $amount = 1.00;
+        $thirdPartyUser = auth('third_party')->user();
+        $applicationId = session('application_id');
+        $thirdPartyId = session('third_party_id');
+        
+        if (!$applicationId || !$thirdPartyId) {
+            return redirect()->route('third.party.search')
+                ->with('error', 'Application not found. Please search again.');
+        }
+        
+        $amount = 10.00; 
         $bankCode = $request->get('bank', session('selected_bank'));
         $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
         
@@ -150,7 +152,7 @@ class ThirdPartyController extends Controller
         $application = Application::find($applicationId);
         
         if (!$application) {
-            return redirect()->route('applications.search')
+            return redirect()->route('third.party.search')
                 ->with('error', 'Application not found.');
         }
         
@@ -170,9 +172,9 @@ class ThirdPartyController extends Controller
         $fpx_txnCurrency = "MYR";
         $fpx_txnAmount = number_format($amount, 2, '.', '');
         
-        // Use third party info from session
-        $fpx_buyerEmail = session('buyer_email', $thirdPartyData['email']);
-        $fpx_buyerName = $thirdPartyData['name'];
+        // Use authenticated third party user info
+        $fpx_buyerEmail = session('buyer_email', $thirdPartyUser->email);
+        $fpx_buyerName = $thirdPartyUser->name;
         
         $fpx_buyerBankId = $bankData['bank_code']; 
         $fpx_buyerBankBranch = $bankData['bank_name']; 
@@ -181,7 +183,7 @@ class ThirdPartyController extends Controller
         $fpx_buyerId = "";
         $fpx_makerName = "";
         $fpx_buyerIban = "";
-        $fpx_productDesc = "Third Party Document Print";
+        $fpx_productDesc = "Third Party Document Reprint - RM 10.00";
         $fpx_version = "6.0";
         
         // Create checksum data string
@@ -200,8 +202,8 @@ class ThirdPartyController extends Controller
         // Store payment data for third party
         $this->storePaymentData([
             'user_id' => null,
-            'third_party_id' => $thirdPartyData['id'],
-            'payment_type' => 'third_party',
+            'third_party_id' => $thirdPartyId,
+            'payment_type' => 'third_party_reprint',
             'application_id' => $applicationId,
             'amount' => $fpx_txnAmount,
             'currency' => $fpx_txnCurrency,
@@ -224,10 +226,11 @@ class ThirdPartyController extends Controller
                 'action_url' => $actionUrl,
                 'timestamp' => now(),
                 'third_party_info' => [
-                    'id' => $thirdPartyData['id'],
-                    'name' => $thirdPartyData['name'],
-                    'ic_number' => $thirdPartyData['ic_number'],
-                    'phone' => $thirdPartyData['phone']
+                    'id' => $thirdPartyId,
+                    'name' => $thirdPartyUser->name,
+                    'email' => $thirdPartyUser->email,
+                    'id_card_number' => $thirdPartyUser->id_card_number ?? null,
+                    'address' => $thirdPartyUser->address ?? null
                 ]
             ]),
             'payment_date' => now()->toDateString()
@@ -235,7 +238,7 @@ class ThirdPartyController extends Controller
         
         // Store transaction details
         $this->storeTransactionDetails([
-            'third_party_id' => $thirdPartyData['id'],
+            'third_party_id' => $thirdPartyId,
             'order_no' => $fpx_sellerOrderNo,
             'amount' => $fpx_txnAmount,
             'bank_code' => $bankCode,
@@ -243,7 +246,7 @@ class ThirdPartyController extends Controller
             'application_id' => $applicationId,
             'bank_id' => $fpx_buyerBankId
         ]);
-    
+
         
         return view('third-party.payments.b2c-checkout', compact(
             'fpx_msgType', 'fpx_msgToken', 'fpx_sellerTxnTime', 'fpx_sellerExId', 
@@ -1428,7 +1431,6 @@ class ThirdPartyController extends Controller
                     },
                 ],
                 'id_card_number'   => [
-                    'required',
                     'string',
                     'max:50',
                     function ($attribute, $value, $fail) {
@@ -1442,7 +1444,7 @@ class ThirdPartyController extends Controller
                 'address'          => 'required|string',
                 'password'         => 'required|string|min:8',
                 'confirm_password' => 'required|same:password',
-                'terms'            => 'required|accepted',
+                'terms'            => '',
             ], [
                 'name.required'             => 'Name is required.',
                 'email.required'            => 'Email is required.',
@@ -1517,62 +1519,52 @@ class ThirdPartyController extends Controller
 
     public function login(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'email'    => 'required|email',
-                'password' => 'required|string|min:8',
-            ]);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:8'
+        ]);
 
-            if ($validator->fails()) {
-                return back()->withErrors($validator)->withInput();
+        $credentials = $request->only('email', 'password');
+
+        if (auth('third_party')->attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // Check if it's an AJAX request
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful!',
+                    'redirect' => route('third.party.dashboard')
+                ]);
             }
-            $user = ThirdPartyUser::where('email', $request->email)->first();
-
-            if (!$user) {
-                return back()->with('error', 'Account not found.');
-            }
-
-            if ($user->status != 1) {
-                return back()->with('error', 'Your account is inactive.');
-            }
-
-            if (!Hash::check($request->password, $user->password)) {
-                return back()->with('error', 'Invalid password.');
-            }
-
-            $request->session()->put([
-                'third_party_user_id' => $user->id,
-                'third_party_user_name' => $user->name,
-                'third_party_user_email' => $user->email,
-            ]);
-
-            $request->session()->save();
-
-            return redirect()->intended(route('third.party.dashboard'))
+            
+            // Regular form submission - redirect directly
+            return redirect()->route('third.party.dashboard')
                 ->with('success', 'Login successful!');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred.');
         }
+
+        // Check if it's an AJAX request
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid credentials. Please try again.'
+            ], 401);
+        }
+
+        return redirect()->back()
+            ->withInput($request->only('email'))
+            ->with('error', 'Invalid credentials. Please try again.');
     }
 
 
-    public function dashboard(Request $request)
+    public function dashboard()
     {
-        $userId = $request->session()->get('third_party_user_id');
-        
-        if (!$userId) {
+        if (!auth('third_party')->check()) {
             return redirect()->route('third.party.login')
                 ->with('error', 'Please login first.');
         }
 
-        $user = ThirdPartyUser::find($userId);
-        
-        if (!$user) {
-            $request->session()->flush();
-            return redirect()->route('third.party.login')
-                ->with('error', 'User not found.');
-        }
+        $user = auth('third_party')->user();
         
         return view('third-party.dashboard', compact('user'));
     }
@@ -1581,12 +1573,17 @@ class ThirdPartyController extends Controller
     public function logout(Request $request)
     {
         try {
-            Auth::logout();
+            auth('third_party')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            return redirect()->route('third.party.login')->with('success', 'You have been logged out successfully.');
+            
+            return redirect()->route('third.party.login')
+                ->with('success', 'You have been logged out successfully.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Something went wrong while logging out.');
+            \Log::error('Third party logout error: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', 'Something went wrong while logging out.');
         }
     }
 
@@ -1662,13 +1659,18 @@ class ThirdPartyController extends Controller
             $query->whereDate('created_at', $request->application_date);
         }
 
-
+        // Only get applications with completed payment - more strict filtering
         $query->whereHas('payment', function ($q) {
             $q->where('payment_status', 'completed');
+        })
+        ->whereDoesntHave('payment', function ($q) {
+            $q->whereIn('payment_status', ['pending', 'failed', 'cancelled', 'processing']);
         });
         
         // Get results with pagination
-        $applications = $query->with(['applicant', 'division', 'districts', 'payment'])
+        $applications = $query->with(['applicant', 'division', 'districts', 'payment' => function($q) {
+                            $q->where('payment_status', 'completed');
+                        }])
                             ->orderBy('created_at', 'desc')
                             ->paginate(10);
         

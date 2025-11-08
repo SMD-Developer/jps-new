@@ -93,7 +93,7 @@
                         <table class="table table-bordered table-striped">
                             <thead class="table-header">
                                 <tr>
-                                    <th>#</th>
+                                    <th>Bil</th>
                                     <th>Nama Pemohon</th>
                                     <th>Lot/PT</th>
                                     <th>Daerah</th>
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => {
                         window.location.href = '{{ route("third.party.payment.selection", "__ID__") }}'
                             .replace('__ID__', applicationId);
-                    }, 1000);
+                    }, 5000);
                 }
             });
         });

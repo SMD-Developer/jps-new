@@ -169,10 +169,10 @@
                         <div class="form-row">
                             <label class="form-label">Email Address:</label>
                             <input type="email" name="email" class="form-control" 
-                                   value="{{ session('third_party_data.email') ?? '' }}" 
+                                   value="{{ auth('third_party')->user()->email ?? '' }}" 
                                    placeholder="Enter your email address" required>
                         </div>
-
+                        
                         <!-- Payment Mode Dropdown -->
                         <div class="form-row">
                             <label class="form-label">Payment Mode:</label>

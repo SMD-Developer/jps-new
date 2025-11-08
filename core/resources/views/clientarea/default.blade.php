@@ -1256,7 +1256,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_id_card" class="col-form-label">
-                                ID Card Number:<span class="text-danger">*</span>
+                                ID Card Number:<span class="text-danger"></span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1265,7 +1265,7 @@ body {
                                    id="tp_id_card" 
                                    name="id_card_number" 
                                    placeholder="Enter your ID card number" 
-                                   required>
+                                   >
                             <div class="invalid-feedback">Please enter your ID card number.</div>
                         </div>
                     </div>
@@ -1298,15 +1298,15 @@ body {
                         <div class="col-md-9">
                             <div class="position-relative">
                                 <input type="password" 
-                                       class="form-control" 
-                                       id="tp_password" 
-                                       name="password" 
-                                       placeholder="Enter password (min 8 characters)" 
-                                       minlength="8"
-                                       required>
-                                <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" 
-                                   data-target="tp_password" 
-                                   style="position: absolute; right: 10px; top: 50%; cursor: pointer;"></i>
+                                    class="form-control" 
+                                    id="tp_password" 
+                                    name="password" 
+                                    placeholder="Enter password (min 8 characters)" 
+                                    minlength="8"
+                                    required>
+                                <i class="fa fa-eye-slash toggle-password" 
+                                data-target="tp_password" 
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
                             </div>
                             <small class="form-text text-muted">Minimum 8 characters</small>
                             <div class="invalid-feedback">Password must be at least 8 characters.</div>
@@ -1321,37 +1321,19 @@ body {
                             </label>
                         </div>    
                         <div class="col-md-9">
-                            <div class="position-relative">
+                             <div class="position-relative">
                                 <input type="password" 
-                                       class="form-control" 
-                                       id="tp_confirm_password" 
-                                       name="confirm_password" 
-                                       placeholder="Re-enter password" 
-                                       minlength="8"
-                                       required>
-                                <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" 
-                                   data-target="tp_confirm_password" 
-                                   style="position: absolute; right: 10px; top: 50%; cursor: pointer;"></i>
+                                    class="form-control" 
+                                    id="tp_confirm_password" 
+                                    name="confirm_password" 
+                                    placeholder="Re-enter password" 
+                                    minlength="8"
+                                    required>
+                                <i class="fa fa-eye-slash toggle-password" 
+                                data-target="tp_confirm_password" 
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
                             </div>
                             <div class="invalid-feedback">Passwords do not match.</div>
-                        </div>
-                    </div>
-
-                    <!-- Terms and Conditions -->
-                    <div class="row align-items-center mb-3">
-                        <div class="col-md-12">
-                            <div class="form-check">
-                                <input class="form-check-input" 
-                                       type="checkbox" 
-                                       id="tp_terms" 
-                                       name="terms" 
-                                       required>
-                                <label class="form-check-label" for="tp_terms">
-                                    I agree to the <a href="#" target="_blank">Terms and Conditions</a>
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <div class="invalid-feedback">You must agree to terms and conditions.</div>
-                            </div>
                         </div>
                     </div>
 
@@ -1815,7 +1797,7 @@ $(document).ready(function() {
         });
     });
 
-    // Password toggle functionality (reuse your existing code)
+    // Password toggle functionality
     document.querySelectorAll('.toggle-password').forEach(item => {
         item.addEventListener('click', function() {
             const targetId = this.getAttribute('data-target');
@@ -1823,12 +1805,12 @@ $(document).ready(function() {
             
             if (input.type === 'password') {
                 input.type = 'text';
-                this.classList.remove('bi-eye-slash');
-                this.classList.add('bi-eye');
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
             } else {
                 input.type = 'password';
-                this.classList.remove('bi-eye');
-                this.classList.add('bi-eye-slash');
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
             }
         });
     });
