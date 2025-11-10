@@ -26,6 +26,16 @@
         font-size: 0.875em;
         margin-top: 0.25rem;
     }
+
+    .no-arrow {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: none !important;
+        background-color: #fff; 
+        cursor: default; 
+    }
+
 </style>
 
 <title>{{ $title }} | JPS</title>
@@ -69,14 +79,8 @@
                                 <tr>
                                     <td class="label">{{ trans('app.print_type') }} :</td>
                                     <td>
-                                        <select class="form-select w-100" name="print_type"
-                                            style="border: 1px solid #ced4da;">
-                                            <option value="PDF"
-                                                {{ old('print_type', 'PDF') == 'PDF' ? 'selected' : '' }}>PDF</option>
-                                            <option value="Excel" {{ old('print_type') == 'Excel' ? 'selected' : '' }}>
-                                                Excel</option>
-                                            <option value="Word" {{ old('print_type') == 'Word' ? 'selected' : '' }}>Word
-                                            </option>
+                                        <select class="form-select w-100 no-arrow" name="print_type" style="border: 1px solid #ced4da;">
+                                            <option value="PDF" selected>PDF</option>
                                         </select>
                                     </td>
                                 </tr>

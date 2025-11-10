@@ -678,7 +678,7 @@ class financeController extends Controller {
     
     public function reportCollectionMethodSearh()
     {
-        $title = __("Cetakan Semula Resit Caruman Parit");
+        $title = __("Laporan Status Pembayaran Caruman Parit");
         return view('finance.report-list-all-method-search',[
             'title' => $title,
         ]);
@@ -1070,87 +1070,7 @@ class financeController extends Controller {
             'title' => 'Laporan Ringkasan Pembayaran'
         ]);
     }
-    
-    
-    // public function paymentSummaryReportDetails(Request $request)
-    // {
-    //     $request->validate([
-    //         'start_date' => 'required|date',
-    //         'end_date' => 'required|date|after_or_equal:start_date',
-    //         'print_type' => 'required|in:PDF,Excel,Word'
-    //     ]);
-        
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-    //     $printType = $request->input('print_type');
-        
-    //     // Modified query to only get completed payments
-    //     $payments = DB::table('payments')
-    //         ->select(
-    //             DB::raw('DATE(payment_date) as payment_date'),
-    //             DB::raw('COUNT(*) as transaction_count'),
-    //             DB::raw('SUM(amount) as total_amount')
-    //         )
-    //         ->where('payment_date', '>=', $startDate)
-    //         ->where('payment_date', '<=', $endDate)
-    //         ->where('payment_status', 'completed') 
-    //         ->groupBy(DB::raw('DATE(payment_date)'))
-    //         ->orderBy('payment_date', 'desc')
-    //         ->get();
-            
-    //     $totalAmount = $payments->sum('total_amount');
-    //     $totalPayments = $payments->sum('transaction_count');
-        
-    //     // Modified query to only get completed payments for detailed analysis
-    //     $detailedPayments = DB::table('payments')
-    //         ->where('payment_date', '>=', $startDate)
-    //         ->where('payment_date', '<=', $endDate)
-    //         ->where('payment_status', 'completed')
-    //         ->get();
-        
-    //     // Since we're only getting completed payments, this will only have 'completed' status
-    //     $paymentsByStatus = $detailedPayments->groupBy('payment_status');
-    //     $statusSummary = [];
-    //     foreach ($paymentsByStatus as $status => $statusPayments) {
-    //         $statusSummary[$status] = [
-    //             'count' => $statusPayments->count(),
-    //             'total_amount' => $statusPayments->sum('amount')
-    //         ];
-    //     }
-        
-    //     $paymentsByMethod = $detailedPayments->groupBy('method');
-    //     $methodSummary = [];
-    //     foreach ($paymentsByMethod as $method => $methodPayments) {
-    //         $methodSummary[$method] = [
-    //             'count' => $methodPayments->count(),
-    //             'total_amount' => $methodPayments->sum('amount')
-    //         ];
-    //     }
-        
-    //     $currentDateTime = \Carbon\Carbon::now();
-    //     $currentDate = $currentDateTime->format('d/m/Y');
-    //     $currentTime = $currentDateTime->format('h:i:s A');
-        
-    //     $reportData = [
-    //         'start_date' => $startDate,
-    //         'end_date' => $endDate,
-    //         'currentDate' => $currentDate,
-    //         'currentTime' => $currentTime,
-    //         'total_amount' => $totalAmount,
-    //         'total_payments' => $totalPayments,
-    //         'payments' => $payments, 
-    //         'status_summary' => $statusSummary,
-    //         'method_summary' => $methodSummary,
-    //         'generated_at' => now()->format('Y-m-d H:i:s')
-    //     ];
-        
-    //     // Return the view with the report data
-    //     return view('finance.payment-report-sumary-details', [
-    //         'reportData' => $reportData,
-    //         'title' => 'Laporan Ringkasan Pembayaran'
-    //     ]);
-    // }
-     
+
      
     public function governmentAgencyApplication(Request $request)
     {

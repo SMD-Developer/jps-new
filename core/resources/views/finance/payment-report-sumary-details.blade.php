@@ -825,25 +825,6 @@
                             </div>
                 </div>
 
-
-                <!-- Summary Statistics -->
-                <!--<div class="summary-box">-->
-                <!--    <div class="row">-->
-                <!--        <div class="col-md-4">-->
-                <!--            <h6><strong>JUMLAH HARI:</strong></h6>-->
-                <!--            <h4>{{ count($reportData['payments']) }}</h4>-->
-                <!--        </div>-->
-                <!--        <div class="col-md-4">-->
-                <!--            <h6><strong>JUMLAH TRANSAKSI:</strong></h6>-->
-                <!--            <h4>{{ number_format($reportData['total_payments']) }}</h4>-->
-                <!--        </div>-->
-                <!--        <div class="col-md-4">-->
-                <!--            <h6><strong>JUMLAH KESELURUHAN:</strong></h6>-->
-                <!--            <h4>RM {{ number_format($reportData['total_amount'], 2) }}</h4>-->
-                <!--        </div>-->
-                <!--    </div>-->
-                <!--</div>-->
-
                 <!-- Main Report Table -->
                 <div class="form-container excel-grid">
                     <div class="scrollbar">
@@ -888,16 +869,26 @@
                         </table>
                     </div>
 
-                    <!-- Method Summary -->
+                     <!-- Method Summary -->
                     @if (!empty($reportData['method_summary']))
                         <div class="mt-4">
                             <h6><strong>RINGKASAN MENGIKUT KAEDAH PEMBAYARAN:</strong></h6>
                             <div class="row">
                                 @foreach ($reportData['method_summary'] as $method => $summary)
+                                    @php
+                                        // Rename payment methods for display only
+                                        $methodLabel = match($method) {
+                                            'FPX_B2C' => 'EFT_B2C',
+                                            'FPX_B2B' => 'EFT_B2B',
+                                            'EFT' => 'BAUCAR BAYARAN',
+                                            default => $method ?? 'N/A',
+                                        };
+                                    @endphp
+
                                     <div class="col-md-3 mb-2">
                                         <div class="card">
                                             <div class="card-body p-2">
-                                                <h6 class="card-title">{{ $method ?? 'N/A' }}</h6>
+                                                <h6 class="card-title">{{ $methodLabel }}</h6>
                                                 <p class="card-text">
                                                     <small>Bilangan: {{ $summary['count'] }}</small><br>
                                                     <strong>RM {{ number_format($summary['total_amount'], 2) }}</strong>
@@ -910,7 +901,7 @@
                         </div>
                     @endif
 
-                   <!-- Status Summary -->
+                    <!-- Status Summary -->
                     @if (!empty($reportData['status_summary']))
                         <div class="mt-4">
                             <h6><strong>RINGKASAN MENGIKUT STATUS:</strong></h6>
@@ -918,14 +909,14 @@
                                 @foreach ($reportData['status_summary'] as $status => $summary)
                                     @php
                                         $statusLabel = match($status) {
-                                            'completed' => 'Selesai',
+                                            'completed' => 'SELESAI', // made uppercase
                                             'pending' => 'Belum Bayar',
                                             'pending_authorization' => 'Menunggu Kelulusan',
                                             'in_review'=> 'Dalam Semakan',
                                             default => $status ?? 'N/A',
                                         };
                                     @endphp
-                    
+
                                     <div class="col-md-3 mb-2">
                                         <div class="card">
                                             <div class="card-body p-2">
@@ -941,7 +932,6 @@
                             </div>
                         </div>
                     @endif
-
 
                     <!-- Print Button -->
                     <div class="d-flex justify-content-end mt-3">

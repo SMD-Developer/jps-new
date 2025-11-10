@@ -64,6 +64,16 @@
    .error-field {
        border-color: #dc3545 !important;
    }
+
+    .no-arrow {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: none !important;
+        background-color: #fff; 
+        cursor: default; 
+    }
+
 </style>
 
 <title>{{$title}} | JPS</title>
@@ -92,11 +102,14 @@
                                     
                                     <!-- Payment Method Dropdown -->
                                     <tr>
-                                        <td class="label">{{ trans('app.payment_method') }} : </td>
+                                        <td class="label">
+                                            Mod Terimaan dan<br>Mod Transaksi Perbankan :
+                                        </td>
+
                                         <td>
                                             <div class="dropdownn">
                                                 <button type="button" id="methodDropdownBtn" onclick="toggleMethodDropdown()" class="dropbtn form-control">
-                                                    @lang('app.select_payment_method')
+                                                    @lang('Pilih Bayaran')
                                                 </button>
                                                 <div id="methodDropdown" class="dropdown-content">
                                                     <input type="text" placeholder="Search.." id="methodSearch"
@@ -148,8 +161,7 @@
                                     <tr>
                                         <td class="label">{{ trans('app.print_type') }} :</td>
                                         <td>
-                                            <select class="form-select w-100" name="print_type"
-                                                style="border: 1px solid #ced4da;">
+                                            <select class="form-select w-100 no-arrow" name="print_type" style="border: 1px solid #ced4da;">
                                                 <option value="PDF" selected>PDF</option>
                                             </select>
                                         </td>

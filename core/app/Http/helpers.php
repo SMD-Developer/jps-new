@@ -914,7 +914,7 @@ if(! function_exists('getMenus')){
                                 ],
                                 [
                                     'icon' => 'money',
-                                    'text' => 'Cetakan Semula Resit Caruman Parit',
+                                    'text' => 'Laporan Status Pembayaran Caruman Parit',
                                     'route' =>  url('report-collection-method-search'),
                                     'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
                                     'permission' => 'report.district'
@@ -1331,7 +1331,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => 'Cetakan Semula Resit Caruman Parit',
+                                'text' => 'Laporan Status Pembayaran Caruman Parit',
                                 'route' =>  url('report-collection-method-search'),
                                 'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
                                 'permission' => 'report.district'
@@ -1592,7 +1592,7 @@ if(! function_exists('getMenus')){
                                 ],
                                 [
                                 'icon' => 'money',
-                                'text' => 'Cetakan Semula Resit Caruman Parit',
+                                'text' => 'Laporan Status Pembayaran Caruman Parit',
                                 'route' =>  url('report-collection-method-search'),
                                 'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
                                 'permission' => 'report.district'

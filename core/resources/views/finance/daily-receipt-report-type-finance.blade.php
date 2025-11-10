@@ -9,6 +9,16 @@
         font-weight: 700;
     }
 
+    .no-arrow {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: none !important;
+        background-color: #fff; 
+        cursor: default; 
+    }
+
+
 
 </style>
 <title>{{ trans('app.daily_receipt_report_type') }} | JPS</title>
@@ -50,11 +60,8 @@
                                 <tr>
                                     <td class="label">{{ trans('app.print_type') }} :</td>
                                     <td>
-                                        <select class="form-select w-100" name="print_type"
-                                            style="border: 1px solid #ced4da;">
+                                        <select class="form-select w-100 no-arrow" name="print_type" style="border: 1px solid #ced4da;">
                                             <option value="PDF" selected>PDF</option>
-                                            <option value="Excel">Excel</option>
-                                            <option value="Word">Word</option>
                                         </select>
                                     </td>
                                 </tr>

@@ -616,7 +616,7 @@
                                             <th>@lang('app.applicant_name')</th>
                                             <th>@lang('app.district')</th>
                                             <th>@lang('app.lot_pt')</th>
-                                            <th>@lang('app.total_contribution')(RM)</th>
+                                            <th>@lang('app.total_contribution') (RM)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -636,7 +636,7 @@
                                                     @endif
                                                 </td>
 
-                                                <td>{{ $application->refference_no ?? 'N/A' }}</td>
+                                                <td>{{ strtoupper($application->refference_no ?? 'N/A') }}</td>
                                                 <td>{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>{{ strtoupper($application->applicant ?? 'N/A') }}</td>
                                                 <td>{{ strtoupper($application->district_name) }}</td>

@@ -232,9 +232,17 @@
                                             <small>{{ $application->transaction_id }}</small>
                                         @endif
                                     @else
-                                        {{ $application->payment_method }}
+                                        @php
+                                            $methodLabel = match($application->payment_method) {
+                                                'FPX_B2C' => 'EFT_B2C',
+                                                'FPX_B2B' => 'EFT_B2B',
+                                                default => $application->payment_method,
+                                            };
+                                        @endphp
+                                        {{ $methodLabel }}
                                     @endif
                                 </td>
+
                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
                                     @php
                                         $txnId = $application->transaction_id ?? 'N/A';
