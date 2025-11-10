@@ -493,8 +493,7 @@
                         </div>
 
                         <!-- File Upload Section -->
-                        <h4>@lang('app.payment_receipt')</h4>
-                        
+                        <h4>Muat Naik Dokumen Sokongan</h4>      
                         <!-- Old Receipt Upload -->
                         <div class="form-group">
                             <div class="col-md-4">

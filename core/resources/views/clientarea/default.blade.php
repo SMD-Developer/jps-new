@@ -1213,7 +1213,7 @@ body {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="thirdPartyRegisterModalLabel" style="color:#000;">
-                    <i class="fa fa-user-plus"></i> Third Party Registration
+                    <i class="fa fa-user-plus"></i> Borang Pendaftaran Pengguna
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1228,7 +1228,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_name" class="col-form-label">
-                                Name:<span class="text-danger">*</span>
+                                Nama:<span class="text-danger">*</span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1236,7 +1236,7 @@ body {
                                    class="form-control" 
                                    id="tp_name" 
                                    name="name" 
-                                   placeholder="Enter your full name" 
+                                   placeholder="" 
                                    required>
                             <div class="invalid-feedback">Please enter your name.</div>
                         </div>
@@ -1246,7 +1246,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_email" class="col-form-label">
-                                Email:<span class="text-danger">*</span>
+                                Emel:<span class="text-danger">*</span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1254,7 +1254,7 @@ body {
                                    class="form-control" 
                                    id="tp_email" 
                                    name="email" 
-                                   placeholder="Enter your email" 
+                                   placeholder="" 
                                    required>
                             <div class="invalid-feedback">Please enter a valid email.</div>
                         </div>
@@ -1264,7 +1264,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_id_card" class="col-form-label">
-                                ID Card Number:<span class="text-danger"></span>
+                                No. kad Pengenalan/ No. Daftar Perniagaan:<span class="text-danger"></span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1272,9 +1272,12 @@ body {
                                    class="form-control" 
                                    id="tp_id_card" 
                                    name="id_card_number" 
-                                   placeholder="Enter your ID card number" 
+                                   placeholder="" 
                                    >
                             <div class="invalid-feedback">Please enter your ID card number.</div>
+                             <small class="form-text text-muted text-end d-block mt-1">
+                                kad Pengenalan Baru perlu (-)
+                            </small>
                         </div>
                     </div>
 
@@ -1282,7 +1285,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_address" class="col-form-label">
-                                Address:<span class="text-danger">*</span>
+                                Alamat:<span class="text-danger">*</span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1290,7 +1293,7 @@ body {
                                       id="tp_address" 
                                       name="address" 
                                       rows="3" 
-                                      placeholder="Enter your full address" 
+                                      placeholder="" 
                                       required></textarea>
                             <div class="invalid-feedback">Please enter your address.</div>
                         </div>
@@ -1300,7 +1303,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_password" class="col-form-label">
-                                Password:<span class="text-danger">*</span>
+                                kata Laluan:<span class="text-danger">*</span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1309,14 +1312,14 @@ body {
                                     class="form-control" 
                                     id="tp_password" 
                                     name="password" 
-                                    placeholder="Enter password (min 8 characters)" 
+                                    placeholder="" 
                                     minlength="8"
                                     required>
                                 <i class="fa fa-eye-slash toggle-password" 
                                 data-target="tp_password" 
                                 style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
                             </div>
-                            <small class="form-text text-muted">Minimum 8 characters</small>
+                            <small class="form-text text-muted">minimum 8 aksara</small>
                             <div class="invalid-feedback">Password must be at least 8 characters.</div>
                         </div>
                     </div>
@@ -1325,7 +1328,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_confirm_password" class="col-form-label">
-                                Confirm Password:<span class="text-danger">*</span>
+                                Tetapkan Kata Laluan:<span class="text-danger">*</span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1348,21 +1351,21 @@ body {
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-2">
                         <button type="submit" class="btn btn-primary" id="tp_submit_btn">
-                            <i class="fa fa-user-plus"></i> Register
+                            <i class="fa fa-user-plus"></i> Daftar
                         </button>
                         <button type="reset" class="btn btn-secondary">
-                            <i class="fa fa-refresh"></i> Reset
+                            <i class="fa fa-refresh"></i> lsi Semula
                         </button>
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                            Cancel
+                            Batal
                         </button>
                     </div>
 
                     <!-- Already have account link -->
                     <div class="text-center mt-3">
-                        <p>Already have an account? 
+                        <p>Sudah mempunyai akaun? 
                             <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#thirdPartyLoginModal">
-                                Login here
+                                Log masuk disini
                             </a>
                         </p>
                     </div>
