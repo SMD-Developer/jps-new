@@ -294,7 +294,7 @@
                                                     <div class="mb-1">
                                                         @if(!empty($item->verified_date))
                                                             <small class="text-muted">
-                                                                <strong>Tarikh Pengesahan:</strong>
+                                                                <strong>Tarikh Pembayaran:</strong>
                                                                 {{ \Carbon\Carbon::parse($item->verified_date)->format('d/m/Y') }}
                                                             </small>
                                                         @endif
@@ -302,7 +302,7 @@
                                                     @if(!empty($item->payment_remarks))
                                                         <div>
                                                             <small class="text-muted">
-                                                                <strong>Catatan Pembayaran:</strong>
+                                                                <strong>Catatan :</strong>
                                                                 <strong>{{ $item->payment_remarks }}</strong>
                                                             </small>
                                                         </div>
