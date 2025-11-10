@@ -1659,20 +1659,17 @@ class ThirdPartyController extends Controller
             $query->whereDate('created_at', $request->application_date);
         }
 
-        // Only get applications with completed payment - more strict filtering
         $query->whereHas('payment', function ($q) {
             $q->where('payment_status', 'completed');
-        })
-        ->whereDoesntHave('payment', function ($q) {
-            $q->whereIn('payment_status', ['pending', 'failed', 'cancelled', 'processing']);
         });
         
         // Get results with pagination
         $applications = $query->with(['applicant', 'division', 'districts', 'payment' => function($q) {
-                            $q->where('payment_status', 'completed');
+                            // Load ALL payments, but you can order to get completed first
+                            $q->orderByRaw("FIELD(payment_status, 'completed') DESC");
                         }])
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(10);
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
         
         // Get filter data for display
         $filters = [
