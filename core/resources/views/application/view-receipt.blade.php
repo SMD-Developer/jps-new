@@ -398,7 +398,7 @@
                                         <th><strong>{{ trans('app.date') }}</strong></th>
                                         <th><strong>{{ trans('app.reference_no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
-                                        <th><strong>{{ trans('app.applicant_list') }}</strong></th>
+                                        <th><strong>{{ trans('Nama Pembayar') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
                                         <th><strong>Mod Terimaan </strong></th>
@@ -507,7 +507,7 @@
                                                     }
                                                 @endphp
                                             </td>
-                                            <td>{{ $item->applicant }}</td>
+                                            <td>{{ strtoupper($item->applicant) }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }}, {{ $item->landDivision->mukim ?? '' }},
                                                 Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}

@@ -171,7 +171,7 @@
 <title>{{ trans('app.claim_contribution') }} | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-list-alt" aria-hidden="true"></i> {{ trans('app.claim_contribution') }}</h5>
+        <h5><i class="fa fa-list-alt" aria-hidden="true"></i> {{ trans('Permohonan Baru') }}</h5>
     </div>
     <section class="content">
         <div class="row">

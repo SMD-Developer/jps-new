@@ -206,7 +206,7 @@
                                          value="{{ old('reference_number') }}">
                                 </div>
 
-                                <button type="submit" class="btn btn-primary float-right">{{ __('app.search') }}</button>
+                                <button type="submit" class="btn btn-primary float-right">Cari</button>
                                 <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">{{ __('app.reset') }}</button>
                             </form>
                         </div>
