@@ -598,7 +598,12 @@
                     @endif
 
                     @if($isFinanceStaff)
-                        <button type="button" class="btn btn-success no-print" data-bs-toggle="modal" data-bs-target="#financeStatusModal">
+                        <button type="button"
+                        class="btn btn-success no-print"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#financeStatusModal"
+                        @if($claim->status === 'approve_paid') disabled @endif
+                        >
                             <i class="fas fa-edit me-1"></i> @lang('app.kemaskini')
                         </button>
                     @endif
@@ -724,7 +729,7 @@
                                                         class="form-control" 
                                                         id="modal_verification_date" 
                                                         name="verification_date"
-                                                        value="{{ $claim->verification_date ?? '' }}">
+                                                        value="{{ $claim->verified_date ?? '' }}">
                                                     <small class="text-muted">Tarikh bayaran dibuat</small>
                                                 </div>
 
@@ -734,6 +739,7 @@
                                                         class="form-control" 
                                                         id="payment_remarks" 
                                                         name="payment_remarks"
+                                                        value="{{ $claim->payment_remarks ?? '' }}"
                                                         rows="2"
                                                         placeholder="Catatan tambahan (jika ada)">{{ $claim->payment_remarks ?? '' }}</textarea>
                                                 </div>

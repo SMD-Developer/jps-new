@@ -446,6 +446,7 @@ class HomeController extends Controller {
                 'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid',
                 'payment_amount' => 'nullable|numeric|min:0',
                 'process_remarks' => 'nullable|string|max:1000',
+                'payment_remarks' => 'nullable|string|max:1000',
                 'visit_date' => 'nullable|date',
                 'verification_date' => 'nullable|date',
             ]);
@@ -473,6 +474,10 @@ class HomeController extends Controller {
 
             if ($request->status === 'approve_paid' && $request->verification_date) {
                 $updateData['verified_date'] = $request->verification_date;
+            }
+
+            if ($request->status === 'approve_paid' && $request->payment_remarks) {
+                $updateData['payment_remarks'] = $request->payment_remarks;
             }
 
             if ($request->status === 'rejected' && $request->filled('reason')) {

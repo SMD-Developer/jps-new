@@ -43,7 +43,8 @@ class ClaimContribution extends Model
         'sent_to_finance_at',
         'verified_date',
         'visit_date',
-        'process_remarks'
+        'process_remarks',
+        'payment_remarks'
     ];
 
     /**

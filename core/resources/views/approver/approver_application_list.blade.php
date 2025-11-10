@@ -299,7 +299,7 @@
                                                         {{ trans('app.new') }}
                                                 @endswitch
                                             </td>
-                                            <td>{{ $item->applicant }}</td>
+                                            <td>{{ strtoupper($item->applicant) }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},
                                                 {{ $item->landDivision->mukim ?? '' }}, Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}

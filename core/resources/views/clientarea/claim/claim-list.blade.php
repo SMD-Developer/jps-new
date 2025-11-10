@@ -287,6 +287,29 @@
                                                     <a href="{{ route('claim.application.reapply', $item->id) }}" class="btn-reapply">
                                                         Mohon semula
                                                     </a>
+
+                                                @elseif ($item->status == 'approve_paid')
+                                                {{-- ✅ Show verification date & payment remarks when approved and paid --}}
+                                                @if(!empty($item->verified_date) || !empty($item->payment_remarks))
+                                                    <div class="mb-1">
+                                                        @if(!empty($item->verified_date))
+                                                            <small class="text-muted">
+                                                                <strong>Tarikh Pengesahan:</strong>
+                                                                {{ \Carbon\Carbon::parse($item->verified_date)->format('d/m/Y') }}
+                                                            </small>
+                                                        @endif
+                                                    </div>
+                                                    @if(!empty($item->payment_remarks))
+                                                        <div>
+                                                            <small class="text-muted">
+                                                                <strong>Catatan Pembayaran:</strong>
+                                                                <strong>{{ $item->payment_remarks }}</strong>
+                                                            </small>
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    <small class="text-muted">Tiada maklumat pembayaran.</small>
+                                                @endif
                                                 @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
                                                     @if(!empty($item->visit_date) || !empty($item->process_remarks))
                                                         {{-- ✅ Show visit date and remarks if available --}}

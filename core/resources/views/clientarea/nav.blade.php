@@ -259,8 +259,8 @@
                     <a href="#"
                         class="nav-link  {{ request()->is('clientarea/contribution-claim') ? 'active' : '' }}">
                         <i class="fa fa-folder-open"></i>
-                        <span>{{ trans('app.claim_contribution') }}</span>
-                        <i class="fa fa-angle-right right"></i>
+                        <span>Permohonan Pulang Balik<br>(Refund)</span>
+                        <i class="fa fa-angle-right right mx-3"></i>
                         <!-- Dropdown arrow -->
                     </a>
                     <ul class="nav nav-treeview" style="display: none; padding-left: 20px;">
