@@ -931,7 +931,6 @@ class ThirdPartyController extends Controller
         // Check if this is B2B transaction (fpx_msgToken = "02")
         $isB2B = ($fpx_msgToken === '02');
         
-        // Handle status based on transaction type (B2B vs B2C)
         if ($fpx_debitAuthCode === '00') {
             $paymentStatus = 'completed';
             $statusMessage = 'Payment completed successfully';
@@ -961,7 +960,6 @@ class ThirdPartyController extends Controller
                 
     
                 if ($isThirdPartyPayment) {
-                    // Third-party payment - authenticate third party user
                     if (!auth('third_party')->check() && $paymentRecord->third_party_id) {
                         $thirdPartyUser = \App\Models\ThirdParty::find($paymentRecord->third_party_id);
                         
