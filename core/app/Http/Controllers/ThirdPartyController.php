@@ -248,7 +248,7 @@ class ThirdPartyController extends Controller
         ]);
 
         
-        return view('third-party.payments.b2c-checkout', compact(
+        return view('third-party.payments.b2c', compact(
             'fpx_msgType', 'fpx_msgToken', 'fpx_sellerTxnTime', 'fpx_sellerExId', 
             'fpx_sellerExOrderNo', 'fpx_sellerOrderNo', 'fpx_sellerId', 
             'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 
