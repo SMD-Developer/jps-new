@@ -163,10 +163,10 @@
     }
 
 </style>
-<title>{{ trans('app.claim_contribution') }} | JPS</title>
+<title>{{ trans('Permohonan Yang Diluluskan') }} | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-list-alt" aria-hidden="true"></i> {{ trans('app.claim_contribution') }}</h5>
+        <h5><i class="fa fa-list-alt" aria-hidden="true"></i> {{ trans('Permohonan Yang Diluluskan') }}</h5>
     </div>
     <section class="content">
         <div class="row">
@@ -264,7 +264,7 @@
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{trans('app.status')}}</strong></th>
-                                        <th><strong>{{trans('app.total_payment')}}(RM)</strong></th>
+                                        <th><strong>{{trans('app.total_payment')}} (RM)</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -315,7 +315,7 @@
 
                                                 {{$applicationType }}
                                             </td>
-                                            <td>{{ $item->applicant }}</td>
+                                            <td>{{ strtoupper($item->applicant) }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},
                                                 {{ $item->landDivision->mukim ?? '' }}, Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}

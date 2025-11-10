@@ -147,6 +147,7 @@
                                     <th><strong>{{ trans('app.account_type') }}</strong></th>
                                     <th>{{ trans('app.application_type') }}</th>
                                     <th>{{ trans('app.applicant_name') }}</th>
+                                    <th>Jumlah Bayaran (RM)</th>
                                     <th>{{ trans('app.status') }}</th>
                                     <th>{{ trans('app.for_action') }}</th>
                                 </tr>
@@ -219,7 +220,8 @@
                                                     {{ trans('app.new') }}
                                             @endswitch
                                         </td>
-                                        <td>{{ $item->applicant }}</td>
+                                        <td>{{ strtoupper($item->applicant) }}</td>
+                                        <td>{{number_format($item->final_amount, 2)}}</td>
 
                                         <td>
                                             <span class="status-badge status-{{ $item->status }}">

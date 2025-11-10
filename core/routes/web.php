@@ -285,7 +285,7 @@ Route::group(['middleware' => 'install'], function(){
         
         Route::get('land-categories', 'HomeController@manageLandCategory')->name('landCategories');
         Route::post('land-categories', 'HomeController@store')->name('addLandCategory');
-        Route::post('land-categories/{id}', 'HomeController@update')->name('updateLandCategory');;
+        Route::post('land-categories/{id}', 'HomeController@update')->name('updateLandCategory');
         Route::delete('land-categories/{id}', 'HomeController@update')->name('deleteLandCategory');
         Route::get('claim-list','HomeController@claimList')->name('claim.list');
         Route::get('approved-claim-list','HomeController@approvedClaimList')->name('claim.approved.list');

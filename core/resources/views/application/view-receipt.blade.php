@@ -400,9 +400,9 @@
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_list') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
-                                        <th><strong>{{ trans('app.total_contribution') }}</strong></th>
+                                        <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
                                         <th><strong>Mod Terimaan </strong></th>
-                                        <th><strong>Mod Transaksi</strong></th>
+                                        <th><strong>Mod Transaksi Perbankan</strong></th>
                                          <th><strong>ID Transaksi</strong></th>
                                         <th><strong>{{ trans('app.payment_status') }}</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
@@ -512,7 +512,7 @@
                                                 Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                             </td>
-                                            <td>{{ $item->final_amount ? 'RM ' . number_format($item->final_amount, 2) : 'N/A' }}</td>
+                                            <td>{{ $item->final_amount ? number_format($item->final_amount, 2) : 'N/A' }}</td>
                                             <!-- ✅ First Column - EFT ONLY -->
                                             <td>
                                                 @if(in_array($paymentMethod, ['EFT', 'B2B', 'B2C']))

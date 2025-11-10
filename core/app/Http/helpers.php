@@ -123,7 +123,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('app.claim_contribution'),
+                        'text' => trans('Permohonan Pulang Balik (Refund)'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -501,7 +501,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('app.claim_contribution'),
+                        'text' => trans('Permohonan Pulang Balik (Refund)'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -806,7 +806,7 @@ if(! function_exists('getMenus')){
 
                     [
                         'icon' => 'money',
-                        'text' => trans('app.claim_contribution'),
+                        'text' => trans('Permohonan Pulang Balik (Refund)'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -1162,7 +1162,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('app.claim_contribution'),
+                        'text' => trans('Permohonan Pulang Balik (Refund)'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -1517,7 +1517,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('app.claim_contribution'),
+                        'text' => trans('Permohonan Pulang Balik (Refund)'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
@@ -1843,7 +1843,7 @@ if(! function_exists('getMenus')){
 
                      [
                         'icon' => 'money',
-                        'text' => trans('app.claim_contribution'),
+                        'text' => trans('Permohonan Pulang Balik (Refund)'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',

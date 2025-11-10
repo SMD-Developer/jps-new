@@ -248,11 +248,12 @@
                                         @foreach ($statuses as $key => $label)
                                             <option value="{{ $key }}" 
                                                 {{ request('status') == $key ? 'selected' : '' }}>
-                                                {{ $label }}
+                                                {{ $key == 'pending' ? 'Dalam Proses' : $label }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
+
                             </div>
 
                         </div>
@@ -269,7 +270,7 @@
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{trans('app.status')}}</strong></th>
-                                        <th><strong>{{trans('app.total_payment')}}(RM)</strong></th>
+                                        <th><strong>{{trans('app.total_payment')}} (RM)</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>
@@ -322,7 +323,7 @@
                                                 {{ $applicationType }}
                                             </td>
 
-                                            <td>{{ $item->applicant }}</td>
+                                            <td>{{ strtoupper($item->applicant) }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }},
                                                 {{ $item->landDivision->mukim ?? '' }}, Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}
@@ -343,7 +344,7 @@
 
                                                             case 'pending':
                                                                 $badgeClass = 'status-badge status-pending';
-                                                                $badgeText = 'Belum Selesai';
+                                                                $badgeText = 'Dalam Proses';
                                                                 break;
 
                                                             case 'approve_payment_in_process':

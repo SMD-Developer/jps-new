@@ -1529,6 +1529,8 @@ class HomeController extends Controller {
         
         $query = Application::with([
             'client',
+            'landDistrict',
+            'landDivision',
             'logs' => function($query) {
                 $query->orderBy('action_at', 'desc');
             }
@@ -1606,13 +1608,18 @@ class HomeController extends Controller {
         if ($isAuthenticated) {             
             $roleId = auth('admin')->user()->role_id;             
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
-        }                  
+        }      
+        
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
         
         $applications = $query->paginate($perPage);                  
         
         return view('application.application-status', compact(             
             'applications',              
-            'allCount',              
+            'allCount',  
+            'district',            
             'approvedCount',              
             'rejectedCount',
             'perPage',             

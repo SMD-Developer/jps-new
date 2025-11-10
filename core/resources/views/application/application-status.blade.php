@@ -506,7 +506,7 @@
                                         <th><strong>{{ trans('app.application_type') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
-                                        <th><strong>{{ trans('app.total_contribution') }}</strong></th>
+                                        <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
                                         <th class="status-column"><strong>{{ trans('app.admin_staff_status') }}</strong></th>
                                         <th class="status-column"><strong>{{ trans('app.approver_status') }}</strong></th>
                                         <th><strong>{{ trans('app.overall_status') }}</strong></th>
@@ -678,11 +678,11 @@
                                                         {{ trans('app.new') }}
                                                 @endswitch
                                             </td>
-                                            <td>{{ $application->applicant }}</td>
-                                            <td>{{ $application->land_lot }}</td>
-                                            <td>{{ $application->client ? 'RM ' . number_format($application->final_amount, 2) : 'N/A' }}
+                                            <td>{{ strtoupper($application->applicant) }}</td>
+                                            <td>{{ $application->land_lot }}, {{ $application->land_area }}, {{ $application->landDivision->mukim ?? '' }},
+                                                Daerah {{ $application->landDistrict->daerah ?? '' }}
                                             </td>
-                                           
+                                            <td>{{ $application->client ? number_format($application->final_amount, 2) : 'N/A' }}</td>  
                                             <td class="status-column">
                                                 @if ($displayStaffStatus)
                                                     <!--<span-->
