@@ -1235,6 +1235,37 @@ class ThirdPartyController extends Controller
     	return $sbin; 
     }
 
+    public function direct(Request $request)
+	{
+	    $fpx_buyerBankBranch = $request->input('fpx_buyerBankBranch');
+        $fpx_buyerBankId = $request->input('fpx_buyerBankId');
+        $fpx_buyerIban = $request->input('fpx_buyerIban');
+        $fpx_buyerId = $request->input('fpx_buyerId');
+        $fpx_buyerName = $request->input('fpx_buyerName');
+        $fpx_creditAuthCode = $request->input('fpx_creditAuthCode');
+        $fpx_creditAuthNo = $request->input('fpx_creditAuthNo');
+        $fpx_debitAuthCode = $request->input('fpx_debitAuthCode');
+        $fpx_debitAuthNo = $request->input('fpx_debitAuthNo');
+        $fpx_fpxTxnId = $request->input('fpx_fpxTxnId');
+        $fpx_fpxTxnTime = $request->input('fpx_fpxTxnTime');
+        $fpx_makerName = $request->input('fpx_makerName');
+        $fpx_msgToken = $request->input('fpx_msgToken');
+        $fpx_msgType = $request->input('fpx_msgType');
+        $fpx_sellerExId = $request->input('fpx_sellerExId');
+        $fpx_sellerExOrderNo = $request->input('fpx_sellerExOrderNo');
+        $fpx_sellerId = $request->input('fpx_sellerId');
+        $fpx_sellerOrderNo = $request->input('fpx_sellerOrderNo');
+        $fpx_sellerTxnTime = $request->input('fpx_sellerTxnTime');
+        $fpx_txnAmount = $request->input('fpx_txnAmount');
+        $fpx_txnCurrency = $request->input('fpx_txnCurrency');
+        $fpx_checkSum = $request->input('fpx_checkSum');
+        
+        $data = $fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_creditAuthCode."|".$fpx_creditAuthNo."|".$fpx_debitAuthCode."|".$fpx_debitAuthNo."|".$fpx_fpxTxnId."|".$fpx_fpxTxnTime."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency;
+        $val = $this->verifySign_fpx($fpx_checkSum, $data);
+        
+	    return "OK";
+	}
+
 
     public function b2b(Request $request)
     {
