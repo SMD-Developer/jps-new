@@ -1,4 +1,5 @@
 @extends('app')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <style>
     /* Make buttons take full width on small screens */
     @media (max-width: 768px) {
@@ -28,6 +29,175 @@
     .card.p-3 {
         background: aliceblue !important;
     }
+
+
+    /* Modal Styling */
+    .modal-content {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .modal-header {
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    /* Card Styling */
+    .card {
+        border-radius: 12px;
+        transition: box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    /* Form Styling */
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.6rem 0.75rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+    
+    /* Permission Table Styling */
+    .permission-table {
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+    
+    .permission-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .permission-table th {
+        border: none;
+        padding: 1rem 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .module-header {
+        width: 25%;
+    }
+    
+    .action-header {
+        width: 15%;
+    }
+    
+    .action-header i {
+        font-size: 1.2rem;
+    }
+    
+    .permission-table tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    .permission-row:hover {
+        background-color: #f8f9ff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .permission-table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .module-name {
+        font-size: 0.95rem;
+        background: linear-gradient(to right, #f8f9fa, #ffffff);
+    }
+    
+    /* Custom Switch Styling */
+    .custom-switch {
+        width: 2.5rem;
+        height: 1.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-switch:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .custom-switch:hover {
+        filter: brightness(1.1);
+    }
+    
+    .custom-switch:focus {
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    
+    /* Button Styling */
+    .btn {
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    /* Icons */
+    .bi {
+        vertical-align: middle;
+    }
+    
+    /* Scrollbar */
+    .modal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .modal-body::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+    }
+    
+    .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .permission-table {
+            font-size: 0.85rem;
+        }
+        
+        .action-header i {
+            font-size: 1rem;
+        }
+    }
 </style>
 <title>{{ $title }} | JPS</title>
 @section('content')
@@ -41,23 +211,7 @@
                 <!-- Filter Section -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <!--<div class="row g-2 mb-3 d-flex justify-content-end">-->
-                        <!--   <button class="btn btn-primary"><i class="fa fa-plus"></i> @lang('app.add_staff')</button>-->
-                        <!--</div> -->
                         <div class="row search-row align-items-center g-2 mb-3">
-                            <!-- Button Group -->
-                            <!--<div class="col-lg-6 col-md-12 mb-2">-->
-                            <!--    <div class="btn-group w-100" role="group">-->
-                            <!--        <button class="btn btn-outline-secondary btn-sm">@lang('app.column_visibility')</button>-->
-                            <!--        <button class="btn btn-outline-secondary btn-sm">@lang('app.copy')</button>-->
-                            <!--        <button class="btn btn-outline-secondary btn-sm">@lang('app.csv')</button>-->
-                            <!--        <button class="btn btn-outline-secondary btn-sm">@lang('app.excel')</button>-->
-                            <!--        <button class="btn btn-outline-secondary btn-sm">@lang('app.pdf')</button>-->
-                            <!--        <button class="btn btn-outline-secondary btn-sm">@lang('app.print')</button>-->
-                            <!--    </div>-->
-
-
-                            <!--</div>-->
                             <div class="col-lg-12 col-md-12 g-2 mb-3 d-flex justify-content-end">
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal"><i
                                         class="fa fa-plus"></i> @lang('app.add_role')</button>
@@ -93,148 +247,74 @@
                         <!-- Table Section -->
                         <p><strong>{{ trans('app.Showing') }} 1 {{ trans('app.to') }} 5 of
                                 {{ trans('app.entries') }}</strong></p>
-                        <!--<div class="table-responsive mt-3">-->
 
-                        <!--     <table class="table">-->
-                        <!--        <thead>-->
-                        <!--            <tr>-->
-                        <!--                <th><strong># <i class="fa fa-sort"></i></strong></th>-->
-                        <!--                <th><strong>{{ trans('app.role') }} <i class="fa fa-sort"></i></strong></th>-->
-                        <!--                <th><strong>{{ trans('app.department') }} <i class="fa fa-sort"></i></strong></th>-->
-                        <!--                <th><strong>{{ trans('app.users') }}</strong></th>-->
-                        <!--                <th><strong>{{ trans('app.status') }}</strong></th>-->
-                        <!--                <th><strong>{{ trans('app.action') }}</strong></th>-->
-                        <!--            </tr>-->
-                        <!--        </thead>-->
-                        <!--        <tbody>-->
-                        <!--            @foreach ($roles as $index => $role)-->
-                        <!--                <tr>-->
-                        <!--                    <td>{{ $index + 1 }}</td>-->
-                        <!--                    <td>{{ trans('app.' . $role->name) }}</td>-->
-                        <!--                    <td>-->
-                        <!--                        @if ($role->department && $role->department->status == 1)-->
-                        <!--                            {{ $role->department->name }}-->
-                        <!--                        @else-->
-                        <!--                            --->
-                        <!--                        @endif-->
-                        <!--                    </td>-->
-                        <!--                    <td>-->
-                        <!--                        @if (isset($role->users) && count($role->users) > 0)-->
-                        <!--                            <ul class="list-unstyled">-->
-                        <!--                                @foreach ($role->users as $user)-->
-                        <!--                                    <li>{{ $user->name }}</li>-->
-                        <!--                                @endforeach-->
-                        <!--                            </ul>-->
-                        <!--                        @else-->
-                        <!--                            --->
-                        <!--                        @endif-->
-                        <!--                    </td>-->
-                        <!--                   <td>-->
-                        <!--                        @if (isset($role->users) && count($role->users) > 0)-->
-                        <!--                            <ul class="list-unstyled">-->
-                        <!--                                @foreach ($role->users as $user)-->
-                        <!--                                    <li id="status-cell-{{ $user->uuid }}"-->
-                        <!--                                        class="d-flex align-items-center gap-2">-->
-                        <!--                                        @if ($user->is_blocked)-->
-                        <!--                                            <span class="badge bg-danger">Blocked</span>-->
-                        <!--                                            <button class="btn btn-sm btn-success unblock-btn"-->
-                        <!--                                                data-user-id="{{ $user->uuid }}">-->
-                        <!--                                                <i class="fa fa-unlock"></i> Unblock-->
-                        <!--                                            </button>-->
-                        <!--                                        @else-->
-                        <!--                                            <span class="badge bg-success">Active</span>-->
-                        <!--                                        @endif-->
-                        <!--                                    </li>-->
-                        <!--                                @endforeach-->
-                        <!--                            </ul>-->
-                        <!--                        @else-->
-                        <!--                            <span class="text-muted">No users</span>-->
-                        <!--                        @endif-->
-                        <!--                    </td>-->
-                        <!--                    <td>-->
-                        <!--                        <div class="btn-group">-->
-                        <!--                            <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"-->
-                        <!--                                data-bs-target="#updateRoleModal" data-id="{{ $role->uuid }}"-->
-                        <!--                                data-name="{{ $role->name }}"-->
-                        <!--                                data-display_name="{{ $role->display_name }}"-->
-                        <!--                                data-description="{{ $role->description }}"-->
-                        <!--                                data-department="{{ $role->department_id }}">-->
-                        <!--                                <i class="fa fa-edit"></i>-->
-                        <!--                            </a>-->
-                        <!--                        </div>-->
-                        <!--                    </td>-->
-                        <!--                </tr>-->
-                        <!--            @endforeach-->
-                        <!--        </tbody>-->
-                        <!--    </table>-->
-                        <!--</div> -->
                         <div class="table-responsive mt-3">
-    <table class="table">
-        <thead>
-            <tr>
-                <th><strong># <i class="fa fa-sort"></i></strong></th>
-                <th><strong>{{ trans('app.role') }} <i class="fa fa-sort"></i></strong></th>
-                <th><strong>{{ trans('app.department') }} <i class="fa fa-sort"></i></strong></th>
-                <th><strong>{{ trans('app.users') }}</strong></th>
-                <th><strong>{{ trans('app.status') }}</strong></th>
-                <th><strong>{{ trans('app.action') }}</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($roles as $index => $role)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $role->display_name}}</td>
-                    <td>
-                        @if ($role->department && $role->department->status == 1)
-                            {{ $role->department->name }}
-                        @else
-                            -
-                        @endif
-                    </td>
-                    <td>
-                        @if (isset($role->users) && count($role->users) > 0)
-                            <ul class="list-unstyled">
-                                @foreach ($role->users as $user)
-                                    <li>{{ $user->name }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            -
-                        @endif
-                    </td>
-                    <td>
-                        @if (isset($role->users) && count($role->users) > 0)
-                            @php
-                                $hasBlockedUsers = $role->users->contains('is_blocked', true);
-                            @endphp
-                            
-                            @if ($hasBlockedUsers)
-                                <span class="badge bg-danger">Has Blocked Users</span>
-                            @else
-                                <span class="badge bg-success">Active</span>
-                            @endif
-                        @else
-                            <span class="text-muted">No users</span>
-                        @endif
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#updateRoleModal" data-id="{{ $role->uuid }}"
-                                data-name="{{ $role->name }}"
-                                data-display_name="{{ $role->display_name }}"
-                                data-description="{{ $role->description }}"
-                                data-department="{{ $role->department_id }}">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div> <!-- End Table Responsive -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><strong># <i class="fa fa-sort"></i></strong></th>
+                                        <th><strong>{{ trans('app.role') }} <i class="fa fa-sort"></i></strong></th>
+                                        <th><strong>{{ trans('app.department') }} <i class="fa fa-sort"></i></strong></th>
+                                        <th><strong>{{ trans('app.users') }}</strong></th>
+                                        <th><strong>{{ trans('app.status') }}</strong></th>
+                                        <th><strong>{{ trans('app.action') }}</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($roles as $index => $role)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $role->display_name}}</td>
+                                            <td>
+                                                @if ($role->department && $role->department->status == 1)
+                                                    {{ $role->department->name }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (isset($role->users) && count($role->users) > 0)
+                                                    <ul class="list-unstyled">
+                                                        @foreach ($role->users as $user)
+                                                            <li>{{ $user->name }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (isset($role->users) && count($role->users) > 0)
+                                                    @php
+                                                        $hasBlockedUsers = $role->users->contains('is_blocked', true);
+                                                    @endphp
+                                                    
+                                                    @if ($hasBlockedUsers)
+                                                        <span class="badge bg-danger">Has Blocked Users</span>
+                                                    @else
+                                                        <span class="badge bg-success">Active</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">No users</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#updateRoleModal" data-id="{{ $role->uuid }}"
+                                                        data-name="{{ $role->name }}"
+                                                        data-display_name="{{ $role->display_name }}"
+                                                        data-description="{{ $role->description }}"
+                                                        data-department="{{ $role->department_id }}">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div> <!-- End Table Responsive -->
                     </div>
 
                     <!-- Add role Button -->
@@ -316,82 +396,216 @@
                     </div>
 
                     <!--Update role-->
-                    <div class="modal fade" id="updateRoleModal" tabindex="-1" aria-labelledby="updateRoleModalLabel">
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="updateRoleModalLabel">@lang('app.update_role')</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                    <div class="modal fade" id="updateRoleModal" tabindex="-1" aria-labelledby="updateRoleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content shadow-lg border-0">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="updateRoleModalLabel">
+                                        <i class="bi bi-shield-lock me-2"></i>@lang('app.update_role')
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body bg-light">
                                     <form id="updateRoleForm" action="{{ route('roles.update') }}" method="POST">
                                         @csrf
-                                        @method('PUT') <!-- This is required for PUT requests -->
+                                        @method('PUT')
                                         <input type="hidden" name="id" id="role_id">
-                                        <!-- FIX: Ensure UUID is set -->
 
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.role')</label>
-                                            <input type="text" class="form-control" name="name" id="role_name"
-                                                placeholder="@lang('app.role')" required>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.display_name')</label>
-                                            <input type="text" class="form-control" name="display_name"
-                                                id="role_display_name" placeholder="@lang('app.display_name')" required>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.department')</label>
-                                            <select class="form-control form-select" name="department_id"
-                                                id="role_department" required>
-                                                <option value="" disabled selected>@lang('app.select_department')</option>
-                                                @foreach ($departments as $department)
-                                                    <option value="{{ $department->id }}">{{ $department->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.description')</label>
-                                            <textarea class="form-control" name="description" id="role_description" placeholder="@lang('app.description')"></textarea>
-                                        </div>
-
-                                        <div class="row g-1">
-                                            <label class="form-label fw-bold">@lang('app.permission')</label>
-                                            @foreach ($groupedPermissions as $groupDisplayName => $permissions)
-                                                <div class="col-md-6 mt-3">
-                                                    <div class="card p-3">
-                                                        <h5 class="card-title mb-0" style="font-size: 15px;">
-                                                            {{ $groupDisplayName }}
-                                                        </h5>
-                                                        <hr>
-                                                        <div class="row">
-                                                            @foreach ($permissions as $permission)
-                                                                <div class="col-6" style="font-size: 13px;">
-                                                                    <input type="checkbox" name="permissions[]"
-                                                                        value="{{ $permission->uuid }}"
-                                                                        id="perm_{{ $permission->uuid }}">
-                                                                    {{ $permission->display_name ?? $permission->name }}
-                                                                </div>
+                                        <!-- Basic Information Card -->
+                                        <div class="card border-0 shadow-sm mb-4">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary mb-3">
+                                                    <i class="bi bi-info-circle me-2"></i>Basic Information
+                                                </h6>
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-tag me-1"></i>@lang('app.role')
+                                                        </label>
+                                                        <input type="text" class="form-control" name="name" id="role_name" placeholder="@lang('app.role')" required>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-card-text me-1"></i>@lang('app.display_name')
+                                                        </label>
+                                                        <input type="text" class="form-control" name="display_name" id="role_display_name" placeholder="@lang('app.display_name')" required>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-building me-1"></i>@lang('app.department')
+                                                        </label>
+                                                        <select class="form-control form-select" name="department_id" id="role_department" required>
+                                                            <option value="" disabled selected>@lang('app.select_department')</option>
+                                                            @foreach ($departments as $department)
+                                                                <option value="{{ $department->id }}">{{ $department->name }}</option>
                                                             @endforeach
-                                                        </div>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-file-text me-1"></i>@lang('app.description')
+                                                        </label>
+                                                        <textarea class="form-control" name="description" id="role_description" placeholder="@lang('app.description')" rows="1"></textarea>
                                                     </div>
                                                 </div>
-                                            @endforeach
+                                            </div>
                                         </div>
+
+                                        <!-- Permissions Card -->
+                                        <div class="card border-0 shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary mb-3">
+                                                    <i class="bi bi-shield-check me-2"></i>@lang('app.permission')
+                                                </h6>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover permission-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="module-header">
+                                                                    <i class="bi bi-grid-3x3-gap me-2"></i>Module
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-list-ul d-block mb-1"></i>
+                                                                    <span>List</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-plus-circle d-block mb-1"></i>
+                                                                    <span>Create</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-pencil-square d-block mb-1"></i>
+                                                                    <span>Edit</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-trash d-block mb-1"></i>
+                                                                    <span>Delete</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-eye d-block mb-1"></i>
+                                                                    <span>View</span>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($groupedPermissions as $groupDisplayName => $permissions)
+                                                            <tr class="permission-row">
+                                                                <td class="module-name">
+                                                                    <i class="bi bi-folder2-open me-2 text-primary"></i>
+                                                                    <span class="fw-semibold">{{ $groupDisplayName }}</span>
+                                                                </td>
+                                                                
+                                                                @php
+                                                                    $permissionsByAction = [
+                                                                        'list' => null,
+                                                                        'create' => null,
+                                                                        'edit' => null,
+                                                                        'delete' => null,
+                                                                        'view' => null
+                                                                    ];
+                                                                    
+                                                                    foreach ($permissions as $permission) {
+                                                                        $permName = strtolower($permission->name);
+                                                                        if (str_contains($permName, 'list') || str_contains($permName, 'index')) {
+                                                                            $permissionsByAction['list'] = $permission;
+                                                                        } elseif (str_contains($permName, 'create') || str_contains($permName, 'add') || str_contains($permName, 'store')) {
+                                                                            $permissionsByAction['create'] = $permission;
+                                                                        } elseif (str_contains($permName, 'edit') || str_contains($permName, 'update')) {
+                                                                            $permissionsByAction['edit'] = $permission;
+                                                                        } elseif (str_contains($permName, 'delete') || str_contains($permName, 'destroy')) {
+                                                                            $permissionsByAction['delete'] = $permission;
+                                                                        } elseif (str_contains($permName, 'view') || str_contains($permName, 'show')) {
+                                                                            $permissionsByAction['view'] = $permission;
+                                                                        }
+                                                                    }
+                                                                @endphp
+                                                                
+                                                                <td class="text-center">
+                                                                    @if($permissionsByAction['list'])
+                                                                        <div class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                value="{{ $permissionsByAction['list']->uuid }}" 
+                                                                                id="perm_{{ $permissionsByAction['list']->uuid }}"
+                                                                                role="switch">
+                                                                        </div>
+                                                                    @else
+                                                                        <span class="text-muted">—</span>
+                                                                    @endif
+                                                                </td>
+                                                                
+                                                                <td class="text-center">
+                                                                    @if($permissionsByAction['create'])
+                                                                        <div class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                value="{{ $permissionsByAction['create']->uuid }}" 
+                                                                                id="perm_{{ $permissionsByAction['create']->uuid }}"
+                                                                                role="switch">
+                                                                        </div>
+                                                                    @else
+                                                                        <span class="text-muted">—</span>
+                                                                    @endif
+                                                                </td>
+                                                                
+                                                                <td class="text-center">
+                                                                    @if($permissionsByAction['edit'])
+                                                                        <div class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                value="{{ $permissionsByAction['edit']->uuid }}" 
+                                                                                id="perm_{{ $permissionsByAction['edit']->uuid }}"
+                                                                                role="switch">
+                                                                        </div>
+                                                                    @else
+                                                                        <span class="text-muted">—</span>
+                                                                    @endif
+                                                                </td>
+                                                                
+                                                                <td class="text-center">
+                                                                    @if($permissionsByAction['delete'])
+                                                                        <div class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                value="{{ $permissionsByAction['delete']->uuid }}" 
+                                                                                id="perm_{{ $permissionsByAction['delete']->uuid }}"
+                                                                                role="switch">
+                                                                        </div>
+                                                                    @else
+                                                                        <span class="text-muted">—</span>
+                                                                    @endif
+                                                                </td>
+                                                                
+                                                                <td class="text-center">
+                                                                    @if($permissionsByAction['view'])
+                                                                        <div class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                value="{{ $permissionsByAction['view']->uuid }}" 
+                                                                                id="perm_{{ $permissionsByAction['view']->uuid }}"
+                                                                                role="switch">
+                                                                        </div>
+                                                                    @else
+                                                                        <span class="text-muted">—</span>
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">@lang('app.close')</button>
-                                    <button type="submit" class="btn btn-primary"
-                                        id="updateRoleSubmit">@lang('app.update')</button>
+                                <div class="modal-footer bg-light border-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="bi bi-x-circle me-1"></i>@lang('app.close')
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="updateRoleSubmit">
+                                        <i class="bi bi-check-circle me-1"></i>@lang('app.update')
+                                    </button>
                                 </div>
-                                </form>
+                                    </form>
                             </div>
                         </div>
-
                     </div>
 
                 </div>

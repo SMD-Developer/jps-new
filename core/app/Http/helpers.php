@@ -228,12 +228,12 @@ if(! function_exists('getMenus')){
                                 'route' => route('landCategories'),
                                 'menu_active' => Request::is('products/list') ? 'active' : null
                             ],
-                             [
-                                'icon' => 'question',
-                                'text' => trans('app.question_management'),
-                                'route' => route('manage.question'),
-                                'menu_active' => Request::is('products/list') ? 'active' : null
-                            ],
+                            //  [
+                            //     'icon' => 'question',
+                            //     'text' => trans('app.question_management'),
+                            //     'route' => route('manage.question'),
+                            //     'menu_active' => Request::is('products/list') ? 'active' : null
+                            // ],
                         ]
                     ],
                     // [
@@ -611,7 +611,7 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search') || 
                                                 request()->is('report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.type'
+                                'permission'=> 'report.account.view-list'
                             ],
                             [
                                 'icon' => 'money',
@@ -619,7 +619,7 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search') ||
                                                 request()->is('report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district'
+                                'permission' => 'report.district.view-lis'
                             ],
                             [
                                 'icon' => 'money',
@@ -633,7 +633,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('payment-summary-report-search') ? 'active' : '',
-                                'permission'  => 'payment.summary.report'
+                                'permission'  => 'payment.summary.report.view-list'
                             ],
                             [
                                 'icon' => 'money',
@@ -894,7 +894,6 @@ if(! function_exists('getMenus')){
                             'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search')  ? 'menu-is-opening menu-open' : '',
                             'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'block' : 'none',
                             'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') ? 'active' : '',
-                            'permission' => 'reports.view-list',
                             'is_dropdown' => true,
                             'submenus' => [
                                 
@@ -903,21 +902,21 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.report_list_application_ditch_contribution'),
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.type'
+                                'permission' => 'report.account.view-list',
                                 ],
                                 [
                                 'icon' => 'money',
                                 'text' => trans('app.report_collection_contribution_ditch_by_district'),
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district'
+                                'permission' => 'report.district.view-list'
                                 ],
                                 [
                                     'icon' => 'money',
                                     'text' => 'Laporan Status Pembayaran Caruman Parit',
                                     'route' =>  url('report-collection-method-search'),
                                     'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
-                                    'permission' => 'report.district'
+                                   
                                 ],
                                 [
                                 'icon' => 'money',
@@ -934,7 +933,7 @@ if(! function_exists('getMenus')){
                                                     'text' => trans('app.generate_a_collectors_statement'),
                                                     'route' =>  url('collectors-statement-report'),
                                                     'menu_active' => request()->is('collectors-statement-report') ? 'active' : '',
-                                                    'permission' => 'generate_collector_statement'
+                                                    'permission' => 'collection-payment.view-list'
                                                 ],
                                                 [
                                                     'icon' => 'file-text',
@@ -967,7 +966,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
-                                'permission'  => 'payment.summary.report'
+                                'permission'  => 'payment.summary.report.view-list'
 
                             ],
                             // [
@@ -1277,14 +1276,14 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.report_list_application_ditch_contribution'),
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.type'
+                                'permission'=> 'report.account.view-list'
                                 ],
                                 [
                                 'icon' => 'money',
                                 'text' => trans('app.report_collection_contribution_ditch_by_district'),
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district'
+                                'permission' => 'report.district.view-list'
                                 ],
                                 [
                                 'icon' => 'money',
@@ -1301,7 +1300,7 @@ if(! function_exists('getMenus')){
                                                     'text' => trans('app.generate_a_collectors_statement'),
                                                     'route' =>  url('collectors-statement-report'),
                                                     'menu_active' => request()->is('collectors-statement-report') ? 'active' : '',
-                                                    'permission' => 'generate_collector_statement'
+                                                    'permission' => 'collection-payment.view-list'
                                                 ],
                                                 [
                                                     'icon' => 'file-text',
@@ -1342,7 +1341,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
-                                'permission'  => 'payment.summary.report'
+                                'permission'  => 'payment.summary.report.view-list'
 
                             ],
                             // [
@@ -1581,21 +1580,20 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.report_list_application_ditch_contribution'),
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.type'
+                                'permission'=> 'report.account.view-list'
                                 ],
                                 [
                                 'icon' => 'money',
                                 'text' => trans('app.report_collection_contribution_ditch_by_district'),
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district'
+                                'permission' => 'report.district.view-list'
                                 ],
                                 [
                                 'icon' => 'money',
                                 'text' => 'Laporan Status Pembayaran Caruman Parit',
                                 'route' =>  url('report-collection-method-search'),
                                 'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
-                                'permission' => 'report.district'
                                 ],
                                 [
                                 'icon' => 'money',
@@ -1612,7 +1610,7 @@ if(! function_exists('getMenus')){
                                                     'text' => trans('app.generate_a_collectors_statement'),
                                                     'route' =>  url('collectors-statement-report'),
                                                     'menu_active' => request()->is('collectors-statement-report') ? 'active' : '',
-                                                    'permission' => 'generate_collector_statement'
+                                                    'permission' => 'collection-payment.view-list'
                                                 ],
                                                 [
                                                     'icon' => 'file-text',
@@ -1645,7 +1643,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('payment-summary-report-search' ,'payment-summary-report-search') ? 'active' : '',
-                                'permission'  => 'payment.summary.report'
+                                'permission'  => 'payment.summary.report.view-list'
 
                             ],
                             // [
@@ -1952,7 +1950,7 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search') || 
                                                 request()->is('report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.type'
+                                'permission'=> 'report.account.view-list'
                             ],
                             [
                                 'icon' => 'money',
@@ -1960,7 +1958,7 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search') ||
                                                 request()->is('report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district'
+                                'permission' => 'report.district.view-list'
                             ],
                             [
                                 'icon' => 'money',
@@ -1974,7 +1972,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('payment-summary-report-search') ? 'active' : '',
-                                'permission'  => 'payment.summary.report'
+                                'permission'  => 'payment.summary.report.view-list'
                             ],
                             [
                                 'icon' => 'money',
