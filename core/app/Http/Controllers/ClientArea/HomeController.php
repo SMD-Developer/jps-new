@@ -592,6 +592,78 @@ class HomeController extends Controller {
 
             return view('clientarea.application.user-receiptcopy', compact('application'));
         }
+
+
+
+        public function userRprintPaymentReceipt($application_id)
+        {
+            $application = Application::with(['payment' => function($query) {
+                    $query->where('payment_status', 'completed')
+                        ->where('payment_type', 'reprint') 
+                        ->latest('created_at');
+                }])
+                ->select(
+                    'applications.*', 
+                    'state.negeri', 
+                    'district.daerah',
+                    'division.mukim as land_mukim'
+                )
+                ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+                ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+                ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+                ->where('applications.id', $application_id)
+                ->firstOrFail();
+                
+            if (auth('user')->id() !== $application->user_id) {
+                abort(403, 'Unauthorized access to this receipt.');
+            }
+            
+            // Get the reprint payment specifically
+            $reprintPayment = $application->payment()
+                ->where('payment_status', 'completed')
+                ->where('payment_type', 'reprint') // Filter for reprint payment only
+                ->latest('created_at')
+                ->first();
+            
+            if (!$reprintPayment) {
+                return redirect()->back()->with('error', 'Reprint payment receipt not found.');
+            }
+            
+            // Assign reprint payment data to application object
+            $application->payment_status = $reprintPayment->payment_status;
+            $application->payment_method = $reprintPayment->method;
+            $application->payment_amount = $reprintPayment->amount; // This will be RM 10
+            $application->transaction_id = $reprintPayment->transaction_id;
+            $application->receipt_number = $reprintPayment->receipt_number;
+            $application->payment_date = $reprintPayment->created_at;
+            $application->gateway_response = $reprintPayment->gateway_response;
+            $application->payment_type = $reprintPayment->payment_type; // Add payment type
+            
+            if ($reprintPayment->gateway_response) {
+                $gatewayResponse = is_array($reprintPayment->gateway_response) 
+                    ? $reprintPayment->gateway_response 
+                    : json_decode($reprintPayment->gateway_response, true);
+                    
+                if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                    $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                    
+                    $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+                elseif (isset($gatewayResponse['processed_at'])) {
+                    $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                        ->setTimezone('Asia/Kuala_Lumpur')
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+            }
+
+            // Use a different view for reprint payment receipt
+            return view('clientarea.application.user-reprint-payment-receipt', compact('application'));
+        }
     
     
         public function contribution_history(Request $request){

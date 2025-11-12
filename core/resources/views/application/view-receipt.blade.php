@@ -398,6 +398,7 @@
                                         <th><strong>{{ trans('app.date') }}</strong></th>
                                         <th><strong>{{ trans('app.reference_no') }}</strong></th>
                                         <th><strong>{{ trans('app.account_type') }}</strong></th>
+                                        <th><strong>{{trans('Jenis Pembayaran')}}</strong></th>
                                         <th><strong>{{ trans('Nama Pembayar') }}</strong></th>
                                         <th><strong>{{ trans('app.lot/PT') }}</strong></th>
                                         <th><strong>{{ trans('app.total_contribution') }} (RM)</strong></th>
@@ -507,6 +508,16 @@
                                                     }
                                                 @endphp
                                             </td>
+                                           <td>
+                                                @if($latestPayment && $latestPayment->payment_type === 'reprint')
+                                                    <span class="badge bg-warning text-dark">Reprint</span>
+                                                @elseif($latestPayment && $latestPayment->payment_type)
+                                                    <span class="badge bg-info text-dark">{{ ucfirst($latestPayment->payment_type) }}</span>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+
                                             <td>{{ strtoupper($item->applicant) }}</td>
                                             <td>{{ $item->land_lot }}, {{ $item->land_area }}, {{ $item->landDivision->mukim ?? '' }},
                                                 Daerah

@@ -482,7 +482,7 @@
             function logout() {
                 Swal.fire({
                     title: 'Tamat',
-                    text: 'Anda telah log keluar Kerana tidak aktif.',
+                    text: 'Anda telah log keluar kerana tidak aktif.',
                     icon: 'info',
                     confirmButtonText: 'OK',
                     allowOutsideClick: false

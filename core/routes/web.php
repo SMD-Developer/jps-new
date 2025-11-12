@@ -126,6 +126,7 @@ Route::group(['middleware' => 'install'], function(){
             Route::get('agency-payment-letter', 'ClientArea\HomeController@government_letter')->name('agency.payment.letter');
             Route::get('user-receipt-original/{application_id}','ClientArea\HomeController@userReceipt')->name('original_receipts');
             Route::get('user-receipt-copy/{id}', 'ClientArea\HomeController@userReceiptCopy')->name('user_copy_receipt');
+            Route::get('user-reprint-payment-receipt/{application_id}', 'ClientArea\HomeController@userRprintPaymentReceipt')->name('reprint.payment.receipt');
             Route::get('contribution-history','ClientArea\HomeController@contribution_history')->name('contribution_history');
             Route::get('contribution-claim','ClientArea\HomeController@contributionClaim')->name('contribution_claim');
             Route::get('claim-contribution-list','ClientArea\HomeController@userClaimList')->name('claim.contribution.list');

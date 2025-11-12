@@ -7,7 +7,6 @@
         margin: 20px;
         color: #333;
         font-weight: 700;
-        /*background-color: #f4f6f9;*/
     }
 
     @import url(https://fonts.googleapis.com/css?family=Denk+One);
@@ -23,17 +22,13 @@
         position: absolute;
         font-family: 'Denk One', sans-serif;
         text-transform: uppercase;
-        /*padding-left: 10%;*/
-        /*display: flex;*/
-        /*text-align: center;*/
         font-weight: 700;
         top: 26rem;
         left: 25%;
         opacity: 0.5;
-
     }
     
-      .receipt-table th {
+    .receipt-table th {
         font-size: 14px; 
     }
 
@@ -41,8 +36,7 @@
         font-size:14px;
     }
     
-    
-     .receipt-footer .info-row {
+    .receipt-footer .info-row {
         display: flex;
         margin-bottom: 5px;
         align-items: flex-start;
@@ -101,7 +95,6 @@
 
     .container {
         padding-inline: 120px !important;
-
     }
 
     .row1 {
@@ -125,7 +118,7 @@
         width: max-content;
     }
     
-        @media print {
+    @media print {
         .no-print, .container.pb-5 {
             display: none !important;
         }
@@ -142,10 +135,10 @@
         }
     }
 </style>
-<title>@lang('app.receipt') | JPS</title>
+<title>@lang('app.reprint_payment_receipt') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header no-print">
-        <h5><i class="fa fa-file"></i> @lang('app.receipt')</h5>
+        <h5><i class="fa fa-file"></i> @lang('app.reprint_payment_receipt')</h5>
     </div>
     <section class="content">
         <div class="container" id="receipt-content">
@@ -154,7 +147,6 @@
                     <p class="mb-0">(Kew.38E 03-2021)</p>
                 </div>
                 <div class="col-md-12">
-                    <!--<p class="rotingtxt">ASAL</p>-->
                     <div class="row">
                         <div class="col-12 row1" style="text-align: center;">
                             <img src="{{ asset('assets/images/uploads/settings/logo_jps-removebg-preview.png') }}" style="width:30%; height:80%;" class="img" alt="...">
@@ -166,18 +158,11 @@
                             <p class="mb-0 pl-3" style="white-space: nowrap;"><strong>KERAJAAN NEGERI SELANGOR DARUL EHSAN</strong></p>
                             <p class="mb-0 text-center"><strong>RESIT RASMI</strong></p>
                             <p class="text-center">
-                                <strong>
-                                        SALINAN
-                                </strong>
+                                <strong>ASAL</strong>
                             </p>
-                            <!--<p class="text-center"><strong>ASAL</strong></p>-->
                         </div>
-                        <!--<div class="col-4 text-right">-->
-                        <!--    <p class="mb-0">(Kew.38E 03-2021)</p>-->
-                        <!--</div>-->
                     </div>
-                    <div class="receipt-container"
-                        style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+                    <div class="receipt-container" style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
                         <div class="receipt-header">
                             <div class="info-row">
                                 <div class="label">DITERIMA DARIPADA</div>
@@ -211,6 +196,7 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
+                                    BAYARAN CETAK SEMULA RESIT UNTUK<br>
                                     {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
@@ -225,8 +211,7 @@
                             <tr style="background-color: #f2f2f2;">
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">BIL</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">CARA BAYARAN</th>
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">NO RUJUKAN /<br>TARIKH
-                                </th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">NO RUJUKAN /<br>TARIKH</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">VOT/DANA</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">KOD AKAUN</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">AMAUN (RM)</th>
@@ -243,67 +228,35 @@
                                         {{ $application->payment_method }}
                                     @endif
                                 </td>
-                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
                                     {{ $application->transaction_id ?? 'N/A' }}<br>
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    L453<br>G001
+                                    G001<br>
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    H0161304<br>H0161304
+                                    H0272499
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
-                                    {{ number_format($application->payment_amount  / 2, 2) }}<br>
-                                    {{ number_format($application->payment_amount  / 2, 2) }}
+                                    {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="5"
-                                    style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">
-                                    JUMLAH KESELURUHAN </td>
+                                <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">
+                                    JUMLAH KESELURUHAN 
+                                </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;" class="custome-text">
                                     {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
                         </table>
 
-                        <!--<div class="receipt-footer">-->
-                        <!--    <p><strong>Ringgit Malaysia:</strong> <span-->
-                        <!--            style="margin-left: 10px;">{{ \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount) }}-->
-                        <!--            Sahaja</span></p>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 90px;"><strong>Jabatan:</strong></div>-->
-                        <!--        <div>JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 90px;"><strong>PTJ:</strong></div>-->
-                        <!--        <div>PENGARAH PENGAIRAN & SALIRAN</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
-                        <!--<div class="receipt-footer">-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">Ringgit Malaysia:</div>-->
-                        <!--        <div class="value">-->
-                        <!--            {{ \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount) }} Sahaja-->
-                        <!--        </div>-->
-                        <!--    </div>-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">Jabatan:</div>-->
-                        <!--        <div class="value">JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>-->
-                        <!--    </div>-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">PTJ:</div>-->
-                        <!--        <div class="value">PENGARAH PENGAIRAN & SALIRAN</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
-                         <div class="receipt-footer">
+                        <div class="receipt-footer">
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
-                                    {{strtoupper( \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount)) }} SAHAJA
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->payment_amount)) }} SAHAJA
                                 </div>
                             </div>
                             <div class="info-row">
@@ -316,49 +269,46 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row my-5">
-                        <div class="col-7">
-                            <P> (SURIAH BT MOHAMAD)</P>
-
-                        </div>
-                        <div class="col-5">
-                            <p>{{ $application->created_at->format('d/m/Y h:i:s A') }}</p>
-                        </div>
-                    </div> --}}
                     <div class="row mt-5">
                         <div class="col-12">
                             <p class="text-center">INI ADALAH CETAKAN KOMPUTER DAN TIDAK PERLU DITANDATANGANI </p>
                         </div>
                     </div>
-                    <div class="row">
-                        <!--<div class="col-12">-->
-                        <!--    <p class="text-center">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>-->
-                        <!--</div>-->
-                    </div>
-                     <div class="row mb-5 mt-5">
+                    <div class="row mb-5 mt-5">
                         <div class="col-9">
                             <p class="text-left">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>
                             <p class="">NO KELULUSAN PERBENDAHARAAN : PWN.SEL.600-5/1/1 JLD.1 (49)</p>
                         </div>
                         <div class="col-3 ml-auto text-right pr-0">
-                            <!--<p class="">JANM 11 </p>-->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="container pb-5 no-print">
-            <div class="row mb-5">
-                <div class="col-md-5">
+            <div class="row mb-3 justify-content-end">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-success mx-2" onclick="window.history.back();">
+                        Kembali
+                    </button>
+                    <button type="button" id="downloadButton" class="btn btn-danger mx-2" style="display:none;">
+                        @lang('app.download')
+                    </button>
+                    <button type="button" id="printButton" class="btn btn-primary mx-2" style="white-space: nowrap;">
+                        @lang('app.print_receipt')
+                    </button>
                 </div>
-                <div class="col-md-4">
-                    <button type="button" id="downloadButton" class="btn btn-danger float-right mx-3">@lang('app.download')</button>
-                </div>
-                <div class="col-md-3">
-                    <button type="button" id="printButton" class="btn btn-primary float-right">@lang('app.print_receipt')</button>
+            </div>
+
+            <div class="row justify-content-end">
+                <div class="col-auto text-end">
+                    <p style="font-size: 14px; color: #555; font-style: italic; margin-top: 5px;">
+                        <strong>Nota:</strong> Sila pastikan Resit <u>ASAL</u> dicetak.
+                    </p>
                 </div>
             </div>
         </div>
+
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -366,9 +316,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         document.getElementById('downloadButton').addEventListener('click', function() {
-            const {
-                jsPDF
-            } = window.jspdf;
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
@@ -388,7 +336,7 @@
                 const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
                 doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                doc.save('Receipt_' + '{{ $application->refference_no }}' + '.pdf');
+                doc.save('Reprint_Payment_Receipt_' + '{{ $application->refference_no }}' + '.pdf');
             }).catch(error => {
                 console.error('Error generating PDF:', error);
                 alert('Failed to generate PDF. Please try again.');

@@ -209,9 +209,12 @@
                                             <td style="display: flex;flex-direction: column;align-items: center;">
                                                 <div class="sbtn">
                                                     <a href="#" class="btn btn-primary btn-sm"
-                                                        style="background-color: green !important;"><strong>{{ trans('app.paid') }}</strong></a>
-                                                </div><br>
-                                                 <div class="sbtn">
+                                                        style="background-color: green !important;">
+                                                        <strong>{{ trans('app.paid') }}</strong>
+                                                    </a>
+                                                </div>
+                                                <br>
+                                                <div class="sbtn">
                                                     <a href="javascript:void(0);"
                                                         class="btn btn-primary btn-sm {{ $application->print_status_count > 0 ? 'reprint-receipt' : 'print-receipt' }}"
                                                         data-application-id="{{ $application->id }}"
@@ -219,6 +222,18 @@
                                                         <strong>{{ $application->print_status_count > 0 ? __('app.reprint_receipt') : __('app.print_receipt') }}</strong>
                                                     </a>
                                                 </div>
+                                                
+                                                @if($application->print_status_count > 0 && $application->payment && $application->payment->payment_type === 'reprint')
+                                                    <br>
+                                                     <div class="sbtn">
+                                                        <a href="{{ route('reprint.payment.receipt', $application->id) }}"
+                                                        class="btn btn-primary btn-sm"
+                                                        style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 230px; text-align: center;">
+                                                        <strong>{{ __('Print reprint payment receipt') }}</strong>
+                                                        </a>
+                                                    </div>
+
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
