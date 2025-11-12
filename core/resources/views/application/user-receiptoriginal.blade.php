@@ -326,7 +326,7 @@
                 <div class="col-auto">
                     <button class="btn btn-success" id="backButton" onClick="window.history.back()">Kembali</button>
                 </div>
-                <div class="col-auto">
+                <div class="col-auto" style="display:none;">
                     <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
                 </div>
                 <div class="col-auto">

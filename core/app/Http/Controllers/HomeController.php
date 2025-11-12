@@ -1874,7 +1874,7 @@ class HomeController extends Controller {
                 $query->whereDoesntHave('payments');
             }
         }
-
+        
         // Filter based on payment method (latest payment only)
         if ($methodFilter !== 'all') {
 
@@ -1886,7 +1886,6 @@ class HomeController extends Controller {
                 'Cheque' => 'cheque',
                 'Bank Transfer' => 'bank_transfer',
             ];
-
 
             if ($methodFilter === 'BAUCAR BAYARAN') {
                 $query->whereHas('payments', function($q) {
@@ -1901,6 +1900,16 @@ class HomeController extends Controller {
                     $clientQuery->where('accountType', 3);
                 });
 
+            } else if ($methodFilter === 'EFT') {
+                // When filtering by EFT, include EFT, B2B, and B2C (all electronic payments)
+                $query->whereHas('payments', function($q) {
+                    $q->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C'])
+                        ->where('payments.created_at', function($q2) {
+                            $q2->selectRaw('MAX(created_at)')
+                                ->from('payments as p2')
+                                ->whereColumn('p2.application_id', 'payments.application_id');
+                        });
+                });
             } else {
                 $exactMethod = $methodMapping[$methodFilter] ?? null;
 

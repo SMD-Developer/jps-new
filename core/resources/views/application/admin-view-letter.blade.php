@@ -333,7 +333,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <p class="mb-0">Tetuan {{ ucwords(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->applicant)) }}</p>
                     <div class="row">
                         <div class="col-6">
                             <p class="mb-0 address-wrap">
@@ -343,21 +343,31 @@
                     </div>
                     <p class="mb-0">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}, {{ ucwords(strtolower($application->daerah ?? 'N/A')) }}</p>
                     <p class="mb-0">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }} Darul Ehsan</p>
-                    {{-- <p class="mb-0">{{$application->district->name}}, {{$application->state->name}}.</p> --}}
-                    {{-- <p class="mb-0">Selangor Darul Ehsan.</p> --}}
                     <br>
                     <p class="">Tuan,</p>
-                    <h6 class="mb-0 text-justify"><b>PENGESAHAN BAYARAN CARUMAN PARIT DI ATAS {{strtoupper($application->land_lot)}}, {{ strtoupper($application->land_mukim ?? 'N/A') }}, DAERAH {{ strtoupper($application->land_daerah ?? 'N/A') }}, NEGERI SELANGOR UNTUK TETUAN {{strtoupper($application->applicant)}}.</b></h6>
-                    <p class="pengesahan"><strong>-Pengesahan Bayaran Caruman Parit</strong></p>
+                    <h6 class="mb-0 text-justify">
+                        <b>{{ strtoupper($application->project_name ?? 'N/A') }}</b>
+                    </h6>
+                     <p class="pengesahan"><strong>-Pengesahan Bayaran Caruman Parit</strong></p>
                     <p>Dengan segala hormatnya saya diarahkan merujuk kepada perkara tersebut di atas.</p>
-                    <p style="text-align:justify;">
-                        2. Berdasarkan geran tanah dan dokumen sokongan yang dilampirkan, keluasan tanah yang perlu di bayar ialah
-                        <b>{{ number_format($application->hectare, 2) }}
-                            hektar</b>. Oleh yang demikian pihak tuan adalah
-                        dikehendaki membayar caruman parit ke jabatan ini <b>berjumlah RM {{ number_format($application->final_amount, 2) }}
-                        @if($application->appeal != 'yes')
-                        (RM {{ number_format($application->cost, 2) }} x {{ number_format($application->hectare, 2) }}
-                                hektar)
+                     <p style="text-align:justify;">
+                        @if($application->appeal === 'yes' && $application->appeal_status === 'approved')
+                            <b>Dimaklumkan bahawa rayuan yang telah dikemukakan oleh pihak tuan berhubung bayaran caruman parit bagi tanah tersebut dan surat kelulusan yang dikemukakan. Berdasarkan semakan terhadap geran tanah keluasan tanah yang terlibat ialah
+                            {{ number_format($application->hectare, 2) }} hektar.</b> 
+                            Oleh yang demikian, pihak tuan adalah dikehendaki membayar caruman parit kepada jabatan ini berjumlah 
+                            <b>RM {{ number_format($application->final_amount, 2) }}</b>.
+                        @else
+                            2. Berdasarkan geran tanah dan dokumen sokongan yang dilampirkan, keluasan tanah yang perlu di bayar
+                            ialah <b>{{ number_format($application->hectare, 2) }} hektar</b>. Oleh yang demikian pihak tuan adalah
+                            dikehendaki membayar caruman parit ke jabatan ini <b>berjumlah RM
+                                {{ number_format($application->final_amount, 2) }}
+                                @if($application->appeal != 'yes')
+                                    (RM {{ number_format($application->cost, 2) }} x {{ number_format($application->hectare, 2) }} hektar)
+                                @endif
+                            </b>.
+                            <br><br>
+                            3. Jabatan ini hanya akan mempertimbangkan kelulusan pelan-pelan kerja tanah dan sistem saliran di atas setelah bayaran 
+                            caruman parit tersebut dijelaskan.
                         @endif
                     </p>
                     <p>Sekian, terima kasih.</p>
