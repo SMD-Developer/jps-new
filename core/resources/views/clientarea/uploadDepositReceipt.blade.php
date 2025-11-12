@@ -373,7 +373,7 @@
                 receipt.closest('.form-group').appendChild(errorDiv);
             } else {
                 const file = receipt.files[0];
-                const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                const allowedTypes = ['application/pdf'];
                 const maxSize = 2 * 1024 * 1024; // 2MB
                 
                 // Check file type
@@ -382,7 +382,7 @@
                     receipt.classList.add('is-invalid');
                     const errorDiv = document.createElement('div');
                     errorDiv.classList.add('invalid-feedback');
-                    errorDiv.textContent = 'Fail mestilah dalam format PDF, JPG, JPEG, atau PNG.';
+                    errorDiv.textContent = 'Fail mestilah dalam format PDF.';
                     receipt.closest('.form-group').appendChild(errorDiv);
                 }
                 // Check file size
@@ -391,7 +391,7 @@
                     receipt.classList.add('is-invalid');
                     const errorDiv = document.createElement('div');
                     errorDiv.classList.add('invalid-feedback');
-                    errorDiv.textContent = 'Saiz fail tidak boleh melebihi 2MB.';
+                    errorDiv.textContent = 'Saiz fail tidak boleh melebihi 15MB.';
                     receipt.closest('.form-group').appendChild(errorDiv);
                 }
             }

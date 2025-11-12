@@ -869,7 +869,7 @@ class HomeController extends Controller {
                     'regex:/^[A-Za-z0-9\-]+$/',
                     'max:50',
                 ],
-                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:15360',
+                'receipt' => 'required|file|mimes:pdf|max:15360',
                 'note' => 'nullable|string|max:500'
             ],
             [
