@@ -1264,7 +1264,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_id_card" class="col-form-label">
-                                No. kad Pengenalan/ No. Daftar Perniagaan:<span class="text-danger"></span>
+                                No. Kad Pengenalan/ No. Daftar Perniagaan:<span class="text-danger"></span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1276,7 +1276,7 @@ body {
                                    >
                             <div class="invalid-feedback">Please enter your ID card number.</div>
                              <small class="form-text text-muted text-end d-block mt-1">
-                                kad Pengenalan Baru perlu (-)
+                                Kad Pengenalan Baru perlu (-)
                             </small>
                         </div>
                     </div>
@@ -1303,7 +1303,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_password" class="col-form-label">
-                                kata Laluan:<span class="text-danger">*</span>
+                                Kata Laluan:<span class="text-danger">*</span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1319,7 +1319,7 @@ body {
                                 data-target="tp_password" 
                                 style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
                             </div>
-                            <small class="form-text text-muted">minimum 8 aksara</small>
+                            <small class="form-text text-muted">Minimum 8 aksara</small>
                             <div class="invalid-feedback">Password must be at least 8 characters.</div>
                         </div>
                     </div>

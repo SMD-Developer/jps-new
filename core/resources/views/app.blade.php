@@ -481,7 +481,7 @@
 
             function logout() {
                 Swal.fire({
-                    title: 'Sesi Temat',
+                    title: 'Tamat',
                     text: 'Anda telah log keluar Kerana tidak aktif.',
                     icon: 'info',
                     confirmButtonText: 'OK',

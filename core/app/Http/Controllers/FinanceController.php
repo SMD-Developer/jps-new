@@ -748,7 +748,12 @@ class financeController extends Controller {
         
         // Filter by payment method if selected
         if ($paymentMethod && $paymentMethod != '') {
-            $query->where('payments.method', $paymentMethod);
+            // If EFT is selected, include EFT, FPX_B2B, and FPX_B2C
+            if ($paymentMethod === 'EFT') {
+                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
+            } else {
+                $query->where('payments.method', $paymentMethod);
+            }
         }
         
         // Filter by payment status if selected
@@ -769,7 +774,7 @@ class financeController extends Controller {
         }
         
         $applications = $query->orderBy('payments.created_at', 'desc')->get();
-    
+
         
         $currentDateTime = \Carbon\Carbon::now();
         $currentDate = $currentDateTime->format('d/m/Y');
