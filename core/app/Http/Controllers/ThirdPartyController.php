@@ -146,8 +146,8 @@ class ThirdPartyController extends Controller
         $bankCode = $request->get('bank', session('selected_bank'));
         $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
         
-        $fpx_callbackUrl = route('third.party.fpx.callback'); 
-        $fpx_returnUrl = route('third.party.fpx.return');   
+        $fpx_callbackUrl = route('fpx.callback'); 
+        $fpx_returnUrl = route('fpx.return');   
         
         $application = Application::find($applicationId);
         
@@ -896,177 +896,6 @@ class ThirdPartyController extends Controller
     }
 
 
-    public function indirect(Request $request)
-    {
-        $fpx_buyerBankBranch = $request->input('fpx_buyerBankBranch');
-        $fpx_buyerBankId = $request->input('fpx_buyerBankId');
-        $fpx_buyerIban = $request->input('fpx_buyerIban');
-        $fpx_buyerId = $request->input('fpx_buyerId');
-        $fpx_buyerName = $request->input('fpx_buyerName');
-        $fpx_creditAuthCode = $request->input('fpx_creditAuthCode');
-        $fpx_creditAuthNo = $request->input('fpx_creditAuthNo');
-        $fpx_debitAuthCode = $request->input('fpx_debitAuthCode');
-        $fpx_debitAuthNo = $request->input('fpx_debitAuthNo');
-        $fpx_fpxTxnId = $request->input('fpx_fpxTxnId');
-        $fpx_fpxTxnTime = $request->input('fpx_fpxTxnTime');
-        $fpx_makerName = $request->input('fpx_makerName');
-        $fpx_msgToken = $request->input('fpx_msgToken');
-        $fpx_msgType = $request->input('fpx_msgType');
-        $fpx_sellerExId = $request->input('fpx_sellerExId');
-        $fpx_sellerExOrderNo = $request->input('fpx_sellerExOrderNo');
-        $fpx_sellerId = $request->input('fpx_sellerId');
-        $fpx_sellerOrderNo = $request->input('fpx_sellerOrderNo');
-        $fpx_sellerTxnTime = $request->input('fpx_sellerTxnTime');
-        $fpx_txnAmount = $request->input('fpx_txnAmount');
-        $fpx_txnCurrency = $request->input('fpx_txnCurrency');
-        $fpx_checkSum = $request->input('fpx_checkSum');
-        
-        $data = $fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_creditAuthCode."|".$fpx_creditAuthNo."|".$fpx_debitAuthCode."|".$fpx_debitAuthNo."|".$fpx_fpxTxnId."|".$fpx_fpxTxnTime."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency;
-        $val = $this->verifySign_fpx($fpx_checkSum, $data);
-        
-        $paymentStatus = '';
-        $errorCode = '';
-        $statusMessage = '';
-        
-        // Check if this is B2B transaction (fpx_msgToken = "02")
-        $isB2B = ($fpx_msgToken === '02');
-        
-        if ($fpx_debitAuthCode === '00') {
-            $paymentStatus = 'completed';
-            $statusMessage = 'Payment completed successfully';
-        } elseif ($isB2B && $fpx_debitAuthCode === '99') {
-            $paymentStatus = 'pending_authorization';
-            $statusMessage = 'Payment is pending for authorizer approval';
-        } elseif ($fpx_debitAuthCode === '09' || $fpx_debitAuthCode === 'A0' || $fpx_debitAuthCode === 'U7') {
-            $paymentStatus = 'pending_authorization';
-            $statusMessage = 'Payment is pending for authorizer approval';
-        } elseif (!$isB2B && $fpx_debitAuthCode === '99') {
-            $paymentStatus = 'failed';
-            $errorCode = $fpx_debitAuthCode;
-            $statusMessage = 'Transaction declined by bank';
-        } else {
-            $paymentStatus = 'failed';
-            $errorCode = $fpx_debitAuthCode;
-            $statusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode, $isB2B);
-        }
-        
-        try {
-            $paymentRecord = DB::table('payments') 
-                ->where('seller_order_no', $fpx_sellerOrderNo)
-                ->first();
-                
-            if ($paymentRecord) {
-                $isThirdPartyPayment = !empty($paymentRecord->third_party_id);
-                
-    
-                if ($isThirdPartyPayment) {
-                    if (!auth('third_party')->check() && $paymentRecord->third_party_id) {
-                        $thirdPartyUser = \App\Models\ThirdParty::find($paymentRecord->third_party_id);
-                        
-                        if ($thirdPartyUser) {
-                            auth('third_party')->login($thirdPartyUser);
-                        } else {
-                        }
-                    }
-                } else {
-
-                    if (!auth('user')->check() && $paymentRecord->user_id) {
-                        $client = Client::where('uuid', $paymentRecord->user_id)->first();
-            
-                        if ($client) {
-                            auth('user')->login($client);
-                        } else {
-                        }
-                    }
-                }
-                
-                // Update payment record
-                DB::table('payments')
-                    ->where('seller_order_no', $fpx_sellerOrderNo)
-                    ->update([
-                        'transaction_id' => $fpx_fpxTxnId,
-                        'payment_status' => $paymentStatus,
-                        'status_message' => $statusMessage,
-                        'gateway_response' => json_encode([
-                            'fpx_response_data' => $request->all(),
-                            'signature_valid' => $val,
-                            'msg_type' => $fpx_msgType,
-                            'msg_token' => $fpx_msgToken,
-                            'is_b2b' => $isB2B,
-                            'is_third_party' => $isThirdPartyPayment,
-                            'processed_at' => now()
-                        ]),
-                        'updated_at' => now()
-                    ]);
-
-
-                if ($paymentStatus === 'completed') {
-                    if ($isThirdPartyPayment && $paymentRecord->third_party_id) {
-                        // Send notification to third party user
-                        $thirdPartyUser = \App\Models\ThirdParty::find($paymentRecord->third_party_id);
-                        
-                        if ($thirdPartyUser) {
-                            $thirdPartyUser->notify(new \App\Notifications\PaymentSuccessful([
-                                'order_no' => $fpx_sellerOrderNo,
-                                'transaction_id' => $fpx_fpxTxnId,
-                                'amount' => $fpx_txnAmount,
-                                'currency' => $fpx_txnCurrency,
-                                'buyer_name' => $fpx_buyerName,
-                                'bank_name' => $fpx_buyerBankBranch,
-                                'payment_date' => now()->format('Y-m-d H:i:s'),
-                                'payment_type' => 'Third Party Document Reprint'
-                            ]));
-                        }
-                    } elseif ($paymentRecord->user_id) {
-                        // Send notification to regular user
-                        $client = \App\Models\Client::where('uuid', $paymentRecord->user_id)->first();
-                        
-                        if ($client) {
-                            $client->notify(new \App\Notifications\PaymentSuccessful([
-                                'order_no' => $fpx_sellerOrderNo,
-                                'transaction_id' => $fpx_fpxTxnId,
-                                'amount' => $fpx_txnAmount,
-                                'currency' => $fpx_txnCurrency,
-                                'buyer_name' => $fpx_buyerName,
-                                'bank_name' => $fpx_buyerBankBranch,
-                                'payment_date' => now()->format('Y-m-d H:i:s')
-                            ]));
-                        }
-                    }
-                }
-                
-                session(['fpx_order_no' => $fpx_sellerOrderNo]);
-                
-                // **KEY CHANGE: Redirect to appropriate success page**
-                if ($isThirdPartyPayment) {
-                    return view('third-party.payments.success', compact(
-                        'val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 
-                        'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 
-                        'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch', 
-                        'paymentStatus', 'statusMessage'
-                    ));
-                } else {
-                    return view('clientarea.payments.success', compact(
-                        'val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 
-                        'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 
-                        'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch'
-                    ));
-                }
-                
-            } else {
-                
-                return redirect()->route('home')->with('error', 'Payment record not found');
-            }
-            
-        } catch (\Exception $e) {
-            
-            return redirect()->route('home')->with('error', 'Payment processing failed');
-        }
-    }
-	
-
-
-
     private function getFPXErrorMessage($code, $isB2B = false) 
     {
       
@@ -1235,36 +1064,240 @@ class ThirdPartyController extends Controller
     	return $sbin; 
     }
 
-    public function direct(Request $request)
-	{
-	    $fpx_buyerBankBranch = $request->input('fpx_buyerBankBranch');
-        $fpx_buyerBankId = $request->input('fpx_buyerBankId');
-        $fpx_buyerIban = $request->input('fpx_buyerIban');
-        $fpx_buyerId = $request->input('fpx_buyerId');
-        $fpx_buyerName = $request->input('fpx_buyerName');
-        $fpx_creditAuthCode = $request->input('fpx_creditAuthCode');
-        $fpx_creditAuthNo = $request->input('fpx_creditAuthNo');
-        $fpx_debitAuthCode = $request->input('fpx_debitAuthCode');
-        $fpx_debitAuthNo = $request->input('fpx_debitAuthNo');
-        $fpx_fpxTxnId = $request->input('fpx_fpxTxnId');
-        $fpx_fpxTxnTime = $request->input('fpx_fpxTxnTime');
-        $fpx_makerName = $request->input('fpx_makerName');
-        $fpx_msgToken = $request->input('fpx_msgToken');
-        $fpx_msgType = $request->input('fpx_msgType');
-        $fpx_sellerExId = $request->input('fpx_sellerExId');
-        $fpx_sellerExOrderNo = $request->input('fpx_sellerExOrderNo');
-        $fpx_sellerId = $request->input('fpx_sellerId');
-        $fpx_sellerOrderNo = $request->input('fpx_sellerOrderNo');
-        $fpx_sellerTxnTime = $request->input('fpx_sellerTxnTime');
-        $fpx_txnAmount = $request->input('fpx_txnAmount');
-        $fpx_txnCurrency = $request->input('fpx_txnCurrency');
-        $fpx_checkSum = $request->input('fpx_checkSum');
+
+    public function status(Request $request) 
+    {
+        $orderNo = $request->input('order_no') ?? session('fpx_order_no');
         
-        $data = $fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_creditAuthCode."|".$fpx_creditAuthNo."|".$fpx_debitAuthCode."|".$fpx_debitAuthNo."|".$fpx_fpxTxnId."|".$fpx_fpxTxnTime."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency;
-        $val = $this->verifySign_fpx($fpx_checkSum, $data);
+        if (!$orderNo) {
+            return redirect()->back()->with('error', 'Order number not found');
+        }
         
-	    return "OK";
-	}
+        // Get payment record from database
+        $paymentRecord = DB::table('payments')
+            ->where('seller_order_no', $orderNo)
+            ->first();
+        
+        if (!$paymentRecord) {
+            return redirect()->back()->with('error', 'Payment record not found');
+        }
+        
+        // Use dynamic values from database
+        $fpx_msgType = "AE";
+        
+        // Determine message token based on payment type (B2B vs B2C)
+        $isB2B = false;
+        
+        // Method 1: Check the 'method' field for FPX_B2B
+        if (isset($paymentRecord->method) && $paymentRecord->method === 'FPX_B2B') {
+            $isB2B = true;
+        }
+        
+        $fpx_msgToken = $isB2B ? "02" : "01";
+        $fpx_sellerExId = $paymentRecord->seller_ex_id ?? "EX00014529"; 
+        $fpx_sellerExOrderNo = $paymentRecord->seller_order_no;
+        $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
+        $fpx_sellerOrderNo = $paymentRecord->seller_order_no;
+        $fpx_sellerId = $paymentRecord->seller_id ?? "SE00110559"; 
+        $fpx_sellerBankCode = "01";
+        $fpx_txnCurrency = $paymentRecord->currency ?? "MYR";
+        
+        // FIXED: Ensure amount format matches exactly
+        $fpx_txnAmount = number_format((float)$paymentRecord->amount, 2, '.', '');
+        
+        // ENSURE these fields are not empty for B2B
+        $fpx_buyerEmail = $paymentRecord->buyer_email ?? "";
+        $fpx_buyerName = $paymentRecord->buyer_name ?? "";
+        
+        $fpx_buyerBankId = $paymentRecord->buyer_bank_id ?? ""; 
+        $fpx_buyerBankBranch = $paymentRecord->buyer_bank_branch ?? ""; 
+        
+        $fpx_checkSum = "";
+        $fpx_buyerAccNo = "";
+        $fpx_buyerId = "";
+        $fpx_makerName = "";
+        $fpx_buyerIban = "";
+        $fpx_productDesc = $paymentRecord->product_desc ?? "Payment";
+        $fpx_version = "6.0";
+        
+        $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
+        
+        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
+        $pkeyid = openssl_get_privatekey($priv_key);
+        openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
+        $fpx_checkSum = strtoupper(bin2hex($binary_signature));
+        
+        $fields_string = "";
+        $response_value = array();
+        $ErrorCode = '';
+        
+        // Set POST variables
+        $url = 'https://www.mepsfpx.com.my/FPXMain/sellerNVPTxnStatus.jsp';
+        
+        $fields = array(
+            'fpx_msgType' => urlencode($fpx_msgType),
+            'fpx_msgToken' => urlencode($fpx_msgToken),
+            'fpx_sellerExId' => urlencode($fpx_sellerExId),
+            'fpx_sellerExOrderNo' => urlencode($fpx_sellerExOrderNo),
+            'fpx_sellerTxnTime' => urlencode($fpx_sellerTxnTime),
+            'fpx_sellerOrderNo' => urlencode($fpx_sellerOrderNo),
+            'fpx_sellerId' => urlencode($fpx_sellerId),
+            'fpx_sellerBankCode' => urlencode($fpx_sellerBankCode),
+            'fpx_txnCurrency' => urlencode($fpx_txnCurrency),
+            'fpx_txnAmount' => urlencode($fpx_txnAmount),
+            'fpx_buyerEmail' => urlencode($fpx_buyerEmail),
+            'fpx_checkSum' => urlencode($fpx_checkSum),
+            'fpx_buyerName' => urlencode($fpx_buyerName),
+            'fpx_buyerBankId' => urlencode($fpx_buyerBankId),
+            'fpx_buyerBankBranch' => urlencode($fpx_buyerBankBranch),
+            'fpx_buyerAccNo' => urlencode($fpx_buyerAccNo),
+            'fpx_buyerId' => urlencode($fpx_buyerId),
+            'fpx_makerName' => urlencode($fpx_makerName),
+            'fpx_buyerIban' => urlencode($fpx_buyerIban),
+            'fpx_productDesc' => urlencode($fpx_productDesc),
+            'fpx_version' => urlencode($fpx_version)
+        );
+        
+        try {
+            // URL-ify the data for the POST
+            foreach($fields as $key => $value) { 
+                $fields_string .= $key.'='.$value.'&'; 
+            }
+            rtrim($fields_string, '&');
+            
+            // Open connection
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+            
+            // Set the url, number of POST vars, POST data
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, count($fields));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+            
+            // Receive server response
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            
+            // Execute post
+            $result = curl_exec($ch);
+            
+            // Close connection
+            curl_close($ch);
+            
+            $token = strtok($result, "&");
+            while ($token !== false) {
+                list($key1, $value1) = explode("=", $token);
+                $value1 = urldecode($value1);
+                $response_value[$key1] = $value1;
+                $token = strtok("&");
+            }
+            
+            $fpx_debitAuthCode = $response_value['fpx_debitAuthCode'] ?? '';
+            
+            // Response Checksum Calculation String
+            $data = ($response_value['fpx_buyerBankBranch'] ?? '')."|".($response_value['fpx_buyerBankId'] ?? '')."|".($response_value['fpx_buyerIban'] ?? '')."|".($response_value['fpx_buyerId'] ?? '')."|".($response_value['fpx_buyerName'] ?? '')."|".($response_value['fpx_creditAuthCode'] ?? '')."|".($response_value['fpx_creditAuthNo'] ?? '')."|".$fpx_debitAuthCode."|".($response_value['fpx_debitAuthNo'] ?? '')."|".($response_value['fpx_fpxTxnId'] ?? '')."|".($response_value['fpx_fpxTxnTime'] ?? '')."|".($response_value['fpx_makerName'] ?? '')."|".($response_value['fpx_msgToken'] ?? '')."|".($response_value['fpx_msgType'] ?? '')."|".($response_value['fpx_sellerExId'] ?? '')."|".($response_value['fpx_sellerExOrderNo'] ?? '')."|".($response_value['fpx_sellerId'] ?? '')."|".($response_value['fpx_sellerOrderNo'] ?? '')."|".($response_value['fpx_sellerTxnTime'] ?? '')."|".($response_value['fpx_txnAmount'] ?? '')."|".($response_value['fpx_txnCurrency'] ?? '');
+            
+            $val = $this->verifySign_fpx($response_value['fpx_checkSum'] ?? '', $data);
+            
+            // ========== DATABASE UPDATE LOGIC ==========
+            // Determine new payment status based on FPX response
+            $newPaymentStatus = '';
+            $newStatusMessage = '';
+            
+            if ($fpx_debitAuthCode === '00') {
+                $newPaymentStatus = 'completed';
+                $newStatusMessage = 'Payment completed successfully';
+            } elseif ($isB2B && $fpx_debitAuthCode === '99') {
+                // For B2B: Code 99 means "Pending Authorization"
+                $newPaymentStatus = 'pending_authorization';
+                $newStatusMessage = 'Payment is pending for authorizer approval';
+            } elseif ($fpx_debitAuthCode === '09' || $fpx_debitAuthCode === 'A0' || $fpx_debitAuthCode === 'U7') {
+                $newPaymentStatus = 'pending_authorization';
+                $newStatusMessage = 'Payment is pending for authorizer approval';
+            } elseif (!$isB2B && $fpx_debitAuthCode === '99') {
+                // For B2C: Code 99 means "Failed"
+                $newPaymentStatus = 'failed';
+                $newStatusMessage = 'Transaction declined by bank';
+            } else {
+                $newPaymentStatus = 'failed';
+                $newStatusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode, $isB2B);
+            }
+            
+            // Check if status has changed
+            $statusChanged = ($paymentRecord->payment_status !== $newPaymentStatus);
+            
+            // UPDATE DATABASE if status changed or if we got new transaction details
+            if ($statusChanged || !empty($response_value['fpx_fpxTxnId'])) {
+                try {
+                    $updateData = [
+                        'payment_status' => $newPaymentStatus,
+                        'status_message' => $newStatusMessage,
+                        'updated_at' => now()
+                    ];
+                    
+                    // Add transaction ID if we got one
+                    if (!empty($response_value['fpx_fpxTxnId'])) {
+                        $updateData['transaction_id'] = $response_value['fpx_fpxTxnId'];
+                    }
+                    
+                    // Generate receipt number for B2B transactions when completed
+                    if ($isB2B && $newPaymentStatus === 'completed' && $statusChanged) {
+                        // Check if receipt number is not already generated
+                        if (empty($paymentRecord->receipt_number)) {
+                            $receiptNumber = $this->generateReceiptNumber();
+                            $updateData['receipt_number'] = $receiptNumber;
+                            
+                            Log::info('B2B Receipt Number Generated in Status Check', [
+                                'order_no' => $orderNo,
+                                'receipt_number' => $receiptNumber,
+                                'transaction_id' => $response_value['fpx_fpxTxnId'] ?? 'N/A',
+                                'old_status' => $paymentRecord->payment_status,
+                                'new_status' => $newPaymentStatus
+                            ]);
+                        }
+                    }
+                    
+                    // Update gateway response with latest status inquiry
+                    $updateData['gateway_response'] = json_encode([
+                        'latest_status_inquiry' => $response_value,
+                        'signature_valid' => $val,
+                        'status_checked_at' => now(),
+                        'previous_response' => $paymentRecord->gateway_response ? json_decode($paymentRecord->gateway_response, true) : null
+                    ]);
+                    
+                    DB::table('payments')
+                        ->where('seller_order_no', $orderNo)
+                        ->update($updateData);
+                    
+                    // Send email if payment is completed and status changed
+                    if ($newPaymentStatus === 'completed' && $statusChanged) {
+                        $this->sendPaymentSuccessEmail($paymentRecord, $response_value);
+                    }
+                    
+                    // Refresh payment record for view
+                    $paymentRecord = DB::table('payments')
+                        ->where('seller_order_no', $orderNo)
+                        ->first();
+                        
+                } catch (\Exception $e) {
+                    Log::error('Failed to update payment status', [
+                        'order_no' => $orderNo,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+            
+            
+        } catch(Exception $e) {
+            \Log::error('FPX Status Inquiry Failed', [
+                'order_no' => $orderNo,
+                'error' => $e->getMessage()
+            ]);
+            $ErrorCode = 'Error: ' . $e->getMessage();
+        }
+        
+        return view('clientarea.payments.status', compact('val', 'fpx_debitAuthCode', 'response_value', 'ErrorCode', 'paymentRecord'));
+    }
 
 
     public function b2b(Request $request)
@@ -1384,95 +1417,6 @@ class ThirdPartyController extends Controller
         }
 
         return view('third-party.receipt', compact('application', 'transaction'));
-    }
-
-    private function initiateFpxPayment($transaction)
-    {
-        // Use your existing FPX integration from PayController
-        // You might want to extract this logic to a service class
-        // to avoid code duplication
-        
-        return app('App\Http\Controllers\ClientArea\PayController')
-            ->initiateFpxPayment($transaction);
-    }
-
-
-    public function guestReceipt(Request $request, $application_id)
-    {
-        if (!$request->hasValidSignature()) {
-            abort(403, 'Invalid or expired receipt link.');
-        }
-        
-        $orderNo = $request->query('order_no');
-        
-        $payment = DB::table('payments')
-            ->where('application_id', $application_id)
-            ->where('seller_order_no', $orderNo)
-            ->where('payment_status', 'completed')
-            ->first();
-        
-        if (!$payment) {
-            abort(404, 'Receipt not found or payment not successful.');
-        }
-        
-        // Use the same logic as userReceiptCopy but without auth check
-        $application = Application::with(['payment' => function($query) {
-                $query->where('payment_status', 'completed')
-                    ->latest('created_at');
-            }])
-            ->select(
-                'applications.*', 
-                'state.negeri', 
-                'district.daerah',
-                'division.mukim as land_mukim'
-            )
-            ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
-            ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-            ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
-            ->where('applications.id', $application_id)
-            ->firstOrFail();
-        
-        
-        $completedPayment = $application->payment()
-            ->where('payment_status', 'completed')
-            ->latest('created_at')
-            ->first();
-        
-        if ($completedPayment) {
-            $application->payment_status = $completedPayment->payment_status;
-            $application->payment_method = $completedPayment->method;
-            $application->payment_amount = $completedPayment->amount;
-            $application->transaction_id = $completedPayment->transaction_id;
-            $application->receipt_number = $completedPayment->receipt_number;
-            $application->payment_date = $completedPayment->created_at;
-            $application->gateway_response = $completedPayment->gateway_response;
-            
-            if ($completedPayment->gateway_response) {
-                $gatewayResponse = is_array($completedPayment->gateway_response) 
-                    ? $completedPayment->gateway_response 
-                    : json_decode($completedPayment->gateway_response, true);
-                    
-                if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
-                    $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
-                    
-                    $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
-                        ->format('d/m/Y h:i:s A');
-                    
-                    $application->fpx_payment_time = $formattedTime;
-                }
-                elseif (isset($gatewayResponse['processed_at'])) {
-                    $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
-                        ->setTimezone('Asia/Kuala_Lumpur')
-                        ->format('d/m/Y h:i:s A');
-                    
-                    $application->fpx_payment_time = $formattedTime;
-                }
-            }
-        }
-
-        // Return the same view but mark it as guest access
-        return view('clientarea.application.user-receiptcopy', compact('application'))
-            ->with('is_guest_access', true);
     }
 
 

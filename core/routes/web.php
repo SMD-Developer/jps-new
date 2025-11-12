@@ -34,8 +34,6 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
   Route::get('divisions/{dist_id}', 'ClientArea\HomeController@getDivisions')->name('divisions');
   Route::post('search-applications', 'ClientArea\HomeController@searchApplications')->name('applications.search');
   Route::get('search-appplication-results', 'ClientArea\HomeController@searchResult')->name('search.results');
-  Route::post('/third-party/indirect-fpx', 'ThirdPartyController@indirect')->name('indirect.fpx');
-  Route::match(['get', 'post'],'/third-party/direct-fpx', 'ThirdPartyController@direct')->name('direct.fpx');
 
   Route::get('/guest/receipt/{application_id}', 'ThirdPartyController@guestReceipt')
     ->name('guest.receipt')
