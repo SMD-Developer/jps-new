@@ -27,9 +27,9 @@
                     </div>
                 </div>
 
-                <!-- Proceed Button -->
+                <!-- FPX Payment Form -->
                 <form name="form1" method="post" action="{{ $actionUrl }}">
-                    @csrf
+                    <!-- 🔥 ALL REQUIRED FPX PARAMETERS -->
                     <input type="hidden" name="fpx_msgType" value="{{ $fpx_msgType }}">
                     <input type="hidden" name="fpx_msgToken" value="{{ $fpx_msgToken }}">
                     <input type="hidden" name="fpx_sellerExId" value="{{ $fpx_sellerExId }}">
@@ -37,14 +37,24 @@
                     <input type="hidden" name="fpx_sellerTxnTime" value="{{ $fpx_sellerTxnTime }}">
                     <input type="hidden" name="fpx_sellerOrderNo" value="{{ $fpx_sellerOrderNo }}">
                     <input type="hidden" name="fpx_sellerId" value="{{ $fpx_sellerId }}">
+                    <input type="hidden" name="fpx_sellerBankCode" value="{{ $fpx_sellerBankCode }}">
                     <input type="hidden" name="fpx_txnCurrency" value="{{ $fpx_txnCurrency }}">
                     <input type="hidden" name="fpx_txnAmount" value="{{ $fpx_txnAmount }}">
                     <input type="hidden" name="fpx_buyerEmail" value="{{ $fpx_buyerEmail }}">
                     <input type="hidden" name="fpx_checkSum" value="{{ $fpx_checkSum }}">
                     <input type="hidden" name="fpx_buyerName" value="{{ $fpx_buyerName }}">
                     <input type="hidden" name="fpx_buyerBankId" value="{{ $fpx_buyerBankId }}">
+                    <input type="hidden" name="fpx_buyerBankBranch" value="{{ $fpx_buyerBankBranch }}">
+                    <input type="hidden" name="fpx_buyerAccNo" value="{{ $fpx_buyerAccNo }}">
+                    <input type="hidden" name="fpx_buyerId" value="{{ $fpx_buyerId }}">
+                    <input type="hidden" name="fpx_makerName" value="{{ $fpx_makerName }}">
+                    <input type="hidden" name="fpx_buyerIban" value="{{ $fpx_buyerIban }}">
                     <input type="hidden" name="fpx_version" value="{{ $fpx_version }}">
                     <input type="hidden" name="fpx_productDesc" value="{{ $fpx_productDesc }}">
+                    
+                    <!-- 🔥 CALLBACK URLs - CRITICAL! -->
+                    <input type="hidden" name="fpx_callbackUrl" value="{{ $fpx_callbackUrl }}">
+                    <input type="hidden" name="fpx_returnUrl" value="{{ $fpx_returnUrl }}">
 
                     <div class="text-center my-4">
                         <button type="submit" class="btn btn-primary btn-lg px-5 py-3 shadow-sm">
@@ -66,7 +76,7 @@
                     <h6 class="alert-heading fw-bold">Important Instructions</h6>
                     <ul class="mb-0 ps-3">
                         <li>You must have an Internet Banking account to make transactions using FPX.</li>
-                        <li>Please disable your browser’s pop-up blocker to avoid interruptions during the transaction.</li>
+                        <li>Please disable your browser's pop-up blocker to avoid interruptions during the transaction.</li>
                         <li>Do not close or refresh the page until you receive a response.</li>
                         <li>This transaction is secure and encrypted.</li>
                     </ul>

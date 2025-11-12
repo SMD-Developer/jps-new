@@ -248,15 +248,7 @@ class ThirdPartyController extends Controller
         ]);
 
         
-        return view('third-party.payments.b2c-checkout', compact(
-            'fpx_msgType', 'fpx_msgToken', 'fpx_sellerTxnTime', 'fpx_sellerExId', 
-            'fpx_sellerExOrderNo', 'fpx_sellerOrderNo', 'fpx_sellerId', 
-            'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 
-            'fpx_buyerEmail', 'fpx_checkSum', 'fpx_buyerName', 'fpx_buyerBankId', 
-            'fpx_buyerBankBranch', 'fpx_buyerAccNo', 'fpx_buyerId', 'fpx_makerName', 
-            'fpx_buyerIban', 'fpx_productDesc', 'fpx_version', 'actionUrl',
-            'fpx_callbackUrl', 'fpx_returnUrl', 'referenceNo'
-        ));
+        return view('third-party.payments.b2c-checkout', compact('fpx_msgType', 'fpx_msgToken','fpx_sellerTxnTime', 'fpx_sellerExId', 'fpx_sellerExOrderNo', 'fpx_sellerTxnTime', 'fpx_sellerOrderNo', 'fpx_sellerId', 'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 'fpx_buyerEmail', 'fpx_checkSum', 'fpx_buyerName', 'fpx_buyerBankId', 'fpx_buyerBankBranch', 'fpx_buyerAccNo', 'fpx_buyerId', 'fpx_makerName', 'fpx_buyerIban', 'fpx_productDesc', 'fpx_version', 'actionUrl','fpx_callbackUrl', 'fpx_returnUrl', 'referenceNo'));
     }
 
 
