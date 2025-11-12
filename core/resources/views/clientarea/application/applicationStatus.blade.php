@@ -34,7 +34,6 @@
     table.table.table-bordered.table-striped th:nth-child(8),
     table.table.table-bordered.table-striped td:nth-child(8) {
         width: 80px;
-        max-width: 80px;
         min-width: 80px;
         word-wrap: break-word;
         white-space: normal;

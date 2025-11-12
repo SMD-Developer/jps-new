@@ -748,7 +748,7 @@
 
                 const paymentAmount = $('[name="payment_amount"]').val();
                 if (!paymentAmount) {
-                    showError('payment_amount', "@lang('app.claim_amount_required')");
+                    showError('payment_amount', "@lang('Medan ini wajib diisi')");
                 } else if (isNaN(paymentAmount)) {
                     showError('payment_amount', "@lang('app.claim_amount_numeric')");
                 } else if (parseFloat(paymentAmount) <= 0) {
@@ -774,23 +774,23 @@
                     showError('state', "@lang('app.state_required')");
                 }
                 if (!$('[name="land_district"]').val()) {
-                    showError('land_district', "@lang('app.land_district_required')");
+                    showError('land_district', "@lang('Medan ini wajib diisi')");
                 }
                 if (!$('[name="land_lot"]').val()) {
-                    showError('land_lot', "@lang('app.land_lot_required')");
+                    showError('land_lot', "@lang('Medan ini wajib diisi')");
                 }
                 if (!$('[name="land_area"]').val()) {
-                    showError('land_area', "@lang('app.land_area_required')");
+                    showError('land_area', "@lang('Medan ini wajib diisi')");
                 }
                 if (!$('[name="land_unit"]').val()) {
-                    showError('land_unit', "@lang('app.land_unit_required')");
+                    showError('land_unit', "@lang('Medan ini wajib diisi')");
                 }
 
                 // Validate land_grant file
                 const landGrantFile = $('#land_grant')[0].files[0];
                 if (!landGrantFile) {
-                    showError('land_grant', "@lang('app.land_grant_required')");
-                    $('#land_grant_error').text("@lang('app.land_grant_required')").show();
+                    showError('land_grant', "@lang('Fail wajib dimuatnaik')");
+                    $('#land_grant_error').text("@lang('Fail wajib dimuatnaik')").show();
                 } else {
                     // Check file size (15MB = 15360KB)
                     if (landGrantFile.size > 15 * 1024 * 1024) {
@@ -809,8 +809,8 @@
                // Validate new_receipt file (REQUIRED)
                 const newReceiptFile = $('#new_receipt')[0].files[0];
                 if (!newReceiptFile) {
-                    showError('new_receipt', "@lang('Resit Bayaran Baru diperlukan')");
-                    $('#new_receipt_error').text("@lang('Resit Bayaran Baru diperlukan')").show();
+                    showError('new_receipt', "@lang('Fail wajib dimuatnaik')");
+                    $('#new_receipt_error').text("@lang('Fail wajib dimuatnaik')").show();
                 } else {
                     if (newReceiptFile.size > 15 * 1024 * 1024) {
                         showError('new_receipt', "@lang('app.land_grant_max')");

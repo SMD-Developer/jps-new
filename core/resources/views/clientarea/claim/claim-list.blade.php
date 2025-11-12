@@ -169,7 +169,7 @@
 <title>{{ trans('app.claim_contribution_list_user') }} | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-list-alt" aria-hidden="true"></i> {{ trans('app.claim_contribution_list_user') }}</h5>
+        <h5><i class="fa fa-list-alt" aria-hidden="true"></i> {{ trans('Status Permohonan Pulang Balik Bayaran Caruman Parit') }}</h5>
     </div>
     <section class="content">
         <div class="row">
@@ -191,7 +191,7 @@
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <!--<th><strong>Activity</strong></th>-->
                                         <th><strong>{{ trans('app.status') }}</strong></th>
-                                        <th><strong>{{trans('app.total_payment')}}</strong></th>
+                                        <th><strong>{{trans('app.total_payment')}} (RM)</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
                                 </thead>

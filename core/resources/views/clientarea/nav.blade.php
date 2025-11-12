@@ -291,23 +291,10 @@
                     </ul> --}}
                 </li>
                 
-
-                <!--<li class="nav-item has-treeview nav-item {{ request()->is('clientarea/helpdesk') ? 'menu-open' : '' }}">-->
-                <!--    <a href="{{route('helpdesk')}}" class="nav-link {{ request()->is('clientarea/helpdesk') ? 'active' : '' }}">-->
-                <!--        <i class="fa fa-question-circle "></i>-->
-                <!--        <span>{{trans('app.helpdesk')}}</span>-->
-                <!--    </a>-->
-                <!--</li>-->
                 <li class="nav-item has-treeview {{ request()->is('clientarea/faq') ? 'menu-open' : '' }}">
                     <a href="{{route('faq')}}" class="nav-link {{ request()->is('clientarea/faq') ? 'active' : '' }}">
                         <i class="fa fa-comments "></i>
                         <span>{{trans('app.faq')}}</span>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview {{ request()->is('clientarea/contact-support') ? 'menu-open' : '' }}">
-                    <a href="{{route('contact_support')}}" class="nav-link {{ request()->is('clientarea/contact-support') ? 'active' : '' }}">
-                        <i class="fa fa-phone "></i>
-                        <span>{{trans('app.contact_support')}}</span>
                     </a>
                 </li>
                 <li class="nav-item has-treeview {{ request()->is('clientarea/user-manual') ? 'menu-open' : '' }}">
@@ -316,33 +303,6 @@
                         <span>{{trans('app.user_manual')}}</span>
                     </a>
                 </li>
-                <!--<li class="header p-2">{{trans('app.main_menu')}}</li>-->
-                <!--<li class="{{ Form::menu_active('clientarea/home') }}">-->
-                <!--    <a href="{{ route('client_dashboard') }}" class="nav-link">-->
-                <!--        <i class="fa fa-home"></i>-->
-                <!--        <span>{{trans('app.dashboard')}}</span>-->
-                <!--    </a>-->
-                <!--</li>-->
-                <!--<li class="{{ Form::menu_active('clientarea/cinvoices') }}">-->
-                <!--    <a href="{{ route('cinvoices.index') }}" class="nav-link">-->
-                <!--        <i class="fa fa-file-pdf-o"></i>-->
-                <!--        <span>{{trans('app.invoices')}}</span>-->
-                <!--    </a>-->
-                <!--</li>-->
-                <!--<li class="{{ Form::menu_active('clientarea/cestimates') }}">-->
-                <!--    <a href="{{ route('cestimates.index') }}" class="nav-link">-->
-                <!--        <i class="fa fa-list-alt"></i>-->
-                <!--        <span>{{trans('app.estimates')}}</span>-->
-                <!--    </a>-->
-                <!--</li>-->
-                
-                <!--<li class="{{ Form::menu_active('clientarea/reports') }}">-->
-                <!--    <a href="{{ url('clientarea/reports') }}" class="nav-link">-->
-                <!--        <i class="fa fa-line-chart"></i>-->
-                <!--        <span>{{trans('app.reports')}}</span>-->
-                <!--    </a>-->
-                <!--</li>-->
-                <!--<li class="header">{{trans('app.account_menu')}}</li>-->
                 
                 <li class="nav-item has-treeview {{ Form::menu_active('clientarea/logout') }}">
                     <a href="{{ route('client_logout') }}" class="nav-link">
