@@ -380,7 +380,7 @@
                                     value="{{ request('date_to') }}" 
                                     style="width: 150px;">
                                 <button type="button" class="btn btn-sm btn-primary" onclick="applyDateFilter()">
-                                    <i class="fa fa-filter"></i> Apply
+                                    <i class="fa fa-filter"></i> 
                                 </button>
                                 @if(request('date_from') || request('date_to'))
                                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearDateFilter()" title="Clear date filter">

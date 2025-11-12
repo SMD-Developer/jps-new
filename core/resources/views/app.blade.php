@@ -462,12 +462,12 @@
 
             function showWarning() {
                 Swal.fire({
-                    title: 'Are you still there?',
-                    text: 'You will be logged out in 1 minute due to inactivity.',
+                    title: 'Peringatan',
+                    text: 'Sesi anda akan ditamatkan dalam masa 1 minit Kerana sebarang aktiviti',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, I\'m here',
-                    cancelButtonText: 'Logout now',
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Log Keluar',
                     timer: 60000,
                     timerProgressBar: true,
                 }).then((result) => {
@@ -481,8 +481,8 @@
 
             function logout() {
                 Swal.fire({
-                    title: 'Session Expired',
-                    text: 'You have been logged out due to inactivity.',
+                    title: 'Sesi Temat',
+                    text: 'Anda telah log keluar Kerana tidak aktif.',
                     icon: 'info',
                     confirmButtonText: 'OK',
                     allowOutsideClick: false
@@ -494,8 +494,8 @@
             function resetTimer() {
                 clearTimeout(warningTime);
                 clearTimeout(logoutTime);
-                warningTime = setTimeout(showWarning, 540000); // 9 minutes
-                logoutTime = setTimeout(logout, 600000); // 10 minutes
+                warningTime = setTimeout(showWarning, 540000); 
+                logoutTime = setTimeout(logout, 600000); 
             }
         };
 

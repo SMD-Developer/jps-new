@@ -187,21 +187,17 @@
         </tr>
         <tr>
             <td class="title">
-                Kemas Kini Status Tuntutan Caruman Parit
+                Status Pemulangan Balik Caruman Parit
             </td>
         </tr>
         <tr>
             <td class="content">
-                <p>Halo {{ $notifiable->name }},</p>
+                <p>Kepada {{ $notifiable->name }},</p>
 
-                <p>Kami dengan senang hati memberitahu bahawa status tuntutan caruman parit anda telah dikemaskini.</p>
+                <p>Dengan sukacitanya dimaklumkan bahawa status tuntutan caruman parit anda telah dikemas kini.</p>
 
                 <div class="claim-details">
                     <table>
-                        <tr>
-                            <td class="label">ID Tuntutan:</td>
-                            <td class="value"><strong>{{ $claim->id }}</strong></td>
-                        </tr>
                         <tr>
                             <td class="label">Status Baru:</td>
                             <td class="value">
@@ -217,27 +213,11 @@
                     </table>
                 </div>
 
-                @if($claim->status === 'pending')
-                    <div class="message-box">
-                        <strong>Maklumat:</strong> Tuntutan anda sedang menunggu semakan oleh pasukan kami. Kami akan memberitahu anda sebaik sahaja ada perkembangan. Sila ambil masa 3-5 hari bekerja.
-                    </div>
-                @elseif($claim->status === 'approve_payment_in_process')
-                    <div class="message-box processing">
-                        <strong>Maklumat:</strong> Tuntutan anda telah diluluskan dan pembayaran sedang diproses. Anda akan menerima dana dalam masa 3-5 hari bekerja. Sila periksa akaun bank anda.
-                    </div>
-                @elseif($claim->status === 'rejected')
-                    <div class="message-box rejected">
-                        <strong>Pemberitahuan:</strong> Maaf, tuntutan anda telah ditolak. Untuk maklumat lanjut mengenai sebab penolakan dan proses rayuan, sila hubungi kami.
-                    </div>
-                @elseif($claim->status === 'approve_paid')
-                    <div class="message-box approved">
-                        <strong>Tahniah:</strong> Tuntutan anda telah diluluskan dan pembayaran telah dihantar. Sila semak akaun bank anda untuk mengesahkan penerimaan dana.
-                    </div>
-                @endif
-
                 <div class="divider"></div>
 
-                <p>Sekiranya anda mempunyai sebarang pertanyaan atau memerlukan bantuan lanjut, sila jangan ragu untuk menghubungi kami melalui portal atau terus hubungi pasukan sokongan kami.</p>
+                <p>Sekiranya tuan/puan mempunyai sebarang pertanyaan atau memerlukan bantuan lanjut
+                    sila hubungi kami melalui portal rasmi atau berinteraksi terus dengan pasukan sokogan kami.
+                </p>
             </td>
         </tr>
         <tr>

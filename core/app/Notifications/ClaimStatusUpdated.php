@@ -36,7 +36,7 @@ class ClaimStatusUpdated extends Notification
         $statusColor = $this->getStatusColor($this->claim->status);
 
         return (new MailMessage)
-            ->subject('Kemas Kini Status Tuntutan Anda - Claim ID: ' . $this->claim->id)
+            ->subject('Status Pemulangan Balik Caruman Parit')
             ->markdown('emails.claim-status-updated', [
                 'notifiable' => $notifiable,
                 'claim' => $this->claim,

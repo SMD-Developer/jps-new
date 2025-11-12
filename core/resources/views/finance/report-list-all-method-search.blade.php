@@ -116,8 +116,8 @@
                                                         onkeyup="filterMethods()" onclick="event.stopPropagation();">
                                                     <a href="#" onclick="selectMethod('Semua', '')">Semua</a>
                                                     <a href="#" onclick="selectMethod('EFT', 'EFT')">EFT</a>
-                                                    <a href="#" onclick="selectMethod('FPX B2B', 'FPX_B2B')">FPX B2B</a>
-                                                    <a href="#" onclick="selectMethod('FPX B2C', 'FPX_B2C')">FPX B2C</a>
+                                                    <a href="#" onclick="selectMethod('B2B', 'FPX_B2B')">B2B</a>
+                                                    <a href="#" onclick="selectMethod('B2C', 'FPX_B2C')">B2C</a>
                                                     <a href="#" onclick="selectMethod('Kad Kredit', 'kad_kredit')">Kad Kredit</a>
                                                     <a href="#" onclick="selectMethod('Kad Debit', 'kad_debit')">Kad Debit</a>
                                                     <a href="#" onclick="selectMethod('Baucar Bayaran Agensi Kerajaan', 'EFT')">Baucar Bayaran Agensi Kerajaan</a>
@@ -139,9 +139,9 @@
                                                     <input type="text" placeholder="Search.." id="statusSearch"
                                                         onkeyup="filterStatus()" onclick="event.stopPropagation();">
                                                     <a href="#" onclick="selectStatus('Semua', '')">Semua</a>
-                                                    <a href="#" onclick="selectStatus('Completed', 'completed')">Selesai</a>
-                                                    <a href="#" onclick="selectStatus('Pending', 'pending')">Belum Bayar</a>
-                                                    <a href="#" onclick="selectStatus('Failed', 'failed')">Pembayaran Gagal</a>
+                                                    <a href="#" onclick="selectStatus('Selesai', 'completed')">Selesai</a>
+                                                    <a href="#" onclick="selectStatus('Belum Bayar', 'pending')">Belum Bayar</a>
+                                                    <a href="#" onclick="selectStatus('Pembayaran Gagal', 'failed')">Pembayaran Gagal</a>
                                                 </div>
                                             </div>
                                             <input type="hidden" id="selectedStatusValue" name="payment_status" value="">

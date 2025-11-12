@@ -607,7 +607,7 @@
                                              <th>@lang('app.account_type')</th>
                                             <th>@lang('app.applicant_name')</th>
                                             <th>@lang('app.lot_pt')</th>
-                                            <th>Cara Bayaran</th>
+                                            <th>Mod Transaksi Perbankan</th>
                                             <th>Status Pembayaran</th>
                                             <th>ID Transaksi</th>
                                             <th>@lang('app.total_contribution')(RM)</th>
@@ -630,12 +630,16 @@
                                                     @endif
                                                 </td>
 
-                                                <td>{{ $application->refference_no ?? 'N/A' }}</td>
+                                                <td>{{ strtoupper($application->refference_no ?? 'N/A') }}</td>
                                                 <td>{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>{{ strtoupper($application->applicant ?? 'N/A') }}</td>
                                                 <td>{{ $application->land_lot ?? 'N/A' }},{{ strtoupper($application->division_name) }}, DAERAH {{ strtoupper($application->district_name) }}, SELANGOR</td>
                                                 <td>{{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}</td>
-                                                <td>{{strtoupper($application->payment_status ?? 'N/A')}}</td>
+                                                <td>
+                                                    {{ $application->payment_status == 'completed' 
+                                                        ? 'Selesai' 
+                                                        : ($application->payment_status == 'pending' ? 'Belum Bayar' : 'N/A') }}
+                                                </td>
                                                 <td>{{ $application->transaction_id ?? 'N/A' }}</td>
                                                  <td>{{ number_format($application->payment_amount, 2) }}</td>
                                             </tr>
