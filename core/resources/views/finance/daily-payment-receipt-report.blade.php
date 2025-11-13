@@ -639,6 +639,12 @@
                             <td>{{ number_format($grandTotal / 2, 2) }}</td>
                         </tr>
                         <tr>
+                            <td>2</td>
+                            <td>H0272499</td>
+                            <td>G001</td>
+                            <td>{{ number_format($totalReprintAmount, 2) }}</td>
+                        </tr>
+                        <tr>
                             <td colspan="3" style="text-align:end;"><strong>JUMLAH :</strong></td>
                             <td><strong>{{ number_format($grandTotal , 2) }}</strong></td>
                         </tr>
