@@ -197,16 +197,19 @@ button.btn.btn-primary.float-right{
         </div>
      </div>
      <div class="container pb-5">
-        <div class="row mb-5">
-           <div class="col-md-5">
-           </div>
-           <div class="col-md-4">
-               <button type="button" class="btn btn-danger float-right">Muat Turun</button>
-           </div>
-           <div class="col-md-3">
-               <button type="button" class="btn btn-primary float-right">Cetak Resit</button>
-           </div>
-       </div>
+        <div class="container pb-5">
+            <div class="row mb-5 justify-content-end">
+                <div class="col-auto">
+                    <button class="btn btn-success" id="backButton" onClick="window.history.back()">Kembali</button>
+                </div>
+                <div class="col-auto" style="display:none;">
+                    <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" id="printButton" class="btn btn-primary">@lang('app.print_receipt')</button>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 @endsection
