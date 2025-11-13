@@ -1830,27 +1830,19 @@ class HomeController extends Controller {
         $statusFilter = $request->input('status_filter', 'all'); 
         $methodFilter = $request->input('method_filter', 'all'); 
         $search = $request->input('q');
-        $dateFrom = $request->input('date_from'); // Add this
+        $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
         
-        // Load payments relation without filtering for latest
-        $query = Application::with(['state', 'landDistrict', 'landDivision', 'client', 'payments'])
+        // Join with payments to show each payment as a separate row
+        $query = Payment::with(['application.state', 'application.landDistrict', 'application.landDivision', 'application.client'])
+            ->join('applications', 'payments.application_id', '=', 'applications.id')
             ->where('applications.status', 'approved')
-            ->leftJoin('payments as latest_payment', function($join) {
-            $join->on('applications.id', '=', 'latest_payment.application_id')
-                 ->whereRaw('latest_payment.created_at = (
-                     SELECT MAX(p2.created_at) 
-                     FROM payments p2 
-                     WHERE p2.application_id = applications.id
-                 )');
-        })
-        ->orderByRaw("CASE 
-                        WHEN latest_payment.payment_status = 'completed' THEN 1 
-                        ELSE 2 
-                    END, 
-                    COALESCE(latest_payment.payment_date, applications.created_at) DESC")
-        ->select('applications.*')
-        ->select('applications.*');         
+            ->orderByRaw("CASE 
+                            WHEN payments.payment_status = 'completed' THEN 1 
+                            ELSE 2 
+                        END, 
+                        COALESCE(payments.payment_date, payments.created_at) DESC")
+            ->select('payments.*', 'applications.id as application_id');
 
         $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
 
@@ -1860,25 +1852,15 @@ class HomeController extends Controller {
             $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
         }          
 
-        // Filter based on payment status (latest payment only)
+        // Filter based on payment status
         if ($statusFilter !== 'all') {
             if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {
-                $query->whereHas('payments', function($q) use ($statusFilter) {
-                    $q->where('payment_status', $statusFilter)
-                        ->whereRaw('payments.created_at = (
-                            SELECT MAX(p2.created_at) FROM payments p2 
-                            WHERE p2.application_id = payments.application_id
-                        )');
-                });
-            } elseif (in_array($statusFilter, ['incomplete','no_payment'])) {
-                $query->whereDoesntHave('payments');
+                $query->where('payments.payment_status', $statusFilter);
             }
         }
         
-        // Filter based on payment method (latest payment only)
+        // Filter based on payment method
         if ($methodFilter !== 'all') {
-
-            // Mapping for normal methods
             $methodMapping = [
                 'B2B' => 'FPX_B2B',
                 'B2C' => 'FPX_B2C',
@@ -1888,63 +1870,30 @@ class HomeController extends Controller {
             ];
 
             if ($methodFilter === 'BAUCAR BAYARAN') {
-                $query->whereHas('payments', function($q) {
-                    $q->where('payments.method', 'EFT')
-                    ->whereRaw('payments.created_at = (
-                        SELECT MAX(p2.created_at)
-                        FROM payments p2
-                        WHERE p2.application_id = payments.application_id
-                    )');
-                })
-                ->whereHas('client', function($clientQuery) {
-                    $clientQuery->where('accountType', 3);
-                });
-
+                $query->where('payments.method', 'EFT')
+                    ->whereHas('application.client', function($clientQuery) {
+                        $clientQuery->where('accountType', 3);
+                    });
             } else if ($methodFilter === 'EFT') {
-                // When filtering by EFT, include EFT, B2B, and B2C (all electronic payments)
-                $query->whereHas('payments', function($q) {
-                    $q->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C'])
-                        ->where('payments.created_at', function($q2) {
-                            $q2->selectRaw('MAX(created_at)')
-                                ->from('payments as p2')
-                                ->whereColumn('p2.application_id', 'payments.application_id');
-                        });
-                });
+                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
             } else {
                 $exactMethod = $methodMapping[$methodFilter] ?? null;
-
                 if ($exactMethod) {
-                    $query->whereHas('payments', function($q) use ($exactMethod) {
-                        $q->where('payments.method', '=', $exactMethod)
-                            ->where('payments.created_at', function($q2) {
-                                $q2->selectRaw('MAX(created_at)')
-                                    ->from('payments as p2')
-                                    ->whereColumn('p2.application_id', 'payments.application_id');
-                            });
-                    });
+                    $query->where('payments.method', '=', $exactMethod);
                 }
             }
         }
 
-        // ============ ADD DATE RANGE FILTER HERE ============
+        // Date range filter
         if ($dateFrom || $dateTo) {
-            $query->whereHas('payments', function($q) use ($dateFrom, $dateTo) {
-                // Only filter on latest payment
-                $q->whereRaw('payments.created_at = (
-                    SELECT MAX(p2.created_at) FROM payments p2 
-                    WHERE p2.application_id = payments.application_id
-                )');
-                
-                if ($dateFrom) {
-                    $q->whereDate('payments.payment_date', '>=', $dateFrom);
-                }
-                
-                if ($dateTo) {
-                    $q->whereDate('payments.payment_date', '<=', $dateTo);
-                }
-            });
+            if ($dateFrom) {
+                $query->whereDate('payments.payment_date', '>=', $dateFrom);
+            }
+            
+            if ($dateTo) {
+                $query->whereDate('payments.payment_date', '<=', $dateTo);
+            }
         }
-
 
         // Search filter
         if ($search) {
@@ -1954,15 +1903,15 @@ class HomeController extends Controller {
                     ->orWhere('applications.applicant', 'like', $like)
                     ->orWhere('applications.land_lot', 'like', $like)
                     ->orWhere('applications.final_amount', 'like', $like)
-                    ->orWhereHas('client', function($clientQuery) use ($like) {
+                    ->orWhereHas('application.client', function($clientQuery) use ($like) {
                         $clientQuery->where('userName', 'like', $like);
                     });
             });
         }
 
         $district = DB::table('district')->where('stat', 1)
-        ->where('idnegeri', 1)
-        ->orderBy('daerah_code', 'asc')->get();
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();
 
         $list = $query->paginate($perPage)->withQueryString();
 
@@ -1972,7 +1921,7 @@ class HomeController extends Controller {
             'perPage', 
             'isFinanceAdmin',
             'statusFilter',
-            'methodFilter' ,
+            'methodFilter',
             'district'
         ));     
     }

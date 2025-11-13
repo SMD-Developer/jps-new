@@ -410,16 +410,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                   @foreach ($list as $item)
+                                    @foreach ($list as $payment)
                                         @php
-                                            // Get latest payment
-                                            $latestPayment = $item->payments->sortByDesc('created_at')->first();
-
+                                            // Now $payment is the Payment model, get application from relationship
+                                            $item = $payment->application;
+                                            
                                             $paymentMethod = '-';
                                             $methodClass = 'method-pending';
 
-                                            if ($latestPayment) {
-                                                switch ($latestPayment->method) {
+                                            if ($payment) {
+                                                switch ($payment->method) {
                                                     case 'FPX_B2C':
                                                         $paymentMethod = 'B2C';
                                                         $methodClass = 'method-online';
@@ -437,8 +437,8 @@
                                                         $methodClass = 'method-offline';
                                                         break;
                                                     default:
-                                                        if (strpos($latestPayment->method, 'FPX') !== false) {
-                                                            $paymentMethod = str_replace('_', ' ', $latestPayment->method);
+                                                        if (strpos($payment->method, 'FPX') !== false) {
+                                                            $paymentMethod = str_replace('_', ' ', $payment->method);
                                                             $methodClass = 'method-online';
                                                         } else {
                                                             $paymentMethod = 'Online';
@@ -456,7 +456,7 @@
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>
-                                                {{ $latestPayment?->payment_date ? \Carbon\Carbon::parse($latestPayment->payment_date)->format('d M Y') : 'N/A' }}
+                                                {{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') : 'N/A' }}
                                             </td>
                                             <td>{{ $item->refference_no }}</td>
                                             <td>
@@ -509,10 +509,10 @@
                                                 @endphp
                                             </td>
                                             <td>
-                                                @if($latestPayment && in_array($latestPayment->payment_type, ['reprint', 'third_party']))
+                                                @if($payment && in_array($payment->payment_type, ['reprint', 'third_party']))
                                                     <span class="badge bg-warning text-dark">Salinan Resit</span>
-                                                @elseif($latestPayment && $latestPayment->payment_type)
-                                                    <span class="badge bg-info text-dark">{{ ucfirst($latestPayment->payment_type) }}</span>
+                                                @elseif($payment && $payment->payment_type)
+                                                    <span class="badge bg-info text-dark">{{ ucfirst($payment->payment_type) }}</span>
                                                 @else
                                                     Caruman Parit
                                                 @endif
@@ -526,8 +526,8 @@
                                             <td>
                                                 @php
                                                     $displayAmount = 'N/A';
-                                                    if ($latestPayment && $latestPayment->amount) {
-                                                        $displayAmount = number_format($latestPayment->amount, 2);
+                                                    if ($payment && $payment->amount) {
+                                                        $displayAmount = number_format($payment->amount, 2);
                                                     } elseif ($item->final_amount) {
                                                         $displayAmount = number_format($item->final_amount, 2);
                                                     }
@@ -556,20 +556,20 @@
                                                     -
                                                 @endif
                                             </td>
-                                            <td>{{ $latestPayment && $latestPayment->transaction_id ? $latestPayment->transaction_id : '-' }}</td>
+                                            <td>{{ $payment && $payment->transaction_id ? $payment->transaction_id : '-' }}</td>
                                             
                                             <td>
-                                                @if ($latestPayment && $latestPayment->payment_status)
-                                                    @if ($latestPayment->method === 'FPX_B2B' && $latestPayment->payment_status === 'pending_authorization')
+                                                @if ($payment && $payment->payment_status)
+                                                    @if ($payment->method === 'FPX_B2B' && $payment->payment_status === 'pending_authorization')
                                                         {{ trans('app.payment_pending') }}
-                                                    @elseif ($latestPayment->payment_status == 'completed')
+                                                    @elseif ($payment->payment_status == 'completed')
                                                         {{ trans('app.paids') }}
-                                                    @elseif ($latestPayment->payment_status == 'in_review')
+                                                    @elseif ($payment->payment_status == 'in_review')
                                                         {{ trans('app.payment_in_review') }}
-                                                    @elseif ($latestPayment->payment_status == 'failed')
+                                                    @elseif ($payment->payment_status == 'failed')
                                                         {{ trans('app.payment_failed')}}
                                                     @else
-                                                        @lang('app.' . $latestPayment->payment_status)
+                                                        @lang('app.' . $payment->payment_status)
                                                     @endif
                                                 @else
                                                     {{ trans('app.unpaid') }}
@@ -579,13 +579,13 @@
                                             <td>
                                                 <div class="sbtn">
                                                     {{-- Don't show anything if payment status is 'failed' --}}
-                                                    @if (!$latestPayment || $latestPayment->payment_status !== 'failed')
+                                                    @if (!$payment || $payment->payment_status !== 'failed')
                                                         
                                                         {{-- If payment exists and status is completed, show view receipt --}}
                                                         @if (
                                                             $canApproverViewReciept && 
-                                                            $latestPayment && 
-                                                            $latestPayment->payment_status === 'completed'
+                                                            $payment && 
+                                                            $payment->payment_status === 'completed'
                                                         )
                                                             <a href="{{ route('user_original_receipts', ['application_id' => $item->id]) }}" 
                                                             class="btn btn-primary btn-sm">
@@ -596,8 +596,8 @@
                                                         {{-- Finance admin can edit in_review status --}}
                                                         @if (
                                                             $isFinanceAdmin && 
-                                                            $latestPayment &&  
-                                                            $latestPayment->payment_status === 'in_review'
+                                                            $payment &&  
+                                                            $payment->payment_status === 'in_review'
                                                         )
                                                             <button type="button" 
                                                                     class="btn btn-edit btn-sm"
@@ -610,10 +610,10 @@
                                                         {{-- If payment is NOT completed AND NOT in_review, show edit button for Finance Admin --}}
                                                         @if (
                                                             $isFinanceAdmin && 
-                                                            $latestPayment &&
-                                                            $latestPayment->payment_status !== 'completed' &&
-                                                            $latestPayment->payment_status !== 'in_review' &&
-                                                            $latestPayment->payment_status !== 'failed'
+                                                            $payment &&
+                                                            $payment->payment_status !== 'completed' &&
+                                                            $payment->payment_status !== 'in_review' &&
+                                                            $payment->payment_status !== 'failed'
                                                         )
                                                             <button type="button" class="btn btn-edit btn-sm"
                                                                 data-bs-toggle="modal" data-bs-target="#editPaymentModal"
@@ -621,7 +621,7 @@
                                                                 data-reference-no="{{ $item->refference_no }}"
                                                                 data-applicant="{{ $item->applicant }}"
                                                                 data-amount="{{ $item->final_amount }}"
-                                                                data-current-status="{{ $latestPayment->payment_status }}"
+                                                                data-current-status="{{ $payment->payment_status }}"
                                                                 data-payment-method="{{ $paymentMethod }}"
                                                                 title="{{ trans('app.edit_payment_status') }}">
                                                                 <i class="fa fa-edit"></i>
@@ -631,7 +631,7 @@
                                                         {{-- Additional condition for cases where no payment exists at all --}}
                                                         @if (
                                                             $isFinanceAdmin && 
-                                                            !$latestPayment
+                                                            !$payment
                                                         )
                                                             <button type="button" class="btn btn-edit btn-sm"
                                                                 data-bs-toggle="modal" data-bs-target="#editPaymentModal"
