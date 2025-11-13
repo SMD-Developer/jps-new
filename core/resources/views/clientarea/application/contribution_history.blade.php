@@ -228,8 +228,8 @@
                                                      <div class="sbtn">
                                                         <a href="{{ route('reprint.payment.receipt', $application->id) }}"
                                                         class="btn btn-primary btn-sm"
-                                                        style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 230px; text-align: center;">
-                                                        <strong>{{ __('Print reprint payment receipt') }}</strong>
+                                                        style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
+                                                        <strong>{{ __('Cetak Resit Bayaran') }}</strong>
                                                         </a>
                                                     </div>
 

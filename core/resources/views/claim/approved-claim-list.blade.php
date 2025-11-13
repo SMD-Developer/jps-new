@@ -358,9 +358,11 @@
                                                     <span class="status-badge status-secondary">N/A</span>
                                                 @endif
                                             </td>
+                                            <td>
+                                                {{ $item->payment_amount }} <br>
+                                                <small>{{ $item->verified_date ? \Carbon\Carbon::parse($item->verified_date)->format('d-m-Y') : '-' }}</small>
+                                            </td>
 
-
-                                            <td>{{$item->payment_amount}}</td>
                                             <td>
                                                 @if ($financeStaff)
                                                 <div class="sbtn">
