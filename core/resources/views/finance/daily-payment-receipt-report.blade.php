@@ -523,11 +523,15 @@
                                         @php 
                                         $grandTotal = 0;
                                         $totalCharges = 0;
-                                         @endphp
+                                        @endphp
                                         @foreach ($applications as $index => $application)
                                             @php
                                                 $grandTotal += $application->payment_amount;
-                                                $amount = $application->payment_amount / 2;
+                                                $isReprint = strtolower(trim($application->payment_type ?? '')) === 'reprint';
+                                                
+                                                // For reprint, use full amount; otherwise split
+                                                $amount = $isReprint ? $application->payment_amount : ($application->payment_amount / 2);
+                                                
                                                 $method = $application->methods ?? '';
                                                 if (stripos($method, 'FPX_B2B') !== false) {
                                                     $transactionCategory = 'B2B';
@@ -545,23 +549,30 @@
                                                     $charge = 0;
                                                 }
                                                 $totalCharges += $charge;
+                                                
+                                                // Determine KOD HASIL based on payment type
+                                                $kodHasil = $isReprint ? 'H0272499' : 'H0161304';
+                                                
+                                                // Determine rowspan based on payment type
+                                                $rowspan = $isReprint ? '1' : '2';
                                             @endphp
+                                            
                                             <tr>
-                                                <td rowspan="2">{{ $index + 1 }}</td>
-                                                <td rowspan="2">{{ $application->receipt_numbers ?? 'N/A' }}</td>
-                                                <td rowspan="2">{{ $application->payment_date ? date('d/m/Y', strtotime($application->payment_date)) : 'N/A' }}</td>
-                                                <td rowspan="2">{{ $application->payment_created_at ? date('H:i:s', strtotime($application->payment_created_at)) : 'N/A' }}</td>
-                                                <td rowspan="2">
+                                                <td rowspan="{{ $rowspan }}">{{ $index + 1 }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $application->receipt_numbers ?? 'N/A' }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $application->payment_date ? date('d/m/Y', strtotime($application->payment_date)) : 'N/A' }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $application->payment_created_at ? date('H:i:s', strtotime($application->payment_created_at)) : 'N/A' }}</td>
+                                                <td rowspan="{{ $rowspan }}">
                                                     {{ strtoupper($application->land_lot) }},
                                                     {{ strtoupper($application->division_name) }},
                                                     DAERAH {{ strtoupper($application->district_name) }}, SELANGOR
                                                 </td>
-                                                <td rowspan="2">{{ strtoupper($application->applicant ?? 'N/A') }}</td>
-                                                <td rowspan="2">{{ strtoupper($application->account_type_name) }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ strtoupper($application->applicant ?? 'N/A') }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>G001</td>
-                                                <td>H0161304</td>
+                                                <td>{{ $kodHasil }}</td>
                                                 <td>{{ number_format($amount, 2) }}</td>
-                                                <td rowspan="2">
+                                                <td rowspan="{{ $rowspan }}">
                                                     @php
                                                         $method = $application->methods ?? '';
 
@@ -572,15 +583,19 @@
                                                         }
                                                     @endphp
                                                 </td>
-                                                <td rowspan="2">N/A</td>
-                                                <td rowspan="2">{{ $transactionCategory }}</td>
-                                                <td rowspan="2">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td>
+                                                <td rowspan="{{ $rowspan }}">N/A</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $transactionCategory }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td>
                                             </tr>
-                                            <tr>
-                                                <td>L453</td>
-                                                <td>H0161304</td>
-                                                <td>{{ number_format($amount, 2) }}</td>
-                                            </tr>
+                                            
+                                            @if (!$isReprint)
+                                                {{-- Only show second row if NOT reprint --}}
+                                                <tr>
+                                                    <td>L453</td>
+                                                    <td>{{ $kodHasil }}</td>
+                                                    <td>{{ number_format($amount, 2) }}</td>
+                                                </tr>
+                                            @endif
                                         @endforeach
 
                                         <!-- Grand Total Row -->

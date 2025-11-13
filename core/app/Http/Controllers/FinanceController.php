@@ -531,7 +531,8 @@ class financeController extends Controller {
                 'payments.payment_date',
                 'payments.method as methods',
                 'payments.created_at as payment_created_at',
-                'payments.application_id' // Add this to check for orphaned payments
+                'payments.application_id', 
+                'payments.payment_type'
             )
             ->where('payments.payment_status', 'completed');
 
