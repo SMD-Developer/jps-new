@@ -107,13 +107,12 @@ class HomeController extends Controller {
 		
 	public function applicationSubmit(Request $request){
         $logged_user = auth()->guard('user')->user();
-    
+
         try {
-            // Validate the request
-            $this->validate($request, [
+            // Base validation rules
+            $rules = [
                 "uploade_date" => "required",
                 "applicant" => "required",
-                "identities" => "required",
                 "address" => "required",
                 "postal_code" => 'required|numeric|digits_between:4,8',
                 "phone" => "numeric|digits_between:10,15",
@@ -129,7 +128,15 @@ class HomeController extends Controller {
                 "project_name" => "required"
                 // "permission_plan" => "required|mimes:pdf|max:15000",
                 // "letter_of_support" => "required|mimes:pdf|max:15000",
-            ], [
+            ];
+
+            // Only require 'identities' if applicant_type is NOT 3
+            if ($request->input('applicant_type') != '3') {
+                $rules['identities'] = 'required';
+            }
+
+            // Validate the request
+            $this->validate($request, $rules, [
                 "uploade_date.required" => trans('app.uploade_date_required'),
                 "applicant.required" => trans('app.applicant_required'),
                 "identities.required" => trans('app.identities_required'),
@@ -169,39 +176,39 @@ class HomeController extends Controller {
             $request['user_id'] = $client->client_id;
             $uploadedFiles = [];
             $uploadPath = public_path('pdf');
-    
+
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0775, true);
             }
             if (!is_writable($uploadPath)) {
                 throw new \Exception("Upload path is not writable: " . $uploadPath);
             }
-    
+
             if ($request->hasFile('land_grant')) {
                 $landGrant = $request->file('land_grant');
                 $landGrantFileName = $landGrant->getClientOriginalName();
                 $landGrant->move($uploadPath, $landGrantFileName);
                 $uploadedFiles['land_grant'] = 'pdf/' . $landGrantFileName;
             }
-    
+
             if ($request->hasFile('permission_plan')) {
                 $permissionPlan = $request->file('permission_plan');
                 $permissionPlanFileName = $permissionPlan->getClientOriginalName();
                 $permissionPlan->move($uploadPath, $permissionPlanFileName);
                 $uploadedFiles['permission_plan'] = 'pdf/' . $permissionPlanFileName;
             }
-    
+
             if ($request->hasFile('letter_of_support')) {
                 $letterOfSupport = $request->file('letter_of_support');
                 $letterOfSupportFileName = $letterOfSupport->getClientOriginalName();
                 $letterOfSupport->move($uploadPath, $letterOfSupportFileName);
                 $uploadedFiles['letter_of_support'] = 'pdf/' . $letterOfSupportFileName;
             }
-    
+
             $requestData = array_merge($request->except('_token'), $uploadedFiles, ['status' => 1]);
-    
+
             $applicationId = DB::table('applications')->insertGetId($requestData);
-    
+
             return response()->json([
                 'success' => true,
                 'message' => __('app.the_application_has_been_sent'),

@@ -629,13 +629,19 @@
                 $('.invalid-feedback').remove();
                 $('.form-control').removeClass('is-invalid');
 
+                const selectedAccountType = $('#applicant_type').val();
+
                 // Check required fields
                 const requiredFields = [
-                    'applicant', 'identities', 'address', 'postal_code', 
+                    'applicant',  'address', 'postal_code', 
                     'city', 'state', 'district', 'email',
                     'land_lot', 'land_area', 'land_unit', 'land_district', 'land_state',
                     'land_grant', 'project_name'
                 ];
+
+                if (selectedAccountType != '3') {
+                    requiredFields.push('identities');
+                }
 
                 requiredFields.forEach(field => {
                     const value = $(`[name="${field}"]`).val();
