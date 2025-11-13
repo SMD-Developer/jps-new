@@ -175,19 +175,28 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $application->created_at->format('d/m/Y') }}</td>
                                             <td>{{ $application->refference_no ?? '-' }}</td>
-                                            <td>
-                                                @if ($application->client)
-                                                    @php
-                                                        $accountTypes = [
-                                                            1 => 'Individu',
-                                                            2 => 'Pemaju',
-                                                            3 => 'Agensi Kerajaan',
-                                                        ];
-                                                    @endphp
-                                                    {{ $accountTypes[$application->client->accountType] ?? 'N/A' }}
-                                                @else
-                                                    N/A
-                                                @endif
+                                             <td>
+                                                    @if ($application->client)
+                                                        @php
+                                                            $accountTypes = [
+                                                                1 => 'Individu',
+                                                                2 => 'Pemaju',
+                                                                3 => 'Agensi Kerajaan',
+                                                                4 => 'Perunding'
+                                                            ];
+                                                            
+                                                            $clientType = $accountTypes[$application->client->accountType] ?? 'N/A';
+                                                            $applicantType = $accountTypes[$application->applicant_type] ?? null;
+                                                            
+                                                            if ($applicantType && $applicantType != $clientType) {
+                                                                echo $clientType . '-' . $applicantType;
+                                                            } else {
+                                                                echo $clientType;
+                                                            }
+                                                        @endphp
+                                                    @else
+                                                        N/A
+                                                    @endif
                                             </td>
                                             <td>{{ $application->applicant }}</td>
                                             <td>{{ $application->land_lot }}</td>

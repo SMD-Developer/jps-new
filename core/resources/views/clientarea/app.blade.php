@@ -343,7 +343,7 @@
             function showWarning() {
                 Swal.fire({
                     title: 'Peringatan',
-                    text: 'Sesi anda akan ditamatkan dalam masa 1 minit Kerana tiada sebarang aktiviti',
+                    text: 'Sesi anda akan ditamatkan dalam masa 1 minit kerana tiada sebarang aktiviti',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Ya',

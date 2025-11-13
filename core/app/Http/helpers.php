@@ -985,7 +985,7 @@ if(! function_exists('getMenus')){
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.contribution_payment_report'),
-                                'route' =>  url('#'),
+                                'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
@@ -1360,8 +1360,8 @@ if(! function_exists('getMenus')){
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.contribution_payment_report'),
-                                'route' =>  url('#'),
-                                'menu_active' => request()->is('') ? 'active' : '',
+                                'route' =>  url('claim-contribution-report-search'),
+                                'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
                             // [
