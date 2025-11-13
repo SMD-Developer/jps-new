@@ -508,13 +508,13 @@
                                                     }
                                                 @endphp
                                             </td>
-                                           <td>
-                                                @if($latestPayment && $latestPayment->payment_type === 'reprint')
-                                                    <span class="badge bg-warning text-dark">Reprint</span>
+                                            <td>
+                                                @if($latestPayment && in_array($latestPayment->payment_type, ['reprint', 'third_party']))
+                                                    <span class="badge bg-warning text-dark">Salinan Resit</span>
                                                 @elseif($latestPayment && $latestPayment->payment_type)
                                                     <span class="badge bg-info text-dark">{{ ucfirst($latestPayment->payment_type) }}</span>
                                                 @else
-                                                    -
+                                                    Caruman Parit
                                                 @endif
                                             </td>
 
@@ -523,7 +523,18 @@
                                                 Daerah
                                                 {{ $item->landDistrict->daerah ?? '' }}
                                             </td>
-                                            <td>{{ $item->final_amount ? number_format($item->final_amount, 2) : 'N/A' }}</td>
+                                            <td>
+                                                @php
+                                                    $displayAmount = 'N/A';
+                                                    if ($latestPayment && $latestPayment->amount) {
+                                                        $displayAmount = number_format($latestPayment->amount, 2);
+                                                    } elseif ($item->final_amount) {
+                                                        $displayAmount = number_format($item->final_amount, 2);
+                                                    }
+                                                @endphp
+                                                
+                                                {{ $displayAmount }}
+                                            </td>
                                             <!-- ✅ First Column - EFT ONLY -->
                                             <td>
                                                 @if(in_array($paymentMethod, ['EFT', 'B2B', 'B2C']))
