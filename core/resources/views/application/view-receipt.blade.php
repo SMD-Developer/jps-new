@@ -589,9 +589,10 @@
                                                             $payment && 
                                                             $payment->payment_status === 'completed'
                                                         )
-                                                            <a href="{{ route('user_original_receipts', ['application_id' => $item->id]) }}" 
-                                                            class="btn btn-primary btn-sm">
-                                                                <strong>{{ trans('app.view_receipt') }}</strong>
+                                                            
+                                                             <a href="{{ route('user_original_receipts', ['application_id' => $item->id, 'payment_uuid' => $payment->uuid]) }}" 
+                                                                class="btn btn-primary btn-sm">
+                                                                    <strong>{{ trans('app.view_receipt') }}</strong>
                                                             </a>
                                                         @endif
                                                         

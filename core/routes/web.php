@@ -336,7 +336,7 @@ Route::group(['middleware' => 'install'], function(){
         Route::post('search', 'HomeController@searchFilter')->name('search-filter');
         Route::get('user-details/{id}', 'HomeController@userDetails')->name('user_details');
         Route::get('user-details-update/{id}', 'HomeController@userDetailsUpdate')->name('user_details_update');
-        Route::get('user-receipts-original/{application_id}','HomeController@userReceiptView')->name('user_original_receipts');
+        Route::get('user-receipts-original/{application_id}/{payment_uuid}','HomeController@userReceiptView')->name('user_original_receipts');
         Route::put('user-details-update/{id}', 'HomeController@updateUserDetails')->name('update_user_details');
         // Route::get('approver_receiptoriginal','HomeController@approver_receiptoriginal')->name('approver_receiptoriginal');
         Route::get('notification','HomeController@notification')->name('notification');

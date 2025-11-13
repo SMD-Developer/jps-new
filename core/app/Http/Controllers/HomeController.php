@@ -1935,13 +1935,9 @@ class HomeController extends Controller {
     }
     
     
-    public function userReceiptView($application_id)     
+    public function userReceiptView($application_id, $payment_uuid)     
     {         
-        $application = Application::with(['payment' => function($query) {
-                $query->where('payment_status', 'completed')
-                    ->latest('created_at');
-            }])
-            ->select(
+        $application = Application::select(
                 'applications.*',
                 'state.negeri',
                 'district.daerah'
@@ -1950,29 +1946,24 @@ class HomeController extends Controller {
             ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
             ->where('applications.id', $application_id)
             ->firstOrFail();
-            
+        
+        // Get the SPECIFIC payment record by uuid column
         $completedPayment = $application->payment()
+            ->where('uuid', $payment_uuid) // Using uuid column instead of id
             ->where('payment_status', 'completed')
-            ->latest('created_at')
-            ->first();
+            ->firstOrFail();
         
         if ($completedPayment) {
             $application->payment_status = $completedPayment->payment_status;
             $application->payment_method = $completedPayment->method;
-            $application->payment_type = $completedPayment->payment_type;
+            $application->payment_type = $completedPayment->payment_type; // 'reprint' or null/other
             $application->payment_amount = $completedPayment->amount;
             $application->transaction_id = $completedPayment->transaction_id;
             $application->receipt_number = $completedPayment->receipt_number;
             $application->payment_date = $completedPayment->created_at;
             $application->gateway_response = $completedPayment->gateway_response;
-
-            $totalCompletedPayments = $application->payment()
-            ->where('payment_status', 'completed')
-            ->count();
-
-            $application->is_reprint = $totalCompletedPayments > 1;
             
-             if ($completedPayment->gateway_response) {
+            if ($completedPayment->gateway_response) {
                 $gatewayResponse = is_array($completedPayment->gateway_response) 
                     ? $completedPayment->gateway_response 
                     : json_decode($completedPayment->gateway_response, true);
@@ -1984,7 +1975,6 @@ class HomeController extends Controller {
                     
                     $application->fpx_payment_time = $formattedTime;
                 }
-
                 elseif (isset($gatewayResponse['processed_at'])) {
                     $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
                         ->setTimezone('Asia/Kuala_Lumpur')
