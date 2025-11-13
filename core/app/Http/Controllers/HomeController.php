@@ -1965,6 +1965,12 @@ class HomeController extends Controller {
             $application->receipt_number = $completedPayment->receipt_number;
             $application->payment_date = $completedPayment->created_at;
             $application->gateway_response = $completedPayment->gateway_response;
+
+            $totalCompletedPayments = $application->payment()
+            ->where('payment_status', 'completed')
+            ->count();
+
+            $application->is_reprint = $totalCompletedPayments > 1;
             
              if ($completedPayment->gateway_response) {
                 $gatewayResponse = is_array($completedPayment->gateway_response) 
