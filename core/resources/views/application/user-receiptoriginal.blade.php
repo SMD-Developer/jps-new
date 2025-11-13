@@ -202,7 +202,7 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
-                                     @if($application->is_reprint)
+                                     @if($application->payment_type === 'reprint')
                                         PERMOHONAN SALINAN RESIT CARUMAN PARIT DI ATAS <br>
                                     @endif
                                     {{ strtoupper($application->land_lot) }},
@@ -257,14 +257,14 @@
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    @if($application->is_reprint)
+                                    @if($application->payment_type === 'reprint')
                                         G001
                                     @else
                                         L453<br>G001
                                     @endif
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    @if($application->is_reprint)
+                                    @if($application->payment_type === 'reprint')
                                         H0272499
                                     @else
                                         H0161304<br>H0161304
