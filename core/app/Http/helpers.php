@@ -353,7 +353,7 @@ if(! function_exists('getMenus')){
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.contribution_payment_report'),
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
@@ -637,7 +637,7 @@ if(! function_exists('getMenus')){
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.contribution_payment_report'),
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
@@ -984,9 +984,9 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.contribution_payment_report'),
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
-                                'menu_active' => request()->is('') ? 'active' : '',
+                                'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
                             // [
@@ -1359,7 +1359,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.contribution_payment_report'),
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
@@ -1661,7 +1661,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.contribution_payment_report'),
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('claim-contribution-report-search', 'claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
@@ -1976,7 +1976,7 @@ if(! function_exists('getMenus')){
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.contribution_payment_report'),
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
