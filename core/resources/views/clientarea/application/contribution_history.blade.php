@@ -342,27 +342,27 @@
         });
 
         // Handle reprint receipt clicks
-            document.querySelectorAll('.reprint-receipt').forEach(button => {
-        button.addEventListener('click', function() {
-            const applicationId = this.getAttribute('data-application-id');
+        document.querySelectorAll('.reprint-receipt').forEach(button => {
+            button.addEventListener('click', function() {
+                const applicationId = this.getAttribute('data-application-id');
 
-            Swal.fire({
-                title: '@lang('app.Are_you_sure_you_want_to_reprint')',
-                text: '@lang('app.Note_:_Receipt_reprints_are_subject_to_a_charge_RM_10.00')',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '@lang("app.yes")',
-                cancelButtonText: '@lang("app.no")'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirect to payment selection page for reprint payment
-                    window.location.href = '{{ route('payment.selection', '__ID__') }}'.replace('__ID__', applicationId) + '?type=reprint';
-                }
+                Swal.fire({
+                    title: '@lang('app.Are_you_sure_you_want_to_reprint')',
+                    text: '@lang('app.Note_:_Receipt_reprints_are_subject_to_a_charge_RM_10.00')',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '@lang("app.yes")',
+                    cancelButtonText: '@lang("app.no")'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to payment selection page for reprint payment
+                        window.location.href = '{{ route('payment.selection', '__ID__') }}'.replace('__ID__', applicationId) + '?type=reprint';
+                    }
+                });
             });
         });
-    });
 
         // Handle print receipt clicks
         document.querySelectorAll('.print-receipt').forEach(button => {
@@ -394,9 +394,9 @@
                             button.querySelector('strong').textContent = '@lang("app.print_receipt")';
                             sessionStorage.removeItem(`printed_${applicationId}`);
                         }
-                        // Redirect with print parameter (original)
-                        window.location.href = '{{ route('user_copy_receipt', '__ID__') }}'
-                            .replace('__ID__', applicationId) + '?type=original&t=' + Date.now();
+                        // Redirect to original receipt route
+                        window.location.href = '{{ route('original_receipts', '__ID__') }}'
+                            .replace('__ID__', applicationId);
                     })
                     .catch(error => {
                         console.error('Error:', error);
