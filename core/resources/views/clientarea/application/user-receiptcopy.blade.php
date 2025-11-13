@@ -240,11 +240,24 @@
                                             <small>{{ $application->transaction_id }}</small>
                                         @endif
                                     @else
-                                        {{ $application->payment_method }}
+                                        @php
+                                            $methodLabel = match($application->payment_method) {
+                                                'FPX_B2C' => 'EFT_B2C',
+                                                'FPX_B2B' => 'EFT_B2B',
+                                                default => $application->payment_method,
+                                            };
+                                        @endphp
+                                        {{ $methodLabel }}
                                     @endif
                                 </td>
                                  <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
-                                    {{ $application->transaction_id ?? 'N/A' }}<br>
+                                    @php
+                                        $txnId = $application->transaction_id ?? 'N/A';
+                                        if ($txnId !== 'N/A' && str_starts_with($txnId, 'TXN-')) {
+                                            $txnId = str_replace('TXN-', '', $txnId);
+                                        }
+                                    @endphp
+                                    {{ $txnId }}<br>
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
@@ -303,7 +316,7 @@
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
-                                    {{strtoupper( \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount)) }} SAHAJA
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->final_amount)) }} SAHAJA
                                 </div>
                             </div>
                             <div class="info-row">

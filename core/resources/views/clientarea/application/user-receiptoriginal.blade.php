@@ -36,6 +36,10 @@
       .receipt-table th {
         font-size: 14px; 
     }
+
+    .custome-text{
+        font-size:14px;
+    }
     
     
      .receipt-footer .info-row {
@@ -120,10 +124,27 @@
     button.btn.btn-primary.float-right {
         width: max-content;
     }
+    
+        @media print {
+        .no-print, .container.pb-5 {
+            display: none !important;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        .content {
+            background-color: white;
+            margin-bottom: 0;
+        }
+    }
 </style>
 <title>@lang('app.receipt') | JPS</title>
 @section('content')
-    <div class="col-md-12 content-header">
+    <div class="col-md-12 content-header no-print">
         <h5><i class="fa fa-file"></i> @lang('app.receipt')</h5>
     </div>
     <section class="content">
@@ -144,7 +165,12 @@
                         <div class="col-5 px-0">
                             <p class="mb-0 pl-3" style="white-space: nowrap;"><strong>KERAJAAN NEGERI SELANGOR DARUL EHSAN</strong></p>
                             <p class="mb-0 text-center"><strong>RESIT RASMI</strong></p>
-                            <p class="text-center"><strong>ASAL</strong></p>
+                            <p class="text-center">
+                                <strong>
+                                        ASAL
+                                </strong>
+                            </p>
+                            <!--<p class="text-center"><strong>ASAL</strong></p>-->
                         </div>
                         <!--<div class="col-4 text-right">-->
                         <!--    <p class="mb-0">(Kew.38E 03-2021)</p>-->
@@ -152,47 +178,6 @@
                     </div>
                     <div class="receipt-container"
                         style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
-                        <!--<div class="receipt-header">-->
-                        <!--    <p><strong>DITERIMA DARIPADA:</strong> <span-->
-                        <!--            style="display: inline-block; min-width: 300px; margin-left: 49px;">SYARIKAT-->
-                        <!--            {{ strtoupper($application->applicant) }}</span></p>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 202px;"><strong>NO. KAD PENGENALAN:</strong></div>-->
-                        <!--        <div>{{ $application->identities }}</div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 200px;"><strong>NO. DAFTAR PERNIAGAAN:</strong></div>-->
-                        <!--        <div></div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 200px;"><strong>ALAMAT:</strong></div>-->
-                        <!--        <div>-->
-                        <!--            {{ $application->address }}<br>-->
-                        <!--            {{ $application->city }}<br>-->
-                        <!--            {{ $application->postal_code }}<br>-->
-                        <!--            {{ $application->negeri ?? 'N/A' }}-->
-                        <!--        </div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 200px;"><strong>NOMBOR RESIT:</strong></div>-->
-                        <!--        <div>25JPSSEL031000001</div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 200px;"><strong>TARIKH / MASA:</strong></div>-->
-                        <!--        <div class="mx-0">{{ $application->created_at->format('d/m/Y h:i:s A') }}</div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 20px;">-->
-                        <!--        <div style="width: 200px;"><strong>PERIHAL TERIMAAN:</strong></div>-->
-                        <!--        <div>{{ $application->land_lot }} ({{ $application->hectare }}HEKTAR) DI MUKIM-->
-                        <!--            {{ $application->negeri ?? 'N/A' }}, DAERAH {{ $application->daerah ?? 'N/A' }}</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
                         <div class="receipt-header">
                             <div class="info-row">
                                 <div class="label">DITERIMA DARIPADA</div>
@@ -212,38 +197,33 @@
                                     {{ strtoupper($application->address) }}<br>
                                     {{ strtoupper($application->city) }}<br>
                                     {{ strtoupper($application->postal_code) }}<br>
-                                    {{ strtoupper($application->negeri ?? 'N/A') }}
+                                    {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">NOMBOR RESIT</div>
-                                <div class="value">{{ $application->reciept_number }}</div>
+                                <div class="value">{{ $application->receipt_number }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
-                                <div class="value">{{ $application->created_at->format('d/m/Y h:i:s A') }}</div>
+                                <div class="value">{{ $application->fpx_payment_time ?? $application->payment_date }}</div>
                             </div>
-                            <!--<div class="info-row" style="margin-bottom: 20px;">-->
-                            <!--    <div class="label">PERIHAL TERIMAAN</div>-->
-                            <!--    <div class="value">{{ $application->land_lot }} ({{ $application->hectare }}HEKTAR) DI-->
-                            <!--        MUKIM {{ $application->negeri ?? 'N/A' }}, DAERAH {{ $application->daerah ?? 'N/A' }}-->
-                            <!--    </div>-->
-                            <!--</div>-->
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
-                                    {{ $application->land_lot }}
+                                    {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
-                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A') }}, DAERAH
-                                    {{ strtoupper($application->daerah ?? 'N/A') }}
+                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A' )}}, DAERAH
+                                    {{ strtoupper($application->daerah ?? 'N/A') }}<br>
+                                    ({{ $application->refference_no ?? 'N/A'}})
                                 </div>
                             </div>
                         </div>
 
                         <table class="receipt-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                             <tr style="background-color: #f2f2f2;">
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">BILL</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">BIL</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">CARA BAYARAN</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">NO RUJUKAN /<br>TARIKH
                                 </th>
@@ -252,30 +232,51 @@
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">AMAUN (RM)</th>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    {{ $application->id }}</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">FPX</td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    {{ $application->refference_no }}<br>
-                                    {{ $application->created_at->format('d/m/Y') }}
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">1</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    @if($application->payment_method === 'cheque')
+                                        Cek<br>
+                                        @if(!empty($application->transaction_id))
+                                            <small>{{ $application->transaction_id }}</small>
+                                        @endif
+                                    @else
+                                        @php
+                                            $methodLabel = match($application->payment_method) {
+                                                'FPX_B2C' => 'EFT_B2C',
+                                                'FPX_B2B' => 'EFT_B2B',
+                                                default => $application->payment_method,
+                                            };
+                                        @endphp
+                                        {{ $methodLabel }}
+                                    @endif
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    L453<br><br>G001
+                                  <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
+                                    @php
+                                        $txnId = $application->transaction_id ?? 'N/A';
+                                        if ($txnId !== 'N/A' && str_starts_with($txnId, 'TXN-')) {
+                                            $txnId = str_replace('TXN-', '', $txnId);
+                                        }
+                                    @endphp
+                                    {{ $txnId }}<br>
+                                    {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
-                                    H0161304<br><br>H0161304
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    L453<br>G001
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                                    {{ number_format($application->final_amount / 2, 2) }}<br><br>
-                                    {{ number_format($application->final_amount / 2, 2) }}
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    H0161304<br>H0161304
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
+                                    {{ number_format($application->payment_amount  / 2, 2) }}<br>
+                                    {{ number_format($application->payment_amount  / 2, 2) }}
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="5"
-                                    style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;">
+                                    style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">
                                     JUMLAH KESELURUHAN </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    {{ number_format($application->final_amount, 2) }}
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;" class="custome-text">
+                                    {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
                         </table>
@@ -313,13 +314,13 @@
                         <!--</div>-->
                          <div class="receipt-footer">
                             <div class="info-row">
-                                <div class="label">Ringgit Malaysia</div>
+                                <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
                                     {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->final_amount)) }} SAHAJA
                                 </div>
                             </div>
                             <div class="info-row">
-                                <div class="label">Jabatan</div>
+                                <div class="label">JABATAN</div>
                                 <div class="value">JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>
                             </div>
                             <div class="info-row">
@@ -342,26 +343,24 @@
                             <p class="text-center">INI ADALAH CETAKAN KOMPUTER DAN TIDAK PERLU DITANDATANGANI </p>
                         </div>
                     </div>
-                    <!--<div class="row">-->
-                    <!--    <div class="col-12">-->
-                    <!--        <p class="text-center">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>-->
-                    <!--    </div>-->
-                    <!--</div>-->
+                    <div class="row">
+                        <!--<div class="col-12">-->
+                        <!--    <p class="text-center">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>-->
+                        <!--</div>-->
+                    </div>
                      <div class="row mb-5 mt-5">
-                         <div class="col-9">
-                            <p class="">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT</p>
-                        </div>
                         <div class="col-9">
+                            <p class="text-left">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>
                             <p class="">NO KELULUSAN PERBENDAHARAAN : PWN.SEL.600-5/1/1 JLD.1 (49)</p>
                         </div>
-                        <!--<div class="col-3 ml-auto text-right pr-0">-->
-                        <!--    <p class="">JANM 11 </p>-->
-                        <!--</div>-->
+                        <div class="col-3 ml-auto text-right pr-0">
+                            <!--<p class="">JANM 11 </p>-->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container pb-5">
+        <div class="container pb-5 no-print">
             <div class="row mb-3 justify-content-end">
                 <div class="col-auto">
                     <button type="button" class="btn btn-success mx-2" onclick="window.history.back();">
@@ -413,40 +412,7 @@
         });
 
         document.getElementById('printButton').addEventListener('click', function() {
-            $.ajax({
-                url: '{{ route("update.print.status", $application->id) }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}' 
-                },
-                success: function(response) {
-                    if (response.success) {
-                        console.log('Print status count updated to: ' + response.print_status_count);
-                        window.print();
-                    } else {
-                        console.error('Failed to update print status');
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Failed to update print status. Printing anyway.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.print();
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.error('AJAX error:', xhr);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'An error occurred while updating print status. Printing anyway.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.print(); 
-                    });
-                }
-            });
+            window.print();
         });
     </script>
 @endsection
