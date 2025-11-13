@@ -169,7 +169,7 @@
         
       @if($transactionStatus == 'SUCCESSFUL')
         <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
-        <a href="{{ route('user-receipt-original', ['id' => $application_id]) }}" 
+        <a href="route('original_receipts', ['application_id' => $application_id]) }}" 
            class="btn btn-outline-primary me-2 rounded-pill px-5">
             @lang('app.view_receipts')
         </a>
