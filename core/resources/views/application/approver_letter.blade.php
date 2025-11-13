@@ -393,7 +393,7 @@
                 </div>
             </div>
             
-            <div class="row last_row align-items-center mt-5" style="justify-content: end;">
+           <div class="row last_row align-items-center mt-5" style="justify-content: end;">
                 <div class="col-12 col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
                     <button 
                         type="button" 
@@ -407,8 +407,8 @@
                        <button type="button" class="btn btn-secondary btn3 no-print" onclick="window.print()">
                             @lang('app.print')
                         </button>
-                    @elseif($canAdminApproverApproveReject)
-                        {{-- Show Approve/Reject buttons if not approved and user has permission --}}
+                    @else
+                        {{-- Show Approve/Reject buttons if not approved --}}
                         <button type="submit" class="btn btn-danger btn1 mx-3" id="rejectButton"
                             data-id="{{ $application->id }}" 
                             @if($application->status == 'rejected') disabled @endif>
