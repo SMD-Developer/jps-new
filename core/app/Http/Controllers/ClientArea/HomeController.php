@@ -236,10 +236,10 @@ class HomeController extends Controller {
             $isReapply = $request->has('is_reapply') && $request->is_reapply == 1;
             $fileValidationRules = $isReapply ? 'nullable' : 'required';
             
-            $this->validate($request, [
+            // Base validation rules
+            $rules = [
                 "uploade_date" => "required",
                 "applicant" => "required",
-                "identities" => "required",
                 "address" => "required",
                 "postal_code" => 'required|numeric|digits_between:4,8',
                 "phone" => "required|numeric|digits_between:10,15",
@@ -256,7 +256,14 @@ class HomeController extends Controller {
                 "supporting_docs" => "nullable|mimes:pdf|max:15000",
                 "claim_reason" => "nullable|string|max:1000",
                 "payment_amount" => "required|numeric|min:0",
-            ], [
+            ];
+
+            // Only require 'identities' if account_types is NOT 3
+            if ($request->input('account_types') != '3') {
+                $rules['identities'] = 'required';
+            }
+
+            $this->validate($request, $rules, [
                 "uploade_date.required" => trans('app.uploade_date_required'),
                 "applicant.required" => trans('app.applicant_required'),
                 "identities.required" => trans('app.identities_required'),
@@ -377,10 +384,6 @@ class HomeController extends Controller {
                         }
                     }
                 } catch (\Exception $notificationError) {
-                    Log::error('Error notifying admin staff about reapplication: ', [
-                        'claim_id' => $applicationId,
-                        'message' => $notificationError->getMessage()
-                    ]);
                 }
                 
             } else {

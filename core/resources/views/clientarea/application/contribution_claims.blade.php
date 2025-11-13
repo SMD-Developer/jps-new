@@ -703,6 +703,8 @@
                 $('.invalid-feedback').remove();
                 $('.form-control').removeClass('is-invalid');
 
+                // Get the selected account type from the dropdown
+                const selectedAccountType = $('#account_types').val();
 
                 let hasErrors = false;
                 function showError(fieldName, message) {
@@ -719,14 +721,16 @@
                 if (!$('[name="applicant"]').val()) {
                     showError('applicant', "@lang('app.applicant_required')");
                 }
-                if (!$('[name="identities"]').val()) {
+
+                // Only validate identities if account type is NOT 3
+                if (selectedAccountType != '3' && !$('[name="identities"]').val()) {
                     showError('identities', "@lang('app.identities_required')");
                 }
+
                 if (!$('[name="address"]').val()) {
                     showError('address', "@lang('app.address_required')");
                 }
                 
-
                 const postalCode = $('[name="postal_code"]').val();
                 if (!postalCode) {
                     showError('postal_code', "@lang('app.postal_code_required')");
@@ -754,7 +758,6 @@
                 } else if (parseFloat(paymentAmount) <= 0) {
                     showError('payment_amount', "@lang('app.claim_amount_positive')");
                 }
-
                 
                 // Validate email
                 const email = $('[name="email"]').val();
@@ -804,9 +807,7 @@
                     }
                 }
 
-
-
-               // Validate new_receipt file (REQUIRED)
+                // Validate new_receipt file (REQUIRED)
                 const newReceiptFile = $('#new_receipt')[0].files[0];
                 if (!newReceiptFile) {
                     showError('new_receipt', "@lang('Fail wajib dimuatnaik')");
@@ -833,7 +834,6 @@
                     }
                 }
 
-
                 // If validation fails, don't show popup
                 if (hasErrors) {
                     return;
@@ -841,7 +841,6 @@
 
                 Swal.fire({
                     title: "@lang('app.are_you_sure_admin')",
-                    // text: "@lang('app.confirm_submit_application')",
                     icon: "question",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
@@ -870,7 +869,6 @@
                             success: function(response) {
                                 Swal.close();
                                 if (response.success) {
-
                                     Swal.fire({
                                         title: "@lang('app.success')",
                                         text: response.message,
@@ -878,8 +876,7 @@
                                         confirmButtonText: "OK"
                                     }).then(() => {
                                         $('#registrationForm')[0].reset();
-                                        window.location.href =
-                                            "{{ route('claim.contribution.list') }}";
+                                        window.location.href = "{{ route('claim.contribution.list') }}";
                                     });
                                 }
                             },
@@ -891,18 +888,15 @@
                                 if (xhr.status === 422) {
                                     let errors = xhr.responseJSON.errors;
                                     $.each(errors, function(key, value) {
-                                        let inputField = $('[name="' + key +
-                                            '"]');
+                                        let inputField = $('[name="' + key + '"]');
                                         inputField.addClass('is-invalid');
                                         inputField.after(
                                             '<div class="invalid-feedback d-flex justify-content-end">' +
                                             value[0] + '</div>'
                                         );
                                         if (key === 'land_area') {
-                                            let errorDiv = inputField.next(
-                                                '.invalid-feedback');
-                                            $('.d-flex.align-items-center')
-                                                .after(errorDiv);
+                                            let errorDiv = inputField.next('.invalid-feedback');
+                                            $('.d-flex.align-items-center').after(errorDiv);
                                         }
                                     });
                                 } else {
