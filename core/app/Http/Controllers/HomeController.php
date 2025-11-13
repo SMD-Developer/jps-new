@@ -1959,6 +1959,7 @@ class HomeController extends Controller {
         if ($completedPayment) {
             $application->payment_status = $completedPayment->payment_status;
             $application->payment_method = $completedPayment->method;
+            $application->payment_type = $completedPayment->payment_type;
             $application->payment_amount = $completedPayment->amount;
             $application->transaction_id = $completedPayment->transaction_id;
             $application->receipt_number = $completedPayment->receipt_number;

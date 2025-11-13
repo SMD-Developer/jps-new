@@ -140,7 +140,7 @@ i.right.fa.fa-angle-right.mt-2 {
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fa fa-credit-card nav-icon"></i>
-                        <p>Payments</p>
+                        <p>Pembayaran</p>
                     </a>
                 </li>
             </ul>

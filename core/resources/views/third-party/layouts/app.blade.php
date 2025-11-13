@@ -60,7 +60,7 @@
                                 class="user-image" alt="User Image" />
                             <strong>
                                 <span>Welcome,</span>
-                                <span class="hidden-xs">{{ session('third_party_user_name', 'User') }}</span>
+                                <span class="hidden-xs">{{ auth('third_party')->user()->name ?? 'User' }}</span>
                             </strong>
                             <b class="caret"></b>
                         </a>
