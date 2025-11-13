@@ -1361,10 +1361,11 @@ body {
                         </button>
                     </div>
 
+                   
                     <!-- Already have account link -->
                     <div class="text-center mt-3">
                         <p>Sudah mempunyai akaun? 
-                            <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#thirdPartyLoginModal">
+                            <a href="{{ route('third.party.login') }}">
                                 Log masuk disini
                             </a>
                         </p>

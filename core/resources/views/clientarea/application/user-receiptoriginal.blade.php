@@ -362,14 +362,17 @@
             </div>
         </div>
         <div class="container pb-5">
-            <div class="row mb-5">
-                <div class="col-md-5">
-                </div>
-                <div class="col-md-4">
-                    <button type="button" id="downloadButton" class="btn btn-danger float-right mx-3">Muat Turun</button>
-                </div>
-                <div class="col-md-3">
-                    <button type="button" id="printButton" class="btn btn-primary float-right">Cetak Resit</button>
+            <div class="row mb-3 justify-content-end">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-success mx-2" onclick="window.history.back();">
+                        Kembali
+                    </button>
+                    <button type="button" id="downloadButton" class="btn btn-danger mx-2" style="display:none;">
+                        @lang('app.download')
+                    </button>
+                    <button type="button" id="printButton" class="btn btn-primary mx-2" style="white-space: nowrap;">
+                        @lang('app.print_receipt')
+                    </button>
                 </div>
             </div>
         </div>
