@@ -374,6 +374,13 @@
                     </button>
                 </div>
             </div>
+             <div class="row justify-content-end">
+                <div class="col-auto text-end">
+                    <p style="font-size: 14px; color: #555; font-style: italic; margin-top: 5px;">
+                        <strong>Nota:</strong> Sila pastikan Resit <u></u> dicetak.
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
