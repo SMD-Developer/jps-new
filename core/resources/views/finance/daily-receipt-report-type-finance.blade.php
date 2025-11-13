@@ -21,10 +21,10 @@
 
 
 </style>
-<title>{{ trans('app.daily_receipt_report_type') }} | JPS</title>
+<title>{{ trans('Laporan Terimaan Harian Mengikut Jenis') }} | JPS</title>
 @section('content')
 <div class="col-md-12 content-header">
-    <h5><i class="fa fa-list"></i> {{ trans('app.daily_payment_receipt_report_by') }}</h5>
+    <h5><i class="fa fa-list"></i> {{ trans('Laporan Terimaan Harian Mengikut Jenis') }}</h5>
 </div>
 
 

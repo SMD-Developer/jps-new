@@ -135,10 +135,10 @@
         }
     }
 </style>
-<title>@lang('app.reprint_payment_receipt') | JPS</title>
+<title>@lang('Resit Bayaran') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header no-print">
-        <h5><i class="fa fa-file"></i> @lang('app.reprint_payment_receipt')</h5>
+        <h5><i class="fa fa-file"></i> @lang('Resit Bayaran')</h5>
     </div>
     <section class="content">
         <div class="container" id="receipt-content">

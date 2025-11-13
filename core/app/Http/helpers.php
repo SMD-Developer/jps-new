@@ -339,7 +339,7 @@ if(! function_exists('getMenus')){
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
@@ -623,7 +623,7 @@ if(! function_exists('getMenus')){
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
@@ -955,7 +955,7 @@ if(! function_exists('getMenus')){
                             
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
@@ -1322,7 +1322,7 @@ if(! function_exists('getMenus')){
                             
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
@@ -1632,7 +1632,7 @@ if(! function_exists('getMenus')){
                             
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',
@@ -1962,7 +1962,7 @@ if(! function_exists('getMenus')){
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.daily_payment_receipt_report_by'),
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
                                 'permission' => 'daily-payment-receipt.view-list',

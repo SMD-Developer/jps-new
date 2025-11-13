@@ -581,9 +581,8 @@
 
                 <!-- Submit Section -->
                 <div class="form-actions">
+                    <button type="button" class="btn btn-success" onclick="window.history.back()">@lang('Kembali')</button>
                     @if($isAdminStaff)
-                        <button type="button" class="btn btn-info" onclick="window.history.back()">@lang('Kembali')</button>
-                        
                         @if($claim->status == 'approve_paid' || $claim->status == 'rejected' || $claim->send_to_finance == 1)
                             <button type="button" class="btn btn-danger" disabled>@lang('app.reject')</button>
                             <button type="button" class="btn btn-info no-print" disabled>
