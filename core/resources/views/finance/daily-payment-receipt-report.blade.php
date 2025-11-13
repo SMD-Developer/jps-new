@@ -630,13 +630,13 @@
                             <td>1</td>
                             <td>H0161304</td>
                             <td>G001</td>
-                            <td>{{ number_format($grandTotal / 2, 2) }}</td>
+                            <td>{{ number_format(($grandTotal - $totalReprintAmount) / 2, 2) }}</td>
                         </tr>
                         <tr>
                             <td></td>
                             <td></td>
                             <td>L453</td>
-                            <td>{{ number_format($grandTotal / 2, 2) }}</td>
+                            <td>{{ number_format(($grandTotal - $totalReprintAmount) / 2, 2) }}</td>
                         </tr>
                         <tr>
                             <td>2</td>
