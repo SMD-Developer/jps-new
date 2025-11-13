@@ -196,7 +196,7 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
-                                    BAYARAN CETAK SEMULA RESIT UNTUK<br>
+                                    PERMOHONAN SALINAN RESIT CARUMAN PARIT DI ATAS<br>
                                     {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
@@ -219,13 +219,20 @@
                             <tr>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">1</td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    @if($application->payment_method === 'cheque')
+                                     @if($application->payment_method === 'cheque')
                                         Cek<br>
                                         @if(!empty($application->transaction_id))
                                             <small>{{ $application->transaction_id }}</small>
                                         @endif
                                     @else
-                                        {{ $application->payment_method }}
+                                        @php
+                                            $methodLabel = match($application->payment_method) {
+                                                'FPX_B2C' => 'EFT_B2C',
+                                                'FPX_B2B' => 'EFT_B2B',
+                                                default => $application->payment_method,
+                                            };
+                                        @endphp
+                                        {{ $methodLabel }}
                                     @endif
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
