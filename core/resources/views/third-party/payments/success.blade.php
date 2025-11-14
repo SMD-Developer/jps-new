@@ -199,21 +199,7 @@
                   $receiptUrl = '#';
               }
             @endphp
-            
-            <!-- Check Status Button -->
-            <a href="{{ route('third.party.payment.status', ['order_no' => $fpx_sellerOrderNo]) }}" 
-               class="btn btn-primary me-2">
-                Check Status
-            </a>
-            
-            <!-- View Receipt Button -->
-            @if($application_id)
-            <a href="{{ $receiptUrl }}" 
-               class="btn btn-outline-primary me-2 rounded-pill px-5"
-               target="_blank">
-                Lihat Resit
-            </a>
-            @endif
+
             
             <!-- Dashboard Button -->
             <a href="{{ route('third.party.dashboard') }}" 
