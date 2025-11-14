@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Payment Status</title>
+  <title>Payment Status - Third Party</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
   <style>
@@ -50,8 +50,8 @@
   </style>
 </head>
 <body>
-  @if(auth('user')->check())
-    <input type="hidden" id="client_uuid" value="{{ auth('user')->user()->uuid }}">
+  @if(auth('third_party')->check())
+    <input type="hidden" id="third_party_id" value="{{ auth('third_party')->user()->id }}">
   @endif
 
   <div class="container text-center py-4">
@@ -76,19 +76,19 @@
         @if($transactionStatus == 'SUCCESSFUL')
             <!-- Success Image -->
             <img src="{{ asset('assets/images/uploads/client_images/image (1).png') }}" 
-           class="img-fluid" alt="JPS Logo" width="111px">
+                 class="img-fluid" alt="JPS Logo" width="111px">
         @elseif($transactionStatus == 'PENDING')
             <!-- Pending Image -->
             <img src="{{ asset('assets/images/pending-icon.png') }}" 
                  class="img-fluid status-image" alt="Pending" width="120px">
         @else
-            <!-- Unsuccessful Image (Your new image goes here) -->
+            <!-- Unsuccessful Image -->
             <img src="{{ asset('assets/images/remove.png') }}" 
                  class="img-fluid status-image" alt="Failed" width="120px">
         @endif
     </div>
     
-    <h1 class="fw-bold pb-3">Payment Status</h1>
+    <h1 class="fw-bold pb-3">Payment Status - Third Party</h1>
     <p class="fw-bold">
         @if($transactionStatus == 'SUCCESSFUL')
             Your payment has been received. Please wait while your account is updated.
@@ -119,16 +119,18 @@
                 @elseif($fpx_debitAuthCode == '99')
                   PENDING FOR AUTHORIZER TO APPROVE
                 @else
-                  UNSUCCESSFUL
+                  UNSUCCESSFUL (Error Code: {{ $fpx_debitAuthCode }})
                 @endif
               </strong>
             </td>
           </tr>
+          @if(!empty($fpx_fpxTxnId))
           <tr>
             <td width="44%" align="left" class="main">FPX Txn ID</td>
             <td width="7%" align="center" class="main">:</td>
             <td width="49%" align="left" class="main">{{ $fpx_fpxTxnId }}</td>
           </tr>
+          @endif
           <tr>
             <td width="44%" align="left" class="main">Seller Order Number</td>
             <td width="7%" align="center" class="main">:</td>
@@ -147,11 +149,24 @@
           <tr>
             <td width="44%" align="left" class="main">Transaction Time</td>
             <td width="7%" align="center" class="main">:</td>
-            <td width="49%" align="left" class="main">{{ date('d M Y h:i:s A', strtotime($fpx_sellerTxnTime)) }}</td>
+            <td width="49%" align="left" class="main">
+              {{ \Carbon\Carbon::createFromFormat('YmdHis', $fpx_sellerTxnTime)->format('d M Y h:i:s A') }}
+            </td>
           </tr>
+          
+          <!-- Additional info for unsuccessful transactions -->
+          @if($transactionStatus == 'UNSUCCESSFUL' && isset($statusMessage))
+          <tr>
+            <td width="44%" align="left" class="main">Error Message</td>
+            <td width="7%" align="center" class="main">:</td>
+            <td width="49%" align="left" class="main text-danger">{{ $statusMessage }}</td>
+          </tr>
+          @endif
         @else
           <tr>
-            <td colspan="3" align="center" class="main">{{ $ErrorCode }}</td>
+            <td colspan="3" align="center" class="main">
+              <div class="alert alert-danger">{{ $ErrorCode ?? 'Signature verification failed' }}</div>
+            </td>
           </tr>
         @endif
       </table>
@@ -164,45 +179,95 @@
                               ->first();
             
             $application_id = $paymentRecord->application_id ?? null;
+            $isAuthenticated = auth('third_party')->check();
         @endphp
         
-      @if($transactionStatus == 'SUCCESSFUL')
-
-        @php
-
-          $isAuthenticated = auth('user')->check();
-          
-          if ($isAuthenticated) {
-              $receiptUrl = route('user_copy_receipt', ['id' => $application_id]);
-          } else {
-              $receiptUrl = URL::temporarySignedRoute(
-                  'guest.receipt',
-                  now()->addHours(48),
-                  ['application_id' => $application_id, 'order_no' => $fpx_sellerOrderNo]
-              );
-          }
-        @endphp
-         <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
-          <a href="{{ $receiptUrl }}" 
-            class="btn btn-outline-primary me-2 rounded-pill px-5"
-            target="_blank">
-              @lang('app.view_receipts')
-          </a>
-      @if($transactionStatus == 'SUCCESSFUL')
-        <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
-            <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk muat turun dan cetak resit untuk tujuan rekod.
-        </p>
-      @endif
+        @if($transactionStatus == 'SUCCESSFUL')
+            @php
+              // For third-party, create appropriate receipt URL
+              if ($isAuthenticated && $application_id) {
+                  // If you have a specific third-party receipt route
+                  $receiptUrl = route('third.party.receipt', ['id' => $application_id]);
+                  
+                  // OR use a temporary signed route for third-party
+                  // $receiptUrl = URL::temporarySignedRoute(
+                  //     'third.party.receipt',
+                  //     now()->addHours(48),
+                  //     ['application_id' => $application_id, 'order_no' => $fpx_sellerOrderNo]
+                  // );
+              } else {
+                  $receiptUrl = '#';
+              }
+            @endphp
+            
+            <!-- Check Status Button -->
+            <a href="{{ route('third.party.payment.status', ['order_no' => $fpx_sellerOrderNo]) }}" 
+               class="btn btn-primary me-2">
+                Check Status
+            </a>
+            
+            <!-- View Receipt Button -->
+            @if($application_id)
+            <a href="{{ $receiptUrl }}" 
+               class="btn btn-outline-primary me-2 rounded-pill px-5"
+               target="_blank">
+                Lihat Resit
+            </a>
+            @endif
+            
+            <!-- Dashboard Button -->
+            <a href="{{ route('third.party.dashboard') }}" 
+               class="btn btn-secondary me-2">
+                <i class="fa fa-home"></i> Dashboard
+            </a>
+            
+            <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+                <strong>Nota:</strong> Sila klik 'Lihat Resit' untuk muat turun dan cetak resit untuk tujuan rekod.
+            </p>
+            
+        @elseif($transactionStatus == 'PENDING')
+            
+            <!-- Dashboard Button -->
+            <a href="{{ route('third.party.dashboard') }}" 
+               class="btn btn-secondary me-2">
+                <i class="fa fa-home"></i> Dashboard
+            </a>
+            
+            <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+                <strong>Nota:</strong> Pembayaran anda sedang menunggu kelulusan. Sila semak status kemudian.
+            </p>
+            
+        @else
+            
+            <!-- Dashboard Button -->
+            <a href="{{ route('third.party.dashboard') }}" 
+               class="btn btn-secondary me-2">
+                <i class="fa fa-home"></i> Dashboard
+            </a>
+            
+            <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+                <strong>Nota:</strong> Pembayaran tidak berjaya. Sila cuba semula atau hubungi sokongan dengan nombor pesanan: <strong>{{ $fpx_sellerOrderNo }}</strong>
+            </p>
+        @endif
     </div>
     
   </div>
 
   <script>
-    // You can use the client_uuid in JavaScript if needed
-    const clientUuid = document.getElementById('client_uuid')?.value;
-    if (clientUuid) {
-      console.log('Client UUID:', clientUuid);
-      // Additional client-specific JavaScript can go here
+    const thirdPartyId = document.getElementById('third_party_id')?.value;
+    if (thirdPartyId) {
+      console.log('Third Party ID:', thirdPartyId);
+      console.log('Transaction Status:', '{{ $transactionStatus }}');
+      console.log('Order Number:', '{{ $fpx_sellerOrderNo }}');
+      
+      // You can add additional third-party specific tracking here
+      @if($transactionStatus == 'SUCCESSFUL')
+        console.log('Payment successful for third-party user');
+      @elseif($transactionStatus == 'PENDING')
+        console.log('Payment pending authorization');
+      @else
+        console.log('Payment failed with code:', '{{ $fpx_debitAuthCode }}');
+      @endif
     }
   </script>
 </body>

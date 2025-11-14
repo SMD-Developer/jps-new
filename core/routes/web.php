@@ -65,6 +65,7 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
             Route::get('/print/{application}/{transaction}', 'ThirdPartyController@printReceipt')->name('print');
             Route::post('/fpx/callback', 'ThirdPartyController@handleFpxCallback')->name('fpx.callback');
             Route::get('/fpx/return', 'ThirdPartyController@handleFpxReturn')->name('fpx.return');
+            Route::get('/success',  'ThirdPartyController@success')->name('success');
         });
         
         // ===== Payment Callbacks (No Middleware - External calls) =====

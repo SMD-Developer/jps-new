@@ -1698,6 +1698,12 @@ class ThirdPartyController extends Controller
     }
 
 
+    public function success()
+    {
+        return view('third-party.payments.success');
+    }
+
+
 
 
 
