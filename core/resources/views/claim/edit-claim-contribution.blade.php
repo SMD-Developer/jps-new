@@ -702,7 +702,7 @@
                                             <!-- Fields for "approve_payment_in_process" Status -->
                                             <div id="processFields" style="display: none;">
                                                 <div class="mb-3">
-                                                    <label for="visit_date" class="form-label">Tarikh Kehadiran: <span class="text-danger">*</span></label>
+                                                    <label for="visit_date" class="form-label">Tarikh Serahan Dokumen: <span class="text-danger">*</span></label>
                                                     <input type="date" 
                                                         class="form-control" 
                                                         id="visit_date" 
