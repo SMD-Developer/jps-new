@@ -625,9 +625,9 @@
                                 
                                 <div class="modal-body">
                                     <p class="mb-3">
-                                        Sila hadir ke <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor</strong>
-                                        dalam masa <strong>7 hari bekerja</strong> dari tarikh Kelulusan Permohonan Tuntutan Pemulangan Bayaran Balik
-                                        pada waktu operasi kaunter seperti berikut:
+                                        <strong>Sila hadir ke </strong> <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor, Tingkat 5, Podium Selatan, Bangunan Sultan Salahuddin Abdul Aziz Shah dalam masa <strong>7 hari bekerja</strong> dari tarikh 
+                                        <span class="text fw-bold">kelulusan permohonan tuntutan pulang balik</span>
+                                        bayaran pada waktu operasi kaunter seperti berikut:
                                     </p>
 
                                     <div class="ms-3">
@@ -646,10 +646,26 @@
                                         </ul>
 
                                         <p class="mb-1"><strong>Rehat:</strong></p>
-                                        <ul>
+                                        <ul class="mb-3">
                                             <li>12.30 tengahari – 2.30 petang (Isnin – Khamis)</li>
                                             <li>12.00 tengahari – 2.45 petang (Jumaat)</li>
                                         </ul>
+
+                                        <!-- Added section -->
+                                        <div class="border-top pt-3">
+                                            <h6 class="fw-bold text-decoration-underline text-dark">
+                                                Sila bawa bersama dokumen seperti berikut:
+                                            </h6>
+                                            <ol class="mt-2">
+                                                <li>Surat permohonan tuntutan pulang balik</li>
+                                                <li>Salinan Kad Pengenalan pemohon</li>
+                                                <li>Penyata bank individu / pemaju</li>
+                                                <li>Resit bayaran asal / KEW38 asal</li>
+                                                <li>Surat Akuan Sumpah / Majistret / Mahkamah / Pesuruhjaya (sekiranya dokumen/ resit asal hilang)</li>
+                                                <li>Pendaftaran Syarikat (SSM/ROS/ROC/ROB/JMB) dan salinan Kad Pengenalan (terkini) semua "Board Of Directors"</li>
+                                            </ol>
+                                        </div>
+
                                     </div>
                                 </div>
 
