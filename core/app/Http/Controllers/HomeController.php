@@ -1833,16 +1833,20 @@ class HomeController extends Controller {
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
         
-        // Join with payments to show each payment as a separate row
-        $query = Payment::with(['application.state', 'application.landDistrict', 'application.landDivision', 'application.client'])
-            ->join('applications', 'payments.application_id', '=', 'applications.id')
-            ->where('applications.status', 'approved')
+        $query = Payment::with([
+                'application.state', 
+                'application.landDistrict', 
+                'application.landDivision', 
+                'application.client'
+            ])
+            ->whereHas('application', function($appQuery) {
+                $appQuery->where('status', 'approved');
+            })
             ->orderByRaw("CASE 
-                            WHEN payments.payment_status = 'completed' THEN 1 
+                            WHEN payment_status = 'completed' THEN 1 
                             ELSE 2 
                         END, 
-                        COALESCE(payments.payment_date, payments.created_at) DESC")
-            ->select('payments.*', 'applications.id as application_id');
+                        COALESCE(payment_date, created_at) DESC");
 
         $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
 
@@ -1852,14 +1856,13 @@ class HomeController extends Controller {
             $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
         }          
 
-        // Filter based on payment status
         if ($statusFilter !== 'all') {
             if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {
-                $query->where('payments.payment_status', $statusFilter);
+                $query->where('payment_status', $statusFilter);
             }
         }
         
-        // Filter based on payment method
+
         if ($methodFilter !== 'all') {
             $methodMapping = [
                 'B2B' => 'FPX_B2B',
@@ -1870,42 +1873,43 @@ class HomeController extends Controller {
             ];
 
             if ($methodFilter === 'BAUCAR BAYARAN') {
-                $query->where('payments.method', 'EFT')
+                $query->where('method', 'EFT')
                     ->whereHas('application.client', function($clientQuery) {
                         $clientQuery->where('accountType', 3);
                     });
             } else if ($methodFilter === 'EFT') {
-                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
+                $query->whereIn('method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
             } else {
                 $exactMethod = $methodMapping[$methodFilter] ?? null;
                 if ($exactMethod) {
-                    $query->where('payments.method', '=', $exactMethod);
+                    $query->where('method', '=', $exactMethod);
                 }
             }
         }
 
-        // Date range filter
+
         if ($dateFrom || $dateTo) {
             if ($dateFrom) {
-                $query->whereDate('payments.payment_date', '>=', $dateFrom);
+                $query->whereDate('payment_date', '>=', $dateFrom);
             }
             
             if ($dateTo) {
-                $query->whereDate('payments.payment_date', '<=', $dateTo);
+                $query->whereDate('payment_date', '<=', $dateTo);
             }
         }
 
-        // Search filter
+        
         if ($search) {
             $like = "%{$search}%";
             $query->where(function ($sub) use ($like) {
-                $sub->where('applications.refference_no', 'like', $like)
-                    ->orWhere('applications.applicant', 'like', $like)
-                    ->orWhere('applications.land_lot', 'like', $like)
-                    ->orWhere('applications.final_amount', 'like', $like)
-                    ->orWhereHas('application.client', function($clientQuery) use ($like) {
-                        $clientQuery->where('userName', 'like', $like);
-                    });
+                $sub->whereHas('application', function($appQuery) use ($like) {
+                    $appQuery->where('refference_no', 'like', $like)
+                            ->orWhere('applicant', 'like', $like)
+                            ->orWhere('land_lot', 'like', $like)
+                            ->orWhere('final_amount', 'like', $like);
+                })->orWhereHas('application.client', function($clientQuery) use ($like) {
+                    $clientQuery->where('userName', 'like', $like);
+                });
             });
         }
 
