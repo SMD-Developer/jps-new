@@ -128,7 +128,9 @@ class ThirdPartyController extends Controller
 
     public function b2c(Request $request)
     {
+        // Step 1: Authentication check
         if (!auth('third_party')->check()) {
+            \Log::warning('Third-party user not authenticated');
             return redirect()->route('third.party.login')
                 ->with('error', 'Session expired. Please login again.');
         }
@@ -137,30 +139,42 @@ class ThirdPartyController extends Controller
         $applicationId = session('application_id');
         $thirdPartyId = session('third_party_id');
         
+        // Step 2: Session validation
         if (!$applicationId || !$thirdPartyId) {
+            \Log::error('Missing session data', [
+                'application_id' => $applicationId,
+                'third_party_id' => $thirdPartyId
+            ]);
             return redirect()->route('third.party.search')
                 ->with('error', 'Application not found. Please search again.');
         }
         
-        $amount = 1.00; 
-        $bankCode = $request->get('bank', session('selected_bank'));
-        $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
-        
-        $fpx_callbackUrl = route('fpx.callback'); 
-        $fpx_returnUrl = route('fpx.return');   
-        
+        // Step 3: Get application
         $application = Application::find($applicationId);
-        
         if (!$application) {
             return redirect()->route('third.party.search')
                 ->with('error', 'Application not found.');
         }
         
+        // Step 4: Payment parameters
+        $amount = 1.00;
+        $bankCode = $request->get('bank', session('selected_bank'));
+        $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
         $referenceNo = $application->refference_no;
         
+        // Step 5: Get bank data
         $bankData = $this->getDynamicBankData($bankCode);
         
-        // FPX Parameters
+        // DEBUG: Verify bank data is correct
+        if (empty($bankData['bank_code']) || empty($bankData['bank_name'])) {
+            \Log::error('Invalid bank data', [
+                'bank_code' => $bankCode,
+                'bank_data' => $bankData
+            ]);
+            return redirect()->back()->with('error', 'Invalid bank selection. Please try again.');
+        }
+        
+        // Step 6: FPX Parameters (keep exact same format as working controller)
         $fpx_msgType = "AR";
         $fpx_msgToken = "01";
         $fpx_sellerExId = "EX00014529";
@@ -172,10 +186,8 @@ class ThirdPartyController extends Controller
         $fpx_txnCurrency = "MYR";
         $fpx_txnAmount = number_format($amount, 2, '.', '');
         
-        // Use authenticated third party user info
         $fpx_buyerEmail = session('buyer_email', $thirdPartyUser->email);
         $fpx_buyerName = $thirdPartyUser->name;
-        
         $fpx_buyerBankId = $bankData['bank_code']; 
         $fpx_buyerBankBranch = $bankData['bank_name']; 
         
@@ -183,72 +195,132 @@ class ThirdPartyController extends Controller
         $fpx_buyerId = "";
         $fpx_makerName = "";
         $fpx_buyerIban = "";
-        $fpx_productDesc = "Third Party Document Reprint - RM 10.00";
+        $fpx_productDesc = "Third Party Document Reprint - RM " . $fpx_txnAmount; // Match actual amount
         $fpx_version = "6.0";
         
-        // Create checksum data string
+        // Step 7: Create checksum data (exact same order as working controller)
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
 
-        // Generate checksum
-        $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
-        $pkeyid = openssl_get_privatekey($priv_key);
-        openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
-        $fpx_checkSum = strtoupper(bin2hex($binary_signature));
+        // Step 8: Generate checksum
+        try {
+            $priv_key = file_get_contents('/var/www/html/core/public/privatekey.php');
+            if (!$priv_key) {
+                throw new \Exception('Private key file not found');
+            }
+            
+            $pkeyid = openssl_get_privatekey($priv_key);
+            if (!$pkeyid) {
+                throw new \Exception('Failed to load private key: ' . openssl_error_string());
+            }
+            
+            openssl_sign($data, $binary_signature, $pkeyid, OPENSSL_ALGO_SHA1);
+            $fpx_checkSum = strtoupper(bin2hex($binary_signature));
+            
+        } catch (\Exception $e) {
+            \Log::error('Checksum generation failed', [
+                'error' => $e->getMessage()
+            ]);
+            return redirect()->back()->with('error', 'Payment processing error. Please try again.');
+        }
         
         $actionUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
+        $receiptNumber = $this->generateReceiptNumber('TP');
         
-        $receiptNumber = $this->generateReceiptNumber('');
+        // Step 9: Store payment data
+        try {
+            $this->storePaymentData([
+                'user_id' => null,
+                'third_party_id' => $thirdPartyId,
+                'payment_type' => 'third_party_reprint',
+                'application_id' => $applicationId,
+                'amount' => $fpx_txnAmount,
+                'currency' => $fpx_txnCurrency,
+                'method' => 'FPX_B2C',
+                'test_case' => $testCase,
+                'bank_code' => $bankCode,
+                'bank_name' => $fpx_buyerBankBranch,
+                'buyer_bank_id' => $fpx_buyerBankId,
+                'buyer_email' => $fpx_buyerEmail,
+                'buyer_name' => $fpx_buyerName,
+                'seller_order_no' => $fpx_sellerOrderNo,
+                'seller_ex_order_no' => $fpx_sellerExOrderNo,
+                'seller_ex_id' => $fpx_sellerExId,
+                'seller_id' => $fpx_sellerId,
+                'seller_txn_time' => $fpx_sellerTxnTime,
+                'buyer_bank_branch' => $fpx_buyerBankBranch,
+                'product_desc' => $fpx_productDesc,
+                'transaction_id' => null, 
+                'payment_status' => 'pending',
+                'payment_gateway' => 'FPX',
+                'fpx_checksum' => $fpx_checkSum,
+                'receipt_number' => $receiptNumber,
+                'gateway_response' => json_encode([
+                    'fpx_data' => $data,
+                    'action_url' => $actionUrl,
+                    'timestamp' => now(),
+                    'third_party_info' => [
+                        'id' => $thirdPartyId,
+                        'name' => $thirdPartyUser->name,
+                        'email' => $thirdPartyUser->email
+                    ]
+                ]),
+                'payment_date' => now()->toDateString()
+            ]);
+            
+            $this->storeTransactionDetails([
+                'third_party_id' => $thirdPartyId,
+                'order_no' => $fpx_sellerOrderNo,
+                'amount' => $fpx_txnAmount,
+                'bank_code' => $bankCode,
+                'test_case' => $testCase,
+                'application_id' => $applicationId,
+                'bank_id' => $fpx_buyerBankId
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to store payment data', [
+                'error' => $e->getMessage()
+            ]);
+            return redirect()->back()->with('error', 'Failed to process payment. Please try again.');
+        }
         
-        // Store payment data for third party
-        $this->storePaymentData([
-            'user_id' => null,
-            'third_party_id' => $thirdPartyId,
-            'payment_type' => 'third_party_reprint',
-            'application_id' => $applicationId,
-            'amount' => $fpx_txnAmount,
-            'currency' => $fpx_txnCurrency,
-            'method' => 'FPX_B2C',
-            'test_case' => $testCase,
-            'bank_code' => $bankCode,
-            'bank_name' => $fpx_buyerBankBranch,
-            'buyer_bank_id' => $fpx_buyerBankId,
-            'buyer_email' => $fpx_buyerEmail,
-            'buyer_name' => $fpx_buyerName,
-            'seller_order_no' => $fpx_sellerOrderNo,
-            'seller_ex_order_no' => $fpx_sellerExOrderNo,
-            'transaction_id' => null, 
-            'payment_status' => 'pending',
-            'payment_gateway' => 'FPX',
-            'fpx_checksum' => $fpx_checkSum,
-            'receipt_number' => $receiptNumber,
-            'gateway_response' => json_encode([
-                'fpx_data' => $data,
-                'action_url' => $actionUrl,
-                'timestamp' => now(),
-                'third_party_info' => [
-                    'id' => $thirdPartyId,
-                    'name' => $thirdPartyUser->name,
-                    'email' => $thirdPartyUser->email,
-                    'id_card_number' => $thirdPartyUser->id_card_number ?? null,
-                    'address' => $thirdPartyUser->address ?? null
-                ]
-            ]),
-            'payment_date' => now()->toDateString()
-        ]);
-        
-        // Store transaction details
-        $this->storeTransactionDetails([
-            'third_party_id' => $thirdPartyId,
+        // Step 10: DEBUG LOG before returning view
+        \Log::info('Third-Party Payment Checkout', [
             'order_no' => $fpx_sellerOrderNo,
             'amount' => $fpx_txnAmount,
-            'bank_code' => $bankCode,
-            'test_case' => $testCase,
-            'application_id' => $applicationId,
-            'bank_id' => $fpx_buyerBankId
+            'bank_id' => $fpx_buyerBankId,
+            'bank_name' => $fpx_buyerBankBranch,
+            'checksum_length' => strlen($fpx_checkSum),
+            'action_url' => $actionUrl
         ]);
-
         
-        return view('third-party.payments.b2c-checkout', compact('fpx_msgType', 'fpx_msgToken','fpx_sellerTxnTime', 'fpx_sellerExId', 'fpx_sellerExOrderNo', 'fpx_sellerTxnTime', 'fpx_sellerOrderNo', 'fpx_sellerId', 'fpx_sellerBankCode', 'fpx_txnCurrency', 'fpx_txnAmount', 'fpx_buyerEmail', 'fpx_checkSum', 'fpx_buyerName', 'fpx_buyerBankId', 'fpx_buyerBankBranch', 'fpx_buyerAccNo', 'fpx_buyerId', 'fpx_makerName', 'fpx_buyerIban', 'fpx_productDesc', 'fpx_version', 'actionUrl','fpx_callbackUrl', 'fpx_returnUrl', 'referenceNo'));
+        // Step 11: Return view with ALL variables (same as working controller)
+        return view('third-party.payments.b2c-checkout', compact(
+            'fpx_msgType', 
+            'fpx_msgToken',
+            'fpx_sellerTxnTime', 
+            'fpx_sellerExId', 
+            'fpx_sellerExOrderNo', 
+            'fpx_sellerOrderNo', 
+            'fpx_sellerId', 
+            'fpx_sellerBankCode', 
+            'fpx_txnCurrency', 
+            'fpx_txnAmount', 
+            'fpx_buyerEmail', 
+            'fpx_checkSum', 
+            'fpx_buyerName', 
+            'fpx_buyerBankId', 
+            'fpx_buyerBankBranch', 
+            'fpx_buyerAccNo', 
+            'fpx_buyerId', 
+            'fpx_makerName', 
+            'fpx_buyerIban', 
+            'fpx_productDesc', 
+            'fpx_version', 
+            'actionUrl',
+            'referenceNo',
+            'testCase' // Make sure to pass this!
+        ));
     }
 
 
