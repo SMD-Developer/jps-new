@@ -165,10 +165,10 @@
         color: #555;
     }
 </style>
-<title>@lang('app.claim_contribution') | JPS</title>
+<title>@lang('Permohonan Baru') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('app.claim_contribution')</h5>
+        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Permohonan Baru')</h5>
     </div>
         <section class="content">
             <div class="row">
