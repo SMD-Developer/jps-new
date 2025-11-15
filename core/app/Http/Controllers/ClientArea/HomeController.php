@@ -498,7 +498,7 @@ class HomeController extends Controller {
 		public function updatePrintStatus(Request $request, $id)
         {
             $application = Application::findOrFail($id);
-            $application->increment('print_status_count'); // Increments the count by 1
+            $application->increment('print_status_count'); 
             return response()->json(['success' => true, 'print_status_count' => $application->print_status_count]);
         }
 		

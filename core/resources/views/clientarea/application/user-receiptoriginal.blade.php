@@ -389,6 +389,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
+        document.getElementById('printButton').addEventListener('click', function() {
+            // Update print status count via AJAX
+            fetch("{{ route('update.print.status', $application->id) }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Print status updated. Count: ' + data.print_status_count);
+                    window.print();
+                }
+            })
+            .catch(error => {
+                console.error('Error updating print status:', error);
+                // Still allow printing even if update fails
+                window.print();
+            });
+        });
+    </script>
+    <script>
         document.getElementById('downloadButton').addEventListener('click', function() {
             const {
                 jsPDF
@@ -417,10 +442,6 @@
                 console.error('Error generating PDF:', error);
                 alert('Failed to generate PDF. Please try again.');
             });
-        });
-
-        document.getElementById('printButton').addEventListener('click', function() {
-            window.print();
         });
     </script>
 @endsection

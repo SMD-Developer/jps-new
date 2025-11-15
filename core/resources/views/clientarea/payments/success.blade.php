@@ -165,14 +165,31 @@
                               ->first();
             
             $application_id = $paymentRecord->application_id ?? null;
+            
+            // Get the application to check print_status_count
+            $application = null;
+            if ($application_id) {
+                $application = DB::table('applications')
+                                ->where('id', $application_id)
+                                ->first();
+            }
         @endphp
         
       @if($transactionStatus == 'SUCCESSFUL')
-        <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
-        <a href="{{route('original_receipts', ['application_id' => $application_id]) }}" 
-           class="btn btn-outline-primary me-2 rounded-pill px-5">
-            @lang('app.view_receipts')
-        </a>
+          <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
+    
+        @if($application && $application->print_status_count > 0)
+          <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
+            class="btn btn-outline-primary me-2 rounded-pill px-5">
+              @lang('app.view_receipts')
+          </a>
+        @else
+            <a href="{{ route('original_receipts', ['application_id' => $application_id]) }}" 
+              class="btn btn-outline-primary me-2 rounded-pill px-5">
+                @lang('app.view_receipts')
+            </a>
+        @endif
+    
         <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>

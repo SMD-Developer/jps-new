@@ -231,17 +231,21 @@
                                                         <strong>{{ $application->print_status_count > 0 ? __('app.reprint_receipt') : __('app.print_receipt') }}</strong>
                                                     </a>
                                                 </div>
+
+                                                @php
+                                                    // Check if there's any reprint payment for this application
+                                                    $reprintPayment = $application->payments()->where('payment_type', 'reprint')->first();
+                                                @endphp
                                                 
-                                                @if($application->print_status_count > 0 && $application->payment && $application->payment->payment_type === 'reprint')
+                                                @if($application->print_status_count > 0 && $reprintPayment)
                                                     <br>
-                                                     <div class="sbtn">
+                                                    <div class="sbtn">
                                                         <a href="{{ route('reprint.payment.receipt', $application->id) }}"
-                                                        class="btn btn-primary btn-sm"
-                                                        style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
-                                                        <strong>{{ __('Cetak Resit Bayaran') }}</strong>
+                                                            class="btn btn-primary btn-sm"
+                                                            style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
+                                                            <strong>{{ __('Cetak Resit Bayaran') }}</strong>
                                                         </a>
                                                     </div>
-
                                                 @endif
                                             </td>
                                         </tr>
