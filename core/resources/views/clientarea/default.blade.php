@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -766,8 +767,7 @@ body {
 
                 <!-- Custom Styling Container -->
                 <div class="ag-format-container">
-                    <h2 class="text-center">@lang('app.get_in_touch')</h2>
-                    <p class="text-center">@lang('app.we_are_always_open')</p>
+                    <h2 class="text-center">@lang('Hubungi Kami')</h2>
 
                     <div class="ag-courses_box d-flex flex-wrap justify-content-center">
                         <!-- Address Section -->
@@ -779,53 +779,58 @@ body {
                                     @lang('app.address')
                                 </div>
                                 <div class="ag-courses-item_date-box">
-                                    @lang('app.address') - <br>
-                                    <span class="ag-courses-item_date">
-                                        Jabatan Pengairan dan Saliran negeri Selangor<br>
-                                        Tingkat 5, Podium Selatan,
-                                        Bangunan Sultan Salahuddin Abdul Aziz Shah, 40626 Shah Alam, Selangor.
-                                    </span>
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- Email Section -->
-                        <div class="ag-courses_item">
-                            <a href="mailto:contactsupport@jps.com" class="ag-courses-item_link">
-                                <div class="ag-courses-item_bg"></div>
-                                <div class="ag-courses-item_title mb-3">
-                                    <img src="{{asset('assets/images/icon/mail.png')}}" width="10%">
-                                    @lang('app.email')
-                                </div>
-                                <div class="ag-courses-item_date-box">
-                                    @lang('app.email_id') - 
-                                    <span class="ag-courses-item_date">contactsupport@jps.com</span>
+                                    <div style="margin-bottom: 15px;">
+                                        <span style="color: #0d6efd; font-weight: 600; font-size: 16px;">
+                                            Jabatan Pengairan dan Saliran negeri Selangor
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="ag-courses-item_date" style="color: #888; line-height: 1.6;">
+                                            Tingkat 5, Podium Selatan, Bangunan Sultan Salahuddin Abdul Aziz Shah, 40626 Shah Alam, Selangor.
+                                        </span>
+                                    </div>
                                 </div>
                             </a>
                         </div>
 
                         <!-- Phone Section -->
-                        <div class="ag-courses_item">
+                        <div class="ag-courses_item" style="min-width: 400px; flex: 1 1 400px;">
                             <a href="#" class="ag-courses-item_link">
                                 <div class="ag-courses-item_bg"></div>
                                 <div class="ag-courses-item_title mb-3">
                                     <img src="{{asset('assets/images/icon/support.png')}}" width="10%">
-                                   <span class="text-uppercase">@lang('app.contact_uss')</span>
+                                    @lang('Telefon')
                                 </div>
-                                <div class="ag-courses-item_date-box">
-                                    @lang('app.no_telephone_mobile') - <br>
-                                    <span class="ag-courses-item_date">603-5544 7376 / 7586 / 7381</span><br>
-                                    <span class="ag-courses-item_date">603-5521 2204 / 2205 / 2207</span>
-                                    <p>Isnin - Jumaat <br> 8:00AM - 4:30PM</p>
+                                <div class="ag-courses-item_date-box" style="padding: 20px;">
+                                    <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                                        <i class="fas fa-phone" style="font-size: 18px; margin-right: 12px; color: #333; flex-shrink: 0;"></i>
+                                        <div style="flex: 1; overflow-wrap: break-word;">
+                                            <span class="ag-courses-item_date">603-5544 7376 / 7586 / 7381 603-5521 2204 / 2205 / 2207</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                                        <i class="fas fa-fax" style="font-size: 18px; margin-right: 12px; color: #333; flex-shrink: 0;"></i>
+                                        <div style="flex: 1; overflow-wrap: break-word;">
+                                            <span class="ag-courses-item_date">603-5510 4494 / 5510 2911</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: flex-start;">
+                                        <i class="fas fa-envelope" style="font-size: 18px; margin-right: 12px; color: #333; flex-shrink: 0;"></i>
+                                        <div style="flex: 1; overflow-wrap: break-word;">
+                                            <span class="ag-courses-item_date" style="color: #ff6600;">support@ecp-jps.selangor.gov.my</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </a>
                         </div>
                     </div>
                 </div>
+
                 <!-- Google Map -->
                 <div class="text-center mt-3">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d831.3055878343583!2d101.5151222!3d3.0835306999999985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc527aecf7d7db%3A0x63f9c30732d0a1f9!2sBangunan%20Sultan%20Salahuddin%20Abdul%20Aziz%20Shah!5e1!3m2!1sen!2sin!4v1739774441278!5m2!1sen!2sin" width="85%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div> 
+
             </div>
         </div>
     </div>
