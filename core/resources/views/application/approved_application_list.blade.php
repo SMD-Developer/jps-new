@@ -147,7 +147,8 @@
                                     <th><strong>{{ trans('app.account_type') }}</strong></th>
                                     <th>{{ trans('app.application_type') }}</th>
                                     <th>{{ trans('app.applicant_name') }}</th>
-                                    <th>Jumlah Bayaran (RM)</th>
+                                    <th>Lot/PT</th>
+                                    <th>Jumlah Caruman (RM)</th>
                                     <th>{{ trans('app.status') }}</th>
                                     <th>{{ trans('app.for_action') }}</th>
                                 </tr>
@@ -221,6 +222,8 @@
                                             @endswitch
                                         </td>
                                         <td>{{ strtoupper($item->applicant) }}</td>
+                                        <td>{{$item->land_lot}},{{ $item->land_area }}, {{ $item->landDivision->mukim ?? '' }},Daerah
+                                                {{ $item->landDistrict->daerah ?? '' }}</td>
                                         <td>{{number_format($item->final_amount, 2)}}</td>
 
                                         <td>

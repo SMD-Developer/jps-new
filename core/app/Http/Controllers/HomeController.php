@@ -228,7 +228,10 @@ class HomeController extends Controller {
         $district = DB::table('district')->where('stat', 1)
         ->where('idnegeri', 1)
         ->orderBy('daerah_code', 'asc')->get();
-        $query = Application::with('client')->where('status', 'approved');
+       $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);
+
+       $query->where('status', 'approved');
+
         if ($request->filled('search')) {
         $searchTerm = $request->get('search');
         $query->where(function($q) use ($searchTerm) {

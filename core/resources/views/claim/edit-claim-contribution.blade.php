@@ -214,7 +214,7 @@
 <title>@lang('app.claim_contribution') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('app.claim_contribution')</h5>
+        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Kemaskini Permohonan Pulang Balik (Refund)')</h5>
     </div>
     <section class="content">
         <div class="row">
@@ -224,7 +224,7 @@
 
                     <!-- Personal Information Section -->
                     <div class="section">
-                        <h4>@lang('app.claim_contribution')</h4>
+                        <h5 class="mb-4">@lang('Permohonan Pulang Balik (Refund)')</h5>
                         <form class="form" method="POST" 
                             action="{{ route('claims.send_to_finance', ['id' => $claim->id]) }}" 
                             enctype="multipart/form-data" id="registrationForm">

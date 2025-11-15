@@ -265,6 +265,12 @@
             max-width: 66.666667%;
         }
     }
+
+    .address-wrap {
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
 </style>
 <title>@lang('app.trench_contribution_bill') | JPS</title>
 @section('content')
@@ -328,7 +334,7 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                     <p class="mb-0">{{ ucwords(strtolower($application->applicant)) }}</p>
-                    <p class="mb-0">{{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}</p>
+                    <p class="mb-0 address-wrap">{{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}</p>
                     <p class="mb-0">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}, {{ ucwords(strtolower($application->daerah ?? 'N/A')) }}</p>
                     <p class="mb-0">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }} Darul Ehsan</p>
                     {{-- <p class="mb-0">{{$application->district->name}}, {{$application->state->name}}.</p> --}}
