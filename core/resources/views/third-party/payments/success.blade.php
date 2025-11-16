@@ -182,7 +182,7 @@
                 
                 // Check if legacy (before 16 Nov 2024)
                 if ($application) {
-                    $isLegacy = \Carbon\Carbon::parse($application->created_at)->lt('2024-11-16');
+                    $isLegacy = \Carbon\Carbon::parse($application->created_at)->lt('2025-11-16');
                 }
             }
         @endphp
