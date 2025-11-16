@@ -91,7 +91,7 @@
                     <!-- Results Table -->
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
-                            <thead class="table-header">
+                            <thead class="table-header" style="font-size: 13px;">
                                 <tr>
                                     <th>Bil</th>
                                     <th>Nama Pemohon</th>

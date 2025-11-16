@@ -182,25 +182,7 @@
             $isAuthenticated = auth('third_party')->check();
         @endphp
         
-        @if($transactionStatus == 'SUCCESSFUL')
-            @php
-              // For third-party, create appropriate receipt URL
-              if ($isAuthenticated && $application_id) {
-                  // If you have a specific third-party receipt route
-                  $receiptUrl = route('third.party.receipt', ['id' => $application_id]);
-                  
-                  // OR use a temporary signed route for third-party
-                  // $receiptUrl = URL::temporarySignedRoute(
-                  //     'third.party.receipt',
-                  //     now()->addHours(48),
-                  //     ['application_id' => $application_id, 'order_no' => $fpx_sellerOrderNo]
-                  // );
-              } else {
-                  $receiptUrl = '#';
-              }
-            @endphp
-
-            
+        @if($transactionStatus == 'SUCCESSFUL')  
             <!-- Dashboard Button -->
             <a href="{{ route('third.party.dashboard') }}" 
                class="btn btn-secondary me-2">
