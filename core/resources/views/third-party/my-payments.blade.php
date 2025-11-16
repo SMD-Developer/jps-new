@@ -123,7 +123,7 @@
                                     <th>Amaun (RM)</th>
                                     <th>Kaedah</th>
                                     <th>Tarikh</th>
-                                    <th>Status</th>
+                                    <th>Tindakan</th> {{-- Add this --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,15 +147,12 @@
                                         </td>
                                         <td>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('d/m/Y H:i') : 'N/A' }}</td>
                                         <td>
-                                            @if($payment->payment_status === 'completed')
-                                                <span class="badge bg-success">Selesai</span>
-                                            @elseif($payment->payment_status === 'pending')
-                                                <span class="badge bg-warning">Menunggu</span>
-                                            @elseif($payment->payment_status === 'pending_authorization')
-                                                <span class="badge bg-info">Menunggu Kelulusan</span>
-                                            @else
-                                                <span class="badge bg-danger">Gagal</span>
-                                            @endif
+                                            {{-- Add View Receipt Button --}}
+                                            <a href="{{ route('third.party.view.receipt', ['application_id' => $payment->application_id, 'payment_uuid' => $payment->uuid]) }}" 
+                                            class="btn btn-sm btn-primary"
+                                            style="border-radius: 20px; padding: 6px 16px; font-weight: 600;">
+                                                <i class="fa fa-eye"></i> Lihat Resit
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty
