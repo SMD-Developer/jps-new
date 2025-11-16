@@ -917,8 +917,7 @@ class PayController extends Controller
                     return view('third-party.payments.success', compact(
                         'val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 
                         'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 
-                        'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch', 
-                        'paymentStatus', 'statusMessage'
+                        'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch'
                     ));
                 } else {
                     return view('clientarea.payments.success', compact(

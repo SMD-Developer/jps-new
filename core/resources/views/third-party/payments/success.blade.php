@@ -153,15 +153,6 @@
               {{ \Carbon\Carbon::createFromFormat('YmdHis', $fpx_sellerTxnTime)->format('d M Y h:i:s A') }}
             </td>
           </tr>
-          
-          <!-- Additional info for unsuccessful transactions -->
-          @if($transactionStatus == 'UNSUCCESSFUL' && isset($statusMessage))
-          <tr>
-            <td width="44%" align="left" class="main">Error Message</td>
-            <td width="7%" align="center" class="main">:</td>
-            <td width="49%" align="left" class="main text-danger">{{ $statusMessage }}</td>
-          </tr>
-          @endif
         @else
           <tr>
             <td colspan="3" align="center" class="main">
@@ -174,12 +165,20 @@
     
     <div class="mt-4">
         @php
+            // Get the application_id from the payments table using fpx_sellerOrderNo
             $paymentRecord = DB::table('payments')
                               ->where('seller_order_no', $fpx_sellerOrderNo)
                               ->first();
             
             $application_id = $paymentRecord->application_id ?? null;
-            $isAuthenticated = auth('third_party')->check();
+            
+            // Get the application to check print_status_count
+            $application = null;
+            if ($application_id) {
+                $application = DB::table('applications')
+                                ->where('id', $application_id)
+                                ->first();
+            }
         @endphp
         
         @if($transactionStatus == 'SUCCESSFUL')  
