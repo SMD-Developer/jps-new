@@ -198,10 +198,13 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
+                                     @if($application->payment_type === 'third_party')
+                                        PERMOHONAN SALINAN RESIT CARUMAN PARIT DI ATAS <br>
+                                    @endif
                                     {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
-                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A' )}}, DAERAH
+                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A') }}, DAERAH
                                     {{ strtoupper($application->daerah ?? 'N/A') }}<br>
                                     ({{ $application->refference_no ?? 'N/A'}})
                                 </div>
@@ -248,10 +251,18 @@
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    L453<br>G001
+                                    @if($application->payment_type === 'third_party')
+                                        G001
+                                    @else
+                                        L453<br>G001
+                                    @endif
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    H0161304<br>H0161304
+                                    @if($application->payment_type === 'third_party')
+                                        H0272499
+                                    @else
+                                        H0161304<br>H0161304
+                                    @endif
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
                                     {{ number_format($application->payment_amount  / 2, 2) }}<br>
