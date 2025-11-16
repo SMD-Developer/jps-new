@@ -1877,6 +1877,88 @@ class ThirdPartyController extends Controller
     }
 
 
+    public function myPayments(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $methodFilter = $request->input('method_filter', 'all'); 
+        $search = $request->input('q');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+        
+        $query = Payment::with([
+                'application.state', 
+                'application.landDistrict', 
+                'application.landDivision'
+            ])
+            ->where('third_party_id', auth('third_party')->id())
+            ->where('payment_type', 'third_party')
+            ->where('payment_status', 'completed') 
+            ->whereHas('application', function($appQuery) {
+                $appQuery->where('status', 'approved');
+            })
+            ->orderBy('payment_date', 'DESC');
+
+        // Method filter
+        if ($methodFilter !== 'all') {
+            $methodMapping = [
+                'B2B' => 'FPX_B2B',
+                'B2C' => 'FPX_B2C',
+                'EFT' => 'EFT',
+                'Cheque' => 'cheque',
+                'Bank Transfer' => 'bank_transfer',
+            ];
+
+            if ($methodFilter === 'EFT') {
+                $query->whereIn('method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
+            } else {
+                $exactMethod = $methodMapping[$methodFilter] ?? null;
+                if ($exactMethod) {
+                    $query->where('method', '=', $exactMethod);
+                }
+            }
+        }
+
+        // Date range filter
+        if ($dateFrom || $dateTo) {
+            if ($dateFrom) {
+                $query->whereDate('payment_date', '>=', $dateFrom);
+            }
+            
+            if ($dateTo) {
+                $query->whereDate('payment_date', '<=', $dateTo);
+            }
+        }
+
+        // Search filter
+        if ($search) {
+            $like = "%{$search}%";
+            $query->where(function ($sub) use ($like) {
+                $sub->whereHas('application', function($appQuery) use ($like) {
+                    $appQuery->where('refference_no', 'like', $like)
+                            ->orWhere('applicant', 'like', $like)
+                            ->orWhere('land_lot', 'like', $like)
+                            ->orWhere('final_amount', 'like', $like);
+                })->orWhere('transaction_id', 'like', $like)
+                ->orWhere('seller_order_no', 'like', $like)
+                ->orWhere('amount', 'like', $like);
+            });
+        }
+
+        $district = DB::table('district')->where('stat', 1)
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();
+
+        $payments = $query->paginate($perPage)->withQueryString();
+
+        return view('third-party.my-payments', compact(
+            'payments', 
+            'perPage', 
+            'methodFilter',
+            'district'
+        ));
+    }
+
+
 
 
 }
