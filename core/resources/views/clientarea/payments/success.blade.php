@@ -51,9 +51,7 @@
 </head>
 <body>
   @if(auth('user')->check())
-      <input type="hidden" id="client_uuid" value="{{ auth('user')->user()->uuid }}">
-  @elseif(auth('third_party')->check())
-      <input type="hidden" id="third_party_id" value="{{ auth('third_party')->user()->id }}">
+    <input type="hidden" id="client_uuid" value="{{ auth('user')->user()->uuid }}">
   @endif
 
   <div class="container text-center py-4">
@@ -160,94 +158,68 @@
     </div>
     
     <div class="mt-4">
-    @php
-        // Get the application_id from the payments table using fpx_sellerOrderNo
-        $paymentRecord = DB::table('payments')
-                          ->where('seller_order_no', $fpx_sellerOrderNo)
-                          ->first();
+        @php
+            // Get the application_id from the payments table using fpx_sellerOrderNo
+            $paymentRecord = DB::table('payments')
+                              ->where('seller_order_no', $fpx_sellerOrderNo)
+                              ->first();
+            
+            $application_id = $paymentRecord->application_id ?? null;
+            
+            // Get the application to check print_status_count
+            $application = null;
+            if ($application_id) {
+                $application = DB::table('applications')
+                                ->where('id', $application_id)
+                                ->first();
+            }
+        @endphp
         
-        $application_id = $paymentRecord->application_id ?? null;
-        $isThirdParty = !empty($paymentRecord->third_party_id);
-        
-        // Get the application to check print_status_count
-        $application = null;
-        if ($application_id) {
-            $application = DB::table('applications')
-                            ->where('id', $application_id)
-                            ->first();
-        }
-    @endphp
-    
-  @if($transactionStatus == 'SUCCESSFUL')
-      @if($isThirdParty)
-          {{-- Third Party User Buttons --}}
-          <a href="{{ route('third.party.dashboard') }}" class="btn btn-primary me-2">
-              <i class="fa fa-home"></i> Dashboard
-          </a>
-      @else
-          {{-- Regular User Buttons --}}
+      @if($transactionStatus == 'SUCCESSFUL')
           <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
     
-          @if($application && $application->print_status_count > 0)
-              <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
-                class="btn btn-outline-primary me-2 rounded-pill px-5">
-                  @lang('app.view_receipts')
-              </a>
-          @else
-              <a href="{{ route('original_receipts', ['application_id' => $application_id]) }}" 
-                class="btn btn-outline-primary me-2 rounded-pill px-5">
-                  @lang('app.view_receipts')
-              </a>
-          @endif
+        @if($application && $application->print_status_count > 0)
+          <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
+            class="btn btn-outline-primary me-2 rounded-pill px-5">
+              @lang('app.view_receipts')
+          </a>
+        @else
+            <a href="{{ route('original_receipts', ['application_id' => $application_id]) }}" 
+              class="btn btn-outline-primary me-2 rounded-pill px-5">
+                @lang('app.view_receipts')
+            </a>
+        @endif
     
-          <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
-              @lang('app.dashboard')
-          </a>
-      @endif
-      
-  @elseif($transactionStatus == 'PENDING')
-      @if($isThirdParty)
-          <a href="{{ route('third.party.dashboard') }}" class="btn btn-warning me-2">Dashboard</a>
+        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
+            @lang('app.dashboard')
+        </a>
+      @elseif($transactionStatus == 'PENDING')
+        <a href="{{ route('pay.status') }}" class="btn btn-warning me-2">Check Status</a>
+        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
+            @lang('app.dashboard')
+        </a>
       @else
-          <a href="{{ route('pay.status') }}" class="btn btn-warning me-2">Check Status</a>
-          <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
-              @lang('app.dashboard')
-          </a>
+        <!-- Unsuccessful - Show retry options -->
+        <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
+            @lang('app.dashboard')
+        </a>
       @endif
-      
-  @else
-      {{-- Unsuccessful - Show retry options --}}
-      @if($isThirdParty)
-          <a href="{{ route('third.party.dashboard') }}" class="btn btn-outline-primary rounded-pill px-5">
-              @lang('app.dashboard')
-          </a>
-      @else
-          <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
-              @lang('app.dashboard')
-          </a>
+      @if($transactionStatus == 'SUCCESSFUL')
+        <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+            <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk cetak resit.
+        </p>
       @endif
-  @endif
-  
-  @if($transactionStatus == 'SUCCESSFUL')
-    <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
-        <strong>Nota:</strong> Sila klik 'Lihat Resit' untuk cetak resit.
-    </p>
-  @endif
-</div>
+    </div>
     
   </div>
 
- <script>
-    // Handle both user types
+  <script>
+    // You can use the client_uuid in JavaScript if needed
     const clientUuid = document.getElementById('client_uuid')?.value;
-    const thirdPartyId = document.getElementById('third_party_id')?.value;
-    
     if (clientUuid) {
       console.log('Client UUID:', clientUuid);
       // Additional client-specific JavaScript can go here
-    } else if (thirdPartyId) {
-      console.log('Third Party ID:', thirdPartyId);
     }
-</script>
+  </script>
 </body>
 </html>
