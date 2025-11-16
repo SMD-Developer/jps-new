@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Client;
+use App\Models\ReceiptRequest;
 use App\Models\ThirdPartyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -1701,6 +1702,136 @@ class ThirdPartyController extends Controller
     public function success()
     {
         return view('third-party.payments.success');
+    }
+
+
+    public function receiptCopy($application_id)
+    {
+        $application = Application::with(['payment' => function($query) {
+                $query->where('payment_status', 'completed')
+                    ->whereNull('payment_type') 
+                    ->oldest('created_at');
+            }])
+            ->select(
+                'applications.*', 
+                'state.negeri', 
+                'district.daerah',
+                'division.mukim as land_mukim'
+            )
+            ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+            ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+            ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+            ->where('applications.id', $application_id)
+            ->firstOrFail();
+        
+        $thirdPartyPayment = Payment::where('application_id', $application_id)
+            ->where('third_party_id', auth('third_party')->id())
+            ->where('payment_type', 'third_party')
+            ->where('payment_status', 'completed')
+            ->first();
+        
+        if (!$thirdPartyPayment) {
+            abort(403, 'Unauthorized access. Please complete payment to view this receipt.');
+        }
+        
+        $completedPayment = $application->payment()
+            ->where('payment_status', 'completed')
+            ->whereNull('payment_type') 
+            ->oldest('created_at')
+            ->first();
+        
+        if ($completedPayment) {
+            // Show ORIGINAL payment details
+            $application->payment_status = $completedPayment->payment_status;
+            $application->payment_method = $completedPayment->method;
+            $application->payment_amount = $completedPayment->amount;
+            $application->transaction_id = $completedPayment->transaction_id;
+            $application->receipt_number = $completedPayment->receipt_number;
+            $application->payment_date = $completedPayment->created_at;
+            $application->gateway_response = $completedPayment->gateway_response;
+            
+            if ($completedPayment->gateway_response) {
+                $gatewayResponse = is_array($completedPayment->gateway_response) 
+                    ? $completedPayment->gateway_response 
+                    : json_decode($completedPayment->gateway_response, true);
+                    
+                if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                    $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                    
+                    $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+                elseif (isset($gatewayResponse['processed_at'])) {
+                    $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                        ->setTimezone('Asia/Kuala_Lumpur')
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+            }
+        }
+
+        return view('third-party.receipt-copy', compact('application'));
+    }
+
+
+    public function submitRequest(Request $request)
+    {
+        $request->validate([
+            'application_id' => 'required|exists:applications,id'
+        ]);
+
+        $application = Application::findOrFail($request->application_id);
+        
+        // Verify it's a legacy application
+        if ($application->created_at >= '2024-11-16') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Permohonan ini menggunakan sistem automatik.'
+            ]);
+        }
+
+        // Verify third party has paid
+        $payment = Payment::where('application_id', $request->application_id)
+            ->where('third_party_id', auth('third_party')->id())
+            ->where('payment_type', 'third_party')
+            ->where('payment_status', 'completed')
+            ->first();
+
+        if (!$payment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sila buat pembayaran terlebih dahulu.'
+            ]);
+        }
+
+        // Check if request already exists
+        $existingRequest = ReceiptRequest::where('application_id', $request->application_id)
+            ->where('third_party_id', auth('third_party')->id())
+            ->first();
+
+        if ($existingRequest) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Permohonan sudah dihantar sebelum ini.'
+            ]);
+        }
+
+        // Create receipt request
+        ReceiptRequest::create([
+            'application_id' => $request->application_id,
+            'third_party_id' => auth('third_party')->id(),
+            'status' => 'pending'
+        ]);
+
+        // TODO: Send email notification to admin
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permohonan berjaya dihantar.'
+        ]);
     }
 
 

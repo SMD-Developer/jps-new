@@ -55,6 +55,9 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
         // ===== EXISTING Routes - Now Protected with Middleware =====
         Route::middleware(['third.party.auth'])->group(function () {
             Route::get('/dashboard', 'ThirdPartyController@dashboard')->name('dashboard'); 
+            Route::get('/user-receipt-copy/{id}', 'ThirdPartyController@userReceiptCopy')->name('receipt.copy');
+            Route::post('/submit-request', 'ThirdPartyController@submitRequest')->name('submit.request');
+            Route::get('/download-receipt/{request_id}', 'ThirdPartyController@downloadReceipt')->name('download.receipt');
             Route::get('/application/search', 'ThirdPartyController@searchFilter' )->name('search');
             Route::get('/search-results', 'ThirdPartyController@searchResults')->name('search-results');
             Route::post('/store', 'ThirdPartyController@storeThirdPartyInfo')->name('store');
