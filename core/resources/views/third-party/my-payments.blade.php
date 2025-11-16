@@ -149,9 +149,9 @@
                                         <td>
                                             {{-- Add View Receipt Button --}}
                                             <a href="{{ route('third.party.view.receipt', ['application_id' => $payment->application_id, 'payment_uuid' => $payment->uuid]) }}" 
-                                            class="btn btn-sm btn-primary"
-                                            style="border-radius: 20px; padding: 6px 16px; font-weight: 600;">
-                                                <i class="fa fa-eye"></i> Lihat Resit
+                                                class="btn btn-sm btn-primary"
+                                                style="border-radius: 15px; padding: 4px 12px; font-weight: 600; font-size: 12px; white-space: nowrap;">
+                                                    <i class="fa fa-eye"></i> Lihat Resit
                                             </a>
                                         </td>
                                     </tr>
