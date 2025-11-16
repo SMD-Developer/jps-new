@@ -914,7 +914,7 @@ class PayController extends Controller
                 
                 // **KEY CHANGE: Redirect to appropriate success page**
                 if ($isThirdPartyPayment) {
-                    return view('third-party.payments.success', compact(
+                    return view('clientarea.payments.success', compact(
                         'val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 
                         'fpx_fpxTxnId', 'fpx_sellerOrderNo', 'fpx_buyerBankId', 
                         'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch'
