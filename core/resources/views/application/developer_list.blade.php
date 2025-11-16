@@ -170,7 +170,7 @@
                                             <td>{{ date('d/m/Y', strtotime($value->created_at)) }}</td>
                                             <td>{{ $value->account_type_name }}</td>
                                             <td>{{ strtoupper($value->userName) }}</td>
-                                            <td>{{ $value->registeredAddress }}</td>
+                                            <td>{{ strtoupper($value->registeredAddress) }}</td>
                                             @if($isAdminOrStaff)
                                             <td id="status-cell-{{ $value->client_id }}">
                                                 @if ($value->is_blocked)

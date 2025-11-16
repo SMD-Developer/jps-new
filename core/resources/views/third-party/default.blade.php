@@ -637,6 +637,15 @@ body {
     .login-page {
         z-index: 1 !important;
     }
+
+    .cursor-pointer {
+        cursor: pointer !important;
+    }
+
+    .toggle-password {
+        z-index: 10;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body class="login-page">
@@ -694,13 +703,16 @@ body {
         <form method="POST" action="{{ route('third.party.login.submit') }}">
             @csrf
             <div class="mb-3">
-                <label>Email</label>
+                <label style="font-size:18px;">Email</label>
                 <input type="email" name="email" class="form-control" required>
             </div>
 
-            <div class="mb-3">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
+           <div class="mb-3 position-relative">
+                <label style="font-size:18px;">Password</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+                <i class="bi bi-eye-slash toggle-password position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer" 
+                data-target="password" 
+                style="cursor: pointer; margin-top: 12px;"></i>
             </div>
 
             <button type="submit" class="btn btn-primary mb-3">Login</button>
