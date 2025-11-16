@@ -172,31 +172,64 @@
             
             $application_id = $paymentRecord->application_id ?? null;
             
-            // Get the application to check print_status_count
+            // Get the application to check if it's legacy
             $application = null;
+            $isLegacy = false;
             if ($application_id) {
                 $application = DB::table('applications')
                                 ->where('id', $application_id)
                                 ->first();
+                
+                // Check if legacy (before 16 Nov 2024)
+                if ($application) {
+                    $isLegacy = \Carbon\Carbon::parse($application->created_at)->lt('2024-11-16');
+                }
             }
         @endphp
         
-        @if($transactionStatus == 'SUCCESSFUL')  
-            <!-- Dashboard Button -->
-            <a href="{{ route('third.party.dashboard') }}" 
-               class="btn btn-secondary me-2">
-                <i class="fa fa-home"></i> Dashboard
-            </a>
-            
-            <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
-                <strong>Nota:</strong> Sila klik 'Lihat Resit' untuk muat turun dan cetak resit untuk tujuan rekod.
-            </p>
+        @if($transactionStatus == 'SUCCESSFUL')
+            @if($isLegacy)
+                {{-- Legacy Application - Show Submit Request Button --}}
+                <button class="btn btn-primary me-2 submit-request-after-payment"
+                        data-application-id="{{ $application_id }}"
+                        style="border-radius: 50px; padding: 10px 25px;">
+                    <i class="fa fa-paper-plane"></i> Hantar Permohonan Resit
+                </button>
+                
+                <a href="{{ route('third.party.dashboard') }}" 
+                  class="btn btn-secondary me-2"
+                  style="border-radius: 50px; padding: 10px 25px;">
+                    <i class="fa fa-home"></i> Dashboard
+                </a>
+                
+                <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+                    <strong>Nota:</strong> Sila klik butang "Hantar Permohonan Resit" untuk mengemukakan permohonan anda kepada pentadbir. 
+                    Resit akan diproses dalam masa 1-3 hari bekerja.
+                </p>
+            @else
+                {{-- New Application - Show View Receipt Button --}}
+                <a href="{{ route('third.party.receipt.copy', $application_id) }}" 
+                  class="btn btn-outline-primary me-2" 
+                  target="_blank"
+                  style="border-radius: 50px; padding: 10px 25px;">
+                    <i class="fa fa-file-pdf-o"></i> Lihat Resit
+                </a>
+                
+                <a href="{{ route('third.party.dashboard') }}" 
+                  class="btn btn-secondary me-2"
+                  style="border-radius: 50px; padding: 10px 25px;">
+                    <i class="fa fa-home"></i> Dashboard
+                </a>
+                
+                <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+                    <strong>Nota:</strong> Sila klik 'Lihat Resit' untuk cetak resit.
+                </p>
+            @endif
             
         @elseif($transactionStatus == 'PENDING')
-            
             <!-- Dashboard Button -->
             <a href="{{ route('third.party.dashboard') }}" 
-               class="btn btn-secondary me-2">
+              class="btn btn-secondary me-2">
                 <i class="fa fa-home"></i> Dashboard
             </a>
             
@@ -205,10 +238,9 @@
             </p>
             
         @else
-            
             <!-- Dashboard Button -->
             <a href="{{ route('third.party.dashboard') }}" 
-               class="btn btn-secondary me-2">
+              class="btn btn-secondary me-2">
                 <i class="fa fa-home"></i> Dashboard
             </a>
             
@@ -219,7 +251,8 @@
     </div>
     
   </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     const thirdPartyId = document.getElementById('third_party_id')?.value;
     if (thirdPartyId) {
@@ -237,5 +270,68 @@
       @endif
     }
   </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const submitBtn = document.querySelector('.submit-request-after-payment');
+        
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function() {
+                const applicationId = this.getAttribute('data-application-id');
+                
+                Swal.fire({
+                    title: 'Hantar Permohonan',
+                    html: `
+                        <div class="text-center">
+                            <p>Permohonan anda akan dihantar kepada pentadbir untuk kelulusan.</p>
+                            <p><strong>Tempoh pemprosesan: 1-3 hari bekerja</strong></p>
+                        </div>
+                    `,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#17a2b8',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Hantar',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Submit request
+                        fetch('{{ route("third.party.submit.request") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                application_id: applicationId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Berjaya!',
+                                    html: `
+                                        <p>Permohonan anda telah dihantar.</p>
+                                        <p>Anda akan dimaklumkan melalui email apabila resit sudah sedia.</p>
+                                    `,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.href = '{{ route("third.party.dashboard") }}';
+                                });
+                            } else {
+                                Swal.fire('Ralat!', data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Ralat!', 'Sila cuba lagi.', 'error');
+                        });
+                    }
+                });
+            });
+        }
+    });
+</script>
 </body>
 </html>
