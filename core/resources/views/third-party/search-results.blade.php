@@ -135,7 +135,7 @@
                                         </td>
                                         <td>
                                             @php
-                                                $isLegacy = \Carbon\Carbon::parse($app->created_at)->lt('2024-11-16');
+                                                $isLegacy = \Carbon\Carbon::parse($app->created_at)->lt('2025-11-16');
                                                 $hasOriginalPayment = $app->payment && $app->payment->payment_status === 'completed';
                                                 
                                                 // Check if third party has paid for reprint
@@ -159,7 +159,7 @@
 
                                             @if($hasOriginalPayment)
                                                 @if($isLegacy)
-                                                    {{-- LEGACY APPLICATION (Before 16 Nov 2024) --}}
+                                                    {{-- LEGACY APPLICATION (Before 16 Nov 2025) --}}
                                                     
                                                     @if($thirdPartyPayment)
                                                         {{-- Third party has paid --}}
