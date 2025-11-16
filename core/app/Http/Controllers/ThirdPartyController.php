@@ -1786,7 +1786,7 @@ class ThirdPartyController extends Controller
         $application = Application::findOrFail($request->application_id);
         
         // Verify it's a legacy application
-        if ($application->created_at >= '2024-11-16') {
+        if ($application->created_at >= '2025-11-16') {
             return response()->json([
                 'success' => false,
                 'message' => 'Permohonan ini menggunakan sistem automatik.'
