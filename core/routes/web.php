@@ -56,6 +56,8 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
         Route::middleware(['third.party.auth'])->group(function () {
             Route::get('/dashboard', 'ThirdPartyController@dashboard')->name('dashboard'); 
             Route::get('/user-receipt-copy/{id}', 'ThirdPartyController@userReceiptCopy')->name('receipt.copy');
+            Route::get('/view-receipt/{application_id}/{payment_uuid}', 'ThirdPartyController@viewReceipt')
+            ->name('view.receipt');
             Route::get('/my-requests', 'ThirdPartyController@myRequests')->name('my.requests');
             Route::get('/my-payments', 'ThirdPartyController@myPayments')->name('my.payments');
             Route::post('/submit-request', 'ThirdPartyController@submitRequest')->name('submit.request');

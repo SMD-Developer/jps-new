@@ -1959,6 +1959,65 @@ class ThirdPartyController extends Controller
     }
 
 
+    // ThirdPartyController.php
+
+    public function viewReceipt($application_id, $payment_uuid)
+    {
+        $application = Application::select(
+                'applications.*',
+                'state.negeri',
+                'district.daerah'
+            )
+            ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+            ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+            ->where('applications.id', $application_id)
+            ->firstOrFail();
+        
+        // Verify this payment belongs to the logged-in third party
+        $completedPayment = $application->payment()
+            ->where('uuid', $payment_uuid)
+            ->where('third_party_id', auth('third_party')->id())
+            ->where('payment_type', 'third_party')
+            ->where('payment_status', 'completed')
+            ->firstOrFail();
+        
+        if ($completedPayment) {
+            $application->payment_status = $completedPayment->payment_status;
+            $application->payment_method = $completedPayment->method;
+            $application->payment_type = $completedPayment->payment_type;
+            $application->payment_amount = $completedPayment->amount;
+            $application->transaction_id = $completedPayment->transaction_id;
+            $application->receipt_number = $completedPayment->receipt_number;
+            $application->payment_date = $completedPayment->created_at;
+            $application->gateway_response = $completedPayment->gateway_response;
+            
+            if ($completedPayment->gateway_response) {
+                $gatewayResponse = is_array($completedPayment->gateway_response) 
+                    ? $completedPayment->gateway_response 
+                    : json_decode($completedPayment->gateway_response, true);
+                    
+                if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                    $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                    
+                    $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+                elseif (isset($gatewayResponse['processed_at'])) {
+                    $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                        ->setTimezone('Asia/Kuala_Lumpur')
+                        ->format('d/m/Y h:i:s A');
+                    
+                    $application->fpx_payment_time = $formattedTime;
+                }
+            }
+        }
+        
+        return view('third-party.view-receipt', compact('application'));
+    }
+
+
 
 
 }
