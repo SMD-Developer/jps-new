@@ -1,0 +1,258 @@
+@extends('app')
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    .table-header {
+        background: #f0f0f0;
+        font-weight: bold;
+        text-align: center;
+        font-size: 13px;
+    }
+    
+    .table td,
+    .table th {
+        vertical-align: middle;
+        text-align: center;
+        font-size: 13px;
+    }
+    
+    .badge {
+        font-size: 0.75em;
+        padding: 6px 12px;
+    }
+    
+    .status-pending {
+        background-color: #ffc107;
+        color: #000;
+    }
+    
+    .status-approved {
+        background-color: #28a745;
+        color: #fff;
+    }
+    
+    .status-rejected {
+        background-color: #dc3545;
+        color: #fff;
+    }
+</style>
+
+<title>Permohonan Resit Saya | JPS</title>
+
+@section('content')
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <!-- Header -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">
+                        <i class="fa fa-file-text"></i> Senarai Permohonan Resit Saya
+                    </h3>
+                </div>
+
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    <!-- Results Count -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <p><strong>{{ $requests->total() }}</strong> Permohonan Dijumpai</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Results Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-header">
+                                <tr>
+                                    <th>Bil</th>
+                                    <th>No Rujukan</th>
+                                    <th>Nama Pemohon</th>
+                                    <th>Lot/PT</th>
+                                    <th>Tarikh Permohonan</th>
+                                    <th>Status</th>
+                                    <th>Tindakan</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($requests as $index => $request)
+                                    <tr>
+                                        <td>{{ $requests->firstItem() + $index }}</td>
+                                        <td>{{ $request->application->refference_no ?? 'N/A' }}</td>
+                                        <td>{{ $request->application->applicant ?? 'N/A' }}</td>
+                                        <td>{{ $request->application->land_lot ?? 'N/A' }}
+                                            {{ $request->application->landDivision->mukim ?? '' }}, Daerah {{ $request->application->landDistrict->daerah ?? '' }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($request->created_at)->format('d/m/Y H:i') }}</td>
+                                        <td>
+                                            @if($request->status === 'pending')
+                                                <span class="badge status-pending">
+                                                    <i class="fa fa-clock"></i> Dalam Proses
+                                                </span>
+                                            @elseif($request->status === 'approved')
+                                                <span class="badge status-approved">
+                                                    <i class="fa fa-check-circle"></i> Diluluskan
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ \Carbon\Carbon::parse($request->approved_at)->format('d/m/Y H:i') }}
+                                                </small>
+                                            @else
+                                                <span class="badge status-rejected">
+                                                    <i class="fa fa-times-circle"></i> Ditolak
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($request->status === 'approved')
+                                                <a href="{{ route('third.party.download.receipt', $request->id) }}" 
+                                                class="btn btn-sm btn-success"
+                                                style="border-radius: 20px; padding: 6px 16px; font-weight: 600;">
+                                                    <i class="fa fa-download"></i> Muat Turun
+                                                </a>
+                                            @elseif($request->status === 'pending')
+                                                <span class="text-muted" style="font-size: 12px;">
+                                                    <i class="fa fa-hourglass-half"></i> Menunggu Kelulusan
+                                                </span>
+                                            @else
+                                                <span class="text-danger" style="font-size: 12px;">
+                                                    <i class="fa fa-info-circle"></i> 
+                                                    @if($request->admin_notes)
+                                                        {{ $request->admin_notes }}
+                                                    @else
+                                                        Permohonan ditolak
+                                                    @endif
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary"
+                                                    onclick="openFinanceModal({{ $request->id }}, '{{ $request->status }}')">
+                                                Approve Request
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted">
+                                            <div class="py-4">
+                                                <i class="fa fa-inbox fa-3x mb-3" style="color: #ccc;"></i>
+                                                <p>Tiada permohonan resit dijumpai</p>
+                                                <a href="{{ route('third.party.dashboard') }}" class="btn btn-primary btn-sm">
+                                                    Kembali ke Dashboard
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    @if($requests->hasPages())
+                        <div class="d-flex justify-content-center mt-4">
+                            {{ $requests->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ONE GLOBAL MODAL -->
+<div class="modal fade" id="financeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form id="financeForm" method="POST" action="{{ route('receipt.request.update') }}" enctype="multipart/form-data">
+                @csrf
+
+                <input type="hidden" name="id" id="receiptRequestId">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Process Receipt Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- STATUS -->
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select name="status" id="statusSelect" class="form-control" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <!-- UPLOAD RECEIPT -->
+                    <div class="mb-3" id="uploadDiv" style="display:none;">
+                        <label>Upload Receipt</label>
+                        <input type="file" name="receipt_file" class="form-control" accept=".pdf,.jpg,.png">
+                    </div>
+
+                    <!-- REJECT REASON -->
+                    <div class="mb-3" id="reasonDiv" style="display:none;">
+                        <label>Reason</label>
+                        <textarea name="admin_notes" class="form-control"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openFinanceModal(id, currentStatus = 'pending') {
+
+        // Set hidden ID
+        document.getElementById('receiptRequestId').value = id;
+
+        // Set current status as selected
+        const statusSelect = document.getElementById('statusSelect');
+        statusSelect.value = currentStatus;
+
+        toggleFields(currentStatus);
+
+        // Open modal
+        let modal = new bootstrap.Modal(document.getElementById('financeModal'));
+        modal.show();
+    }
+
+    // Show/Hide Fields Based on Status
+    function toggleFields(status) {
+        document.getElementById('uploadDiv').style.display = (status === "approved") ? "block" : "none";
+        document.getElementById('reasonDiv').style.display = (status === "rejected") ? "block" : "none";
+    }
+
+    document.getElementById('statusSelect').addEventListener('change', function () {
+        toggleFields(this.value);
+    });
+</script>
+
+@endsection

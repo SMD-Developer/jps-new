@@ -1834,6 +1834,35 @@ class ThirdPartyController extends Controller
         ]);
     }
 
+    public function myRequests()
+    {
+        $requests = \App\Models\ReceiptRequest::with(['application.landDistrict', 'application.landDivision'])
+            ->where('third_party_id', auth('third_party')->id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        $district = DB::table('district')->where('stat', 1)
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();
+        return view('third-party.my-requests', compact('requests', 'district'));
+    }
+
+
+    public function downloadReceipt($request_id)
+    {
+        // Find the receipt request
+        $receipt = \App\Models\ReceiptRequest::findOrFail($request_id);
+
+        // Check if receipt file exists
+        if (!$receipt->receipt_file_path || !file_exists(public_path($receipt->receipt_file_path))) {
+            return back()->with('error', 'Receipt file not found.');
+        }
+
+        $filePath = public_path($receipt->receipt_file_path);
+
+        // Download the file
+        return response()->download($filePath, basename($filePath));
+    }
 
 
 

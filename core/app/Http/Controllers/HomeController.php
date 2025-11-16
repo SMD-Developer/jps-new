@@ -9,6 +9,7 @@ use App\Invoicer\Repositories\Contracts\ExpenseInterface as Expense;
 use Illuminate\View\View;
 use DB;
 use App\Models\Application;
+use App\Models\ReceiptRequest;
 use App\Models\ClaimContribution;
 use App\Models\Payment;
 use App\Notifications\NewApplicationSent;
@@ -3540,6 +3541,81 @@ public function updateUserDetails(Request $request, $id)
         
         return response()->json(['status' => 'success']);
     }
+
+
+    public function thirdPartyRequest()
+    {
+        $requests = \App\Models\ReceiptRequest::with(['application.landDistrict', 'application.landDivision'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        $district = DB::table('district')->where('stat', 1)
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')
+            ->get();
+
+        return view('finance.my-requests', compact('requests', 'district'));
+    }
+
+
+    public function requestUpdateStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:receipt_requests,id',
+            'status' => 'required|in:pending,approved,rejected',
+            'admin_notes' => 'nullable|string',
+            'receipt_file' => 'nullable|file|mimes:jpg,png,pdf|max:4096',
+        ]);
+
+        $receipt = ReceiptRequest::find($request->id);
+
+        $receipt->status = $request->status;
+        $receipt->admin_notes = $request->admin_notes;
+        $receipt->admin_uuid = auth('admin')->user()->uuid ?? null;
+
+        // FILE UPLOAD USING YOUR CUSTOM LOGIC
+        if ($request->status === 'approved') {
+
+            $fileKey = 'receipt_file';
+
+            if ($request->hasFile($fileKey)) {
+
+                $uploadPath = public_path('pdf'); 
+
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+
+                $file = $request->file($fileKey);
+
+                // Keep original name
+                $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $fileExtension = $file->getClientOriginalExtension();
+                $newFileName = $fileName . '.' . $fileExtension;
+
+                // Move file to folder
+                $file->move($uploadPath, $newFileName);
+
+                // Save path in database (exactly like your code)
+                $receipt->receipt_file_path = 'pdf/' . $newFileName;
+            }
+
+            $receipt->approved_at = now();
+        }
+
+        // If rejected → remove file
+        if ($request->status === 'rejected') {
+            $receipt->receipt_file_path = null;
+            $receipt->approved_at = null;
+        }
+
+        $receipt->save();
+
+        return back()->with('success', 'Receipt request updated successfully.');
+    }
+
+
+
 
 
     

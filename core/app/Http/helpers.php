@@ -1560,6 +1560,13 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
                                 'permission' => 'payments.view-list'
                             ],
+
+                            [
+                                'icon' => 'money',
+                                'text' => trans('Third Party Request'),
+                                'route' =>  url('third-party-request'),
+                                'menu_active' => request()->is('third-party-request') ? 'active' : '',
+                            ],
                         ]
                     ],
                   

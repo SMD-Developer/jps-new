@@ -138,9 +138,9 @@ i.right.fa.fa-angle-right.mt-2 {
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('third.party.my.requests') }}" class="nav-link">
                         <i class="fa fa-credit-card nav-icon"></i>
-                        <p>Pembayaran</p>
+                        <p>My Request</p>
                     </a>
                 </li>
             </ul>

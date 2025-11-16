@@ -56,6 +56,7 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
         Route::middleware(['third.party.auth'])->group(function () {
             Route::get('/dashboard', 'ThirdPartyController@dashboard')->name('dashboard'); 
             Route::get('/user-receipt-copy/{id}', 'ThirdPartyController@userReceiptCopy')->name('receipt.copy');
+            Route::get('/my-requests', 'ThirdPartyController@myRequests')->name('my.requests');
             Route::post('/submit-request', 'ThirdPartyController@submitRequest')->name('submit.request');
             Route::get('/download-receipt/{request_id}', 'ThirdPartyController@downloadReceipt')->name('download.receipt');
             Route::get('/application/search', 'ThirdPartyController@searchFilter' )->name('search');
@@ -319,6 +320,8 @@ Route::group(['middleware' => 'install'], function(){
         Route::get('developer-list','HomeController@developer_list')->name('developer_list');
         Route::delete('client/{id}', 'HomeController@destroy_user')->name('client.destroy');
         Route::get('view-receipt','HomeController@viewReceipt')->name('view.receipt');
+        Route::get('third-party-request','HomeController@thirdPartyRequest')->name('finance.reques');
+        Route::post('receipt-request/update', 'HomeController@requestUpdateStatus')->name('receipt.request.update');
         Route::get('receipt-original','HomeController@userReceipt')->name('original_receipt');
          Route::get('receipt-copy','HomeController@adminuserReceiptCopy')->name('copy_receipt');
         // Route::get('user-approve','ApproverController@approve')->name('approve');
