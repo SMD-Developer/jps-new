@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Client;
 use App\Models\ReceiptRequest;
 use App\Models\ThirdPartyUser;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
