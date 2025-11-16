@@ -9,6 +9,7 @@ use App\Invoicer\Repositories\Contracts\ExpenseInterface as Expense;
 use Illuminate\View\View;
 use DB;
 use App\Models\Application;
+use App\Models\ThirdPartyUser;
 use App\Models\ReceiptRequest;
 use App\Models\ClaimContribution;
 use App\Models\Payment;
@@ -16,6 +17,7 @@ use App\Notifications\NewApplicationSent;
 use App\Notifications\UserApplicationStatusNotification;
 use App\Notifications\UserApplicationRejectionNotification;
 use App\Notifications\ClaimStatusUpdated;
+use App\Notifications\ReceiptStatusUpdated;
 use App\Notifications\AccountUnblockedNotification;
 use App\Notifications\AdminAccountUnblockedNotification;
 use App\Models\User;
@@ -3610,6 +3612,12 @@ public function updateUserDetails(Request $request, $id)
         }
 
         $receipt->save();
+
+        $thirdPartyUser = \App\Models\ThirdPartyUser::find($receipt->third_party_id);
+
+        if ($thirdPartyUser) {
+            $thirdPartyUser->notify(new ReceiptStatusUpdated($receipt));
+        }
 
         return back()->with('success', 'Receipt request updated successfully.');
     }

@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewReceiptRequestSubmitted;
 
 
 
@@ -1826,7 +1827,17 @@ class ThirdPartyController extends Controller
             'status' => 'pending'
         ]);
 
-        // TODO: Send email notification to admin
+        $financeRoleId = '9e032970-5f48-4d2b-b88e-abb9da79140f';
+
+        $financeAdmins = User::where('role_id', $financeRoleId)->get();
+
+        if ($financeAdmins->count() === 0) {
+            Log::warning('No Finance Admin found', ['role_id' => $financeRoleId]);
+        } else {
+            foreach ($financeAdmins as $admin) {
+                $admin->notify(new NewReceiptRequestSubmitted($receiptRequest));
+            }
+        }
 
         return response()->json([
             'success' => true,

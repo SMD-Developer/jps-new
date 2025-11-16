@@ -86,7 +86,6 @@
                                     <th>Lot/PT</th>
                                     <th>Tarikh Permohonan</th>
                                     <th>Status</th>
-                                    <th>Tindakan</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -119,32 +118,16 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($request->status === 'approved')
-                                                <a href="{{ route('third.party.download.receipt', $request->id) }}" 
-                                                class="btn btn-sm btn-success"
-                                                style="border-radius: 20px; padding: 6px 16px; font-weight: 600;">
-                                                    <i class="fa fa-download"></i> Muat Turun
-                                                </a>
-                                            @elseif($request->status === 'pending')
-                                                <span class="text-muted" style="font-size: 12px;">
-                                                    <i class="fa fa-hourglass-half"></i> Menunggu Kelulusan
-                                                </span>
+                                            @if($request->status !== 'approved')
+                                                <button class="btn btn-sm btn-primary"
+                                                        onclick="openFinanceModal({{ $request->id }}, '{{ $request->status }}')">
+                                                    Approve Request
+                                                </button>
                                             @else
-                                                <span class="text-danger" style="font-size: 12px;">
-                                                    <i class="fa fa-info-circle"></i> 
-                                                    @if($request->admin_notes)
-                                                        {{ $request->admin_notes }}
-                                                    @else
-                                                        Permohonan ditolak
-                                                    @endif
-                                                </span>
+                                                <button class="btn btn-sm btn-secondary" disabled>
+                                                    <i class="fa fa-check"></i> Already Approved
+                                                </button>
                                             @endif
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary"
-                                                    onclick="openFinanceModal({{ $request->id }}, '{{ $request->status }}')">
-                                                Approve Request
-                                            </button>
                                         </td>
                                     </tr>
                                 @empty
