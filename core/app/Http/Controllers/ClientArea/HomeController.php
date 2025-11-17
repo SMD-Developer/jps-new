@@ -1121,7 +1121,8 @@ class HomeController extends Controller {
 	        $division=DB::table('division')->where('status',1)->orderBy('mukim_code','asc')->get();
             $landCategories = DB::table('land_category')->get();
             $landMeasurement = DB::table('land_measurement_unit')->get();
-            return view('clientarea.resubmit-application', compact('application', 'state', 'district','division', 'landCategories','landMeasurement'));
+            $accountTypes = DB::table('account_types')->get();
+            return view('clientarea.resubmit-application', compact('application', 'state', 'district','division', 'landCategories','landMeasurement', 'accountTypes'));
             
         } catch (\Exception $e) {
             \Log::error('Error accessing resubmit application: ' . $e->getMessage());
@@ -1136,28 +1137,36 @@ class HomeController extends Controller {
         try {
             $application = DB::table('applications')->where('id', $id)->first();
             $currentUser = auth('user')->user();
-    
+
             if (!$application) {
                 return redirect()->back()->with('error', __('app.application_not_found'));
             }
-    
+
+            // Get the applicant type from the application
+            $applicantType = $application->applicant_type;
+
             // Define base validation rules
             $validationRules = [
                 "uploade_date" => "required",
                 "applicant" => "required",
-                "identities" => "required",
                 "address" => "required",
                 "phone" => "required|numeric|digits_between:8,12",
                 "email" => "required|email",
                 "state" => "required",
                 "city" => "required",
                 "district" => "required",
+                "project_name" => "required",
                 "land_lot" => "required",
                 "land_area" => "required",
                 "land_district" => "required",
                 "land_state" => "required",
             ];
-    
+
+            // Only add identities validation if applicant_type is NOT 3 (Agency)
+            if ($applicantType != 3) {
+                $validationRules["identities"] = "required";
+            }
+
             // Custom validation messages
             $customMessages = [
                 'land_grant.max' => 'The land grant file size cannot exceed 15MB.',
@@ -1166,8 +1175,9 @@ class HomeController extends Controller {
                 'land_grant.mimes' => 'The land grant file must be a PDF.',
                 'permission_plan.mimes' => 'The permission plan file must be a PDF.',
                 'letter_of_support.mimes' => 'The letter of support file must be a PDF.',
+                'identities.required' => 'The identification card number is required.',
             ];
-    
+
             // Check if files are uploaded and add validation rules
             $fileKeys = ['land_grant', 'permission_plan', 'letter_of_support'];
             foreach ($fileKeys as $key) {
@@ -1187,7 +1197,7 @@ class HomeController extends Controller {
                     $validationRules[$key] = 'file|mimes:pdf|max:15360'; // 15MB in KB
                 }
             }
-    
+
             // Validate the request
             $validator = \Validator::make($request->all(), $validationRules, $customMessages);
             
@@ -1198,7 +1208,7 @@ class HomeController extends Controller {
                     'message' => 'Validation failed. Please check your inputs.'
                 ], 422);
             }
-    
+
             // Handle file uploads with additional size checking
             $uploadedFiles = [];
             $uploadPath = public_path('pdf');
@@ -1247,7 +1257,38 @@ class HomeController extends Controller {
                     }
                 }
             }
-    
+
+            // Prepare update data
+            $updateData = [
+                "uploade_date" => $request->input('uploade_date', $application->uploade_date),
+                "applicant" => $request->input('applicant', $application->applicant),
+                "address" => $request->input('address', $application->address),
+                "postal_code" => $request->input('postal_code', $application->postal_code),
+                "phone" => $request->input('phone', $application->phone),
+                "email" => $request->input('email', $application->email),
+                "city" => $request->input('city', $application->city),
+                "district" => $request->input('district', $application->district),
+                "project_name" => $request->input('project_name', $application->project_name),
+                "land_district" => $request->input('land_district', $application->land_district),
+                "land_state" => $request->input('land_state', $application->land_state),
+                "land_lot" => $request->input('land_lot', $application->land_lot),
+                "land_area" => $request->input('land_area', $application->land_area),
+                "state" => $request->input('state', $application->state),
+                "status" => 'pending',
+                "rejection_reason" => null,
+                "application_type" => 'reapply',
+                "updated_at" => now()
+            ];
+
+            // Handle identities field conditionally
+            if ($applicantType != 3) {
+                // For non-Agency types, update identities if provided
+                $updateData["identities"] = $request->input('identities', $application->identities);
+            } else {
+                // For Agency (type 3), keep existing identities or set to null if empty
+                $updateData["identities"] = $request->input('identities') ?: null;
+            }
+
             // Handle file removal requests
             $removeFields = ['remove_land_grant', 'remove_permission_plan', 'remove_letter_of_support'];
             foreach ($removeFields as $removeField) {
@@ -1262,39 +1303,20 @@ class HomeController extends Controller {
                     }
                 }
             }
-    
-            $updateData = [
-                "uploade_date" => $request->input('uploade_date', $application->uploade_date),
-                "applicant" => $request->input('applicant', $application->applicant),
-                "identities" => $request->input('identities', $application->identities),
-                "address" => $request->input('address', $application->address),
-                "postal_code" => $request->input('postal_code', $application->postal_code),
-                "phone" => $request->input('phone', $application->phone),
-                "email" => $request->input('email', $application->email),
-                "city" => $request->input('city', $application->city),
-                "district" => $request->input('district', $application->district),
-                "land_district" => $request->input('land_district', $application->land_district),
-                "land_state" => $request->input('land_state', $application->land_state),
-                "land_lot" => $request->input('land_lot', $application->land_lot),
-                "land_area" => $request->input('land_area', $application->land_area),
-                "state" => $request->input('state', $application->state),
-                "status" => 'pending',
-                "rejection_reason" => null,
-                "application_type" => 'reapply',
-                "updated_at" => now()
-            ];
-    
+
             // Merge uploaded files data
             if (!empty($uploadedFiles)) {
                 $updateData = array_merge($updateData, $uploadedFiles);
             }
-    
+
             \Log::info("Update data:", $updateData);
         
             DB::beginTransaction();
             
             try {
                 DB::table('applications')->where('id', $id)->update($updateData);
+                
+                // Log the resubmission
                 DB::table('application_logs')->insert([
                     'application_id' => $id,
                     'user_type' => 'applicant', 
@@ -1306,7 +1328,8 @@ class HomeController extends Controller {
                     'additional_data' => json_encode([
                         'performed_by' => $currentUser->name ?? 'User',
                         'reapplication_date' => now()->format('Y-m-d H:i:s'),
-                        'uploaded_files' => array_keys($uploadedFiles)
+                        'uploaded_files' => array_keys($uploadedFiles),
+                        'applicant_type' => $applicantType
                     ]),
                     'action_at' => now(),
                     'created_at' => now(),

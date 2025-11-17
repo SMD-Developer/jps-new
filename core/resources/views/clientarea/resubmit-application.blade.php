@@ -440,6 +440,25 @@
                         value="{{ $application->final_amount ?? '0' }}">
                     <input type="hidden" id="cost_input" name="cost" value="{{ $application->cost ?? '0' }}"> --}}
 
+
+                    <div class="section">
+                        <h4>@lang('app.project_information')</h4>
+                        
+            
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <label for="project_name">@lang('Nama dan Butiran Projek')</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <textarea id="project_name" name="project_name" class="form-control" rows="4" 
+                                            placeholder="Nama Projek">{{ $application->project_name ?? '' }}</textarea>
+                                        @error('project_name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                        
+
                     <!-- Lot Information Section -->
                     <div class="section">
                         <h4>@lang('app.lot_information')</h4>
@@ -1024,608 +1043,550 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            let formIsReady = true;
+       $(document).ready(function() {
+        let formIsReady = true;
 
-            // Initially disable the Generate Letter button
-            $('#generateLetterButton').addClass('disabled').attr('onclick', 'return false;');
+        // Get application type from backend - THIS IS THE KEY FIX
+        const applicationType = '{{ $application->applicant_type }}';
 
-            // Function to check if form is valid and toggle the Generate Letter button
-            function checkFormAndToggleButton() {
-                let formIsValid = true;
+        // Function to get current application type
+        function getApplicationType() {
+            return applicationType;
+        }
 
-                // List of all required fields to check
-                const requiredFields = [
-                    'application_reference', 'pemohon', 'ssm', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
-                    'lot-tanah', 'keluasan', 'land-unit', 'land_district', 'mukim', 'land_category'
-                ];
+        // Function to update ID card field requirement based on account type
+        function updateIdCardRequirement() {
+            const appType = getApplicationType();
+            const ssmField = $('#ssm');
+            const ssmLabel = $('label[for="ssm"]');
+            
+            if (appType == '3') {
+                // Remove required validation for account type 3
+                ssmField.removeClass('is-invalid');
+                ssmField.next('.invalid-feedback').remove();
+                $('#ssm-error').remove();
+                
+                // Remove red asterisk
+                ssmLabel.find('.starr').remove();
+            } else {
+                // Add red asterisk for other account types
+                if (!ssmLabel.find('.starr').length) {
+                    ssmLabel.append(' <b class="starr">*</b>');
+                }
+            }
+        }
 
-                // Check each required field
-                requiredFields.forEach(field => {
-                    const element = $('#' + field);
-                    if (element.length) {
-                        let value = element.val();
+        // Initial check on page load
+        updateIdCardRequirement();
 
-                        // Skip validation for fields that are read-only or disabled
-                        if (element.prop('readonly') || element.prop('disabled')) {
-                            return;
-                        }
+        // Function to check if form is valid
+        function checkFormAndToggleButton() {
+            let formIsValid = true;
+            const appType = getApplicationType();
 
-                        if (!value || value.trim() === '') {
-                            formIsValid = false;
-                        }
+            // Build required fields list based on account type
+            let requiredFields = [
+                'pemohon', 'alamat', 'poskod',
+                'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                'lot-tanah', 'keluasan', 'land_district', 'mukim', 'project_name'
+            ];
+
+            // Only add ssm if NOT account type 3
+            if (appType != '3') {
+                requiredFields.push('ssm');
+            }
+
+            // Check each required field
+            requiredFields.forEach(field => {
+                const element = $('#' + field);
+                if (element.length) {
+                    let value = element.val();
+
+                    // Skip validation for fields that are read-only or disabled
+                    if (element.prop('readonly') || element.prop('disabled')) {
+                        return;
                     }
-                });
 
-                // Check other validations (email, postal code, phone number, etc.)
-                const emailElement = $('#emel');
-                if (emailElement.length && emailElement.val().trim() !== '') {
-                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailPattern.test(emailElement.val())) {
+                    if (!value || value.trim() === '') {
                         formIsValid = false;
                     }
                 }
+            });
 
-                const postalElement = $('#poskod');
-                if (postalElement.length && postalElement.val().trim() !== '') {
-                    const postalPattern = /^[0-9]+$/;
-                    if (!postalPattern.test(postalElement.val())) {
-                        formIsValid = false;
-                    }
-                }
-
-                const phoneElement = $('#telefon');
-                if (phoneElement.length && phoneElement.val().trim() !== '') {
-                    const phonePattern = /^[0-9]+$/;
-                    if (!phonePattern.test(phoneElement.val())) {
-                        formIsValid = false;
-                    }
-                }
-
-                // Check land grant file validation
-                const landGrantInput = $('#land_grant');
-                if (landGrantInput.length) {
-                    const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
-                    if (!hasExistingFile && landGrantInput[0].files.length === 0) {
-                        formIsValid = false;
-                    }
-                }
-
-                // Enable or disable the Generate Letter button based on form validity
-                if (formIsValid) {
-                    $('#generateLetterButton').removeClass('disabled').attr('onclick',
-                        "confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
-                        );
-                } else {
-                    $('#generateLetterButton').addClass('disabled').attr('onclick', 'return false;');
+            // Check email validation
+            const emailElement = $('#emel');
+            if (emailElement.length && emailElement.val().trim() !== '') {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(emailElement.val())) {
+                    formIsValid = false;
                 }
             }
 
-            // Add validation function
-            function validateForm() {
-                let isValid = true;
-                let firstInvalidField = null;
+            // Check postal code validation
+            const postalElement = $('#poskod');
+            if (postalElement.length && postalElement.val().trim() !== '') {
+                const postalPattern = /^[0-9]+$/;
+                if (!postalPattern.test(postalElement.val())) {
+                    formIsValid = false;
+                }
+            }
 
-                const requiredFields = [{
-                        id: 'application_reference',
-                        name: 'Application Reference'
-                    },
-                    {
-                        id: 'pemohon',
-                        name: 'Applicant'
-                    },
-                    {
-                        id: 'ssm',
-                        name: 'Identification Card No'
-                    },
-                    {
-                        id: 'alamat',
-                        name: 'Address'
-                    },
-                    {
-                        id: 'poskod',
-                        name: 'Postal Code'
-                    },
-                    {
-                        id: 'bandar',
-                        name: 'City'
-                    },
-                    {
-                        id: 'negeri',
-                        name: 'State'
-                    },
-                    {
-                        id: 'daerah',
-                        name: 'District'
-                    },
-                    {
-                        id: 'emel',
-                        name: 'Email'
-                    },
-                    {
-                        id: 'telefon',
-                        name: 'Telephone'
-                    },
-                    {
-                        id: 'lot-tanah',
-                        name: 'Land Lot'
-                    },
-                    {
-                        id: 'keluasan',
-                        name: 'Land Area'
-                    },
-                    {
-                        id: 'land-unit',
-                        name: 'Land Unit'
-                    },
-                    {
-                        id: 'land_district',
-                        name: 'Land District'
-                    },
-                    {
-                        id: 'mukim',
-                        name: 'Mukim'
-                    },
-                    {
-                        id: 'land_category',
-                        name: 'Land Category'
+            // Check phone validation
+            const phoneElement = $('#telefon');
+            if (phoneElement.length && phoneElement.val().trim() !== '') {
+                const phonePattern = /^[0-9]+$/;
+                if (!phonePattern.test(phoneElement.val())) {
+                    formIsValid = false;
+                }
+            }
+
+            // Check land grant file validation
+            const landGrantInput = $('#land_grant');
+            if (landGrantInput.length) {
+                const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
+                if (!hasExistingFile && landGrantInput[0].files.length === 0) {
+                    formIsValid = false;
+                }
+            }
+
+            // Enable or disable the Generate Letter button based on form validity
+            if (formIsValid) {
+                $('#generateLetterButton').removeClass('disabled').attr('onclick',
+                    "confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
+                );
+            } else {
+                $('#generateLetterButton').addClass('disabled').attr('onclick', 'return false;');
+            }
+        }
+
+        // Validate form function
+        function validateForm() {
+            let isValid = true;
+            let firstInvalidField = null;
+            const appType = getApplicationType();
+
+            // Build required fields based on account type
+            const requiredFields = [];
+            
+            const allFields = [
+                { id: 'pemohon', name: 'Applicant' },
+                { id: 'alamat', name: 'Address' },
+                { id: 'poskod', name: 'Postal Code' },
+                { id: 'bandar', name: 'City' },
+                { id: 'negeri', name: 'State' },
+                { id: 'daerah', name: 'District' },
+                { id: 'emel', name: 'Email' },
+                { id: 'telefon', name: 'Telephone' },
+                { id: 'lot-tanah', name: 'Land Lot' },
+                { id: 'keluasan', name: 'Land Area' },
+                { id: 'land_district', name: 'Land District' },
+                { id: 'mukim', name: 'Mukim' }
+            ];
+
+            // Add ssm only if NOT account type 3
+            if (appType != '3') {
+                requiredFields.push({ id: 'ssm', name: 'Identification Card No' });
+            }
+
+            // Add all other fields
+            requiredFields.push(...allFields);
+
+            // Check each required field
+            requiredFields.forEach(field => {
+                const element = $('#' + field.id);
+                if (element.length) {
+                    let value = element.val();
+
+                    // Skip validation for fields that are read-only or disabled
+                    if (element.prop('readonly') || element.prop('disabled')) {
+                        return;
                     }
-                ];
 
-                // Check each required field
-                requiredFields.forEach(field => {
-                    const element = $('#' + field.id);
-                    if (element.length) {
-                        let value = element.val();
+                    if (!value || value.trim() === '') {
+                        isValid = false;
 
-                        // Skip validation for fields that are read-only or disabled
-                        if (element.prop('readonly') || element.prop('disabled')) {
-                            return;
-                        }
+                        // Add error class and message
+                        element.addClass('is-invalid');
 
-                        if (!value || value.trim() === '') {
-                            isValid = false;
-
-                            // Add error class and message
-                            element.addClass('is-invalid');
-
-                            // Create error message if it doesn't exist
-                            let errorId = field.id + '-error';
-                            if ($('#' + errorId).length === 0) {
-                                element.after('<div id="' + errorId +
-                                    '" class="text-danger">This field is required</div>');
-                            } else {
-                                $('#' + errorId).text('This field is required').show();
-                            }
-
-                            // Store first invalid field for scrolling
-                            if (!firstInvalidField) {
-                                firstInvalidField = element;
-                            }
+                        // Create error message if it doesn't exist
+                        let errorId = field.id + '-error';
+                        if ($('#' + errorId).length === 0) {
+                            element.after('<div id="' + errorId +
+                                '" class="text-danger">This field is required</div>');
                         } else {
-                            // Remove error class and hide message
-                            element.removeClass('is-invalid');
-                            $('#' + field.id + '-error').hide();
+                            $('#' + errorId).text('This field is required').show();
                         }
-                    }
-                });
 
-                // Validate land category separately as it's in a different part of the form
-                const landCategoryElement = $('#land_category');
-                if (landCategoryElement.length && (landCategoryElement.val() === null || landCategoryElement
-                    .val() === '')) {
-                    isValid = false;
-                    landCategoryElement.addClass('is-invalid');
-
-                    if ($('#land_category-error').length === 0) {
-                        landCategoryElement.after(
-                            '<div id="land_category-error" class="text-danger">Land category is required</div>');
+                        // Store first invalid field for scrolling
+                        if (!firstInvalidField) {
+                            firstInvalidField = element;
+                        }
                     } else {
-                        $('#land_category-error').text('Land category is required').show();
+                        // Remove error class and hide message
+                        element.removeClass('is-invalid');
+                        $('#' + field.id + '-error').hide();
+                    }
+                }
+            });
+
+            // Validate email format if provided
+            const emailElement = $('#emel');
+            if (emailElement.length && emailElement.val().trim() !== '') {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(emailElement.val())) {
+                    isValid = false;
+                    emailElement.addClass('is-invalid');
+
+                    if ($('#emel-error').length === 0) {
+                        emailElement.after(
+                            '<div id="emel-error" class="text-danger">Please enter a valid email address</div>'
+                        );
+                    } else {
+                        $('#emel-error').text('Please enter a valid email address').show();
                     }
 
                     if (!firstInvalidField) {
-                        firstInvalidField = landCategoryElement;
-                    }
-                } else if (landCategoryElement.length) {
-                    landCategoryElement.removeClass('is-invalid');
-                    $('#land_category-error').hide();
-                }
-
-                // Validate email format if provided
-                const emailElement = $('#emel');
-                if (emailElement.length && emailElement.val().trim() !== '') {
-                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailPattern.test(emailElement.val())) {
-                        isValid = false;
-                        emailElement.addClass('is-invalid');
-
-                        if ($('#emel-error').length === 0) {
-                            emailElement.after(
-                                '<div id="emel-error" class="text-danger">Please enter a valid email address</div>'
-                            );
-                        } else {
-                            $('#emel-error').text('Please enter a valid email address').show();
-                        }
-
-                        if (!firstInvalidField) {
-                            firstInvalidField = emailElement;
-                        }
+                        firstInvalidField = emailElement;
                     }
                 }
-
-                // Validate postal code format if provided (numeric only)
-                const postalElement = $('#poskod');
-                if (postalElement.length && postalElement.val().trim() !== '') {
-                    const postalPattern = /^[0-9]+$/;
-                    if (!postalPattern.test(postalElement.val())) {
-                        isValid = false;
-                        postalElement.addClass('is-invalid');
-
-                        if ($('#poskod-error').length === 0) {
-                            postalElement.after(
-                                '<div id="poskod-error" class="text-danger">Postal code must contain only numbers</div>'
-                            );
-                        } else {
-                            $('#poskod-error').text('Postal code must contain only numbers').show();
-                        }
-
-                        if (!firstInvalidField) {
-                            firstInvalidField = postalElement;
-                        }
-                    }
-                }
-
-                // Validate phone number format if provided (numeric only)
-                const phoneElement = $('#telefon');
-                if (phoneElement.length && phoneElement.val().trim() !== '') {
-                    const phonePattern = /^[0-9]+$/;
-                    if (!phonePattern.test(phoneElement.val())) {
-                        isValid = false;
-                        phoneElement.addClass('is-invalid');
-
-                        if ($('#telefon-error').length === 0) {
-                            phoneElement.after(
-                                '<div id="telefon-error" class="text-danger">Phone number must contain only numbers</div>'
-                            );
-                        } else {
-                            $('#telefon-error').text('Phone number must contain only numbers').show();
-                        }
-
-                        if (!firstInvalidField) {
-                            firstInvalidField = phoneElement;
-                        }
-                    }
-                }
-
-                // MODIFIED: Check land grant file only if there is no existing file
-                const landGrantInput = $('#land_grant');
-                if (landGrantInput.length) {
-                    // Check if there's an existing file by looking for the "Current file" text
-                    const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
-
-                    // Only validate if there's no existing file and no new file uploaded
-                    if (!hasExistingFile && landGrantInput[0].files.length === 0) {
-                        isValid = false;
-
-                        if ($('#land_grant-error').length === 0) {
-                            landGrantInput.closest('.form-group').append(
-                                '<div id="land_grant-error" class="text-danger">Land grant document is required</div>'
-                            );
-                        } else {
-                            $('#land_grant-error').text('Land grant document is required').show();
-                        }
-
-                        if (!firstInvalidField) {
-                            firstInvalidField = landGrantInput;
-                        }
-                    } else {
-                        $('#land_grant-error').hide();
-                    }
-                }
-
-                // Scroll to the first invalid field if validation fails
-                if (firstInvalidField) {
-                    $('html, body').animate({
-                        scrollTop: firstInvalidField.offset().top - 100
-                    }, 500);
-                }
-
-                return isValid;
             }
 
-            // Run the check when page loads
-            checkFormAndToggleButton();
+            // Validate postal code format if provided (numeric only)
+            const postalElement = $('#poskod');
+            if (postalElement.length && postalElement.val().trim() !== '') {
+                const postalPattern = /^[0-9]+$/;
+                if (!postalPattern.test(postalElement.val())) {
+                    isValid = false;
+                    postalElement.addClass('is-invalid');
 
-            // Add input validation on blur for all required fields
-            $('.form-control').on('blur', function() {
-                const id = $(this).attr('id');
-                if (id) {
-                    // Skip validation for land_grant and discount fields
-                    if (id === 'land_grant' || id === 'discount') {
-                        return;
-                    }
-
-                    const value = $(this).val();
-                    if (!value || value.trim() === '') {
-                        $(this).addClass('is-invalid');
-
-                        // Create error message if it doesn't exist
-                        if ($('#' + id + '-error').length === 0) {
-                            $(this).after('<div id="' + id +
-                                '-error" class="text-danger">This field is required</div>');
-                        } else {
-                            $('#' + id + '-error').text('This field is required').show();
-                        }
+                    if ($('#poskod-error').length === 0) {
+                        postalElement.after(
+                            '<div id="poskod-error" class="text-danger">Postal code must contain only numbers</div>'
+                        );
                     } else {
-                        $(this).removeClass('is-invalid');
-                        $('#' + id + '-error').hide();
+                        $('#poskod-error').text('Postal code must contain only numbers').show();
+                    }
+
+                    if (!firstInvalidField) {
+                        firstInvalidField = postalElement;
                     }
                 }
-                checkFormAndToggleButton();
-            });
+            }
 
-            $('.form-control').on('input', function() {
-                $(this).removeClass('is-invalid');
-                $('#' + $(this).attr('id') + '-error').hide();
-                checkFormAndToggleButton();
-            });
+            // Validate phone number format if provided (numeric only)
+            const phoneElement = $('#telefon');
+            if (phoneElement.length && phoneElement.val().trim() !== '') {
+                const phonePattern = /^[0-9]+$/;
+                if (!phonePattern.test(phoneElement.val())) {
+                    isValid = false;
+                    phoneElement.addClass('is-invalid');
 
-            $('select').on('change', function() {
-                checkFormAndToggleButton();
-            });
+                    if ($('#telefon-error').length === 0) {
+                        phoneElement.after(
+                            '<div id="telefon-error" class="text-danger">Phone number must contain only numbers</div>'
+                        );
+                    } else {
+                        $('#telefon-error').text('Phone number must contain only numbers').show();
+                    }
 
-            // Handle State Change for Districts - keep your existing code
-            $('#negeri').on('change', function() {
-                const stateId = $(this).val();
-                $('#daerah').html('<option value="">Loading...</option>'); // Show loading
+                    if (!firstInvalidField) {
+                        firstInvalidField = phoneElement;
+                    }
+                }
+            }
 
-                if (stateId) {
-                    $.ajax({
-                        url: `/districts/${stateId}`, // Correct backend route
-                        type: 'GET',
-                        success: function(data) {
-                            let options = '<option value="">Sila Pilih Daerah</option>';
-                            data.forEach(district => {
-                                options +=
-                                    `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
-                            });
-                            $('#daerah').html(options); // Populate the dropdown
-                            checkFormAndToggleButton
-                        (); // Check form validity after populating dropdown
-                        },
-                        error: function() {
-                            $('#daerah').html(
-                                '<option value="">Error loading districts</option>');
-                            checkFormAndToggleButton();
-                        }
-                    });
+            // Check land grant file only if there is no existing file
+            const landGrantInput = $('#land_grant');
+            if (landGrantInput.length) {
+                const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
+
+                if (!hasExistingFile && landGrantInput[0].files.length === 0) {
+                    isValid = false;
+
+                    if ($('#land_grant-error').length === 0) {
+                        landGrantInput.closest('.form-group').append(
+                            '<div id="land_grant-error" class="text-danger">Land grant document is required</div>'
+                        );
+                    } else {
+                        $('#land_grant-error').text('Land grant document is required').show();
+                    }
+
+                    if (!firstInvalidField) {
+                        firstInvalidField = landGrantInput;
+                    }
                 } else {
-                    $('#daerah').html('<option value="">Sila Pilih Daerah</option>');
+                    $('#land_grant-error').hide();
+                }
+            }
+
+            // Scroll to the first invalid field if validation fails
+            if (firstInvalidField) {
+                $('html, body').animate({
+                    scrollTop: firstInvalidField.offset().top - 100
+                }, 500);
+            }
+
+            return isValid;
+        }
+
+        // Run the check when page loads
+        checkFormAndToggleButton();
+
+        // Add input validation on blur for all required fields
+        $('.form-control').on('blur', function() {
+            const id = $(this).attr('id');
+            const appType = getApplicationType();
+            
+            if (id) {
+                // Skip validation for land_grant field
+                if (id === 'land_grant') {
+                    return;
+                }
+
+                // Skip ssm validation if account type is 3
+                if (id === 'ssm' && appType == '3') {
+                    return;
+                }
+
+                const value = $(this).val();
+                if (!value || value.trim() === '') {
+                    $(this).addClass('is-invalid');
+
+                    // Create error message if it doesn't exist
+                    if ($('#' + id + '-error').length === 0) {
+                        $(this).after('<div id="' + id +
+                            '-error" class="text-danger">This field is required</div>');
+                    } else {
+                        $('#' + id + '-error').text('This field is required').show();
+                    }
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $('#' + id + '-error').hide();
+                }
+            }
+            checkFormAndToggleButton();
+        });
+
+        $('.form-control').on('input', function() {
+            $(this).removeClass('is-invalid');
+            $('#' + $(this).attr('id') + '-error').hide();
+            checkFormAndToggleButton();
+        });
+
+        $('select').on('change', function() {
+            checkFormAndToggleButton();
+        });
+
+    // Handle State Change for Districts
+    $('#negeri').on('change', function() {
+        const stateId = $(this).val();
+        $('#daerah').html('<option value="">Loading...</option>');
+
+        if (stateId) {
+            $.ajax({
+                url: `/districts/${stateId}`,
+                type: 'GET',
+                success: function(data) {
+                    let options = '<option value="">Sila Pilih Daerah</option>';
+                    data.forEach(district => {
+                        options +=
+                            `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
+                    });
+                    $('#daerah').html(options);
+                    checkFormAndToggleButton();
+                },
+                error: function() {
+                    $('#daerah').html(
+                        '<option value="">Error loading districts</option>');
                     checkFormAndToggleButton();
                 }
             });
+        } else {
+            $('#daerah').html('<option value="">Sila Pilih Daerah</option>');
+            checkFormAndToggleButton();
+        }
+    });
 
-            $('#land_district').on('change', function() {
-                const districtId = $(this).val();
-                $('#mukim').html('<option value="">Loading...</option>'); // Show loading message
+    $('#land_district').on('change', function() {
+        const districtId = $(this).val();
+        $('#mukim').html('<option value="">Loading...</option>');
 
-                if (districtId) {
-                    $.ajax({
-                        url: `/division/${districtId}`,
-                        type: 'GET',
-                        success: function(data) {
-                            let options = '<option value="">Sila Pilih</option>';
-                            data.forEach(mukin => {
-                                options +=
-                                    `<option value="${mukin.idmukim}">${mukin.mukim_code} - ${mukin.mukim}</option>`;
-                            });
-                            $('#mukim').html(options); 
-                            checkFormAndToggleButton
-                        (); 
-                        },
-                        error: function() {
-                            $('#mukim').html('<option value="">Error loading mukim</option>');
-                            checkFormAndToggleButton();
-                        }
+        if (districtId) {
+            $.ajax({
+                url: `/division/${districtId}`,
+                type: 'GET',
+                success: function(data) {
+                    let options = '<option value="">Sila Pilih</option>';
+                    data.forEach(mukin => {
+                        options +=
+                            `<option value="${mukin.idmukim}">${mukin.mukim_code} - ${mukin.mukim}</option>`;
                     });
-                } else {
-                    $('#mukim').html('<option value="">Sila Pilih</option>');
+                    $('#mukim').html(options);
+                    checkFormAndToggleButton();
+                },
+                error: function() {
+                    $('#mukim').html('<option value="">Error loading mukim</option>');
                     checkFormAndToggleButton();
                 }
             });
+        } else {
+            $('#mukim').html('<option value="">Sila Pilih</option>');
+            checkFormAndToggleButton();
+        }
+    });
 
-            $('#updatetButton').on('click', function(e) {
-                e.preventDefault(); 
+    $('#updatetButton').on('click', function(e) {
+        e.preventDefault();
 
-                if (validateForm()) {
-                    $('#updateApplicationForm').submit(); 
-                }
+        if (validateForm()) {
+            $('#updateApplicationForm').submit();
+        }
+    });
+
+    $('#updateApplicationForm').on('submit', function(e) {
+        if (!formIsReady) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Error",
+                text: "Please wait for the form to load fully before submitting.",
+                icon: "error",
+                confirmButtonText: "OK"
             });
+            return;
+        }
 
-            $('#updateApplicationForm').on('submit', function(e) {
-                if (!formIsReady) {
-                    e.preventDefault();
+        if (!validateForm()) {
+            e.preventDefault();
+            return;
+        }
+
+        e.preventDefault();
+        
+        let formData = new FormData(this);
+        const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support'];
+        
+        let fileSizeValid = true;
+        fileInputs.forEach(inputName => {
+            const fileInput = $(`#${inputName}`)[0];
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > 15 * 1024 * 1024) {
+                    fileSizeValid = false;
+                    return;
+                }
+                formData.append(inputName, file);
+            }
+        });
+
+        if (!fileSizeValid) {
+            Swal.fire({
+                title: "Error!",
+                text: "One or more files exceed the 15MB size limit. Please choose smaller files.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "@lang('app.uploading')",
+            text: "@lang('app.please_wait_while_uploading')",
+            icon: "info",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: "{{ route('updateResubmitApplication', $application->id) }}",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.success) {
                     Swal.fire({
-                        title: "Error",
-                        text: "Please wait for the form to load fully before submitting.",
+                        title: "@lang('app.success')",
+                        text: response.message || "@lang('app.application_has_been_updated')",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        window.location.href = "{{ route('client_application_status') }}";
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: response.message || "@lang('app.unexpected_error_occurred')",
                         icon: "error",
                         confirmButtonText: "OK"
                     });
-                    return;
                 }
-
-                if (!validateForm()) {
-                    e.preventDefault();
-                    return;
-                }
-
-                e.preventDefault();
-                const hectareValue = parseFloat($('input[name="hectare"]').val()) || 0;
-                const adjustmentValue = parseFloat($('input[name="adjustment_percentage"]').val()) || 0;
-
-                $('input[name="hectare"]').val(hectareValue.toFixed(2));
-                $('input[name="adjustment_percentage"]').val(adjustmentValue.toFixed(2));
-
-                let formData = new FormData(this);
-                const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support'];
-                
-                let fileSizeValid = true;
-                    fileInputs.forEach(inputName => {
-                        const fileInput = $(`#${inputName}`)[0];
-                        if (fileInput.files.length > 0) {
-                            const file = fileInput.files[0];
-                            if (file.size > 15 * 1024 * 1024) { // 15MB check
-                                fileSizeValid = false;
-                                return;
-                            }
-                            formData.append(inputName, file);
-                        }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    Swal.fire({
+                        title: "@lang('app.validation_error')",
+                        text: "@lang('app.please_fill_up')",
+                        icon: "error",
+                        confirmButtonText: "OK"
                     });
 
-                    if (!fileSizeValid) {
-                        Swal.fire({
-                            title: "Error!",
-                            text: "One or more files exceed the 15MB size limit. Please choose smaller files.",
-                            icon: "error",
-                            confirmButtonText: "OK"
-                        });
-                        return;
-                    }
-                
-                
-                // fileInputs.forEach(inputName => {
-                //     const fileInput = $(`#${inputName}`)[0];
-                //     if (fileInput.files.length > 0) {
-                //         formData.append(inputName, fileInput.files[0]);
-                //     }
-                // });
-
-                console.log("FormData prepared:", formData);
-                Swal.fire({
-                    title: "@lang('app.uploading')",
-                    text: "@lang('app.please_wait_while_uploading')",
-                    icon: "info",
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                $.ajax({
-                    url: "{{ route('updateResubmitApplication', $application->id) }}",
-                    type: "POST",
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        console.log("Response received:", response);
-                        if (response.success) {
-                            $('#generateLetterButton').removeClass('disabled').attr('onclick',
-                                "confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
-                                );
-
-                            Swal.fire({
-                                title: "@lang('app.success')",
-                                text: response.message || "@lang('app.application_has_been_updated')",
-                                icon: "success",
-                                confirmButtonText: "OK"
-                            }).then(() => {
-                                window.location.href =
-                                    "{{ route('client_application_status') }}";
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Error!",
-                                text: response.message || "@lang('app.unexpected_error_occurred')",
-                                icon: "error",
-                                confirmButtonText: "OK"
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error("Error occurred:", xhr);
-
-                        if (xhr.status === 422) {
-                            let errors = xhr.responseJSON.errors;
-                            console.log("Validation Errors:", errors);
-
-                            Swal.fire({
-                                title: "@lang('app.validation_error')",
-                                text: "@lang('app.please_fill_up')",
-                                icon: "error",
-                                confirmButtonText: "OK"
-                            });
-
-                            $.each(errors, function(key, value) {
-                                $("#" + key + "-error").text(value[0]);
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Error!",
-                                text: "@lang('app.unexpected_error_occurred')",
-                                icon: "error",
-                                confirmButtonText: "OK"
-                            });
-                        }
-                    }
-                });
-            });
-
-            $('<style>')
-                .prop('type', 'text/css')
-                .html(`
-        .is-invalid {
-            border-color: #dc3545 !important;
-            padding-right: calc(1.5em + 0.75rem);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right calc(0.375em + 0.1875rem) center;
-            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-        }
-        .text-danger {
-            color: #dc3545 !important;
-            font-size: 80%;
-            margin-top: 0.25rem;
-        }
-        .starr {
-            color: red;
-        }
-        .btn.disabled {
-            cursor: not-allowed;
-            opacity: 0.65;
-            pointer-events: none;
-        }
-        `)
-                .appendTo('head');
-
-            setTimeout(function() {
-                const requiredFields = [
-                    'application_reference', 'pemohon', 'ssm', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
-                    'lot-tanah', 'keluasan', 'land_district', 'mukim', 'land_category'
-                ];
-
-                requiredFields.forEach(field => {
-                    const label = $(`label[for="${field}"]`);
-                    if (label.length && !label.find('.starr').length) {
-                        label.append(' <b class="starr">*</b>');
-                    }
-                });
-
-                const landGrantInput = $('#land_grant');
-                if (landGrantInput.length) {
-                    const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info')
-                        .length > 0;
-                    if (hasExistingFile) {
-                        $('label[for="land_grant"]').find('.starr').remove();
-                    }
+                    $.each(errors, function(key, value) {
+                        $("#" + key + "-error").text(value[0]);
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "@lang('app.unexpected_error_occurred')",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                 }
-                checkFormAndToggleButton();
-            }, 500);
+            }
         });
+    });
+
+    // Add asterisks to required fields
+    setTimeout(function() {
+        const appType = getApplicationType();
+        
+        let requiredFields = [
+            'pemohon', 'alamat', 'poskod',
+            'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+            'lot-tanah', 'keluasan', 'land_district', 'mukim'
+        ];
+
+        // Only add ssm if NOT account type 3
+        if (appType != '3') {
+            requiredFields.push('ssm');
+        }
+
+        requiredFields.forEach(field => {
+            const label = $(`label[for="${field}"]`);
+            if (label.length && !label.find('.starr').length) {
+                label.append(' <b class="starr">*</b>');
+            }
+        });
+
+        // If account type is 3, ensure ssm doesn't have asterisk
+        if (appType == '3') {
+            $('label[for="ssm"]').find('.starr').remove();
+        }
+
+        const landGrantInput = $('#land_grant');
+        if (landGrantInput.length) {
+            const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
+            if (hasExistingFile) {
+                $('label[for="land_grant"]').find('.starr').remove();
+            }
+        }
+        
+        checkFormAndToggleButton();
+    }, 500);
+});
     </script>
     <script>
 $(document).ready(function() {
