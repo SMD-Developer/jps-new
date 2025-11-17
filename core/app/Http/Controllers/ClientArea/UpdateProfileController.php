@@ -42,7 +42,6 @@ class UpdateProfileController extends Controller
         try {
             $validated = $this->validate($request, [
                 'userName'          => 'required|max:255',
-                'idCardNumber'      => 'required|max:20',
                 'postalCode'        => 'required|max:10',
                 'registeredAddress' => 'required|max:500',
                 'state'             => 'required',

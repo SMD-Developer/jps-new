@@ -710,12 +710,9 @@ body {
                         <!--{!! Form::label('email', trans('app.email_or_username')) !!}-->
                         {!! Form::input('email','login', null, ['class'  =>"form-control", 'required'=>'required', 'placeholder'=>"Emel"]) !!}
                     </div>
-                     <div class="input-box mt-3">
-                        <!--<input type="text" id="email-input" placeholder="Kata Laluan">-->
-                        <!--<button type="button" class="btn btn-outline-light p-1" data-role="togglepassword" data-target="#email-input" title="Show password" tabindex="-1"><i class="fa fa-eye" style="font-size: x-large"></i></button>-->
-                    <!--{!! Form::label('password', trans('app.password')) !!}-->
-                        {!! Form::password('password', ['class'=>"form-control", 'id' => "password", 'placeholder'=>"Kata Laluan", 'required']) !!}
-                        <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" data-target="password"></i>
+                     <div class="input-box mt-3 position-relative">
+                        {!! Form::password('password', ['class'=>"form-control", 'id'=>"password", 'required'=>'required' , 'placeholder'=>'Kata Laluan' ]) !!}
+                        <i class="fa fa-eye-slash toggle-password" data-target="password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"></i>
                     </div>
                    
                     <div class="forgot float-right mt-2">
@@ -1733,17 +1730,23 @@ $(document).ready(function() {
     tick();
 </script>
 <script>
-    $(document).ready(function() {
-        $('.toggle-password').on('click', function() {
-            const targetId = $(this).data('target');
-            const input = $('#' + targetId);
-            const type = input.attr('type') === 'password' ? 'text' : 'password';
-            
-            input.attr('type', type);
-            $(this).toggleClass('bi-eye-slash bi-eye');
-        });
+     // Password toggle functionality - KEEP THIS ONE
+document.querySelectorAll('.toggle-password').forEach(item => {
+    item.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+        } else {
+            input.type = 'password';
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+        }
     });
-    
+});
     function resetLoginForm(el) {
     // find the nearest form inside same column
     let form = el.closest('.col-lg-4').querySelector('form');
@@ -1811,24 +1814,6 @@ $(document).ready(function() {
         .finally(() => {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
-        });
-    });
-
-    // Password toggle functionality
-    document.querySelectorAll('.toggle-password').forEach(item => {
-        item.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                this.classList.remove('fa-eye-slash');
-                this.classList.add('fa-eye');
-            } else {
-                input.type = 'password';
-                this.classList.remove('fa-eye');
-                this.classList.add('fa-eye-slash');
-            }
         });
     });
 </script>
