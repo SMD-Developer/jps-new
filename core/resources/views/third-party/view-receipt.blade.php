@@ -158,7 +158,7 @@
                         <div class="col-5 px-0">
                             <p class="mb-0 pl-3"><strong>KERAJAAN NEGERI SELANGOR DARUL EHSAN</strong></p>
                             <p class="mb-0 text-center"><strong>RESIT RASMI</strong></p>
-                            <p class="text-center"><strong>SALINAN</strong></p>
+                            <p class="text-center"><strong>ASAL</strong></p>
                         </div>
                     </div>
                     
