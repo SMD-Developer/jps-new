@@ -165,7 +165,7 @@ class UpdateProfileController extends Controller
                     'string',
                     'min:8',
                     'max:20',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,20}$/',
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%_])[A-Za-z\d!@#$%_]{8,20}$/',
                     'different:old_password'
                 ],
                 'new_password_confirmation' => 'required|same:new_password',
@@ -175,7 +175,7 @@ class UpdateProfileController extends Controller
                 'new_password.max' => 'Kata laluan baharu tidak boleh melebihi 20 aksara.',
                 'new_password.regex' => __('app.password_validation_message', [], 'en') !== 'app.password_validation_message'
                     ? __('app.password_validation_message')
-                    : 'Kata laluan mesti mengandungi sekurang-kurangnya satu huruf besar, satu huruf kecil, satu nombor dan satu aksara khas (!@#$%).',
+                    : 'Kata laluan mesti mengandungi sekurang-kurangnya satu huruf besar, satu huruf kecil, satu nombor dan satu aksara khas (!@#$%_).',
                 'new_password.different' => __('app.new_password_must_be_different', [], 'en') !== 'app.new_password_must_be_different'
                     ? __('app.new_password_must_be_different')
                     : 'Kata laluan baharu mestilah berbeza daripada kata laluan lama.',

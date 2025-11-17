@@ -207,7 +207,7 @@
                                             <li id="noSpaces"><span class="validation-icon">❌</span>
                                                 {{ trans('app.no_spaces') }}</li>
                                             <li id="special"><span class="validation-icon">❌</span>
-                                                {{ trans('app.special_character') }} (!@#$%)</li>
+                                                {{ trans('app.special_character') }} (!@#$%_)</li>
                                             <li id="noSequential"><span class="validation-icon">❌</span>
                                                 {{ trans('app.no_sequential_characters') }} (abc, 123)</li>
                                         </ul>
@@ -330,7 +330,7 @@
                 lowercase: /[a-z]/.test(password),
                 number: /[0-9]/.test(password),
                 noSpaces: !/\s/.test(password),
-                specialChar: /[!@#$%]/.test(password),
+                specialChar: /[!@#$%_]/.test(password),
                 noSequential: !
                     /(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i
                     .test(password),
