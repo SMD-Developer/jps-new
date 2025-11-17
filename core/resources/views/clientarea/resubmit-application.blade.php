@@ -474,7 +474,7 @@
                         <div class="form-group">
                             <label for="keluasan">@lang('app.land_area')</label>
                             <div class="d-flex align-items-center">
-                                <select id="land-unit" name="land_unit" class="form-control form-select me-3" readonly
+                                <select id="land-unit" name="land_unit" class="form-control form-select me-3"
                                     onclick="return false;" style="pointer-events: none;">
                                     <option value="" disabled>- Sila Pilih -</option>
                                     @foreach ($landMeasurement as $land)
