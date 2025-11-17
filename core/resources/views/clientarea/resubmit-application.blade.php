@@ -489,7 +489,7 @@
                                     oninput="validateInput(this); convertToHectare();">
                                 <span class="mx-2">=</span>
                                 <input type="text" id="hectare-display" class="form-control"
-                                    placeholder="@lang('app.hectare')" readonly>
+                                    placeholder="@lang('app.hectare')">
                                 <span class="ml-2">@lang('app.hectare')</span>
                             </div>
                             <div class="mt-1 px-5 mx-5">
