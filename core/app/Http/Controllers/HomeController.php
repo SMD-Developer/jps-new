@@ -1860,8 +1860,13 @@ class HomeController extends Controller {
         // Only approved applications
         $query->where('status', 'approved');
 
-        // Only applications WITHOUT payment record (new applications)
-        $query->whereDoesntHave('payment');
+        // Only applications WITHOUT payment OR with in_review payment status
+        $query->where(function($q) {
+            $q->whereDoesntHave('payment')
+            ->orWhereHas('payment', function($paymentQuery) {
+                $paymentQuery->where('payment_status', 'in_review');
+            });
+        });
 
         // Order by latest
         $query->orderBy('created_at', 'desc');

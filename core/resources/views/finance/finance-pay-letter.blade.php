@@ -269,14 +269,12 @@
                            <div class="row last_row">
                                 <div class="col-md-6"></div>
                                <div class="col-md-6 text-right">
-                                   @if($canFinanceAdminApproveReject)
                                     <button type="submit" class="btn btn-secondary btn1 mx-3" id="rejectButton"
                                         data-id="{{ $application->id }}">@lang('app.no')</button>
                                     <button type="submit" class="btn btn-primary btn2" id="approveButton"
                                         data-id="{{ $application->id }}">
                                         @lang('app.accept')
                                     </button>
-                                    @endif
                                 </div>
                             </div>
                 </div>

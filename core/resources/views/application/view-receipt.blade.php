@@ -156,7 +156,20 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-</style>
+
+    .btn-approve-custom {
+        background-color: #d8ba32ff !important;
+        border-radius: 10px !important;
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-approve-custom i {
+        font-size: 12px;
+    }
+    </style>
 <title>{{ trans('app.manual_payment_update') }} | JPS</title>
 
 @section('content')
@@ -295,8 +308,20 @@
                                             <!-- Action -->
                                             <td>
                                                 @if ($isFinanceAdmin)
-                                                    <!-- Show edit button for all except completed and failed -->
-                                                    @if (!$payment || ($payment->payment_status !== 'completed' && $payment->payment_status !== 'failed'))
+
+                                                    {{-- If payment exists and status is in_review → show Approve button --}}
+                                                    @if ($payment && $payment->payment_status === 'in_review')
+                                                        
+                                                       <button type="button" 
+                                                            class="btn btn-approve-custom btn-sm"
+                                                            onclick="window.location.href='{{ route('finance.payment.letter', ['application_id' => $item->id]) }}'"
+                                                            title="{{ trans('app.view_receipt') }}">
+                                                            <i class="fa fa-edit"></i> Approve
+                                                        </button>
+
+                                                    @else
+
+                                                        {{-- Otherwise show Update button --}}
                                                         <button type="button" class="btn btn-edit btn-sm"
                                                             data-bs-toggle="modal" 
                                                             data-bs-target="#editPaymentModal"
@@ -304,17 +329,18 @@
                                                             data-reference-no="{{ $item->refference_no }}"
                                                             data-applicant="{{ $item->applicant }}"
                                                             data-amount="{{ $item->final_amount }}"
-                                                            data-current-status="{{ $payment->payment_status ?? 'Not Set' }}"
+                                                            data-current-status="Not Set"
                                                             title="{{ trans('app.update_payment') }}">
                                                             <i class="fa fa-edit"></i> 
                                                         </button>
-                                                    @else
-                                                        <span class="text-muted">-</span>
+
                                                     @endif
+
                                                 @else
                                                     <span class="text-muted">No Access</span>
                                                 @endif
                                             </td>
+
                                         </tr>
                                     @empty
                                         <tr>
