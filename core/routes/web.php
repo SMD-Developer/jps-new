@@ -323,6 +323,7 @@ Route::group(['middleware' => 'install'], function(){
         Route::get('developer-list','HomeController@developer_list')->name('developer_list');
         Route::delete('client/{id}', 'HomeController@destroy_user')->name('client.destroy');
         Route::get('view-receipt','HomeController@viewReceipt')->name('view.receipt');
+        Route::get('admin/payments', 'HomeController@paymentsList')->name('payments.list');
         Route::get('third-party-request','HomeController@thirdPartyRequest')->name('finance.reques');
         Route::post('receipt-request/update', 'HomeController@requestUpdateStatus')->name('receipt.request.update');
         Route::get('receipt-original','HomeController@userReceipt')->name('original_receipt');

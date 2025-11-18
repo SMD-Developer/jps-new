@@ -1832,6 +1832,70 @@ class HomeController extends Controller {
     
     public function viewReceipt(Request $request)
     {         
+        $list = $this->fetchApprovedApplicationsForPayment($request);
+        $perPage = $request->input('per_page', 10);
+        $isFinanceAdmin = $this->checkIfFinanceAdmin();
+
+        return view('application.view-receipt', compact(
+            'list', 
+            'perPage', 
+            'isFinanceAdmin'
+        ));     
+    }
+
+
+    private function fetchApprovedApplicationsForPayment(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('q');
+
+        $query = Application::with([
+                'state', 
+                'landDistrict', 
+                'landDivision', 
+                'client',
+                'payment'
+            ]);
+
+        // Only approved applications
+        $query->where('status', 'approved');
+
+        // Only applications WITHOUT payment record (new applications)
+        $query->whereDoesntHave('payment');
+
+        // Order by latest
+        $query->orderBy('created_at', 'desc');
+
+        // Apply search filter if provided
+        if ($search) {
+            $like = "%{$search}%";
+            $query->where(function ($sub) use ($like) {
+                $sub->where('refference_no', 'like', $like)
+                    ->orWhere('applicant', 'like', $like)
+                    ->orWhere('land_lot', 'like', $like)
+                    ->orWhere('final_amount', 'like', $like)
+                    ->orWhereHas('client', function($clientQuery) use ($like) {
+                        $clientQuery->where('userName', 'like', $like);
+                    });
+            });
+        }
+
+        return $query->paginate($perPage)->withQueryString();
+    }
+
+    private function checkIfFinanceAdmin(): bool
+    {
+        if (!auth('admin')->check()) {
+            return false;
+        }
+        
+        return auth('admin')->user()->role_id === '9e032970-5f48-4d2b-b88e-abb9da79140f';
+    }
+
+
+ 
+    private function fetchPayments(Request $request)
+    {
         $perPage = $request->input('per_page', 10);
         $statusFilter = $request->input('status_filter', 'all'); 
         $methodFilter = $request->input('method_filter', 'all'); 
@@ -1848,27 +1912,17 @@ class HomeController extends Controller {
             ->whereHas('application', function($appQuery) {
                 $appQuery->where('status', 'approved');
             })
-            ->orderByRaw("CASE 
-                            WHEN payment_status = 'completed' THEN 1 
-                            ELSE 2 
-                        END, 
-                        COALESCE(payment_date, created_at) DESC");
+            ->orderBy('payment_date', 'desc')
+            ->orderBy('created_at', 'desc');
 
-        $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');          
-
-        $isFinanceAdmin = false;         
-        if (auth('admin')->check()) {             
-            $roleId = auth('admin')->user()->role_id;             
-            $isFinanceAdmin = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');         
-        }          
-
+        // Apply status filter
         if ($statusFilter !== 'all') {
             if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {
                 $query->where('payment_status', $statusFilter);
             }
         }
         
-
+        // Apply method filter
         if ($methodFilter !== 'all') {
             $methodMapping = [
                 'B2B' => 'FPX_B2B',
@@ -1883,7 +1937,7 @@ class HomeController extends Controller {
                     ->whereHas('application.client', function($clientQuery) {
                         $clientQuery->where('accountType', 3);
                     });
-            } else if ($methodFilter === 'EFT') {
+            } elseif ($methodFilter === 'EFT') {
                 $query->whereIn('method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
             } else {
                 $exactMethod = $methodMapping[$methodFilter] ?? null;
@@ -1893,7 +1947,7 @@ class HomeController extends Controller {
             }
         }
 
-
+        // Apply date filter
         if ($dateFrom || $dateTo) {
             if ($dateFrom) {
                 $query->whereDate('payment_date', '>=', $dateFrom);
@@ -1904,7 +1958,7 @@ class HomeController extends Controller {
             }
         }
 
-        
+        // Apply search filter
         if ($search) {
             $like = "%{$search}%";
             $query->where(function ($sub) use ($like) {
@@ -1919,23 +1973,27 @@ class HomeController extends Controller {
             });
         }
 
-        $district = DB::table('district')->where('stat', 1)
-            ->where('idnegeri', 1)
-            ->orderBy('daerah_code', 'asc')->get();
-
-        $list = $query->paginate($perPage)->withQueryString();
-
-        return view('application.view-receipt', compact(
-            'list', 
-            'canApproverViewReciept', 
-            'perPage', 
-            'isFinanceAdmin',
-            'statusFilter',
-            'methodFilter',
-            'district'
-        ));     
+        return $query->paginate($perPage)->withQueryString();
     }
 
+    public function paymentsList(Request $request)
+    {
+        $list = $this->fetchPayments($request);
+        
+        $perPage = $request->input('per_page', 10);
+        $statusFilter = $request->input('status_filter', 'all');
+        $methodFilter = $request->input('method_filter', 'all');
+        
+        $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');
+
+        return view('application.payments-list', compact(
+            'list', 
+            'perPage', 
+            'statusFilter',
+            'methodFilter',
+            'canApproverViewReciept'
+        ));
+    }
     
     public function userReceipt(){
         $list = Application::with(['state', 'landDistrict', 'landDivision', 'client'])
