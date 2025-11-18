@@ -1624,6 +1624,10 @@ class HomeController extends Controller {
         $district = DB::table('district')->where('stat', 1)
         ->where('idnegeri', 1)
         ->orderBy('daerah_code', 'asc')->get();
+
+        if ($isApproverAdmin) {
+            $query->where('forwarded_by_admin_staff', 1);
+        }
         
         $applications = $query->paginate($perPage);                  
         

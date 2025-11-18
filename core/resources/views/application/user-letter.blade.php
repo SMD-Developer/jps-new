@@ -452,7 +452,7 @@
                 confirmButtonColor: '#3085d6',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = '{{ route('application_list') }}';
+                    window.location.href = '{{ route('application_status') }}';
                 }
             });
         }

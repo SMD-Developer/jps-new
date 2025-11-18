@@ -44,7 +44,7 @@
         padding: 4px 8px;
         font-size: 0.75rem;
         line-height: 1;
-        background: #E85B6C !important;
+        background: #E85B6C;
         border: 1px solid #E85B6C;
         border-radius: 25px;
     }
@@ -360,6 +360,67 @@
             max-width: 100%;
         }
     }
+
+        .current-user {
+        color: #28a745 !important;
+        font-weight: bold;
+    }
+
+    /* Enhanced button styles */
+    .btn-viewed {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+        position: relative;
+    }
+
+    .btn-edited {
+        background-color: #fd7e14 !important;
+        border-color: #fd7e14 !important;
+        position: relative;
+    }
+
+    .btn-viewed::after {
+        content: "✓";
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background: #fff;
+        color: #28a745;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .btn-edited::after {
+        content: "✎";
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background: #fff;
+        color: #fd7e14;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .activity-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: bold;
+        margin-right: 5px;
+    }
 </style>
 <title>{{ trans('app.application_status') }} | JPS</title>
 @section('content')
@@ -510,6 +571,7 @@
                                         <th class="status-column"><strong>{{ trans('app.admin_staff_status') }}</strong></th>
                                         <th class="status-column"><strong>{{ trans('app.approver_status') }}</strong></th>
                                         <th><strong>{{ trans('app.overall_status') }}</strong></th>
+                                        <th><string>Untuk</strong></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -817,6 +879,42 @@
                                                         Log
                                                     </a>
                                                 </div>
+                                            </td>
+                                            <td>
+                                                @if($isAdminOrStaff)
+                                                <div class="sbtn">
+                                                        @php
+                                                            $hasBeenViewed = DB::table('application_views')
+                                                                ->where('application_id', $application->id)
+                                                                ->exists();
+                                                        @endphp
+                                                        <a href="{{ route('newApplication', ['id' => $application->id]) }}"
+                                                            class="btn btn-primary btn-sm view-application {{ $hasBeenViewed ? 'btn-viewed' : '' }}"
+                                                            data-id="{{ $application->id }}">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                            
+                                                        @php
+                                                            $hasBeenEdited = DB::table('application_views')
+                                                                ->where('application_id', $application->id)
+                                                                ->where('action_type', 'edit')
+                                                                ->exists();
+                                                        @endphp
+                                                        <a href="{{ route('updateApplication', ['id' => $application->id]) }}"
+                                                            class="btn btn-warning btn-sm edit-application {{ $hasBeenEdited ? 'btn-edited' : '' }}"
+                                                            data-id="{{ $application->id }}">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                </div>
+                                                @endif
+
+                                                @if($isApproverAdmin)
+                                                    <a href="{{ route('approvernewApplication', ['id' => $application->id]) }}"
+                                                    class="btn btn-primary btn-sm view-btn {{ isset($application->is_approver_viewed) && $application->is_approver_viewed ? 'btn-viewed' : '' }}"
+                                                    data-app-id="{{ $application->id }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @empty
@@ -1137,5 +1235,72 @@
                     modal.style.display = 'none';
                 }
             }
+        </script>
+        <script>
+             $(document).ready(function() {
+                // Track view clicks
+                $(document).on('click', '.view-application', function(e) {
+                    const applicationId = $(this).data('id');
+                    const $button = $(this); // Store reference to the clicked button
+                    trackAction(applicationId, 'view', $button);
+                });
+            
+                // Track edit clicks
+                $(document).on('click', '.edit-application', function(e) {
+                    const applicationId = $(this).data('id');
+                    const $button = $(this); // Store reference to the clicked button
+                    trackAction(applicationId, 'edit', $button);
+                });
+            
+                function trackAction(applicationId, actionType, $button) {
+                    $.ajax({
+                        url: '/track-application-action',
+                        method: 'POST',
+                        data: {
+                            application_id: applicationId,
+                            action_type: actionType,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function() {
+                            if (actionType === 'view') {
+                                $button.addClass('btn-viewed');
+                            } else if (actionType === 'edit') {
+                                $button.addClass('btn-edited');
+                            }
+                            console.log('Action tracked and UI updated');
+                        },
+                        error: function() {
+                            console.error('Failed to track action');
+                        }
+                    });
+                }
+
+                 $('.view-btn').on('click', function(e) {
+                var appId = $(this).data('app-id');
+                var button = $(this);
+                
+                // Only track if it has an app-id (it's a view button)
+                if (appId) {
+                    // Make AJAX call to track the view
+                    $.ajax({
+                        url: '/track-approver-application-view', 
+                        type: 'POST',
+                        data: {
+                            application_id: appId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            // Turn button green immediately
+                            button.removeClass('btn-primary').addClass('btn-viewed');
+                        },
+                        error: function() {
+                            console.log('Error tracking application view');
+                        }
+                    });
+                }
+                
+                // Let the normal click proceed (will navigate to view page)
+            });
+        });
         </script>
     @endsection
