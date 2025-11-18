@@ -1838,12 +1838,15 @@ class HomeController extends Controller {
     {         
         $list = $this->fetchApprovedApplicationsForPayment($request);
         $perPage = $request->input('per_page', 10);
-        $isFinanceAdmin = $this->checkIfFinanceAdmin();
+
+        $isFinanceAdmin = $this->isFinanceAdmin();
+        $isFinanceApprover = $this->isFinanceApprover();
 
         return view('application.view-receipt', compact(
             'list', 
             'perPage', 
-            'isFinanceAdmin'
+            'isFinanceAdmin',
+            'isFinanceApprover'
         ));     
     }
 
@@ -1892,14 +1895,19 @@ class HomeController extends Controller {
         return $query->paginate($perPage)->withQueryString();
     }
 
-    private function checkIfFinanceAdmin(): bool
+    private function isFinanceAdmin(): bool
     {
-        if (!auth('admin')->check()) {
-            return false;
-        }
-        
-        return auth('admin')->user()->role_id === '9e032970-5f48-4d2b-b88e-abb9da79140f';
+        return auth('admin')->check() &&
+            auth('admin')->user()->role_id === '9e032970-5f48-4d2b-b88e-abb9da79140f';
     }
+
+    private function isFinanceApprover(): bool
+    {
+        return auth('admin')->check() &&
+            auth('admin')->user()->role_id === '27f41653-a968-4885-8000-7aaf4efc385d';
+    }
+
+
 
 
  

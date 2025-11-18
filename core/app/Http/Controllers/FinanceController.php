@@ -267,7 +267,7 @@ class financeController extends Controller {
         
          public function approvePayment(Request $request, $application_id)
          {
-            if (!auth('admin')->check() || auth('admin')->user()->role_id !== '9e032970-5f48-4d2b-b88e-abb9da79140f') {
+            if (!auth('admin')->check() || auth('admin')->user()->role_id !== '27f41653-a968-4885-8000-7aaf4efc385d') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized'
