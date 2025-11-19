@@ -363,7 +363,7 @@ class AuthController extends Controller {
                             'required',
                             'string',
                             'min:8',
-                            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#+\-_={}[\]|\\:";\'<>,.\/])[A-Za-z\d@$!%*?&#+\-_={}[\]|\\:";\'<>,.\/]{8,}$/'
+                            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#+_=\-{}[\]|\\:";\'<>,.\/])[A-Za-z\d@$!%*?&#+_=\-{}[\]|\\:";\'<>,.\/]{8,}$/'
                     ],
                     'userName'          => 'required|string|max:255',
                     'idCardNumber'      => $request->accountType == 3 ? 'nullable|string|max:50' : 'required|string|max:50',
