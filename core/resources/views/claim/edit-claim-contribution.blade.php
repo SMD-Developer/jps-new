@@ -548,6 +548,114 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label for="refund_claim_letter">@lang('Surat Permohonan Tuntutan Pulang Balik') <b class="starr"></b></label>
+                        <input type="file" id="refund_claim_letter" name="refund_claim_letter" class="file-input" accept="application/pdf">
+                        <label for="refund_claim_letter" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="refund_claim_letterfileName" class="file-name"></div>
+
+                        <div class="offset-area">
+                            @if ($claim->refund_claim_letter)
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->refund_claim_letter)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->refund_claim_letter) }}
+                                    </a>
+                                </small>
+                            @endif
+                            @error('refund_claim_letter')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="ic_copy">@lang('Salinan Kad Pengenalan Pemohon') <b class="starr"></b></label>
+                        <input type="file" id="ic_copy" name="ic_copy" class="file-input" accept="application/pdf">
+                        <label for="ic_copy" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="ic_copyfileName" class="file-name"></div>
+
+                        <div class="offset-area">
+                            @if ($claim->ic_copy)
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->ic_copy)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->ic_copy) }}
+                                    </a>
+                                </small>
+                            @endif
+                            @error('ic_copy')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bank_statement">@lang('Penyata Bank Individu/Pemaju') <b class="starr"></b></label>
+                        <input type="file" id="bank_statement" name="bank_statement" class="file-input" accept="application/pdf">
+                        <label for="bank_statement" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="bank_statementfileName" class="file-name"></div>
+
+                        <div class="offset-area">
+                            @if ($claim->bank_statement)
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->bank_statement)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->bank_statement) }}
+                                    </a>
+                                </small>
+                            @endif
+                            @error('bank_statement')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="statutory_declaration">@lang('Surat Akuan Sumpah') <b class="starr"></b></label>
+                        <input type="file" id="statutory_declaration" name="statutory_declaration" class="file-input" accept="application/pdf">
+                        <label for="statutory_declaration" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="statutory_declarationfileName" class="file-name"></div>
+
+                        <div class="offset-area">
+                            @if ($claim->statutory_declaration)
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->statutory_declaration)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->statutory_declaration) }}
+                                    </a>
+                                </small>
+                            @endif
+                            @error('bank_statement')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="company_registration">@lang('Pendaftaran Syarikat') <b class="starr"></b></label>
+                        <input type="file" id="company_registration" name="company_registration" class="file-input" accept="application/pdf">
+                        <label for="company_registration" class="upload-button">@lang('app.choose_file')</label>
+                        <div id="company_registrationfileName" class="file-name"></div>
+
+                        <div class="offset-area">
+                            @if ($claim->company_registration)
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->company_registration)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->company_registration) }}
+                                    </a>
+                                </small>
+                            @endif
+                            @error('company_registration')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
 
                     <div class="form-group">
                         <label for="geran-tanah">@lang('Dokumen Sokongan') <b class="starr"></b></label>
