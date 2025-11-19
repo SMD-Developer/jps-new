@@ -170,14 +170,42 @@
     
     
     #keluasan ~ .invalid-feedback {
-    display: block !important;
-    width: 100% !important;
-    margin-top: 4px;
-    order: 9999 !important;
-    flex-basis: 100% !important;
-    text-align: right !important;
+        display: block !important;
+        width: 100% !important;
+        margin-top: 4px;
+        order: 9999 !important;
+        flex-basis: 100% !important;
+        text-align: right !important;
 
-}
+    }
+
+    .example-link {
+        color: #007bff;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-top: 5px;
+    }
+    .example-link:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
+    .example-link i {
+        margin-right: 3px;
+    }
+    .modal-header {
+        border-bottom: 3px solid #0056b3;
+    }
+    .example-content {
+        transition: transform 0.2s;
+    }
+    .example-content:hover {
+        transform: translateX(5px);
+    }
+    .tips-section ul li {
+        margin-bottom: 8px;
+    }
 
 
 
@@ -392,12 +420,15 @@
                     <!-- Project Information Section -->
                     <div class="section">
                         <h4>@lang('app.project_information')</h4>
-                        
                         <div class="container">
                             <div class="row">
                                 <div class="form-group">
                                     <div class="col-md-4">
                                         <label for="project_name">@lang('Nama dan Butiran Projek')</label>
+                                        <br>
+                                        <a href="#" class="example-link" data-toggle="modal" data-target="#projectExampleModal">
+                                            <i class="fa fa-info-circle"></i> Lihat Contoh
+                                        </a>
                                     </div>
                                     <div class="col-md-8">
                                         <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek"></textarea>
@@ -546,6 +577,36 @@
                         <button type="submit" class="btn btn-primary">@lang('app.send')</button>
                     </div>
                     </form>
+                </div>
+            </div>
+            <div class="modal fade" id="projectExampleModal" tabindex="-1" role="dialog" aria-labelledby="projectExampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="projectExampleModalLabel">
+                                <i class="fa fa-lightbulb"></i> Contoh Cara Mengisi Nama dan Butiran Projek
+                            </h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle"></i> Sila masukkan nama projek dan butiran projek dengan format berikut:
+                            </div>
+                            
+                            <div class="example-content p-3 mb-3" style="background-color: #f8f9fa; border-left: 4px solid #007bff; border-radius: 5px;">
+                                <h6 class="text-primary"><strong>Contoh 1: Projek Info</strong></h6>
+                                <p class="mb-0"><strong>Butiran:</strong> CADANGAN PEMBANGUNAN UNTUK 50 UNIT RUMAH TERES DAN SEBUAH BANGUNAN PEJABAT 10 TINGKAT DI ATAS PT 121, PT 122, PT 123 DAN PT 124 , MUKIM KLANG,
+                                DAERAH KLANG , SELANGOR DARUL EHSAN UNTUK TETUAN ABC SDN. BHD.</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                <i class="fa fa-times"></i> Tutup
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
