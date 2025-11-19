@@ -326,9 +326,17 @@ background-color: red;
     <div class="container-fluid">
         <div class="row w-100 align-items-center">
             <!-- Logo -->
-            <div class="col-md-3 col-3 " style="text-align: end;">
+            <div class="col-md-2 col-4 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
-                    <img src="{{ asset('assets/images/selangor.png') }}" class="img-fluid logo" alt="Logo">
+                    @if(get_setting_value('logo') != '')
+                    <img src="{{ image_url(get_setting_value('logo')) }}" 
+                        alt="Logo" 
+                        style="max-height: 93px; width: auto; object-fit: contain;">
+                    @else
+                        <img src="{{ asset('assets/images/selangor.png') }}" 
+                            alt="Logo" 
+                            style="max-height: 60px; width: auto; object-fit: contain;">
+                    @endif
                 </a>
             </div>
             <!-- Text Container style="padding: 0px 175px;" -->
