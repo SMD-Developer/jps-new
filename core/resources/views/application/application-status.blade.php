@@ -425,7 +425,7 @@
 <title>{{ trans('app.application_status') }} | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-list"></i> {{ trans('app.application_status') }}</h5>
+        <h5><i class="fa fa-list"></i> {{ trans('Permohonan Baru') }}</h5>
     </div>
     <section class="content">
         

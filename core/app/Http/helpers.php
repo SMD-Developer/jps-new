@@ -99,24 +99,25 @@ if(! function_exists('getMenus')){
                         'menu_active' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list') ? 'active' : '',
                         'is_dropdown' => true,
                         'submenus' => [
+
                             [
-                                'icon' => 'list',
-                                'text' => trans('app.list_of_application'),
-                                'route' =>  url('application-list'),
-                                'menu_active' => request()->is('application-list') ? 'active' : ''
+                                'icon' => 'line-chart',
+                                'text' => trans('app.list_of_applications'),
+                                'route' =>  url('application-status'),
+                                'menu_active' => request()->is('application-status') ? 'active' : ''
                             ],
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.list_of_application'),
+                            //     'route' =>  url('application-list'),
+                            //     'menu_active' => request()->is('application-list') ? 'active' : ''
+                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => trans('app.approved_application'),
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
-                            ],
-                            [
-                                'icon' => 'line-chart',
-                                'text' => trans('app.application_status'),
-                                'route' =>  url('application-status'),
-                                'menu_active' => request()->is('application-status') ? 'active' : ''
                             ],
                         ]
                     ],
@@ -482,25 +483,25 @@ if(! function_exists('getMenus')){
                         'is_dropdown' => true,
                         'submenus' => [
                             [
-                                'icon' => 'list',
+                                'icon' => 'line-chart',
                                 'text' => trans('app.list_of_application'),
-                                'route' =>  url('user-approve'),
-                                'menu_active' => request()->is('user-approve') ? 'active' : '',
-                                'permission' => 'applications.view-list',
+                                'route' =>  url('application-status'),
+                                'menu_active' => request()->is('application-status') ? 'active' : '',
+                                'permission' => 'application-status.view-list',
                             ],
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.list_of_application'),
+                            //     'route' =>  url('user-approve'),
+                            //     'menu_active' => request()->is('user-approve') ? 'active' : '',
+                            //     'permission' => 'applications.view-list',
+                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => trans('app.approved_application'),
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
-                            ],
-                            [
-                                'icon' => 'line-chart',
-                                'text' => trans('app.application_status'),
-                                'route' =>  url('application-status'),
-                                'menu_active' => request()->is('application-status') ? 'active' : '',
-                                'permission' => 'application-status.view-list',
                             ],
                         ]
                     ],
@@ -794,25 +795,25 @@ if(! function_exists('getMenus')){
                         'is_dropdown' => true,
                         'submenus' => [
                             [
-                                'icon' => 'list',
+                                'icon' => 'line-chart',
                                 'text' => trans('app.list_of_application'),
-                                'route' => url('application-list'),
-                                'menu_active' => request()->is('application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
+                                'route' => url('application-status'),
+                                'menu_active' => request()->is('application-status') ? 'active' : '',
+                                'permission' => 'application-status.view-list'
                             ],
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.list_of_application'),
+                            //     'route' => url('application-list'),
+                            //     'menu_active' => request()->is('application-list') ? 'active' : '',
+                            //     'permission' => 'applications.view-list' 
+                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => trans('app.approved_application'),
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
-                            ],
-                            [
-                                'icon' => 'line-chart',
-                                'text' => trans('app.application_status'),
-                                'route' => url('application-status'),
-                                'menu_active' => request()->is('application-status') ? 'active' : '',
-                                'permission' => 'application-status.view-list'
                             ],
                             
                         ]
@@ -1159,12 +1160,19 @@ if(! function_exists('getMenus')){
                         'is_dropdown' => true,
                         'submenus' => [
                             [
-                                'icon' => 'list',
+                                'icon' => 'line-chart',
                                 'text' => trans('app.list_of_application'),
-                                'route' =>  url('approver-application-list'),
-                                'menu_active' => request()->is('approver-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list'
+                                'route' =>  url('application-status'),
+                                'menu_active' => request()->is('application-status') ? 'active' : '',
+                                'permission' => 'application-status.view-list'
                             ],
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.list_of_application'),
+                            //     'route' =>  url('approver-application-list'),
+                            //     'menu_active' => request()->is('approver-application-list') ? 'active' : '',
+                            //     'permission' => 'applications.view-list'
+                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => trans('app.approved_application'),
@@ -1172,13 +1180,7 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
                             ],
-                            [
-                                'icon' => 'line-chart',
-                                'text' => trans('app.application_status'),
-                                'route' =>  url('application-status'),
-                                'menu_active' => request()->is('application-status') ? 'active' : '',
-                                'permission' => 'application-status.view-list'
-                            ],
+                            
                         ]
                     ],
 
@@ -1534,7 +1536,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'line-chart',
-                                'text' => trans('app.application_status'),
+                                'text' => trans('app.list_of_application'),
                                 'route' =>  url('application-status'),
                                 'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
                                 'permission' => 'application-status.view-list'
@@ -1860,26 +1862,27 @@ if(! function_exists('getMenus')){
                         'menu_active' => request()->is('user-approve') || request()->is('application-status') || request()->is('approved-application-list')  ? 'active' : '',
                         'is_dropdown' => true,
                         'submenus' => [
-                            [
-                                'icon' => 'list',
+
+                             [
+                                'icon' => 'line-chart',
                                 'text' => trans('app.list_of_application'),
-                                'route' =>  url('user-approve'),
-                                'menu_active' =>  request()->is('user-approve') || request()->is('user-approve/*') ? 'active' : '',
-                                'permission' => 'applications.view-list',
+                                'route' =>  url('application-status'),
+                                'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
+                                'permission' => 'application-status.view-list',
                             ],
+                            // [
+                            //     'icon' => 'list',
+                            //     'text' => trans('app.list_of_application'),
+                            //     'route' =>  url('user-approve'),
+                            //     'menu_active' =>  request()->is('user-approve') || request()->is('user-approve/*') ? 'active' : '',
+                            //     'permission' => 'applications.view-list',
+                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => trans('app.approved_application'),
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
-                            ],
-                            [
-                                'icon' => 'line-chart',
-                                'text' => trans('app.application_status'),
-                                'route' =>  url('application-status'),
-                                'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
-                                'permission' => 'application-status.view-list',
                             ],
                         ]
                     ],

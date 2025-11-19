@@ -337,7 +337,7 @@ margin-bottom: 22px;
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <a href="{{route('approved-statement')}}" style="color:#212529;">
+                    <a href="{{route('payments.list')}}" style="color:#212529;">
                     <div class="info-box" style="background: #EEF6FF;">
                         <i class="fa fa-list-alt bg-yellow"></i>
                         <div class="info-box-content pr-0" rowspan="2" >

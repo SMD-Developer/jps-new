@@ -162,7 +162,7 @@
     .file-name {
         margin-top: 10px;
         font-size: 14px;
-        color: #555;
+        color: #4dbd1aff;
     }
 </style>
 <title>@lang('Permohonan Baru') | JPS</title>
@@ -641,8 +641,10 @@
 
 
                         <div class="form-group">
-                            <div class="col-md-4">
+                             <div class="col-md-4">
                                 <label for="statutory_declaration">Surat Akuan Sumpah</label>
+                                <br>
+                                <small class="text-muted">(sekiranya dokumen/ resit asal hilang)</small>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->statutory_declaration)
