@@ -415,7 +415,7 @@
                             <div class="row">
                                 <div class="form-group">
                                     <div class="col-md-4">
-                                        <label for="lot-tanah">@lang('app.land_lot')</label>
+                                        <label for="lot-tanah">Lot Tanah/PT</label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="lot-tanah" name="land_lot" class="form-control" placeholder="Land lot">

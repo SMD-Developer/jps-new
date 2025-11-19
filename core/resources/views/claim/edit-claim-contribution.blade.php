@@ -386,6 +386,25 @@
                             </div>
                     </div>
 
+
+                     <!-- Project Information Section -->
+                        <div class="section">
+                            <h4>@lang('app.project_information')</h4>
+                            
+                            <div class="container">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            <label for="project_name">@lang('Nama dan Butiran Projek')</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <textarea id="project_name" name="project_name"  class="form-control" rows="4" placeholder="Nama Projek">{{ $claim->project_name ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     <!-- Lot Information Section -->
                     <div class="section">
                         <h4>@lang('app.lot_information')</h4>
@@ -1171,7 +1190,7 @@
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            window.location.reload();
+                            window.location.href = "{{ route('claim.approved.list') }}";
                         });
                     },
                     error: function(xhr) {

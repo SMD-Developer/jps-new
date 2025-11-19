@@ -44,7 +44,8 @@ class ClaimContribution extends Model
         'verified_date',
         'visit_date',
         'process_remarks',
-        'payment_remarks'
+        'payment_remarks',
+        'project_name'
     ];
 
     /**

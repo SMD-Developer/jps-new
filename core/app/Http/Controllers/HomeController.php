@@ -876,7 +876,6 @@ class HomeController extends Controller {
                 "uploade_date" => "required",
                 "refference_no" => "nullable|string|unique:applications,refference_no,".$id,
                 "applicant" => "required",
-                "identities" => "required",
                 "address" => "required",
                 // "postal_code" => "required|numeric|digits:6",
                 "phone" => "required|numeric|digits_between:10,15",
@@ -898,6 +897,13 @@ class HomeController extends Controller {
                 "appeal" => "nullable|in:yes,no",
                 "remark" => "nullable|string|max:255",
             ];
+
+            $applicantType = $application->applicant_type ?? $request->input('applicant_type');
+            if ($applicantType != 3) {
+                $validationRules['identities'] = 'required';
+            } else {
+                $validationRules['identities'] = 'nullable';
+            }
 
             // Conditionally add file validation only if files are uploaded
             $fileKeys = ['land_grant', 'permission_plan'];

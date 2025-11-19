@@ -397,6 +397,7 @@
                     <input type="hidden" id="final_amount_input" name="final_amount"
                         value="{{ $application->final_amount ?? '0' }}">
                     <input type="hidden" id="cost_input" name="cost" value="{{ $application->cost ?? '0' }}">
+                    <input type="hidden" id="applicant_type" value="{{ $application->applicant_type }}">
 
                     <!-- Lot Information Section -->
                     <div class="section">
@@ -846,11 +847,19 @@
             function validateForm() {
                 let isValid = true;
                 let firstInvalidField = null;
-        
-                const requiredFields = [
+
+                const applicantType = $('#applicant_type').val();
+
+                let requiredFields = [
                     { id: 'application_reference', name: 'Application Reference' },
                     { id: 'pemohon', name: 'Applicant' },
-                    { id: 'ssm', name: 'Identification Card No' },
+                ];
+
+                if (applicantType != '3') {
+                    requiredFields.push({ id: 'ssm', name: 'Identification Card No' });
+                }
+        
+                requiredFields = requiredFields.concat([
                     { id: 'alamat', name: 'Address' },
                     { id: 'poskod', name: 'Postal Code' },
                     { id: 'bandar', name: 'City' },
@@ -864,7 +873,7 @@
                     { id: 'land_district', name: 'Land District' },
                     { id: 'mukim', name: 'Mukim' },
                     { id: 'land_category', name: 'Land Category' }
-                ];
+                ]);
         
                 // Check each required field
                 requiredFields.forEach(field => {
@@ -974,13 +983,18 @@
         
             function checkFormAndToggleButton() {
                 let formIsValid = true;
+
+                const applicantType = $('#applicant_type').val();
         
-                const requiredFields = [
-                    'application_reference', 'pemohon', 'ssm', 'alamat', 'poskod',
+                let requiredFields = [
+                    'application_reference', 'pemohon', 'alamat', 'poskod',
                     'bandar', 'negeri', 'daerah', 'emel', 'telefon',
                     'lot-tanah', 'keluasan', 'land-unit', 'land_district', 'mukim', 'land_category'
                 ];
         
+                if (applicantType != '3') {
+                    requiredFields.splice(2, 0, 'ssm'); 
+                }
                 requiredFields.forEach(field => {
                     const element = $('#' + field);
                     if (element.length) {
@@ -1204,6 +1218,32 @@
                 $('#' + $(this).attr('id') + '-error').hide();
                 checkFormAndToggleButton();
             });
+
+            $('#ssm').on('blur', function() {
+                const applicantType = $('#applicant_type').val();
+                
+                // Skip validation if applicant_type is 3
+                if (applicantType == '3') {
+                    $(this).removeClass('is-invalid');
+                    $('#ssm-error').hide();
+                    return;
+                }
+                
+                // Otherwise, validate as normal
+                const value = $(this).val();
+                if (!value || value.trim() === '') {
+                    $(this).addClass('is-invalid');
+                    if ($('#ssm-error').length === 0) {
+                        $(this).after('<div id="ssm-error" class="text-danger">This field is required</div>');
+                    } else {
+                        $('#ssm-error').text('This field is required').show();
+                    }
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $('#ssm-error').hide();
+                }
+                checkFormAndToggleButton();
+            });
         
             $('select').on('change', function() {
                 checkFormAndToggleButton();
@@ -1305,11 +1345,16 @@
         
             // Initialize required field markers
             setTimeout(function() {
-                const requiredFields = [
-                    'application_reference', 'pemohon', 'ssm', 'alamat', 'poskod',
+                const applicantType = $('#applicant_type').val();
+                let requiredFields = [
+                    'application_reference', 'pemohon', 'alamat', 'poskod',
                     'bandar', 'negeri', 'daerah', 'emel', 'telefon',
                     'lot-tanah', 'keluasan', 'land_district', 'mukim', 'land_category'
                 ];
+
+                if (applicantType != '3') {
+                    requiredFields.splice(2, 0, 'ssm'); 
+                }
         
                 requiredFields.forEach(field => {
                     const label = $(`label[for="${field}"]`);
