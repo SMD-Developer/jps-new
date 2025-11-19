@@ -248,7 +248,7 @@
                         <h4>@lang('app.lot_information')</h4>
                         <form>
                             <div class="form-group">
-                                <label for="lot-tanah">@lang('app.land_lot') </label>
+                                <label for="lot-tanah">Lot Tanah/PT </label>
                                 <input type="text" id="lot-tanah" class="form-control"
                                     value="{{ $application->land_lot }}" readonly>
                             </div>
