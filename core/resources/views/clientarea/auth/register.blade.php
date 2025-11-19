@@ -449,7 +449,7 @@ background-color: red;
                                                     <li id="lowercase" style="color: red;">❌ {{ trans('app.lowercase_letter') }} (a-z)</li>
                                                     <li id="number" style="color: red;">❌ {{ trans('app.number') }} (0-9)</li>
                                                     <li id="noSpaces" style="color: red;">❌ {{ trans('app.no_spaces') }}</li>
-                                                    <li id="special" style="color: red;">❌ {{ trans('app.special_character') }} (!@#$%)</li>
+                                                    <li id="special" style="color: red;">❌ {{ trans('app.special_character') }} (!@#$%_)</li>
                                                     <li id="noSequential" style="color: red;">❌ {{ trans('app.no_sequential_characters') }} (abc, 123)</li>
                                                 </ul>
                                             </div>
@@ -768,6 +768,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function validatePassword() {
     let password = document.getElementById("password").value;
+    let validationBox = document.getElementById("password-validation");
     
     if (password) {
         document.getElementById("password-error").textContent = "";
@@ -779,17 +780,40 @@ function validatePassword() {
         lowercase: /[a-z]/.test(password),
         number: /[0-9]/.test(password),
         noSpaces: !/\s/.test(password),
-        specialChar: /[!@#$%]/.test(password),
+        specialChar: /[!@#$%_]/.test(password),
         noSequential: !/(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password),
     };
 
+    // Update UI with colors
     document.getElementById("length").innerHTML = (checks.length ? "✅" : "❌") + " {{ trans('app.password_minimum') }} 8 {{ trans('app.too') }} 20 {{ trans('app.characters') }}";
+    document.getElementById("length").style.color = checks.length ? "green" : "red";
+    
     document.getElementById("uppercase").innerHTML = (checks.uppercase ? "✅" : "❌") + " {{ trans('app.uppercase_letter') }} (A-Z)";
+    document.getElementById("uppercase").style.color = checks.uppercase ? "green" : "red";
+    
     document.getElementById("lowercase").innerHTML = (checks.lowercase ? "✅" : "❌") + " {{ trans('app.lowercase_letter') }} (a-z)";
+    document.getElementById("lowercase").style.color = checks.lowercase ? "green" : "red";
+    
     document.getElementById("number").innerHTML = (checks.number ? "✅" : "❌") + " {{ trans('app.number') }} (0-9)";
+    document.getElementById("number").style.color = checks.number ? "green" : "red";
+    
     document.getElementById("noSpaces").innerHTML = (checks.noSpaces ? "✅" : "❌") + " {{ trans('app.no_spaces') }}";
-    document.getElementById("special").innerHTML = (checks.specialChar ? "✅" : "❌") + " {{ trans('app.special_character') }} (!@#$%)";
+    document.getElementById("noSpaces").style.color = checks.noSpaces ? "green" : "red";
+    
+    document.getElementById("special").innerHTML = (checks.specialChar ? "✅" : "❌") + " {{ trans('app.special_character') }} (!@#$%_)";
+    document.getElementById("special").style.color = checks.specialChar ? "green" : "red";
+    
     document.getElementById("noSequential").innerHTML = (checks.noSequential ? "✅" : "❌") + " {{ trans('app.no_sequential_characters') }} (abc, 123)";
+    document.getElementById("noSequential").style.color = checks.noSequential ? "green" : "red";
+
+    // Keep validation box visible if password has value and not all checks pass
+    let allValid = Object.values(checks).every(check => check === true);
+    if (password && !allValid && validationBox) {
+        validationBox.style.display = "block";
+    }
+
+    // Return true if all checks pass
+    return allValid;
 }
 
 function matchPasswords() {
@@ -799,12 +823,26 @@ function matchPasswords() {
 
     if (confirmPassword === "" && password === "") {
         matchError.innerHTML = "";
+        return false;
     } else if (password !== confirmPassword) {
         matchError.innerHTML = "❌ {{ trans('app.passwords_do_not_match') }}";
         matchError.style.color = "red";
-    } else {
+        return false;
+    } else if (password === confirmPassword && password !== "") {
         matchError.innerHTML = "✅ {{ trans('app.passwords_match') }}";
         matchError.style.color = "green";
+        
+        // Show warning if passwords match but requirements aren't met
+        let allValid = validatePassword();
+        if (!allValid) {
+            let passwordError = document.getElementById("password-error");
+            if (passwordError) {
+                passwordError.textContent = "⚠️ Kata laluan tidak memenuhi semua keperluan.";
+                passwordError.style.color = "orange";
+                passwordError.style.display = "block";
+            }
+        }
+        return true;
     }
 }
 
@@ -1136,9 +1174,28 @@ $(document).ready(function () {
             isValid = false;
         }
         
-        if (!$('#password').val()) {
+        let password = $('#password').val();
+        if (!password) {
             $('#password-error').text('Kata laluan diperlukan');
             isValid = false;
+        } else {
+            // Check all password requirements
+            let checks = {
+                length: password.length >= 8 && password.length <= 20,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                noSpaces: !/\s/.test(password),
+                specialChar: /[!@#$%_]/.test(password),
+                noSequential: !/(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password),
+            };
+            
+            let allValid = Object.values(checks).every(check => check === true);
+            
+            if (!allValid) {
+                $('#password-error').text('⚠️ Sila penuhi semua keperluan kata laluan').css('color', 'orange');
+                isValid = false;
+            }
         }
         
         if (!$('#setPassword').val()) {
