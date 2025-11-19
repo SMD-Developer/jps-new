@@ -563,6 +563,132 @@
                             </div>
                         </div>
 
+                        <!-- Surat Permohonan Tuntutan Pulang Balik (Required) -->
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label for="refund_claim_letter">Surat Permohonan Tuntutan Pulang Balik <b class="starr"></b></label>
+                            </div>
+                            <div class="col-md-8">
+                                @if(isset($claim) && $claim->refund_claim_letter)
+                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                        <small class="text-muted">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
+                                            <a href="{{ url('pdf/' . basename($claim->refund_claim_letter)) }}" target="_blank" class="text-primary">
+                                                <i class="fa fa-eye"></i> Lihat Fail
+                                            </a>
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <label for="refund_claim_letter" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="refund_claim_letter" name="refund_claim_letter" class="file-input"
+                                    accept="application/pdf" onchange="validateFileSize(this)">
+                                <div id="refund_claim_letterfileName" class="file-name"></div>
+                                <div id="refund_claim_letter_error" class="invalid-feedback d-block" style="display:none;"></div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label for="ic_copy">Salinan Kad Pengenalan Pemohon <b class="starr"></b></label>
+                            </div>
+                            <div class="col-md-8">
+                                @if(isset($claim) && $claim->ic_copy)
+                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                        <small class="text-muted">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
+                                            <a href="{{ url('pdf/' . basename($claim->ic_copy)) }}" target="_blank" class="text-primary">
+                                                <i class="fa fa-eye"></i> Lihat Fail
+                                            </a>
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <label for="ic_copy" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="ic_copy" name="ic_copy" class="file-input"
+                                    accept="application/pdf" onchange="validateFileSize(this)">
+                                <div id="ic_copyfileName" class="file-name"></div>
+                                <div id="ic_copy_error" class="invalid-feedback d-block" style="display:none;"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label for="bank_statement">Penyata Bank Individu/Pemaju <b class="starr"></b></label>
+                            </div>
+                            <div class="col-md-8">
+                                @if(isset($claim) && $claim->bank_statement)
+                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                        <small class="text-muted">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
+                                            <a href="{{ url('pdf/' . basename($claim->bank_statement)) }}" target="_blank" class="text-primary">
+                                                <i class="fa fa-eye"></i> Lihat Fail
+                                            </a>
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <label for="bank_statement" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="bank_statement" name="bank_statement" class="file-input"
+                                    accept="application/pdf" onchange="validateFileSize(this)">
+                                <div id="bank_statementfileName" class="file-name"></div>
+                                <div id="bank_statement_error" class="invalid-feedback d-block" style="display:none;"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label for="statutory_declaration">Surat Akuan Sumpah</label>
+                            </div>
+                            <div class="col-md-8">
+                                @if(isset($claim) && $claim->statutory_declaration)
+                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                        <small class="text-muted">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
+                                            <a href="{{ url('pdf/' . basename($claim->statutory_declaration)) }}" target="_blank" class="text-primary">
+                                                <i class="fa fa-eye"></i> Lihat Fail
+                                            </a>
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <label for="statutory_declaration" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="statutory_declaration" name="statutory_declaration" class="file-input"
+                                    accept="application/pdf" onchange="validateFileSize(this)">
+                                <div id="statutory_declarationfileName" class="file-name"></div>
+                                <div id="statutory_declaration_error" class="invalid-feedback d-block" style="display:none;"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label for="company_registration">Pendaftaran Syarikat</label>
+                            </div>
+                            <div class="col-md-8">
+                                @if(isset($claim) && $claim->company_registration)
+                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                        <small class="text-muted">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
+                                            <a href="{{ url('pdf/' . basename($claim->company_registration)) }}" target="_blank" class="text-primary">
+                                                <i class="fa fa-eye"></i> Lihat Fail
+                                            </a>
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <label for="company_registration" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="company_registration" name="company_registration" class="file-input"
+                                    accept="application/pdf" onchange="validateFileSize(this)">
+                                <div id="company_registrationfileName" class="file-name"></div>
+                                <div id="company_registration_error" class="invalid-feedback d-block" style="display:none;"></div>
+                            </div>
+                        </div>
+
                         <!-- Supporting Documents Upload - Optional -->
                         <div class="form-group">
                             <div class="col-md-4">
@@ -851,6 +977,74 @@
                         $('#supporting_docs_error').text("@lang('app.land_grant_mimes')").show();
                     }
                 }
+
+
+                // Validate refund_claim_letter (OPTIONAL)
+                const refundClaimLetterFile = $('#refund_claim_letter')[0];
+                if (refundClaimLetterFile && refundClaimLetterFile.files[0]) {
+                    const file = refundClaimLetterFile.files[0];
+                    if (file.size > 15 * 1024 * 1024) {
+                        showError('refund_claim_letter', "@lang('app.land_grant_max')");
+                        $('#refund_claim_letter_error').text("@lang('app.land_grant_max')").show();
+                    } else if (file.type !== 'application/pdf') {
+                        showError('refund_claim_letter', "@lang('app.land_grant_mimes')");
+                        $('#refund_claim_letter_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+                // Validate ic_copy (OPTIONAL)
+                const icCopyFile = $('#ic_copy')[0];
+                if (icCopyFile && icCopyFile.files[0]) {
+                    const file = icCopyFile.files[0];
+                    if (file.size > 15 * 1024 * 1024) {
+                        showError('ic_copy', "@lang('app.land_grant_max')");
+                        $('#ic_copy_error').text("@lang('app.land_grant_max')").show();
+                    } else if (file.type !== 'application/pdf') {
+                        showError('ic_copy', "@lang('app.land_grant_mimes')");
+                        $('#ic_copy_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+                // Validate bank_statement (OPTIONAL)
+                const bankStatementFile = $('#bank_statement')[0];
+                if (bankStatementFile && bankStatementFile.files[0]) {
+                    const file = bankStatementFile.files[0];
+                    if (file.size > 15 * 1024 * 1024) {
+                        showError('bank_statement', "@lang('app.land_grant_max')");
+                        $('#bank_statement_error').text("@lang('app.land_grant_max')").show();
+                    } else if (file.type !== 'application/pdf') {
+                        showError('bank_statement', "@lang('app.land_grant_mimes')");
+                        $('#bank_statement_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+                // Validate statutory_declaration (OPTIONAL)
+                const statutoryDeclarationFile = $('#statutory_declaration')[0];
+                if (statutoryDeclarationFile && statutoryDeclarationFile.files[0]) {
+                    const file = statutoryDeclarationFile.files[0];
+                    if (file.size > 15 * 1024 * 1024) {
+                        showError('statutory_declaration', "@lang('app.land_grant_max')");
+                        $('#statutory_declaration_error').text("@lang('app.land_grant_max')").show();
+                    } else if (file.type !== 'application/pdf') {
+                        showError('statutory_declaration', "@lang('app.land_grant_mimes')");
+                        $('#statutory_declaration_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+                // Validate company_registration (OPTIONAL)
+                const companyRegistrationFile = $('#company_registration')[0];
+                if (companyRegistrationFile && companyRegistrationFile.files[0]) {
+                    const file = companyRegistrationFile.files[0];
+                    if (file.size > 15 * 1024 * 1024) {
+                        showError('company_registration', "@lang('app.land_grant_max')");
+                        $('#company_registration_error').text("@lang('app.land_grant_max')").show();
+                    } else if (file.type !== 'application/pdf') {
+                        showError('company_registration', "@lang('app.land_grant_mimes')");
+                        $('#company_registration_error').text("@lang('app.land_grant_mimes')").show();
+                    }
+                }
+
+
 
                 // If validation fails, don't show popup
                 if (hasErrors) {

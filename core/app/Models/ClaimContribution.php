@@ -45,7 +45,12 @@ class ClaimContribution extends Model
         'visit_date',
         'process_remarks',
         'payment_remarks',
-        'project_name'
+        'project_name',
+        'refund_claim_letter',
+        'ic_copy',
+        'bank_statement',
+        'statutory_declaration',
+        'company_registration'
     ];
 
     /**

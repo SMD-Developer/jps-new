@@ -256,6 +256,13 @@ class HomeController extends Controller {
                 "supporting_docs" => "nullable|mimes:pdf|max:15000",
                 "claim_reason" => "nullable|string|max:1000",
                 "payment_amount" => "required|numeric|min:0",
+                
+                // New file fields (all optional)
+                "refund_claim_letter" => "nullable|mimes:pdf|max:15000",
+                "ic_copy" => "nullable|mimes:pdf|max:15000",
+                "bank_statement" => "nullable|mimes:pdf|max:15000",
+                "statutory_declaration" => "nullable|mimes:pdf|max:15000",
+                "company_registration" => "nullable|mimes:pdf|max:15000",
             ];
 
             // Only require 'identities' if account_types is NOT 3
@@ -294,6 +301,18 @@ class HomeController extends Controller {
                 "payment_amount.required" => trans('app.claim_amount_required'),
                 "payment_amount.numeric" => trans('app.claim_amount_numeric'),
                 "payment_amount.min" => trans('app.claim_amount_positive'),
+                
+                // New file validation messages (only for format and size)
+                "refund_claim_letter.mimes" => trans('app.land_grant_mimes'),
+                "refund_claim_letter.max" => trans('app.land_grant_max'),
+                "ic_copy.mimes" => trans('app.land_grant_mimes'),
+                "ic_copy.max" => trans('app.land_grant_max'),
+                "bank_statement.mimes" => trans('app.land_grant_mimes'),
+                "bank_statement.max" => trans('app.land_grant_max'),
+                "statutory_declaration.mimes" => trans('app.land_grant_mimes'),
+                "statutory_declaration.max" => trans('app.land_grant_max'),
+                "company_registration.mimes" => trans('app.land_grant_mimes'),
+                "company_registration.max" => trans('app.land_grant_max'),
             ]);
 
             $client = ClientRegisterModel::where('client_id', $logged_user->uuid)->first();
@@ -313,8 +332,17 @@ class HomeController extends Controller {
                 throw new \Exception("Upload path is not writable: " . $uploadPath);
             }
 
-            // Handle file uploads
-            $fileFields = ['land_grant', 'new_receipt', 'supporting_docs'];
+            // Handle file uploads - Updated array with new fields
+            $fileFields = [
+                'land_grant', 
+                'new_receipt', 
+                'supporting_docs',
+                'refund_claim_letter',
+                'ic_copy',
+                'bank_statement',
+                'statutory_declaration',
+                'company_registration'
+            ];
             
             foreach ($fileFields as $field) {
                 if ($request->hasFile($field)) {
