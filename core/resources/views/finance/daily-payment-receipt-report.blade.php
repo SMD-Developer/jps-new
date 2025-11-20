@@ -665,7 +665,7 @@
                     </thead>
                     <tbody>
                         
-                          @php
+                        @php
                             // Initialize EFT payment statistics
                             $eftCount = 0;
                             $eftAmount = 0;
@@ -673,6 +673,9 @@
                             // Initialize Cheque payment statistics
                             $chequeCount = 0;
                             $chequeAmount = 0;
+
+                            $bankDraftCount= 0;
+                            $bankDraftAmount=0;
 
                             foreach ($applications as $application) {
                                 $method = $application->methods ?? '';
@@ -693,6 +696,11 @@
                                 if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
                                     $chequeCount++;
                                     $chequeAmount += $amount;
+                                }
+
+                                if (stripos($method, 'bank_draf') !== false || stripos($method, 'bank_draf') !== false) {
+                                    $bankDraftCount++;
+                                    $bankDraftAmount += $amount;
                                 }
                             }
                         @endphp
@@ -721,10 +729,16 @@
                             <td>N/A</td>
                             <td>N/A</td>
                         </tr>
+                         <tr>
+                            <td>5</td>
+                            <td>BANK DRAF</td>
+                            <td>{{$bankDraftCount}}</td>
+                            <td>{{ number_format($bankDraftAmount, 2) }}</td>
+                        </tr>
                         <tr>
                             <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
-                            <td><strong>{{ $eftCount + $chequeCount }}</strong></td>
-                            <td><strong>{{ number_format($eftAmount + $chequeAmount, 2) }}</strong></td>
+                            <td><strong>{{ $eftCount + $chequeCount + $bankDraftCount }}</strong></td>
+                            <td><strong>{{ number_format($eftAmount + $chequeAmount + $bankDraftAmount, 2) }}</strong></td>
                         </tr>
                     </tbody>
                 </table>

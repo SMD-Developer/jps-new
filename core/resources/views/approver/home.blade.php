@@ -317,33 +317,37 @@
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <a href="{{ route('approved_statement_approver') }}" style="color:#212529;">
+                    <a href="{{ route('view.receipt') }}" style="color:#212529;">
                         <div class="info-box" style="background: #FBFFE0;">
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">
-                                <span class="info-box-text text3 text-left text2">@lang('app.your_assignment')</span>
-                                <span class="info-box-number">{{$assignmentcount}}</span>
+                                <span class="info-box-text text3 text-left text2">@lang('Pembayaran Dalam Semakan')</span>
+                                <span class="info-box-number">{{$totalInReviewPayments}}</span>
                             </div>
                         </div>
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #EEF6FF;">
-                        <i class="fa fa-list-alt bg-yellow"></i>
-                        <div class="info-box-content pr-0" rowspan="2">
-                            <span class="info-box-text text3 text-left text2">@lang('app.assignments_not_taken')</span>
-                            <span class="info-box-number">{{$assignmentnotTakencount}}</span>
+                    <a href="{{ route('payments.list') }}" style="color:#212529;">
+                        <div class="info-box" style="background: #EEF6FF;">
+                            <i class="fa fa-list-alt bg-yellow"></i>
+                            <div class="info-box-content pr-0" rowspan="2">
+                                <span class="info-box-text text3 text-left text2">@lang('app.payment_contribution_as_today')</span>
+                                <span class="info-box-number">RM {{$totalTodayContribution}}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #FFEFEF;">
-                        <i class="fa fa-puzzle-piece bg-red"></i>
-                        <div class="info-box-content pr-0" rowspan="2">
-                            <span class="info-box-text text3 text-left text2">@lang('app.unfinished_tasks')</span>
-                            <span class="info-box-number">0</span>
+                    <a href="{{ route('daily_receipt_report_type_finance') }}" style="color:#212529;">
+                        <div class="info-box" style="background: #FFEFEF;">
+                            <i class="fa fa-puzzle-piece bg-red"></i>
+                            <div class="info-box-content pr-0" rowspan="2">
+                                <span class="info-box-text text3 text-left text2">@lang('Kutipan Caruman Parit Bulan lni')</span>
+                                <span class="info-box-number">RM {{$totalMonthContribution}}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
             </div>

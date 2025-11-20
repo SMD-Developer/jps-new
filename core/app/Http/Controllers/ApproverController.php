@@ -11,6 +11,7 @@ use App\Invoicer\Repositories\Contracts\ExpenseInterface as Expense;
 use Illuminate\View\View;
 use App\Models\Application;
 use App\Models\ClientRegisterModel;
+use Carbon\Carbon;
 use DB;
 use App\Models\ReportApproval;
 
@@ -47,6 +48,19 @@ class ApproverController extends Controller
             ->whereMonth('created_at', date('m'))
             ->count(); 
         $approvedapplication = DB::table('applications')->where('status', 'approved')->count(); 
+        $totalInReviewPayments = DB::table('payments')
+                ->where('payment_status', 'in_review')
+                ->count();
+        $totalMonthContribution = DB::table('payments')
+                ->where('payment_status', 'completed')
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
+                ->sum('amount');
+
+        $totalTodayContribution = DB::table('payments')
+                ->where('payment_status', 'completed')
+                ->whereDate('created_at', Carbon::today())
+                ->sum('amount');
         $passed = DB::table('applications')->where('status', 'approved')->count();
         $rejected = DB::table('applications')->where('status', 'rejected')->count();
         $assignmentcount=DB::table('report_approvals')->count();
@@ -87,6 +101,9 @@ class ApproverController extends Controller
         'passed',
         'rejected',
         'applicationsByDistrict',
+        'totalInReviewPayments',
+        'totalMonthContribution',
+        'totalTodayContribution',
         'districts'));
     }
     
