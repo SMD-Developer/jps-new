@@ -170,12 +170,11 @@
         font-size: 12px;
     }
     </style>
-<title>{{ trans('app.manual_payment_update') }} | JPS</title>
+<title>{{ trans('Pembayaran Belum Selesai') }} | JPS</title>
 
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-edit"></i> {{ trans('app.manual_payment_update') }}</h5>
-        <p class="text-muted">Approved applications pending payment update</p>
+        <h5><i class="fa fa-edit"></i> {{ trans('Pembayaran Belum Selesai') }}</h5>
     </div>
 
     <section class="content">

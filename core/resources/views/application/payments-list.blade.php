@@ -128,11 +128,11 @@
     }
 </style>
 
-<title>{{ trans('app.payments_list') }} | JPS</title>
+<title>{{ trans('Pembayaran Selesai') }} | JPS</title>
 
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-money-bill"></i> {{ trans('app.payments_list') }}</h5>
+        <h5><i class="fa fa-money-bill"></i> {{ trans('Pembayaran Selesai') }}</h5>
     </div>
 
     <section class="content">

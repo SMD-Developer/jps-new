@@ -196,7 +196,6 @@
     }
 
     .offset-area {
-        margin-left: 307px; 
         margin-top: 5px;
     }
 
@@ -508,31 +507,25 @@
 
                     <h4>@lang('Muat Naik Dokumen Sokongan')</h4>
                     <div class="form-group">
-                        <label for="geran-tanah">@lang('Resit Bayaran Lama') <b class="starr">*</b></label>
-                        <input type="file" id="land_grant" name="land_grant" class="file-input"
-                            accept="application/pdf">
-                        <label for="land_grant" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="land_grantfileName" class="file-name"></div>
-                        <div class="offset-area">
+                        <label for="geran-tanah">@lang('Resit Bayaran Lama')<b class="starr">*</b></label>
+                        <div class="offset-area mt-1">
                             @if ($claim->land_grant)
-                                <small class="text-info">Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->land_grant)) }}"
-                                        target="_blank"><i class="fa fa-file-pdf-o"></i>
+                                <small class="text-info">
+                                    Current file:
+                                    <a href="{{ url('pdf/' . basename($claim->land_grant)) }}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i>
                                         {{ basename($claim->land_grant) }}
-                                    </a></small>
+                                    </a>
+                                </small>
+                            @else
+                                <small class="text-muted">No file uploaded</small>
                             @endif
-                            @error('land_grant')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
                         </div>
                     </div>
 
+
                     <div class="form-group">
                         <label for="new_receipt">@lang('Resit Bayaran Baru') <b class="starr">*</b></label>
-                        <input type="file" id="new_receipt" name="new_receipt" class="file-input" accept="application/pdf">
-                        <label for="new_receipt" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="new_receiptfileName" class="file-name"></div>
-
                         <div class="offset-area">
                             @if ($claim->new_receipt)
                                 <small class="text-info">
@@ -550,10 +543,6 @@
 
                     <div class="form-group">
                         <label for="refund_claim_letter">@lang('Surat Permohonan Tuntutan Pulang Balik') <b class="starr"></b></label>
-                        <input type="file" id="refund_claim_letter" name="refund_claim_letter" class="file-input" accept="application/pdf">
-                        <label for="refund_claim_letter" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="refund_claim_letterfileName" class="file-name"></div>
-
                         <div class="offset-area">
                             @if ($claim->refund_claim_letter)
                                 <small class="text-info">
@@ -572,10 +561,6 @@
 
                     <div class="form-group">
                         <label for="ic_copy">@lang('Salinan Kad Pengenalan Pemohon') <b class="starr"></b></label>
-                        <input type="file" id="ic_copy" name="ic_copy" class="file-input" accept="application/pdf">
-                        <label for="ic_copy" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="ic_copyfileName" class="file-name"></div>
-
                         <div class="offset-area">
                             @if ($claim->ic_copy)
                                 <small class="text-info">
@@ -593,10 +578,6 @@
 
                     <div class="form-group">
                         <label for="bank_statement">@lang('Penyata Bank Individu/Pemaju') <b class="starr"></b></label>
-                        <input type="file" id="bank_statement" name="bank_statement" class="file-input" accept="application/pdf">
-                        <label for="bank_statement" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="bank_statementfileName" class="file-name"></div>
-
                         <div class="offset-area">
                             @if ($claim->bank_statement)
                                 <small class="text-info">
@@ -615,10 +596,6 @@
 
                     <div class="form-group">
                         <label for="statutory_declaration">@lang('Surat Akuan Sumpah') <b class="starr"></b></label>
-                        <input type="file" id="statutory_declaration" name="statutory_declaration" class="file-input" accept="application/pdf">
-                        <label for="statutory_declaration" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="statutory_declarationfileName" class="file-name"></div>
-
                         <div class="offset-area">
                             @if ($claim->statutory_declaration)
                                 <small class="text-info">
@@ -637,9 +614,6 @@
 
                     <div class="form-group">
                         <label for="company_registration">@lang('Pendaftaran Syarikat') <b class="starr"></b></label>
-                        <input type="file" id="company_registration" name="company_registration" class="file-input" accept="application/pdf">
-                        <label for="company_registration" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="company_registrationfileName" class="file-name"></div>
 
                         <div class="offset-area">
                             @if ($claim->company_registration)
@@ -659,10 +633,6 @@
 
                     <div class="form-group">
                         <label for="geran-tanah">@lang('Dokumen Sokongan') <b class="starr"></b></label>
-                        <input type="file" id="supporting_docs" name="supporting_docs" class="file-input"
-                            accept="application/pdf">
-                        <label for="supporting_docs" class="upload-button">@lang('app.choose_file')</label>
-                        <div id="supporting_docsfileName" class="file-name"></div>
                         <div class="offset-area">
                             @if ($claim->supporting_docs)
                                 <small class="text-info">Current file:
@@ -687,7 +657,6 @@
                             <div id="claim_reason_error" class="invalid-feedback d-block" style="display:none;"></div>
                         </div>
                     </div>
-
 
                      <!-- Claim Amount Field -->
                     <div class="form-group">

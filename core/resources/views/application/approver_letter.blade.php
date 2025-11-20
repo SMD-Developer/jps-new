@@ -590,7 +590,7 @@
                     .then(data => {
                         if (data.success) {
                             sendNotificationToUser(id, 'rejection');
-                            window.location.href = "{{ route('approver-application_list') }}";
+                            window.location.href = "{{ route('application_status') }}";
                         } else {
                             Swal.fire('Error', data.message || 'Failed to reject application.', 'error');
                         }

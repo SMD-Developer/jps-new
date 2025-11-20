@@ -571,7 +571,7 @@
                                         <th class="status-column"><strong>{{ trans('app.admin_staff_status') }}</strong></th>
                                         <th class="status-column"><strong>{{ trans('app.approver_status') }}</strong></th>
                                         <th><strong>{{ trans('app.overall_status') }}</strong></th>
-                                        <th><string>Untuk</strong></th>
+                                        <th><string>Untuk Tindakan</strong></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -867,6 +867,14 @@
                                                         <a href="{{ route('updateApplicationForm', ['id' => $application->id]) }}"
                                                             class="btn btn-danger btn-sm"><strong>{{ trans('app.rejected') }}</strong></a>
                                                     </div>
+
+                                                        {{-- Show rejection reason --}}
+                                                    @if (!empty($application->rejection_reason))
+                                                        <div class="mt-2" style="color: #d9534f; font-weight:500;">
+                                                            Alasan: {{ $application->rejection_reason }}
+                                                        </div>
+                                                    @endif
+
                                                 @else
                                                     <div class="sbtn">
                                                         <a href="{{ route('updateApplicationForm', ['id' => $application->id]) }}"

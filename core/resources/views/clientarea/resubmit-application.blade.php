@@ -442,21 +442,16 @@
 
 
                     <div class="section">
-                        <h4>@lang('app.project_information')</h4>
-                        
-            
+                        <h4>@lang('app.project_information')</h4>                              
                                 <div class="form-group">
-                                    <div class="col-md-4">
                                         <label for="project_name">@lang('Nama dan Butiran Projek')</label>
-                                    </div>
-                                    <div class="col-md-8">
                                         <textarea id="project_name" name="project_name" class="form-control" rows="4" 
                                             placeholder="Nama Projek">{{ $application->project_name ?? '' }}</textarea>
                                         @error('project_name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
-                                    </div>
                                 </div>
+                    </div>
                         
 
                     <!-- Lot Information Section -->

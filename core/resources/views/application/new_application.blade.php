@@ -349,17 +349,23 @@
                         <!--<button type="submit" class="btn btn-secondary btn1" id="rejectButton"-->
                         <!--    data-id="{{ $application->id }}" style="background-color: red; border-color: red;">@lang('app.reject')</button>-->
                             <button class="btn btn-success btn3" onClick="window.history.back()">Kembali</button>
-                            <button type="submit" class="btn btn-secondary btn1" id="rejectButton"
-                                data-id="{{ $application->id }}" 
-                                style="@if($application->status === 'approved' || $application->status === 'rejected') background-color: #ccc; border-color: #ccc; color: #666; @else background-color: red; border-color: red; @endif"
-                                @if($application->status === 'approved' || $application->status === 'rejected') disabled @endif>
+                            <button type="submit" 
+                                class="btn btn-secondary btn1" 
+                                id="rejectButton"
+                                data-id="{{ $application->id }}"
+                                style="background-color: red; border-color: red; color: #fff;"
+                                @if ($application->status === 'approved') disabled @endif>
                                 @lang('app.reject')
                             </button>
-                        <button type="submit" class="btn btn-primary btn2" id="approveButton"
-                            data-id="{{ $application->id }}" style="@if($application->status === 'approved' || $application->status === 'rejected') background-color: #ccc; border-color: #ccc; color: #666;  @endif"
-                                @if($application->status === 'approved' || $application->status === 'rejected') disabled @endif>
-                            @lang('app.next')
-                        </button>
+
+                            <button type="submit" 
+                                class="btn btn-primary btn2" 
+                                id="approveButton"
+                                data-id="{{ $application->id }}"
+                                @if ($application->status === 'approved') disabled @endif>
+                                @lang('app.next')
+                            </button>
+
                     </div>
 
                 </div>
@@ -550,7 +556,7 @@
                             console.log('Response Data:', data);
                             if (data.success) {
                                 sendNotificationToUser(applicationId, 'rejection');
-                                 window.location.href = "{{ route('application_list') }}";
+                                 window.location.href = "{{ route('application_status') }}";
                             } else {
                                 Swal.fire('Error', data.message || 'Failed to reject application.',
                                     'error');
