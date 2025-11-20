@@ -1551,7 +1551,9 @@ class HomeController extends Controller {
             'logs' => function($query) {
                 $query->orderBy('action_at', 'desc');
             }
-        ])->orderBy('created_at', 'desc');    
+        ])
+        ->whereIn('status', ['pending', 'rejected'])
+        ->orderBy('created_at', 'desc');    
         
         
          if ($searchTerm) {
