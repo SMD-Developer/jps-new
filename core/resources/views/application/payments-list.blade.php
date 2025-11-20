@@ -169,7 +169,7 @@
                                         <option value="completed" {{ ($statusFilter ?? 'all') == 'completed' ? 'selected' : '' }}>
                                             @lang('app.completed')
                                         </option>
-                                        <option value="pending" {{ ($statusFilter ?? 'all') == 'pending' ? 'selected' : '' }}>
+                                        <option value="pending" {{ ($statusFilter ?? 'all') == 'pending' ? 'selected' : '' }} style="display:none;">
                                             @lang('app.pending')
                                         </option>
                                         <option value="failed" {{ ($statusFilter ?? 'all') == 'failed' ? 'selected' : '' }}>
@@ -297,7 +297,8 @@
                                                         $methodClass = 'method-offline';
                                                         break;
                                                     case 'bank_transfer':
-                                                        $paymentMethod = 'Bank Transfer';
+                                                    case 'bank_draf':
+                                                        $paymentMethod = 'Bank Draf';
                                                         $methodClass = 'method-offline';
                                                         break;
                                                     case 'EFT':

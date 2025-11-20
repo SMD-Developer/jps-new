@@ -326,7 +326,7 @@ margin-bottom: 22px;
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                <a href="{{route('payment_report')}}" style="color:#212529;">
+                <a href="{{route('view.receipt')}}" style="color:#212529;">
                     <div class="info-box" style="background: #FBFFE0;">
                         <i class="fa fa-file-pdf-o bg-green"></i>
                         <div class="info-box-content">
@@ -348,7 +348,7 @@ margin-bottom: 22px;
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                     <a href="{{route('task_not_completed_finance')}}" style="color:#212529;">
+                     <a href="{{route('daily_receipt_report_type_finance')}}" style="color:#212529;">
                     <div class="info-box" style="background: #FFEFEF;">
                         <i class="fa fa-puzzle-piece bg-red"></i>
                         <div class="info-box-content pr-0" rowspan="2" >

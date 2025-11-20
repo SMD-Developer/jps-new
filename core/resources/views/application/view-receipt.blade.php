@@ -385,7 +385,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editPaymentModalLabel">
-                        <i class="fa fa-edit"></i> {{ trans('app.update_payment') }}
+                        <i class="fa fa-edit"></i> {{ trans('Kemaskini Pembayaran') }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -395,7 +395,7 @@
                     <div class="modal-body">
                         <!-- Payment Details -->
                         <div class="payment-details-modal">
-                            <h6><i class="fa fa-info-circle"></i> {{ trans('app.application_details') }}</h6>
+                            <h6><i class="fa fa-info-circle"></i> {{ trans('Maklumat Permohonan') }}</h6>
                             <div class="row">
                                 <div class="col-md-6">
                                     <p><strong>{{ trans('app.reference_no') }}:</strong> <span id="modal-ref-no"></span></p>
@@ -418,9 +418,9 @@
                             <div class="form-group mb-4">
                                 <label for="payment_method" class="form-label">{{ trans('app.payment_method') }} <span class="text-danger">*</span></label>
                                 <select name="payment_method" id="payment_method" class="form-select" required>
-                                    <option value="">{{ trans('app.select_payment_method') }}</option>
+                                    <option value="">{{ trans('Pilih Cara Bayaran') }}</option>
                                     <option value="cheque">{{ trans('app.cheque') }}</option>
-                                    <option value="bank_transfer">{{ trans('app.bank_transfer') }}</option>
+                                    <option value="bank_draf">{{ trans('Bank Draf') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -432,7 +432,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label for="cheque_number" class="form-label">{{ trans('app.cheque_number') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="cheque_number" id="cheque_number" class="form-control" placeholder="{{ trans('app.enter_cheque_number') }}">
+                                        <input type="text" name="cheque_number" id="cheque_number" class="form-control" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -446,7 +446,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label for="bank_name" class="form-label">{{ trans('app.bank_name') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="bank_name" id="bank_name" class="form-control" placeholder="{{ trans('app.enter_bank_name') }}">
+                                        <input type="text" name="bank_name" id="bank_name" class="form-control" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -460,17 +460,17 @@
 
                         <!-- Bank Transfer Fields -->
                         <div class="form-section conditional-fields" id="bank-transfer-fields">
-                            <h6><i class="fa fa-university"></i> {{ trans('app.bank_transfer_details') }}</h6>
+                            <h6><i class="fa fa-university"></i> {{ trans('Butiran') }}</h6>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
-                                        <label for="transaction_id" class="form-label">{{ trans('app.transaction_id') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="transaction_id" id="transaction_id" class="form-control" placeholder="{{ trans('app.enter_transaction_id') }}">
+                                        <label for="transaction_id" class="form-label">{{ trans('No Bank Draf') }} <span class="text-danger">*</span></label>
+                                        <input type="text" name="transaction_id" id="transaction_id" class="form-control" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
-                                        <label for="transfer_date" class="form-label">{{ trans('app.transfer_date') }} <span class="text-danger">*</span></label>
+                                        <label for="transfer_date" class="form-label">{{ trans('Tarikh') }} <span class="text-danger">*</span></label>
                                         <input type="date" name="transfer_date" id="transfer_date" class="form-control">
                                     </div>
                                 </div>
@@ -478,18 +478,18 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
-                                        <label for="from_bank" class="form-label">{{ trans('app.from_bank') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="from_bank" id="from_bank" class="form-control" placeholder="{{ trans('app.enter_bank_name') }}">
+                                        <label for="amount" class="form-label">{{ trans('Jumlah (RM) :') }} <span class="text-danger">*</span></label>
+                                        <input type="number" name="amount" id="amount" class="form-control" placeholder="">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" style="display:none;">
                                     <div class="form-group mb-3">
                                         <label for="account_number" class="form-label">{{ trans('app.account_number') }}</label>
                                         <input type="text" name="account_number" id="account_number" class="form-control" placeholder="{{ trans('app.enter_account_number') }}">
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" style="display:none;">
                                 <div class="col-md-12">
                                     <div class="form-group mb-3">
                                         <label for="receipt_upload" class="form-label">{{ trans('app.upload_receipt') }} <span class="text-danger">*</span></label>
@@ -546,7 +546,7 @@
             const paymentMethodSelect = document.getElementById('payment_method');
             const conditionalFields = {
                 'cheque': document.getElementById('cheque-fields'),
-                'bank_transfer': document.getElementById('bank-transfer-fields')
+                'bank_draf': document.getElementById('bank-transfer-fields')
             };
 
             function hideAllConditionalFields() {
@@ -585,8 +585,8 @@
                         const f = document.getElementById(id);
                         if (f) f.setAttribute('required', 'required');
                     });
-                } else if (method === 'bank_transfer') {
-                    ['transaction_id', 'transfer_date', 'from_bank', 'receipt_upload'].forEach(id => {
+                } else if (method === 'bank_draf') {
+                    ['transaction_id', 'transfer_date', 'amount'].forEach(id => {
                         const f = document.getElementById(id);
                         if (f) f.setAttribute('required', 'required');
                     });

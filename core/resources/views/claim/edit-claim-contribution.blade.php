@@ -210,10 +210,10 @@
 
     
 </style>
-<title>@lang('app.claim_contribution') | JPS</title>
+<title>@lang('Permohonan Yang Diluluskan') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Kemaskini Permohonan Pulang Balik (Refund)')</h5>
+        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Permohonan Yang Diluluskan')</h5>
     </div>
     <section class="content">
         <div class="row">
@@ -789,16 +789,16 @@
                                                 <label for="modal_status" class="form-label">@lang('app.status')</label>
                                                 <select class="form-select" id="modal_status" name="status" required>
                                                     <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
-                                                    <option value="approve_payment_in_process" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
+                                                    <option value="approve_payment_in_process" style="display:none;"; {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
                                                     <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
-                                                    <option value="rejected" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
+                                                    <option value="rejected" style="display:none;"; {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
                                                 </select>
                                             </div>
                                             
                                             <!-- Fields for "approve_payment_in_process" Status -->
                                             <div id="processFields" style="display: none;">
                                                 <div class="mb-3">
-                                                    <label for="visit_date" class="form-label">Tarikh Serahan Dokumen: <span class="text-danger">*</span></label>
+                                                    <label for="visit_date" class="form-label">Tarikh Dikemaskini: <span class="text-danger">*</span></label>
                                                     <input type="date" 
                                                         class="form-control" 
                                                         id="visit_date" 

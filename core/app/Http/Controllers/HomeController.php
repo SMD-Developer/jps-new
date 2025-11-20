@@ -1663,7 +1663,7 @@ class HomeController extends Controller {
         $application = Application::findOrFail($application_id);
         
         $validated = $request->validate([
-            'payment_method' => 'required|in:online,cheque,bank_transfer',
+            'payment_method' => 'required|in:online,cheque,bank_draf',
             'payment_status' => 'required|in:completed,pending,failed,in_review',
             'receipt_number' => 'nullable|string|max:255',
             'admin_notes' => 'nullable|string',
@@ -1671,11 +1671,10 @@ class HomeController extends Controller {
             'cheque_date' => 'required_if:payment_method,cheque|date',
             'bank_name' => 'required_if:payment_method,cheque|string|max:255',
             'deposit_date' => 'nullable|date',
-            'transaction_id' => 'required_if:payment_method,bank_transfer|string|max:255',
-            'transfer_date' => 'required_if:payment_method,bank_transfer|date',
-            'from_bank' => 'required_if:payment_method,bank_transfer|string|max:255',
+            'transaction_id' => 'required_if:payment_method,bank_draf|string|max:255',
+            'transfer_date' => 'required_if:payment_method,bank_draf|date',
+            'amount' => 'required_if:payment_method,bank_draf|numeric',
             'account_number' => 'nullable|string|max:255',
-            'receipt_upload' => 'required_if:payment_method,bank_transfer|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'gateway_transaction_id' => 'nullable|string|max:255',
             'payment_gateway' => 'nullable|in:fpx,credit_card,paypal,stripe,razorpay',
             'gateway_response' => 'nullable|string',
@@ -1710,10 +1709,10 @@ class HomeController extends Controller {
         }
 
         // Handle file upload for bank transfer
-        $bankTransferReceiptPath = null;
-        if ($request->hasFile('receipt_upload') && $request->payment_method === 'bank_transfer') {
-            $bankTransferReceiptPath = $request->file('receipt_upload')->store('bank_receipts', 'public');
-        }
+        // $bankTransferReceiptPath = null;
+        // if ($request->hasFile('receipt_upload') && $request->payment_method === 'bank_transfer') {
+        //     $bankTransferReceiptPath = $request->file('receipt_upload')->store('bank_receipts', 'public');
+        // }
 
         // Generate transaction ID based on payment method
         $transactionId = null;
@@ -1724,10 +1723,10 @@ class HomeController extends Controller {
                     ?? 'ONL-'.mt_rand(1000000000,9999999999);
                 break;
         
-            case 'bank_transfer':
+            case 'bank_draf':
                 $transactionId = $request->transaction_id
-                    ? 'BT-'.$request->transaction_id
-                    : 'BT-'.mt_rand(1000000000,9999999999);
+                    ? 'BD-'.$request->transaction_id
+                    : 'BD-'.mt_rand(1000000000,9999999999);
                 break;
         
             case 'cheque':
@@ -1751,7 +1750,7 @@ class HomeController extends Controller {
                 $paymentDate = Carbon::now();
                 break;
                 
-            case 'bank_transfer':
+            case 'bank_draf':
                 $paymentDate = $request->transfer_date ? Carbon::parse($request->transfer_date) : Carbon::now();
                 break;
                 
@@ -1765,28 +1764,12 @@ class HomeController extends Controller {
                 $paymentDate = Carbon::now();
         }
 
-        // Prepare update data for Application table
-        $applicationUpdateData = [
-            'payment_status' => $validated['payment_status'],
-            'transaction' => $transactionId, 
-            'reciept_number' => $receiptNumber, // This should save the receipt number
-            'deposit_date' => $paymentDate,
-            'payment_rejection_reason' => $validated['payment_status'] === 'failed' ? 
-                ($request->admin_notes ?? 'Payment failed') : null,
-            'receipt_path' => $bankTransferReceiptPath ?? $application->receipt_path,
-        ];
 
-        \Log::info('Updating Application with data: ', $applicationUpdateData);
-
-        // Update Application table
-        $updateResult = $application->update($applicationUpdateData);
-        
-        \Log::info('Application update result: ' . ($updateResult ? 'SUCCESS' : 'FAILED'));
-        
-        // Verify the update by refreshing and checking
-        $application->refresh();
-        \Log::info('Application receipt_number after update: ' . $application->receipt_number);
-
+        if ($validated['payment_method'] === 'cheque' ) {
+            $paymentAmount = $application->final_amount;
+        } else {
+            $paymentAmount = $request->amount;
+        }
 
         $payment = Payment::updateOrCreate(
             ['application_id' => $application->id],
@@ -1794,7 +1777,7 @@ class HomeController extends Controller {
                 'uuid' => Uuid::uuid4()->toString(),
                 'application_id' => $application->id,
                 'payment_date' => $paymentDate,
-                'amount' => $application->final_amount,
+                'amount' => $paymentAmount,
                 'method' => $validated['payment_method'],
                 'payment_status' => $validated['payment_status'],
                 'transaction_id' => $transactionId,
