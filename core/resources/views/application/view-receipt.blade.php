@@ -158,7 +158,7 @@
     }
 
     .btn-approve-custom {
-        background-color: #d8ba32ff !important;
+        background-color: #1bbe28ff !important;
         border-radius: 10px !important;
         padding: 4px 10px !important;
         font-size: 12px !important;
@@ -167,7 +167,7 @@
         gap: 4px;
     }
     .btn-approve-custom i {
-        font-size: 12px;
+        font-size: 15px;
     }
     </style>
 <title>{{ trans('Pembayaran Belum Selesai') }} | JPS</title>
@@ -315,7 +315,7 @@
                                                             class="btn btn-approve-custom btn-sm"
                                                             onclick="window.location.href='{{ route('finance.payment.letter', ['application_id' => $item->id]) }}'"
                                                             title="{{ trans('app.view_receipt') }}">
-                                                            <i class="fa fa-edit"></i> Approve
+                                                            <i class="fa fa-edit" style="color: white;"></i>
                                                         </button>
                                                     @else
                                                         <span class="text-muted"></span>
