@@ -657,7 +657,7 @@
 
                                         <!-- Grand Total Row -->
                                         <tr style="background-color: #f0f0f0; font-weight: bold;">
-                                            <td colspan="9" style="text-align: right;">JUMLAH :</td>
+                                            <td colspan="10" style="text-align: right;">JUMLAH :</td>
                                             <td > RM {{ number_format($applications->sum('payment_amount'), 2) }}</td>
                                         </tr>
                                     </tbody>
