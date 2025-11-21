@@ -560,7 +560,7 @@
 
 
                     <div class="form-group">
-                        <label for="ic_copy">@lang('Salinan Kad Pengenalan Pemohon') <b class="starr"></b></label>
+                        <label for="ic_copy">@lang('Geran/Pelan Kelulusan KM') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->ic_copy)
                                 <small class="text-info">
@@ -577,7 +577,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="bank_statement">@lang('Penyata Bank Individu/Pemaju') <b class="starr"></b></label>
+                        <label for="bank_statement">@lang('Surat Penetapan Jumlah Bayaran Caruman Parit') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->bank_statement)
                                 <small class="text-info">

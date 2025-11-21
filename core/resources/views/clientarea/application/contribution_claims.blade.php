@@ -404,7 +404,7 @@
                                             </a>
                                         </div>
                                         <div class="col-md-8">
-                                            <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{$claim->project_name}}</textarea>
+                                            <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{ $claim->project_name ?? '' }}</textarea>
                                         </div>
                                     </div>
                                 </div>
