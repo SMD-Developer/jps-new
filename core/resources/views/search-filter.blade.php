@@ -78,6 +78,7 @@
         vertical-align: middle;
         text-align: center;
     }
+    
 </style>
 
 <title>{{ $title }} | JPS</title>

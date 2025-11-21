@@ -316,7 +316,7 @@
                                                         <div class="mb-1">
                                                             @if(!empty($item->visit_date))
                                                                 <small class="text-muted">
-                                                                    <strong>Tarikh Lawatan:</strong>
+                                                                    <strong>Tarikh Kemaskini:</strong>
                                                                     {{ \Carbon\Carbon::parse($item->visit_date)->format('d/m/Y') }}
                                                                 </small>
                                                             @endif
