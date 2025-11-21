@@ -363,6 +363,11 @@
                                                     <span class="{{ $badgeClass }}">
                                                         {{ $badgeText }}
                                                     </span>
+                                                    @if($item->status === 'rejected' && !empty($item->rejected_reason))
+                                                        <div class="mt-2 text-danger text-center">
+                                                            <strong>Alasan:</strong> {{ $item->rejected_reason }}
+                                                        </div>
+                                                    @endif
                                                 @else
                                                     <span class="status-badge status-unknown">N/A</span>
                                                 @endif

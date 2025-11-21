@@ -638,7 +638,13 @@
                                                 <td>
                                                     {{ strtoupper($application->payment_method) == 'CHEQUE' ? 'CEK' : 'EFT' }}
                                                 </td>
-                                                <td>{{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}</td>
+                                                <td>
+                                                    @if($application->applicant_type == 3)
+                                                        BAUCAR BAYARAN
+                                                    @else
+                                                        {{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     {{ $application->payment_status == 'completed' 
                                                         ? 'SELESAI' 

@@ -324,22 +324,25 @@
                                                 {{-- FINANCE ADMIN → Only Update Button --}}
                                                 @elseif ($isFinanceAdmin)
 
-                                                    <button type="button" class="btn btn-edit btn-sm"
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#editPaymentModal"
-                                                        data-application-id="{{ $item->id }}"
-                                                        data-reference-no="{{ $item->refference_no }}"
-                                                        data-applicant="{{ $item->applicant }}"
-                                                        data-amount="{{ $item->final_amount }}"
-                                                        data-current-status="Not Set"
-                                                        title="{{ trans('app.update_payment') }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
+                                                    @if ($payment && $payment->payment_status === 'in_review')
+                                                        {{-- Do NOT show any button for Finance Admin when payment is in_review --}}
+                                                        <span class="text-muted"></span>
+                                                    @else
+                                                        <button type="button" class="btn btn-edit btn-sm"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#editPaymentModal"
+                                                            data-application-id="{{ $item->id }}"
+                                                            data-reference-no="{{ $item->refference_no }}"
+                                                            data-applicant="{{ $item->applicant }}"
+                                                            data-amount="{{ $item->final_amount }}"
+                                                            data-current-status="Not Set"
+                                                            title="{{ trans('app.update_payment') }}">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                    @endif
 
                                                 @else
-
                                                     <span class="text-muted">No Access</span>
-
                                                 @endif
 
                                             </td>

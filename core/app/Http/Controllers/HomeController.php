@@ -1917,6 +1917,7 @@ class HomeController extends Controller {
                 'application.landDivision', 
                 'application.client'
             ])
+            ->where('payment_status', 'completed') 
             ->whereHas('application', function($appQuery) {
                 $appQuery->where('status', 'approved');
             })

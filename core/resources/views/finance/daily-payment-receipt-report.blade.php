@@ -539,7 +539,15 @@
                                                 } elseif (stripos($method, 'FPX_B2C') !== false) {
                                                     $transactionCategory = 'B2C';
                                                     $charge = 0.5;
-                                                } else {
+                                                }
+                                                elseif (stripos($method, 'bank_draf') !== false) {
+                                                    $transactionCategory = 'BANK DRAF';
+                                                } 
+                                                elseif (stripos($method, 'cheque') !== false) {
+                                                    $transactionCategory = 'CEK';
+                                                    $charge = 0;
+                                                }
+                                                else {
                                                     if (isset($application->account_type_name) && 
                                                         strtoupper(trim($application->account_type_name)) === 'AGENSI KERAJAAN') {
                                                         $transactionCategory = 'BAUCAR BAYARAN';
@@ -573,15 +581,7 @@
                                                 <td>{{ $kodHasil }}</td>
                                                 <td>{{ number_format($amount, 2) }}</td>
                                                 <td rowspan="{{ $rowspan }}">
-                                                    @php
-                                                        $method = $application->methods ?? '';
-
-                                                        if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
-                                                            echo 'Cek';
-                                                        } else {
-                                                            echo 'EFT';
-                                                        }
-                                                    @endphp
+                                                   EFT 
                                                 </td>
                                                 <td rowspan="{{ $rowspan }}">N/A</td>
                                                 <td rowspan="{{ $rowspan }}">{{ $transactionCategory }}</td>
@@ -765,6 +765,8 @@
                                 $b2cAmount = 0;
                                 $baucarCount = 0;
                                 $baucarAmount = 0;
+                                $manualPaymentCount = 0;
+                                $manualPaymentAmount = 0;
 
                                 foreach ($applications as $application) {
                                     $method = $application->methods ?? '';
@@ -783,6 +785,11 @@
                                         $b2cCount++;
                                         $b2cAmount += $amount;
                                     }
+                                    // ✅ MANUAL PAYMENT (Cheque + Bank Draft)
+                                    elseif (stripos($method, 'bank_draf') !== false || stripos($method, 'cheque') !== false) {
+                                        $manualPaymentCount++;
+                                        $manualPaymentAmount += $amount;
+                                    }
                                     // ✅ BAUCAR BAYARAN (for agency users)
                                     elseif ($accountTypeName === 'AGENSI KERAJAAN') {
                                         $baucarCount++;
@@ -790,9 +797,9 @@
                                     }
                                 }
 
-                                // Grand total (B2B + B2C + Baucar)
-                                $totalCount = $b2bCount + $b2cCount + $baucarCount;
-                                $totalAmount = $b2bAmount + $b2cAmount + $baucarAmount;
+                                // Grand total (B2B + B2C + Baucar + Manual Payment)
+                                $totalCount = $b2bCount + $b2cCount + $baucarCount + $manualPaymentCount;
+                                $totalAmount = $b2bAmount + $b2cAmount + $baucarAmount + $manualPaymentAmount;
                             @endphp
 
                             <tr>
@@ -812,6 +819,12 @@
                                 <td>BAUCAR BAYARAN AGENSI KERAJAAN</td>
                                 <td>{{ $baucarCount }}</td>
                                 <td>{{ number_format($baucarAmount, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>PEMBAYARAN MANUAL</td>
+                                <td>{{ $manualPaymentCount }}</td>
+                                <td>{{ number_format($manualPaymentAmount, 2) }}</td>
                             </tr>
                             <tr style="background-color: #f0f0f0;">
                                 <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>

@@ -204,7 +204,7 @@
 
                                 <!-- Hidden fields for reapplication -->
                                 @if(isset($claim))
-                                    <input type="hidden" name="is_reapply" value="1">
+                                    <input type="hidden" name="is_reapply" id="is_reapply" value="{{ isset($claim) ? '1' : '0' }}">
                                     <input type="hidden" name="original_claim_id" value="{{ $claim->id }}">
                                 @endif
 
@@ -404,7 +404,7 @@
                                             </a>
                                         </div>
                                         <div class="col-md-8">
-                                            <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek"></textarea>
+                                            <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{$claim->project_name}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -883,6 +883,8 @@
                 $('.invalid-feedback').remove();
                 $('.form-control').removeClass('is-invalid');
 
+                const isReapply = $('#is_reapply').val() == '1';
+
                 // Get the selected account type from the dropdown
                 const selectedAccountType = $('#account_types').val();
 
@@ -971,34 +973,57 @@
 
                 // Validate land_grant file
                 const landGrantFile = $('#land_grant')[0].files[0];
-                if (!landGrantFile) {
-                    showError('land_grant', "@lang('Fail wajib dimuatnaik')");
-                    $('#land_grant_error').text("@lang('Fail wajib dimuatnaik')").show();
-                } else {
-                    // Check file size (15MB = 15360KB)
-                    if (landGrantFile.size > 15 * 1024 * 1024) {
-                        showError('land_grant', "@lang('app.land_grant_max')");
-                        $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                if (!isReapply) {
+                    if (!landGrantFile) {
+                        showError('land_grant', "@lang('Fail wajib dimuatnaik')");
+                        $('#land_grant_error').text("@lang('Fail wajib dimuatnaik')").show();
+                    } else {
+                        if (landGrantFile.size > 15 * 1024 * 1024) {
+                            showError('land_grant', "@lang('app.land_grant_max')");
+                            $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                        } else if (landGrantFile.type !== 'application/pdf') {
+                            showError('land_grant', "@lang('app.land_grant_mimes')");
+                            $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                        }
                     }
-                    // Check file type (PDF only)
-                    else if (landGrantFile.type !== 'application/pdf') {
-                        showError('land_grant', "@lang('app.land_grant_mimes')");
-                        $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                } else {
+                    // If reapply and file is provided, validate its format and size only
+                    if (landGrantFile) {
+                        if (landGrantFile.size > 15 * 1024 * 1024) {
+                            showError('land_grant', "@lang('app.land_grant_max')");
+                            $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                        } else if (landGrantFile.type !== 'application/pdf') {
+                            showError('land_grant', "@lang('app.land_grant_mimes')");
+                            $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                        }
                     }
                 }
 
-                // Validate new_receipt file (REQUIRED)
+                // Validate new_receipt file - ONLY REQUIRED IF NOT REAPPLY
                 const newReceiptFile = $('#new_receipt')[0].files[0];
-                if (!newReceiptFile) {
-                    showError('new_receipt', "@lang('Fail wajib dimuatnaik')");
-                    $('#new_receipt_error').text("@lang('Fail wajib dimuatnaik')").show();
+                if (!isReapply) {
+                    if (!newReceiptFile) {
+                        showError('new_receipt', "@lang('Fail wajib dimuatnaik')");
+                        $('#new_receipt_error').text("@lang('Fail wajib dimuatnaik')").show();
+                    } else {
+                        if (newReceiptFile.size > 15 * 1024 * 1024) {
+                            showError('new_receipt', "@lang('app.land_grant_max')");
+                            $('#new_receipt_error').text("@lang('app.land_grant_max')").show();
+                        } else if (newReceiptFile.type !== 'application/pdf') {
+                            showError('new_receipt', "@lang('app.land_grant_mimes')");
+                            $('#new_receipt_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    }
                 } else {
-                    if (newReceiptFile.size > 15 * 1024 * 1024) {
-                        showError('new_receipt', "@lang('app.land_grant_max')");
-                        $('#new_receipt_error').text("@lang('app.land_grant_max')").show();
-                    } else if (newReceiptFile.type !== 'application/pdf') {
-                        showError('new_receipt', "@lang('app.land_grant_mimes')");
-                        $('#new_receipt_error').text("@lang('app.land_grant_mimes')").show();
+                    // If reapply and file is provided, validate its format and size only
+                    if (newReceiptFile) {
+                        if (newReceiptFile.size > 15 * 1024 * 1024) {
+                            showError('new_receipt', "@lang('app.land_grant_max')");
+                            $('#new_receipt_error').text("@lang('app.land_grant_max')").show();
+                        } else if (newReceiptFile.type !== 'application/pdf') {
+                            showError('new_receipt', "@lang('app.land_grant_mimes')");
+                            $('#new_receipt_error').text("@lang('app.land_grant_mimes')").show();
+                        }
                     }
                 }
 
