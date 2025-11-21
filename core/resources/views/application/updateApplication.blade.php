@@ -1424,7 +1424,6 @@
 
     <script>
         let landCategories = @json($landCategories);
-
         document.addEventListener("DOMContentLoaded", function() {
             let landCategorySelect = document.getElementById("land_category");
             let costInput = document.getElementById("cost");
@@ -1434,6 +1433,7 @@
             let adjustmentUnitSpan = document.getElementById("adjustment_unit");
             let marginInput = document.getElementById("margin");
             let squareMetersInput = document.getElementById("keluasan");
+            let landUnitSelect = document.getElementById("land-unit");
             let appealTypeSelect = document.getElementById("appeal_type");
 
             const landCategoryId = document.getElementById('land_category_input')?.value || '0';
@@ -1477,12 +1477,41 @@
                 marginInput.value = parseFloat(marginValue).toFixed(2);
             }
 
-            // Initialize hectare value
-            if (hectareValue && hectareValue !== '0') {
+            // IMPORTANT: Always recalculate hectare based on current land area and unit
+            // This fixes the issue when user changes unit during reapplication
+            if (squareMetersInput && squareMetersInput.value && landUnitSelect && landUnitSelect.value) {
+                // Force reconversion based on current unit and area
+                const landArea = parseFloat(squareMetersInput.value);
+                const selectedUnitId = landUnitSelect.value;
+                
+                if (!isNaN(landArea) && landArea > 0 && selectedUnitId) {
+                    let hectares = 0;
+                    
+                    // Use your existing conversion logic
+                    switch (selectedUnitId) {
+                        case '1':
+                            hectares = landArea / 10000; // meter persegi to hectare
+                            break;
+                        case '2':
+                            hectares = landArea / 2.47105; // ekar to hectare
+                            break;
+                        case '3':
+                            hectares = landArea; // already in hectare
+                            break;
+                        default:
+                            hectares = 0;
+                    }
+                    
+                    hectareInput.value = hectares.toFixed(2);
+                    document.getElementById('hectare_input').value = hectares.toFixed(3);
+                    
+                    if (document.getElementById('hectare-display')) {
+                        document.getElementById('hectare-display').value = hectares.toFixed(2);
+                    }
+                }
+            } else if (hectareValue && hectareValue !== '0') {
+                // Only use saved hectare value if no land area is entered
                 hectareInput.value = parseFloat(hectareValue).toFixed(3);
-
-               } else if (squareMetersInput && squareMetersInput.value && !isNaN(squareMetersInput.value)) {
-                convertToHectare();
             } else {
                 hectareInput.value = '0.00';
                 document.getElementById('hectare_input').value = '0.00';
@@ -1564,7 +1593,7 @@
             });
 
             adjustmentTypeSelect.addEventListener("change", function() {
-                document.getElementById('adjustment_type_input').value = this.value; // Save adjustment type
+                document.getElementById('adjustment_type_input').value = this.value;
                 updateAdjustmentUnit();
                 updateAllValues();
             });
@@ -1582,7 +1611,62 @@
 
             // Functions
             function validateInput(input) {
-                input.value = input.value.replace(/[^0-9]/g, '');
+                input.value = input.value.replace(/[^0-9.]/g, '');
+            }
+
+            function convertToHectare() {
+                const landAreaInput = document.getElementById('keluasan');
+                const landUnitSelect = document.getElementById('land-unit');
+                const hectareDisplay = document.getElementById('hectare-display');
+                const hectareInput = document.getElementById('hectare');
+                const hectareHiddenInput = document.getElementById('hectare_input');
+
+                if (!landAreaInput || !landUnitSelect) {
+                    return;
+                }
+
+                const inputValue = landAreaInput.value;
+                const landUnit = landUnitSelect.value;
+
+                if (inputValue && !isNaN(inputValue) && landUnit) {
+                    let hectares = 0;
+
+                    switch (landUnit) {
+                        case '1':
+                            hectares = parseFloat(inputValue) / 10000; 
+                            break;
+                        case '2':
+                            hectares = parseFloat(inputValue) / 2.47105; 
+                            break;
+                        case '3':
+                            hectares = parseFloat(inputValue); 
+                            break;
+                        default:
+                            hectares = 0;
+                    }
+
+                    if (hectareDisplay) {
+                        hectareDisplay.value = hectares.toFixed(2);
+                    }
+                    
+                    if (hectareInput) {
+                        hectareInput.value = hectares.toFixed(2);
+                    }
+                    
+                    if (hectareHiddenInput) {
+                        hectareHiddenInput.value = hectares.toFixed(3);
+                    }
+                } else {
+                    if (hectareDisplay) {
+                        hectareDisplay.value = '';
+                    }
+                    if (hectareInput) {
+                        hectareInput.value = '';
+                    }
+                    if (hectareHiddenInput) {
+                        hectareHiddenInput.value = '0.00';
+                    }
+                }
             }
 
             function updateAdjustmentUnit() {
@@ -1638,11 +1722,11 @@
                 let marginAmount = baseAmount * (marginPercentage / 100);
                 let discountAmount = adjustmentType === "percentage" ?
                     baseAmount * (discountValue / 100) : discountValue;
-                let finalAmount = Math.max(0, baseAmount + marginAmount - discountAmount); // Prevent negative
+                let finalAmount = Math.max(0, baseAmount + marginAmount - discountAmount);
                 let halfAmount = finalAmount / 2;
                 
-                 let appealValue = appealTypeSelect.value;
-                 document.getElementById('appeal_input').value = appealValue;
+                let appealValue = appealTypeSelect.value;
+                document.getElementById('appeal_input').value = appealValue;
 
                 let firstRow = document.querySelector("tbody tr:first-child");
                 if (firstRow) {

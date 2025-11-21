@@ -1188,6 +1188,7 @@ class HomeController extends Controller {
                 "land_area" => "required",
                 "land_district" => "required",
                 "land_state" => "required",
+                "land_unit" => "required"
             ];
 
             // Only add identities validation if applicant_type is NOT 3 (Agency)
@@ -1301,6 +1302,7 @@ class HomeController extends Controller {
                 "land_state" => $request->input('land_state', $application->land_state),
                 "land_lot" => $request->input('land_lot', $application->land_lot),
                 "land_area" => $request->input('land_area', $application->land_area),
+                "land_unit" => $request->input('land_unit', $application->land_unit),
                 "state" => $request->input('state', $application->state),
                 "status" => 'pending',
                 "rejection_reason" => null,

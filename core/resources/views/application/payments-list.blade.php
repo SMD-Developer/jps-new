@@ -406,11 +406,7 @@
                                             </td>
                                             <td>{{ number_format($payment->amount ?? 0, 2) }}</td>
                                              <td>
-                                                @if(in_array($paymentMethod, ['EFT', 'B2B', 'B2C']))
-                                                    <span class="payment-method-badge method-offline">EFT</span>
-                                                @else
-                                                    -
-                                                @endif
+                                                <span class="payment-method-badge method-offline">EFT</span>
                                             </td>
                                             <td>
                                                 <span class="payment-method-badge {{ $methodClass }}">
