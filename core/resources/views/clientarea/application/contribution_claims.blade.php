@@ -596,7 +596,7 @@
 
                         <div class="form-group">
                             <div class="col-md-4">
-                                <label for="ic_copy">Salinan Kad Pengenalan Pemohon <b class="starr"></b></label>
+                                <label for="ic_copy">Geran/Pelan Kelulusan KM <b class="starr"></b></label>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->ic_copy)
@@ -621,7 +621,7 @@
 
                         <div class="form-group">
                             <div class="col-md-4">
-                                <label for="bank_statement">Penyata Bank Individu/Pemaju <b class="starr"></b></label>
+                                <label for="bank_statement">Surat Penetapan Jumlah Bayaran Caruman Parit <b class="starr"></b></label>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->bank_statement)

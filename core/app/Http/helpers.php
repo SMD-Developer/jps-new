@@ -736,7 +736,6 @@ if(! function_exists('getMenus')){
                     'text' => trans('app.filter_search'),
                     'route' => url('/search'),
                     'menu_active' => request()->is('search') || request()->is('search/*') ? 'active' : '',
-                    'permission' => 'filter-search'
                     
                 ],
                 
@@ -1034,7 +1033,6 @@ if(! function_exists('getMenus')){
             'text' => trans('app.filter_search'),
             'route' => url('/search'),
             'menu_active' => request()->is('search') || request()->is('search/*') ? 'active' : '',
-            'permission' => 'filter-search'
         ],
          [
             'icon' => 'fa fa-users',
@@ -1419,7 +1417,7 @@ if(! function_exists('getMenus')){
                     'text' => trans('app.filter_search'),
                     'route' => url('/search'),
                     'menu_active' => request()->is('search') || request()->is('search/*') ? 'active' : '',
-                    'permission' => 'claim-contribution.view-list'
+                    
                 ],
 
                 
@@ -2116,7 +2114,6 @@ if(! function_exists('getMenus')){
                     'text' => trans('app.filter_search'),
                     'route' => url('/search'),
                     'menu_active' => request()->is('search') || request()->is('search/*') ? 'active' : '',
-                    'permission' => 'filter-search',
                 ],
                
                 // [

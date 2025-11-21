@@ -505,6 +505,12 @@
                 <div class="input-box login mt-3">
                     {!! Form::submit(trans('app.reset_password'), ['class' => 'btn btn-primary form-control']) !!}
                 </div>
+
+                <div class="text-center mt-3">
+                    <a href="{{ route('admin_login') }}" class="text-light" style="text-decoration: underline;">
+                        @lang('app.login')
+                    </a>
+                </div>
                 <!-- ... rest of your form ... -->
                 {!! Form::close() !!}
                 <div class="row mt-5">

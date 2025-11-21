@@ -154,8 +154,8 @@
     }
 
     .status-pending {
-        background-color: #ffc107; 
-        color: #000;
+        background-color: #17a2b8; 
+        color: #fff;
     }
 
     .status-inprocess {
@@ -166,6 +166,8 @@
     .status-unknown {
         background-color: #6c757d; 
     }
+
+    
 
 </style>
 <title>{{ trans('app.claim_contribution') }} | JPS</title>
