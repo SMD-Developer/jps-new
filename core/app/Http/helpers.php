@@ -162,13 +162,13 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.list_of_payments'),
+                                'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : ''
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('Pembayaran Selesai'),
+                                'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
                                 'permission' => 'payments.view-list'
@@ -549,7 +549,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.list_of_payments'),
+                                'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
                                 'permission' => 'payments.view-details',
@@ -557,7 +557,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('Pembayaran Selesai'),
+                                'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
                                 'permission' => 'payments.view-list'
@@ -860,7 +860,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.list_of_payments'),
+                                'text' => trans('Belum Selesai'),
                                 'route' => url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
                                 'permission' => 'payments.view-list'
@@ -868,7 +868,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('Pembayaran Selesai'),
+                                'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
                                 'permission' => 'payments.view-list'
@@ -1222,7 +1222,7 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.list_of_payments'),
+                                'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
                                 'permission' => 'payments.view-list'
@@ -1230,7 +1230,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('Pembayaran Selesai'),
+                                'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
                                 'permission' => 'payments.view-list'
@@ -1576,7 +1576,7 @@ if(! function_exists('getMenus')){
                     
                     [
                         'icon' => 'money',
-                        'text' => trans('Senarai Pembayaran'),
+                        'text' => trans('app.payments'),
                         'route' => url('#'),
                         'active_dropdown' => request()->is('view-receipt') || request()->is('admin/payments') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('view-receipt') || request()->is('admin/payments') ? 'block' : 'none',
@@ -1928,14 +1928,14 @@ if(! function_exists('getMenus')){
                         'submenus' => [
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.list_of_payments'),
+                                'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt')  ? 'active' : '',
                                 'permission' => 'payments.view-list'
                             ],
                             [
                                 'icon' => 'money',
-                                'text' => trans('Pembayaran Selesai'),
+                                'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
                                 'permission' => 'payments.view-list'
