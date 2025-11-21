@@ -1552,7 +1552,7 @@ class HomeController extends Controller {
                 $query->orderBy('action_at', 'desc');
             }
         ])
-        ->whereIn('status', ['pending', 'rejected'])
+        ->whereIn('status', ['pending', 'rejected', 'returned_to_staff'])
         ->orderBy('created_at', 'desc');    
         
         

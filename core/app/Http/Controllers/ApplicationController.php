@@ -33,34 +33,41 @@ class ApplicationController extends Controller
             }
             
             $oldData = $application->toArray();
-            
-            
-            
             $previousStatus = $application->status;
+            
+            // Update application status
             $application->status = 'approved';
             $application->resubmitted_at = null;
+            
+            // Clear any previous approver rejection data
+            $application->approver_rejection_reason = null;
+            $application->returned_to_staff_at = null;
+            
+            // Clear staff rejection data if any
+            $application->rejection_reason = null;
+            $application->rejected_at = null;
+            
             $application->save();
             
             $newData = $application->fresh()->toArray();
             
-            
-            
-             $changes = [];
-                foreach ($newData as $key => $value) {
-                    if (array_key_exists($key, $oldData)) {
-                        $oldValue = is_object($oldData[$key]) ? json_encode($oldData[$key]) : $oldData[$key];
-                        $newValue = is_object($value) ? json_encode($value) : $value;
-                        
-                        if ($oldValue != $newValue) {
-                            $changes[$key] = [
-                                'old' => $oldValue,
-                                'new' => $newValue
-                            ];
-                        }
+            // Calculate changes
+            $changes = [];
+            foreach ($newData as $key => $value) {
+                if (array_key_exists($key, $oldData)) {
+                    $oldValue = is_object($oldData[$key]) ? json_encode($oldData[$key]) : $oldData[$key];
+                    $newValue = is_object($value) ? json_encode($value) : $value;
+                    
+                    if ($oldValue != $newValue) {
+                        $changes[$key] = [
+                            'old' => $oldValue,
+                            'new' => $newValue
+                        ];
                     }
                 }
+            }
             
-            
+            // Create Application Log
             ApplicationLog::create([
                 'application_id' => $application->id,
                 'user_id' => $currentApprover->uuid,
@@ -72,13 +79,17 @@ class ApplicationController extends Controller
                 'additional_data' => [
                     'performed_by' => $currentApprover->username,
                     'approved_at' => now()->toDateTimeString(),
+                    'was_returned_to_staff' => $previousStatus === 'returned_to_staff',
                 ],
             ]);
             
+            // Create Activity Log
+            $description = 'Application approved by admin: ' . ($currentApprover->username ?? 'Unknown') . 
+                        ' (Status changed from "' . $previousStatus . '" to "approved")';
             
             ActivityLog::create([
                 'log_name' => 'application',
-                'description' => 'Application approved by admin: ' . ($currentApprover->username ?? 'Unknown') . ' (Status changed from "' . $previousStatus . '" to "approved")',
+                'description' => $description,
                 'event' => 'approved',
                 'subject_type' => 'App\Models\Application',
                 'subject_id' => $id,
@@ -96,6 +107,7 @@ class ApplicationController extends Controller
                 'approved_by_uuid' => $currentApprover->uuid,
                 'approved_by_username' => $currentApprover->username,
                 'approved_at' => now(),
+                'previous_status' => $previousStatus,
             ]);
 
             return response()->json([
@@ -154,6 +166,7 @@ class ApplicationController extends Controller
 
         $currentAdmin = auth('admin')->user();
         $userType = null;
+        
         if ($currentAdmin->role_id == '9e032984-8ef0-4e00-b7b9-439679a4d1aa' || $currentAdmin->role->name == 'adminstaff') {
             $userType = 'admin_staff';
         } elseif ($currentAdmin->role_id == '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d' || $currentAdmin->role->name == 'application_approver') {
@@ -162,23 +175,37 @@ class ApplicationController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized role for this action'], 403);
         }
         
-        
-         $oldData = $application->toArray();
-        
-        
-
+        $oldData = $application->toArray();
         $previousStatus = $application->status;
-        $application->status = 'rejected';
-        $application->rejection_reason = $validated['reason'];
-        if ($userType === 'admin_approver') {
-            $application->rejected_at = now();
-        }
-        $application->resubmitted_at = null;
-        $application->save();
         
+        // TWO-STEP REJECTION LOGIC
+        if ($userType === 'admin_approver') {
+            $application->status = 'returned_to_staff';
+            $application->approver_rejection_reason = $validated['reason'];
+            $application->returned_to_staff_at = now();
+            $application->rejected_at = null; 
+            $application->resubmitted_at = null;
+            
+            $action = 'returned_to_staff';
+            $statusTo = 'returned_to_staff';
+            $message = 'Application returned to staff for review';
+            
+        } else {
+            // Staff rejection: Final rejection
+            $application->status = 'rejected';
+            $application->rejection_reason = $validated['reason'];
+            $application->rejected_at = now();
+            $application->resubmitted_at = null;
+            
+            $action = 'rejected';
+            $statusTo = 'rejected';
+            $message = 'Application rejected successfully';
+        }
+        
+        $application->save();
         $newData = $application->fresh()->toArray();
         
-        
+        // Calculate changes
         $changes = [];
         foreach ($newData as $key => $value) {
             if (array_key_exists($key, $oldData)) {
@@ -194,24 +221,30 @@ class ApplicationController extends Controller
             }
         }
 
-
+        // Create Application Log
         ApplicationLog::create([
             'application_id' => $application->id,
             'user_id' => $currentAdmin->uuid,
             'user_type' => $userType,
-            'action' => 'rejected',
+            'action' => $action,
             'status_from' => $previousStatus,
-            'status_to' => 'rejected',
+            'status_to' => $statusTo,
             'remarks' => $validated['reason'],
-            'additional_data' => ['performed_by' => $currentAdmin->username, 'rejected_at' => now()->toDateTimeString()],
+            'additional_data' => [
+                'performed_by' => $currentAdmin->username,
+                'timestamp' => now()->toDateTimeString()
+            ],
         ]);
         
+        // Create Activity Log
+        $description = $userType === 'admin_approver' 
+            ? 'Application returned to staff by admin approver: ' . ($currentAdmin->username ?? 'Unknown') . ' (Status changed from "' . $previousStatus . '" to "returned_to_staff")'
+            : 'Application rejected by admin staff: ' . ($currentAdmin->username ?? 'Unknown') . ' (Status changed from "' . $previousStatus . '" to "rejected")';
         
-        
-         ActivityLog::create([
+        ActivityLog::create([
             'log_name' => 'application',
-            'description' => 'Application rejected by ' . ($userType === 'admin_staff' ? 'admin staff' : 'admin approver') . ': ' . ($currentAdmin->username ?? 'Unknown') . ' (Status changed from "' . $previousStatus . '" to "rejected")',
-            'event' => 'rejected',
+            'description' => $description,
+            'event' => $action,
             'subject_type' => 'App\Models\Application',
             'subject_id' => $id,
             'properties' => $changes,
@@ -222,52 +255,12 @@ class ApplicationController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ]);
-        
-        
-         // **NEW: If approver rejects, create a system log to reset staff status to pending**
-        if ($userType === 'admin_approver') {
-            ApplicationLog::create([
-                'application_id' => $application->id,
-                'user_id' => null, // System generated
-                'user_type' => 'admin_staff',
-                'action' => 'reset_to_pending',
-                'status_from' => 'approved',
-                'status_to' => 'pending',
-                'remarks' => 'Staff status reset to pending after approver rejection',
-                'additional_data' => [
-                    'performed_by' => 'System',
-                    'triggered_by_rejection' => $currentAdmin->username,
-                    'is_system_generated' => true,
-                    'rejection_reason' => $validated['reason']
-                ],
-            ]);
-            
-            
-            ActivityLog::create([
-                'log_name' => 'application',
-                'description' => 'System reset staff status to pending after approver rejection',
-                'event' => 'system_reset',
-                'subject_type' => 'App\Models\Application',
-                'subject_id' => $id,
-                'properties' => [
-                    'triggered_by' => $currentAdmin->username,
-                    'rejection_reason' => $validated['reason'],
-                    'previous_status' => 'approved',
-                    'new_status' => 'pending'
-                ],
-                'causer_type' => 'System',
-                'causer_id' => null,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Application rejected successfully',
+            'message' => $message,
             'action_by' => $currentAdmin->role->name ?? 'admin',
+            'status' => $statusTo
         ], 200);
     }
 
