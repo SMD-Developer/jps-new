@@ -257,9 +257,9 @@
                                                 @endswitch
                                             </td>
 
-                                            <td>
+                                             <td>
                                                 @if($result->payment && $result->payment->payment_status === 'completed')
-                                                    <a href="{{ route('user_original_receipts', ['application_id' => $result->id]) }}" 
+                                                    <a href="{{ route('user_original_receipts', ['application_id' => $result->id, 'payment_uuid' => $result->payment->uuid]) }}" 
                                                         class="btn btn-sm"
                                                         style="
                                                             background-color: #f4a100;
@@ -279,8 +279,6 @@
                                                         onmouseout="this.style.backgroundColor='#f4a100';">
                                                         <strong>{{ trans('app.view_receipt') }}</strong>
                                                     </a>
-
-
                                                 @endif
                                             </td>
 
