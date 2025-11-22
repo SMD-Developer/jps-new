@@ -1829,13 +1829,15 @@ class HomeController extends Controller {
     {         
         $list = $this->fetchApprovedApplicationsForPayment($request);
         $perPage = $request->input('per_page', 10);
+        $statusFilter = $request->input('status', 'all'); // Add this line
 
         $isFinanceAdmin = $this->isFinanceAdmin();
         $isFinanceApprover = $this->isFinanceApprover();
 
         return view('application.view-receipt', compact(
             'list', 
-            'perPage', 
+            'perPage',
+            'statusFilter', // Add this line
             'isFinanceAdmin',
             'isFinanceApprover'
         ));     
@@ -1846,6 +1848,7 @@ class HomeController extends Controller {
     {
         $perPage = $request->input('per_page', 10);
         $search = $request->input('q');
+        $statusFilter = $request->input('status', 'all');
 
         $query = Application::with([
                 'state', 
@@ -1858,13 +1861,21 @@ class HomeController extends Controller {
         // Only approved applications
         $query->where('status', 'approved');
 
-        // Only applications WITHOUT payment OR with in_review payment status
-        $query->where(function($q) {
-            $q->whereDoesntHave('payment')
-            ->orWhereHas('payment', function($paymentQuery) {
+        // Apply status filter
+        if ($statusFilter === 'in_review') {
+            $query->whereHas('payment', function($paymentQuery) {
                 $paymentQuery->where('payment_status', 'in_review');
             });
-        });
+        } elseif ($statusFilter === 'belum_bayar') {
+            $query->whereDoesntHave('payment');
+        } elseif ($statusFilter === 'all') {
+            $query->where(function($q) {
+                $q->whereDoesntHave('payment')
+                ->orWhereHas('payment', function($paymentQuery) {
+                    $paymentQuery->where('payment_status', 'in_review');
+                });
+            });
+        }
 
         // Order by latest
         $query->orderBy('created_at', 'desc');

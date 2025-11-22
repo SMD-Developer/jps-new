@@ -183,38 +183,61 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <!-- Simple pagination control -->
-                        <div class="d-flex justify-content-between align-items-center mb-3 mx-3">
-                            <div class="d-flex align-items-center">
-                                <label for="perPageSelect" class="me-2">@lang('app.show') : </label>
-                                <select id="perPageSelect" class="form-select form-select-sm" 
-                                        onchange="changePerPage()" style="width: auto">
-                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                                </select>
-                            </div>
+                        <div class="card-body"> 
+                            <!-- Simple pagination control --> 
+                            <div class="d-flex justify-content-between align-items-center mb-3 mx-3"> 
+                                <!-- Left side: Per Page and Status Filter -->
+                                <div class="d-flex align-items-center gap-3">
+                                    <!-- Per Page Select -->
+                                    <div class="d-flex align-items-center"> 
+                                        <label for="perPageSelect" class="me-2">@lang('app.show') : </label> 
+                                        <select id="perPageSelect" class="form-select form-select-sm"  
+                                                onchange="changePerPage()" style="width: auto"> 
+                                            <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option> 
+                                            <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option> 
+                                            <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option> 
+                                            <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option> 
+                                        </select> 
+                                    </div> 
 
-                            <!-- Search Box -->
-                            <form method="GET" class="d-flex align-items-center">
-                                <input type="hidden" name="per_page" value="{{ $perPage }}">
-                                <div class="input-group" style="max-width: 300px;">
-                                    <input type="search" name="q" value="{{ request('q') }}"
-                                        placeholder="@lang('app.search') reference, applicant..."
-                                        class="form-control form-control-sm">
-                                    <button class="btn btn-sm btn-primary" type="submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                    @if (request('q'))
-                                        <a href="{{ request()->url() }}?per_page={{ $perPage }}"
-                                            class="btn btn-sm btn-outline-secondary" title="Clear search">
-                                            <i class="fa fa-times"></i>
-                                        </a>
-                                    @endif
+                                    <!-- Status Filter -->
+                                    <div class="d-flex align-items-center"> 
+                                        <label for="statusFilter" class="me-2">{{ trans('app.status') }} :</label> 
+                                        <select id="statusFilter" class="form-select form-select-sm" 
+                                                onchange="changeStatusFilter()" style="width: auto; min-width: 150px;"> 
+                                            <option value="all" {{ ($statusFilter ?? 'all') == 'all' ? 'selected' : '' }}> 
+                                                @lang('app.all') 
+                                            </option> 
+                                            <option value="in_review" {{ ($statusFilter ?? 'all') == 'in_review' ? 'selected' : '' }}> 
+                                                @lang('app.in_review') 
+                                            </option> 
+                                            <option value="belum_bayar" {{ ($statusFilter ?? 'all') == 'belum_bayar' ? 'selected' : '' }}> 
+                                                Belum Bayar 
+                                            </option> 
+                                        </select> 
+                                    </div>
                                 </div>
-                            </form>
-                        </div>
 
+                                <!-- Right side: Search Box --> 
+                                <form method="GET" class="d-flex align-items-center"> 
+                                    <input type="hidden" name="per_page" value="{{ $perPage }}">
+                                    <input type="hidden" name="status" value="{{ $statusFilter ?? 'all' }}">
+                                    <div class="input-group" style="max-width: 300px;"> 
+                                        <input type="search" name="q" value="{{ request('q') }}" 
+                                            placeholder="@lang('app.search') reference, applicant..." 
+                                            class="form-control form-control-sm"> 
+                                        <button class="btn btn-sm btn-primary" type="submit"> 
+                                            <i class="fa fa-search"></i> 
+                                        </button> 
+                                        @if (request('q')) 
+                                            <a href="{{ request()->url() }}?per_page={{ $perPage }}&status={{ $statusFilter ?? 'all' }}" 
+                                                class="btn btn-sm btn-outline-secondary" title="Clear search"> 
+                                                <i class="fa fa-times"></i> 
+                                            </a> 
+                                        @endif 
+                                    </div> 
+                                </form> 
+                            </div>
                         <!-- Table -->
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
@@ -542,6 +565,17 @@
             const search = '{{ request("q") }}';
             let url = window.location.pathname + '?per_page=' + perPage;
             if (search) url += '&q=' + encodeURIComponent(search);
+            window.location.href = url;
+        }
+
+        function changeStatusFilter() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const perPage = document.getElementById('perPageSelect').value;
+            const search = '{{ request("q") }}';
+            
+            let url = window.location.pathname + '?per_page=' + perPage + '&status=' + statusFilter;
+            if (search) url += '&q=' + encodeURIComponent(search);
+            
             window.location.href = url;
         }
 
