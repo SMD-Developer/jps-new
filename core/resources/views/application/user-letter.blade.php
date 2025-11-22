@@ -23,207 +23,49 @@
 
     /* Print-specific styles */
     @media print {
-        @page {
-            size: A4;
-            margin: 10mm;
+         html, body {
+            height: 100%;
         }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            background: white;
-            font-size: 12pt;
-        }
-        
-        .no-print {
-            display: none !important;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 100%;
-            padding: 0;
-        }
-        
-        img {
-            max-width: 100% !important;
-            height: auto !important;
-        }
-        
-        .img1 {
-            width: 120px !important;
-            float: right !important;
-        }
-        
-        .img2 {
-            width: 100px !important;
-            float: left !important;
-        }
-        
-        .img3 {
-            width: 200px !important;
-        }
-        
-        /* Keep flexbox for print to maintain exact layout */
-        .head-row, .row {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            margin-right: 0 !important;
-            margin-left: 0 !important;
-        }
-        
-        .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-8 {
-            position: relative !important;
-            padding-right: 15px !important;
-            padding-left: 15px !important;
-        }
-        
-        .col-md-2 {
-            flex: 0 0 16.666667% !important;
-            max-width: 16.666667% !important;
-        }
-        
-        .col-md-3 {
-            flex: 0 0 25% !important;
-            max-width: 25% !important;
-        }
-        
-        .col-md-4 {
-            flex: 0 0 33.333333% !important;
-            max-width: 33.333333% !important;
-        }
-        
-        .col-md-5 {
-            flex: 0 0 41.666667% !important;
-            max-width: 41.666667% !important;
-        }
-        
-        .col-md-6 {
-            flex: 0 0 50% !important;
-            max-width: 50% !important;
-        }
-        
-        .col-md-8 {
-            flex: 0 0 66.666667% !important;
-            max-width: 66.666667% !important;
-        }
-        
-        /* Ensure float works properly in print with flexbox */
-        .float-right {
-            float: right !important;
-            display: block !important;
-            width: auto !important;
-        }
-        
-        .float-left {
-            float: left !important;
-            display: block !important;
-            width: auto !important;
-        }
-        
-        /* Specific image positioning for print */
-        .img1 {
-            width: 120px !important;
-            float: right !important;
-            margin-left: auto !important;
-        }
-        
-        .img2 {
-            width: 100px !important;
-            float: left !important;
-            margin-right: auto !important;
-        }
-        
-        /* Ensure column content alignment */
-        .col-md-2:first-child {
-            text-align: right !important;
-        }
-        
-        .col-md-2:last-child {
-            text-align: left !important;
-        }
-        
-        /* Text alignment fixes */
-        .text-right {
-            text-align: right !important;
-        }
-        
-        .text-left {
-            text-align: left !important;
-        }
-        
-        .text-justify {
-            text-align: justify !important;
-        }
-        
-        /* Spacing utilities */
-        .mt-3 {
-            margin-top: 1rem !important;
-        }
-        
-        .mb-0 {
-            margin-bottom: 0 !important;
-        }
-        
-        .mb-2 {
-            margin-bottom: 0.5rem !important;
-        }
-        
-        .pl-0 {
-            padding-left: 0 !important;
-        }
-        
-        .px-0 {
-            padding-right: 0 !important;
-            padding-left: 0 !important;
-        }
-        
-        .p-0 {
-            padding: 0 !important;
-        }
-        
-        .head-1 {
-            font-size: 10pt;
-            line-height: 1.2;
-        }
-        
-        .ruj p {
-            margin-bottom: 0.5rem;
-        }
-        
-        .pengesahan {
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .last_row {
-            margin-top: 2rem;
-        }
-        
-        .last_para {
-            color: grey;
-            font-size: 10pt;
-        }
-        
-        .align-items-center {
-            vertical-align: middle !important;
-        }
-        
-        .mr-2 {
-            margin-right: 0.5rem !important;
-        }
-        
-        /* Additional print-specific layout fixes */
-        .head-row {
+
+        .row, .head-row {
+            display: table !important;
             width: 100% !important;
+            
         }
-        
-        /* Prevent breaking inside columns */
+
+        body, p, span, div {
+            font-size: 15pt !important;
+            line-height: 1.4 !important;
+        }
+
         .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-8 {
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
+            display: table-cell !important;
+            float: none !important;
+            vertical-align: top !important;
         }
+
+        .last_para {
+            position: absolute !important;
+            bottom: 20px !important;
+            left: 0;
+            right: 0;
+            text-align: center !important;
+            width: 100%;
+            font-size: 16pt;
+            margin-left: 25px !important;
+        }
+
+            @media print {
+            .img3 {
+                float: left !important;
+                margin-right: auto !important;
+                margin-left: -15px !important;
+            }
+        }
+
+    
     }
+
     
     /* Screen styles to maintain normal layout */
     @media screen {
@@ -271,6 +113,19 @@
             max-width: 66.666667%;
         }
     }
+
+    .row.mt-3.head-row {
+        border-bottom: none !important;
+    }
+
+    .col-md-4.ruj.text-left {
+        padding-left: 250px !important;
+    }
+    .last_para {
+        margin-left: 83px;
+        color: grey; 
+        white-space: nowrap;
+    }
 </style>
 <title>@lang('app.trench_contribution_bill') | JPS</title>
 @section('content')
@@ -279,59 +134,37 @@
     </div>
 
     <section class="content">
-        <div class="container middle-body">
-            <div class="row mt-3 head-row">
-                <div class="col-md-2">
-                    <img src="{{ asset('assets/images/admin-images/jps-latest-logo.png') }}"
-                        class="img-fluid img1 float-right" alt="JPS Logo" style="width: 120px;">
-                </div>
-                <div class="col-md-5">
-                    <p class="mb-0 head-1"><b>@lang('JABATAN PENGAIRAN DAN SALIRAN NEGERI SELANGOR')</b></p>
-                    <p class="mb-0 head-1">@lang('(SELANGOR STATE IRRIGATION AND DRAINAGE DEPARTMENT)')</p>
-                    <p class="mb-0 head-1"><b>@lang('TINGKAT 5,BLOK PODIUM SELATAN')</b></p>
-                    <p class="mb-0 head-1"><b>@lang('BANGUNAN SULTAN SALAHUDDIN ABDUL AZIZ SHAH')</b></p>
-                    <p class="mb-0 head-1"><b>@lang('40626 SHAH ALAM,SELANGOR')</b></p>
-                </div>
-                <div class="col-md-3 px-0" style="font-size: 10pt;">
-                    <i class="bi bi-telephone-forward-fill"> </i>&nbsp; : 03-5544 7376/7586 <br>
-                    <i class="bi bi-telephone-forward-fill"> </i>&nbsp; : 03-5521 2204/2205/2207 <br>
-                    <i class="bi bi-printer"> </i>&nbsp; : 03-5544 2911/5510 4494<br>
-                    <p style="white-space: nowrap; margin-bottom: 0;">
-                        <i class="bi bi-envelope-arrow-up"></i> &nbsp;&nbsp;: webmaster@waterselangor.gov.my
-                    </p>
-                    <p style="white-space: nowrap; margin-bottom: 0;">
-                        <i class="bi bi-globe"></i>&nbsp; : http://water.selangor.gov.my
-                    </p>
-                </div>
-                <div class="col-md-2 pl-0">
-                    <img src="{{ asset('assets/images/admin-images/logo-jps-(tran)(wordwhite).png') }}"
-                        class="img-fluid img2 float-left" alt="JPS Word Logo" style="width: 100px;">
-                </div>
+       <div class="row mt-3 head-row">
+            <div class="col-md-12 text-center">
+                <img src="{{ asset('assets/images/letterhead.jpg') }}" 
+                    class="img-fluid" 
+                    alt="JPS Header" 
+                    style="width: 100%; max-width: 100%;">
             </div>
         </div>
         <div class="container middle-body">
             <div class="row mt-3">
-                <div class="col-md-2"></div>
+                <div class="col-md-1"></div>
                 <div class="col-md-4">
                     <img src="{{ asset('assets/images/admin-images/new-title.png') }}" class="img-fluid img3"
                         alt="Kita Selangor Logo" style="width: 200px;">
                 </div>
-                <div class="col-md-2 ruj text-left">
-                    <p class="mb-0">Ruj. Kami</p>
+                <div class="col-md-4 ruj text-left">
+                    <p class="mb-0" style="white-space: nowrap;">Ruj. Kami</p>
                     <p>Tarikh</p>
                 </div>
-                <div class="col-md-2 text-left p-0">
+                <div class="col-md-3 text-left p-0">
                     <p class="mb-0" style="white-space: nowrap;">: {{ $application->refference_no ?? 'SF/CV/1891/24' }}</p>
                     <!--<p class="mb-0" style="white-space: nowrap;">: {{ $application->created_at ? $application->created_at->format('d M Y') : '10 hb September 2024' }}</p>-->
-                    <p class="mb-0">
+                    <p class="mb-0" style="white-space: nowrap;">
                         : {{ App\Helpers\DateHelper::formatMalayDate($application->created_at) }}
                     </p>
                 </div>
                 <div class="col-md-2"></div>
             </div>
             <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
                     <p class="mb-0">{{ ucwords(strtolower($application->applicant)) }}</p>
                     <div class="row">
                         <div class="col-6">
@@ -372,20 +205,19 @@
                         @endif
                     </p>
                     <p>Sekian, terima kasih.</p>
-                    <p class="mb-0"><b>"#KITASELANGOR MAJU BERSAMA"</b></p>
+                    <p class="mb-0"><b>"KITASELANGOR MAJU BERSAMA"</b></p>
                     <p class="mb-0"><b>"MALAYSA MADANI"</b></p>
                     <p><b>"BERKHIDMAT UNTUK NEGARA"</b></p>
                     <p>Saya yang menjalankan amanah,</p>
                     <p class="mb-2"><b>Pengarah Pengairan dan Saliran Negeri Selangor</b></p>
                 </div>
-                <div class="col-md-2"></div>
+                <div class="col-md-1"></div>
             </div>
             <div class="row last_row align-items-center mt-3">
                 <div class="col-md-6">
-                    <p class="last_para mb-0" style="margin-left: 166px; color: grey; white-space: nowrap;">
-                        @lang('app.computer_printout')</p>
                 </div>
             </div>
+             <p class="last_para  mb-0" >@lang('app.computer_printout')</p>
             <div class="col-md-12 mt-3  text-right no-print display-flex jsutify-content-end">
                     <button type="button" class="btn btn-success mx-2" onclick="window.location.href='{{ url()->previous() }}'">
                         @lang('app.back')
@@ -401,6 +233,7 @@
                         @lang('app.adminstaff_send_to_approver')
                     </button>
                 </div>
+               
             </div>
     </section>
 
@@ -456,7 +289,6 @@
                 }
             });
         }
-
         document.getElementById('successButton').addEventListener('click', showConfirmationPopup);
     </script>
 @endsection

@@ -164,10 +164,10 @@
         color: #555;
     }
 </style>
-<title>@lang('app.payment_details') | JPS</title>
+<title>@lang('Maklumat Bayaran') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('app.payment_details')</h5>
+        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Maklumat Bayaran')</h5>
     </div>
     <section class="content">
         <div class="row">
@@ -177,7 +177,7 @@
 
                     <!-- Personal Information Section -->
                     <div class="section">
-                        <h4>@lang('app.payment_details')</h4>
+                        <h4>@lang('Maklumat Bayaran')</h4>
                             <input type="hidden" name="application_id" value="{{ $application->id }}">
                         
                             <div class="form-group">
@@ -269,8 +269,11 @@
                            <div class="row last_row">
                                 <div class="col-md-6"></div>
                                <div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-success mx-2" onclick="window.history.back();">
+                                        Kembali
+                                    </button>
                                     <button type="submit" class="btn btn-secondary btn1 mx-3" id="rejectButton"
-                                        data-id="{{ $application->id }}">@lang('app.no')</button>
+                                        data-id="{{ $application->id }}" style="display:none;">@lang('app.no')</button>
                                     <button type="submit" class="btn btn-primary btn2" id="approveButton"
                                         data-id="{{ $application->id }}">
                                         @lang('app.accept')

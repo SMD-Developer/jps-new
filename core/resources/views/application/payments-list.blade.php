@@ -183,11 +183,11 @@
 
                                 <!-- Method Filter -->
                                 <div class="d-flex align-items-center">
-                                    <label for="methodFilter" class="me-2">{{ trans('app.method') }} :</label>
+                                    <!-- <label for="methodFilter" class="me-2">{{ trans('app.method') }} :</label> -->
                                     <select id="methodFilter" class="form-select form-select-sm" 
                                             onchange="changeMethodFilter()" style="width: auto; min-width: 150px;">
                                         <option value="all" {{ ($methodFilter ?? 'all') == 'all' ? 'selected' : '' }}>
-                                            @lang('app.all_methods')
+                                            @lang('Semua')
                                         </option>
                                         <option value="B2B" {{ ($methodFilter ?? 'all') == 'B2B' ? 'selected' : '' }}>B2B</option>
                                         <option value="B2C" {{ ($methodFilter ?? 'all') == 'B2C' ? 'selected' : '' }}>B2C</option>
@@ -259,7 +259,7 @@
                                 <thead>
                                     <tr>
                                         <th><strong>{{ trans('Bil') }}</strong></th>
-                                        <th style="width: 100px;"><strong>{{ trans('app.payment_date') }}</strong></th>
+                                        <th style="width: 100px;"><strong>{{ trans('Tarikh') }}</strong></th>
                                         <th><strong>{{ trans('app.reference_no') }}</strong></th>
                                         <th><strong>{{trans('Jenis Akaun')}}</strong></th>
                                         <th><strong>{{ trans('Jenis Pembayaran') }}</strong></th>
