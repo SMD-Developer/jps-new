@@ -33,7 +33,7 @@
             
         }
 
-        body, p, span, div {
+        body, p, span, div, h6 {
             font-size: 15pt !important;
             line-height: 1.4 !important;
         }
