@@ -775,96 +775,96 @@
 
                     <!-- Status Update Modal (for Finance Staff) - MOVED OUTSIDE MAIN FORM -->
                     @if($isFinanceStaff)
-                        <div class="modal fade" id="financeStatusModal" tabindex="-1" aria-labelledby="financeStatusModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="financeStatusModalLabel">@lang('app.payment_status')</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="statusUpdateForm" action="{{ route('updateClaimStatus', $claim->id ?? '') }}" method="POST">
-                                            @csrf
+                    <div class="modal fade" id="financeStatusModal" tabindex="-1" aria-labelledby="financeStatusModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="financeStatusModalLabel">@lang('app.payment_status')</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="statusUpdateForm" action="{{ route('updateClaimStatus', $claim->id ?? '') }}" method="POST">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="modal_status" class="form-label">@lang('app.status')</label>
+                                            <select class="form-select" id="modal_status" name="status" required>
+                                                <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
+                                                <option value="approve_payment_in_process" style="display:none;" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
+                                                <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
+                                                <option value="rejected" style="display:none;" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Fields for "approve_payment_in_process" Status -->
+                                        <div id="processFields" style="display: none;">
                                             <div class="mb-3">
-                                                <label for="modal_status" class="form-label">@lang('app.status')</label>
-                                                <select class="form-select" id="modal_status" name="status" required>
-                                                    <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
-                                                    <option value="approve_payment_in_process" style="display:none;" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
-                                                    <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
-                                                    <option value="rejected" style="display:none;" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
-                                                </select>
-                                            </div>
-                                            
-                                            <!-- Fields for "approve_payment_in_process" Status -->
-                                            <div id="processFields" style="display: none;">
-                                                <div class="mb-3">
-                                                    <label for="visit_date" class="form-label">Tarikh Dikemaskini: <span class="text-danger">*</span></label>
-                                                    <input type="date" 
-                                                        class="form-control" 
-                                                        id="visit_date" 
-                                                        name="visit_date"
-                                                        value="{{ $claim->visit_date ?? '' }}">
-                                                    <small class="text-muted">Tarikh pengguna hadir ke pejabat</small>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="process_remarks" class="form-label">Catatan:</label>
-                                                    <textarea 
-                                                        class="form-control" 
-                                                        id="process_remarks" 
-                                                        name="process_remarks"
-                                                        rows="3"
-                                                        placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ old('process_remarks', $claim->process_remarks ?? '') }}</textarea>
-                                                    <small class="text-muted">Contoh: Dokumen sokongan tidak lengkap</small>
-                                                </div>
+                                                <label for="visit_date" class="form-label">Tarikh Dikemaskini: <span class="text-danger">*</span></label>
+                                                <input type="date" 
+                                                    class="form-control" 
+                                                    id="visit_date" 
+                                                    name="visit_date"
+                                                    value="{{ $claim->visit_date ?? '' }}">
+                                                <small class="text-muted">Tarikh pengguna hadir ke pejabat</small>
                                             </div>
 
-                                            <!-- Fields for "approve_paid" Status -->
-                                            <div id="paidFields" style="display: none;">
-                                                <div class="mb-3">
-                                                    <label for="modal_payment_amount" class="form-label">Jumlah Bayaran: <span class="text-danger">*</span></label>
-                                                    <input type="number" 
-                                                        class="form-control" 
-                                                        id="modal_payment_amount" 
-                                                        name="payment_amount" 
-                                                        placeholder="Masukkan jumlah bayaran"
-                                                        step="0.01"
-                                                        min="0"
-                                                        value="{{ old('payment_amount', $claim->payment_amount ?? '') }}">
-                                                    <small class="text-muted">Contoh: 1500.00</small>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="modal_verification_date" class="form-label">Tarikh Bayaran: <span class="text-danger">*</span></label>
-                                                    <input type="date" 
-                                                        class="form-control" 
-                                                        id="modal_verification_date" 
-                                                        name="verification_date"
-                                                        value="{{ old('verification_date', $claim->verified_date ?? '') }}">
-                                                    <small class="text-muted">Tarikh bayaran dibuat</small>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="payment_remarks" class="form-label">Catatan Bayaran:</label>
-                                                    <textarea 
-                                                        class="form-control" 
-                                                        id="payment_remarks" 
-                                                        name="payment_remarks"
-                                                        rows="2"
-                                                        placeholder="Catatan tambahan (jika ada)">{{ old('payment_remarks', $claim->payment_remarks ?? '') }}</textarea>
-                                                </div>
+                                            <div class="mb-3">
+                                                <label for="process_remarks" class="form-label">Catatan:</label>
+                                                <textarea 
+                                                    class="form-control" 
+                                                    id="process_remarks" 
+                                                    name="process_remarks"
+                                                    rows="3"
+                                                    placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ old('process_remarks', $claim->process_remarks ?? '') }}</textarea>
+                                                <small class="text-muted">Contoh: Dokumen sokongan tidak lengkap</small>
                                             </div>
-                                            
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
-                                                <button type="submit" class="btn btn-primary">@lang('app.kemaskini')</button>
+                                        </div>
+
+                                        <!-- Fields for "approve_paid" Status -->
+                                        <div id="paidFields" style="display: none;">
+                                            <div class="mb-3">
+                                                <label for="modal_payment_amount" class="form-label">Jumlah Bayaran: <span class="text-danger">*</span></label>
+                                                <input type="number" 
+                                                    class="form-control" 
+                                                    id="modal_payment_amount" 
+                                                    name="payment_amount" 
+                                                    placeholder="Masukkan jumlah bayaran"
+                                                    step="0.01"
+                                                    min="0"
+                                                    value="{{ old('payment_amount', $claim->payment_amount ?? '') }}">
+                                                <small class="text-muted">Contoh: 1500.00</small>
                                             </div>
-                                        </form>
-                                    </div>
+
+                                            <div class="mb-3">
+                                                <label for="modal_verification_date" class="form-label">Tarikh Bayaran: <span class="text-danger">*</span></label>
+                                                <input type="date" 
+                                                    class="form-control" 
+                                                    id="modal_verification_date" 
+                                                    name="verification_date"
+                                                    value="{{ old('verification_date', $claim->verified_date ?? '') }}">
+                                                <small class="text-muted">Tarikh bayaran dibuat</small>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="payment_remarks" class="form-label">Catatan Bayaran:</label>
+                                                <textarea 
+                                                    class="form-control" 
+                                                    id="payment_remarks" 
+                                                    name="payment_remarks"
+                                                    rows="2"
+                                                    placeholder="Catatan tambahan (jika ada)">{{ old('payment_remarks', $claim->payment_remarks ?? '') }}</textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('app.close')</button>
+                                            <button type="submit" class="btn btn-primary">@lang('app.kemaskini')</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
+                @endif
             </div>
         </div>
         </div>
@@ -1165,37 +1165,29 @@
     <script>
         $(document).ready(function() {
             function toggleModalFields() {
-                const status = $('#modal_status').val();
-                
+            const status = $('#modal_status').val();
+    
                 // Hide all conditional fields first
-                $('#processFields').slideUp();
-                $('#paidFields').slideUp();
+                $('#processFields').hide();
+                $('#paidFields').hide();
                 
-                // Clear non-required fields when hidden
-                if (status !== 'approve_payment_in_process') {
-                    $('#visit_date').removeAttr('required');
-                    $('#process_remarks').val('');
-                } else {
+                if (status === 'pending' || status === 'approve_payment_in_process') {
+                    $('#processFields').slideDown();
                     $('#visit_date').attr('required', 'required');
+                } else {
+                    $('#visit_date').removeAttr('required');
                 }
                 
-                if (status !== 'approve_paid') {
-                    $('#modal_payment_amount').removeAttr('required');
-                    $('#modal_verification_date').removeAttr('required');
-                } else {
+                if (status === 'approve_paid') {
+                    $('#paidFields').slideDown();
                     $('#modal_payment_amount').attr('required', 'required');
                     $('#modal_verification_date').attr('required', 'required');
-                }
-                
-
-                if (status === 'pending') {
-                    $('#processFields').slideDown();
-                } else if (status === 'approve_paid') {
-                    $('#paidFields').slideDown();
+                } else {
+                    $('#modal_payment_amount').removeAttr('required');
+                    $('#modal_verification_date').removeAttr('required');
                 }
             }
             
-            // Run when modal is shown
             $('#financeStatusModal').on('shown.bs.modal', function() {
                 toggleModalFields();
             });
@@ -1205,13 +1197,16 @@
                 toggleModalFields();
             });
             
+            // Initial call
+            toggleModalFields();
+            
             // Handle form submission with validation
             $('#statusUpdateForm').submit(function(e) {
                 e.preventDefault();
                 
                 const status = $('#modal_status').val();
                 
-                // Validate required fields based on status
+
                 if (status === 'approve_payment_in_process') {
                     const visitDate = $('#visit_date').val();
                     if (!visitDate) {
@@ -1265,7 +1260,16 @@
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            window.location.href = "{{ route('claim.approved.list') }}";
+                            // Redirect based on status
+                            const status = $('#modal_status').val();
+                            if (status === 'pending' || status === 'approve_payment_in_process') {
+                                window.location.href = "{{ route('claim.list') }}";
+                            } else if (status === 'approve_paid') {
+                                window.location.href = "{{ route('claim.approved.list') }}";
+                            } else {
+                                // Default redirect
+                                window.location.href = "{{ route('claim.list') }}";
+                            }
                         });
                     },
                     error: function(xhr) {
