@@ -176,7 +176,7 @@
         @endphp
         
       @if($transactionStatus == 'SUCCESSFUL')
-          <a href="{{ route('pay.status') }}" class="btn btn-primary me-2">Check Status</a>
+          <a href="{{ route('pay.status') }}" class="btn btn-primary me-2" style="display:none;">Check Status</a>
     
         @if($application && $application->print_status_count > 0)
           <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
@@ -194,7 +194,7 @@
             @lang('app.dashboard')
         </a>
       @elseif($transactionStatus == 'PENDING')
-        <a href="{{ route('pay.status') }}" class="btn btn-warning me-2">Check Status</a>
+        <a href="{{ route('pay.status') }}" class="btn btn-warning me-2" style="display:none;">Check Status</a>
         <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
