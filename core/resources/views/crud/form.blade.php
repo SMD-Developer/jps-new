@@ -22,22 +22,6 @@
         </button>
     </div>
 @endif
-
-{{-- Validation Errors --}}
-@if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fa fa-exclamation-triangle"></i> <strong>Please fix the following errors:</strong>
-        <ul class="mb-0 mt-2">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
-
 <section class="content">
 <div class="row">
     <div class="col-md-12">

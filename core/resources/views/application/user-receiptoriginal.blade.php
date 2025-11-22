@@ -256,24 +256,30 @@
                                     {{ $txnId }}<br>
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    @if($application->payment_type === 'reprint')
-                                        G001
-                                    @else
-                                        L453<br>G001
-                                    @endif
-                                </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    @if($application->payment_type === 'reprint')
-                                        H0272499
-                                    @else
-                                        H0161304<br>H0161304
-                                    @endif
-                                </td>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
+                               <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
+                                    G001
+                                @else
+                                    L453<br>G001
+                                @endif
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                @if($application->payment_type === 'reprint')
+                                    H0272499
+                                @elseif($application->payment_type === 'third_party')
+                                    H0272499
+                                @else
+                                    H0161304<br>H0161304
+                                @endif
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
+                                @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
+                                    {{ number_format($application->payment_amount, 2) }}
+                                @else
                                     {{ number_format($application->payment_amount / 2, 2) }}<br>
                                     {{ number_format($application->payment_amount / 2, 2) }}
-                                </td>
+                                @endif
+                            </td>
                             </tr>
                             <tr>
                                 <td colspan="5"

@@ -775,7 +775,7 @@
 
                     <!-- Status Update Modal (for Finance Staff) - MOVED OUTSIDE MAIN FORM -->
                     @if($isFinanceStaff)
-                         <div class="modal fade" id="financeStatusModal" tabindex="-1" aria-labelledby="financeStatusModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="financeStatusModal" tabindex="-1" aria-labelledby="financeStatusModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -789,9 +789,9 @@
                                                 <label for="modal_status" class="form-label">@lang('app.status')</label>
                                                 <select class="form-select" id="modal_status" name="status" required>
                                                     <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
-                                                    <option value="approve_payment_in_process" style="display:none;"; {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
+                                                    <option value="approve_payment_in_process" style="display:none;" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
                                                     <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
-                                                    <option value="rejected" style="display:none;"; {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
+                                                    <option value="rejected" style="display:none;" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
                                                 </select>
                                             </div>
                                             
@@ -814,7 +814,7 @@
                                                         id="process_remarks" 
                                                         name="process_remarks"
                                                         rows="3"
-                                                        placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ $claim->process_remarks ?? '' }}</textarea>
+                                                        placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ old('process_remarks', $claim->process_remarks ?? '') }}</textarea>
                                                     <small class="text-muted">Contoh: Dokumen sokongan tidak lengkap</small>
                                                 </div>
                                             </div>
@@ -830,7 +830,7 @@
                                                         placeholder="Masukkan jumlah bayaran"
                                                         step="0.01"
                                                         min="0"
-                                                        value="{{ $claim->payment_amount ?? '' }}">
+                                                        value="{{ old('payment_amount', $claim->payment_amount ?? '') }}">
                                                     <small class="text-muted">Contoh: 1500.00</small>
                                                 </div>
 
@@ -840,7 +840,7 @@
                                                         class="form-control" 
                                                         id="modal_verification_date" 
                                                         name="verification_date"
-                                                        value="{{ $claim->verified_date ?? '' }}">
+                                                        value="{{ old('verification_date', $claim->verified_date ?? '') }}">
                                                     <small class="text-muted">Tarikh bayaran dibuat</small>
                                                 </div>
 
@@ -850,9 +850,8 @@
                                                         class="form-control" 
                                                         id="payment_remarks" 
                                                         name="payment_remarks"
-                                                        value="{{ $claim->payment_remarks ?? '' }}"
                                                         rows="2"
-                                                        placeholder="Catatan tambahan (jika ada)">{{ $claim->payment_remarks ?? '' }}</textarea>
+                                                        placeholder="Catatan tambahan (jika ada)">{{ old('payment_remarks', $claim->payment_remarks ?? '') }}</textarea>
                                                 </div>
                                             </div>
                                             
@@ -865,7 +864,6 @@
                                 </div>
                             </div>
                         </div>
-
                     @endif
             </div>
         </div>
