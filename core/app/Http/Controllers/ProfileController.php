@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use Kris\LaravelFormBuilder\FormBuilderTrait;
 use Laracasts\Flash\Flash;
 
@@ -38,8 +39,7 @@ class ProfileController extends CrudController {
             $form = $this->form($this->formClass, [
                 'method' => 'POST',
                 'url' => route($this->routes['update']),
-                'class' => 'needs-validation row ajax-submit',
-                'novalidate',
+                'class' => 'needs-validation row', 
                 'model'=> $user
             ]);
             $heading = trans('app.edit_profile');
@@ -47,11 +47,11 @@ class ProfileController extends CrudController {
         }
         return redirect('profile');
     }
+
+
     public function beforeStore($request, &$input): void
     {
-        if($request->get('password') !== ''){
-            $input['password']= Hash::make($request->password);
-        }
+    
     }
     
     public function afterStore($request, &$entity): void
@@ -63,8 +63,10 @@ class ProfileController extends CrudController {
             $filename = uploadFile($file,$path, true, 200);
             $entity->photo = $filename;
             $entity->save();
-            if(file_exists($oldPhoto)){
-                File::delete($entity->photo);
+            
+            // ✅ Fixed: Delete old photo, not new one
+            if($oldPhoto && file_exists(public_path($oldPhoto))){
+                File::delete(public_path($oldPhoto));
             }
         }
     }
@@ -73,61 +75,68 @@ class ProfileController extends CrudController {
     {
         $loggedUser = auth()->guard('admin')->user();
         
-        if ($loggedUser) {
-            $user = $this->repository->getById($loggedUser->uuid);
-            
-            // ✅ Make username nullable/optional
-            $validated = $request->validate([
-                'photo' => 'nullable|file|max:2048',
-                'username' => 'nullable|string|unique:users,username,' . $user->uuid . ',uuid',
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $user->uuid . ',uuid',
-                'phone' => 'nullable|string|max:20'
-            ]);
-            
-            // ✅ Only include username if provided
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone
-            ];
-            
-            // Add username only if it's provided
-            if ($request->filled('username')) {
-                $data['username'] = $request->username;
-            }
-            
-            // ✅ Handle photo upload if exists
-            if ($request->hasFile('photo')) {
-                $photo = $request->file('photo');
-                $photoName = time() . '_' . $photo->getClientOriginalName();
-                $photo->move(public_path('uploads/profiles'), $photoName);
-                $data['photo'] = 'uploads/profiles/' . $photoName;
-                
-                // Optional: Delete old photo
-                if ($user->photo && file_exists(public_path($user->photo))) {
-                    unlink(public_path($user->photo));
-                }
-            }
-            
-            // ✅ Update user
-            $entity = $this->repository->updateById($user->uuid, $data);
-            $this->afterStore($request, $entity);
-            
-            flash()->success(trans('app.record_updated'));
-            
-            if (request()->ajax()) {
+        if (!$loggedUser) {
+            if ($request->ajax()) {
                 return response()->json([
-                    'type' => 'success',
-                    'message' => trans('app.record_updated'),
-                    'action' => 'reload'
-                ]);
+                    'message' => 'User not authenticated',
+                    'errors' => []
+                ], 401);
             }
-            
-            return redirect('profile');
+            return redirect()->back()->with('error', 'User not authenticated');
         }
         
-        return redirect()->back()->with('error', 'User not authenticated');
+        $user = $this->repository->getById($loggedUser->uuid);
+        
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->uuid . ',uuid',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+            'photo' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'name.required' => 'Sila isikan medan yang diperlukan',
+            'email.required' => 'Sila isikan medan yang diperlukan',
+            'phone.required' => 'Sila isikan medan yang diperlukan',
+            'address.required' => 'Sila isikan medan yang diperlukan',
+            'email.email' => 'Please enter a valid email address',
+            'email.unique' => 'This email is already taken',
+            'photo.mimes' => 'Photo must be a file of type: jpeg, png, jpg, gif',
+            'photo.max' => 'Photo size must not exceed 2MB',
+        ]);
+        
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'message' => 'Validation failed. Please check the form.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        // Update user
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address
+        ];
+        
+        $entity = $this->repository->updateById($user->uuid, $data);
+        $this->afterStore($request, $entity);
+        
+        // ✅ Return JSON for AJAX success
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => trans('app.record_updated'),
+                'type' => 'success'
+            ], 200);
+        }
+        
+        return redirect()->back()->with('success', trans('app.record_updated'));
     }
 
 
