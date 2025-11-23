@@ -710,8 +710,8 @@ body {
                         <!--{!! Form::label('email', trans('app.email_or_username')) !!}-->
                         {!! Form::input('email','login', null, ['class'  =>"form-control", 'required'=>'required', 'placeholder'=>"Emel"]) !!}
                     </div>
-                     <div class="input-box mt-3 position-relative">
-                        {!! Form::password('password', ['class'=>"form-control", 'id'=>"password", 'required'=>'required' , 'placeholder'=>'Kata Laluan' ]) !!}
+                    <div class="input-box mt-3 position-relative" style="position: relative;">
+                        {!! Form::password('password', ['class'=>"form-control", 'id'=>"password", 'required'=>'required' , 'placeholder'=>'Kata Laluan', 'style'=>'padding-right: 40px;' ]) !!}
                         <i class="fa fa-eye-slash toggle-password" data-target="password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"></i>
                     </div>
                    
