@@ -866,7 +866,6 @@
                     { id: 'negeri', name: 'State' },
                     { id: 'daerah', name: 'District' },
                     { id: 'emel', name: 'Email' },
-                    { id: 'telefon', name: 'Telephone' },
                     { id: 'lot-tanah', name: 'Land Lot' },
                     { id: 'keluasan', name: 'Land Area' },
                     { id: 'land-unit', name: 'Land Unit' },
@@ -988,7 +987,7 @@
         
                 let requiredFields = [
                     'application_reference', 'pemohon', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                    'bandar', 'negeri', 'daerah', 'emel', 
                     'lot-tanah', 'keluasan', 'land-unit', 'land_district', 'mukim', 'land_category'
                 ];
         
@@ -1348,7 +1347,7 @@
                 const applicantType = $('#applicant_type').val();
                 let requiredFields = [
                     'application_reference', 'pemohon', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                    'bandar', 'negeri', 'daerah', 'emel',
                     'lot-tanah', 'keluasan', 'land_district', 'mukim', 'land_category'
                 ];
 

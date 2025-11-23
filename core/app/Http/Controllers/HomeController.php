@@ -878,7 +878,7 @@ class HomeController extends Controller {
                 "applicant" => "required",
                 "address" => "required",
                 // "postal_code" => "required|numeric|digits:6",
-                "phone" => "required|numeric|digits_between:10,15",
+                "phone" => "numeric|digits_between:10,15",
                 "email" => "required|email",
                 "state" => "required",
                 "city" => "required",
