@@ -476,59 +476,126 @@
     }
 
      @media print {
-        @page {
-            margin: 20mm;
-            size: A4 portrait;
-
-            /* Add page numbering in bottom-right */
-            @bottom-right {
-                content: "MUKA SURAT " counter(page) " / " counter(pages);
-                font-size: 12px;
-                font-weight: bold;
-            }
-        }
-
         body {
-            background: #fff !important;   /* White background */
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            background: white;
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .report-container {
             margin: 0 !important;
-            color: #000 !important;        /* Force black text */
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .header-row {
+            border: none !important;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            width: 100%;
         }
 
-        /* Remove any background colors */
-        * {
-            background: #fff !important;
-            box-shadow: none !important;
+        .header-row .date-time-info {
+            text-align: left !important;
+        }
+    
+        .header-row .main-title {
+            text-align: center !important;
+        }
+    
+        .header-row .page-info {
+            text-align: right !important;
+        }
+    
+        .department-info-table {
+            border: 1px solid #000 !important; 
+            border-collapse: collapse !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+            margin: 10px 0 !important;
+        }
+    
+        .department-info-table th,
+        .department-info-table td {
+            border: 1px solid #000 !important; 
+            padding: 4px !important;
+            word-wrap: break-word !important;
+            background: white !important;
+        }
+        
+        .department-info-table th {
+            background: #f0f0f0 !important;
+        }
+        
+        #btn-section {
+            display: none !important;
+        }
+
+        .report-wrapper {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: auto;
+        }
+
+        .report-wrapper thead {
+            display: table-header-group;
+        }
+
+        .report-wrapper tbody {
+            display: table-row-group;
+        }
+
+        .report-wrapper thead tr td {
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        .report-wrapper tbody tr:first-child td {
+            page-break-before: avoid;
         }
 
         .report-header {
             padding: 10px 0 !important;
             background: white !important;
             border: none !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
         }
 
-        /* Fix header row alignment */
-        .header-row {
-            display: flex !important;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100% !important;
+        .main-data-table {
+            border: 1px solid #000 !important;
+            border-collapse: collapse !important;
+            page-break-inside: auto;
         }
 
-        /* Prevent date & time breaking into two lines */
-        .date-time-info p {
-            white-space: nowrap !important;
-            margin: 0 !important;
+        .main-data-table thead {
+            display: table-header-group;
         }
 
-        /* Make department info table same width as header */
-        .department-info-table {
-            width: 100% !important;
-            table-layout: fixed !important;
+        .main-data-table tbody {
+            display: table-row-group;
+        }
+
+        .main-data-table th,
+        .main-data-table td {
+            border: 1px solid #000 !important;
+            background: white !important;
+            padding: 4px !important;
+        }
+
+        .main-data-table th {
+            background: #f0f0f0 !important;
+        }
+
+        .main-data-table tbody tr:nth-child(even) {
+            background: #f9f9f9 !important;
+        }
+
+        .main-data-table tbody tr:last-child {
+            background: #f0f0f0 !important;
+            font-weight: bold !important;
         }
     }
 </style>
