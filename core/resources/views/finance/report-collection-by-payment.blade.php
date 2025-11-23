@@ -474,130 +474,6 @@
         margin: 15px 0 10px 0;
         color: #333;
     }
-
-     @media print {
-        body {
-            background: white;
-            font-size: 11px;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .report-container {
-            margin: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-        
-        .header-row {
-            border: none !important;
-            margin-bottom: 10px;
-            padding: 5px 0;
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            align-items: center;
-            width: 100%;
-        }
-
-        .header-row .date-time-info {
-            text-align: left !important;
-        }
-    
-        .header-row .main-title {
-            text-align: center !important;
-        }
-    
-        .header-row .page-info {
-            text-align: right !important;
-        }
-    
-        .department-info-table {
-            border: 1px solid #000 !important; 
-            border-collapse: collapse !important;
-            width: 100% !important;
-            table-layout: fixed !important;
-            margin: 10px 0 !important;
-        }
-    
-        .department-info-table th,
-        .department-info-table td {
-            border: 1px solid #000 !important; 
-            padding: 4px !important;
-            word-wrap: break-word !important;
-            background: white !important;
-        }
-        
-        .department-info-table th {
-            background: #f0f0f0 !important;
-        }
-        
-        #btn-section {
-            display: none !important;
-        }
-
-        .report-wrapper {
-            width: 100%;
-            border-collapse: collapse;
-            page-break-inside: auto;
-        }
-
-        .report-wrapper thead {
-            display: table-header-group;
-        }
-
-        .report-wrapper tbody {
-            display: table-row-group;
-        }
-
-        .report-wrapper thead tr td {
-            page-break-inside: avoid;
-            page-break-after: avoid;
-        }
-
-        .report-wrapper tbody tr:first-child td {
-            page-break-before: avoid;
-        }
-
-        .report-header {
-            padding: 10px 0 !important;
-            background: white !important;
-            border: none !important;
-        }
-
-        .main-data-table {
-            border: 1px solid #000 !important;
-            border-collapse: collapse !important;
-            page-break-inside: auto;
-        }
-
-        .main-data-table thead {
-            display: table-header-group;
-        }
-
-        .main-data-table tbody {
-            display: table-row-group;
-        }
-
-        .main-data-table th,
-        .main-data-table td {
-            border: 1px solid #000 !important;
-            background: white !important;
-            padding: 4px !important;
-        }
-
-        .main-data-table th {
-            background: #f0f0f0 !important;
-        }
-
-        .main-data-table tbody tr:nth-child(even) {
-            background: #f9f9f9 !important;
-        }
-
-        .main-data-table tbody tr:last-child {
-            background: #f0f0f0 !important;
-            font-weight: bold !important;
-        }
-    }
 </style>
 
 <title>{{$title}}</title>
@@ -713,15 +589,15 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @php
-                                                        $statusMap = [
-                                                            'completed' => 'SELESAI',
-                                                            'pending' => 'BELUM BAYAR',
-                                                            'in_review' => 'Dalam Semakan'
-                                                        ];
-                                                        echo $statusMap[$application->payment_status] ?? 'N/A';
-                                                    @endphp
-                                                </td>
+                                                @php
+                                                    $statusMap = [
+                                                        'completed' => 'SELESAI',
+                                                        'pending' => 'BELUM BAYAR',
+                                                        'in_review' => 'Dalam Semakan'
+                                                    ];
+                                                    echo $statusMap[$application->payment_status] ?? 'N/A';
+                                                @endphp
+                                            </td>
                                                 <td>{{ $application->transaction_id ?? 'N/A' }}</td>
                                                  <td>{{ number_format($application->payment_amount, 2) }}</td>
                                             </tr>
