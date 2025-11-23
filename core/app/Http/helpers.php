@@ -1295,9 +1295,9 @@ if(! function_exists('getMenus')){
                             'icon' => 'line-chart',
                             'text' => trans('app.reports'),
                             'route' => url('#'),
-                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance')  ? 'menu-is-opening menu-open' : '',
-                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'block' : 'none',
-                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') ? 'active' : '',
+                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'menu-is-opening menu-open' : '',
+                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'block' : 'none',
+                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') ? 'active' : '',
                             'permission' => 'reports.view-list',
                             'is_dropdown' => true,
                             'submenus' => [
@@ -1315,6 +1315,13 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
                                 'permission' => 'report.district.view-list'
+                                ],
+                                [
+                                    'icon' => 'money',
+                                    'text' => 'Laporan Status Pembayaran Caruman Parit',
+                                    'route' =>  url('report-collection-method-search'),
+                                    'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                   
                                 ],
                                 [
                                 'icon' => 'money',
