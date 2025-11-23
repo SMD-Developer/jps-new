@@ -323,7 +323,7 @@
                 lowercase: /[a-z]/.test(password),
                 number: /[0-9]/.test(password),
                 noSpaces: !/\s/.test(password),
-                specialChar: /[!@#$%]/.test(password),
+                specialChar: /[!@#$%_]/.test(password),
                 noSequential: !
                     /(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i
                     .test(password),
@@ -336,7 +336,7 @@
             lowercase.innerHTML = (checks.lowercase ? "✅" : "❌") + " {{ trans('app.lowercase_letter') }} (a-z)";
             number.innerHTML = (checks.number ? "✅" : "❌") + " {{ trans('app.number') }} (0-9)";
             noSpaces.innerHTML = (checks.noSpaces ? "✅" : "❌") + " {{ trans('app.no_spaces') }}";
-            special.innerHTML = (checks.specialChar ? "✅" : "❌") + " {{ trans('app.special_character') }} (!@#$%)";
+            special.innerHTML = (checks.specialChar ? "✅" : "❌") + " {{ trans('app.special_character') }} (!@#$%_)";
             noSequential.innerHTML = (checks.noSequential ? "✅" : "❌") +
                 " {{ trans('app.no_sequential_characters') }} (abc, 123)";
         }
@@ -419,6 +419,24 @@
                 e.preventDefault();
                 inputFields.forEach(field => $(field).removeClass('is-invalid'));
 
+                function isPasswordValid() {
+                    let password = $('#new_password').val();
+                    
+                    // Check all conditions
+                    let checks = {
+                        length: password.length >= 8 && password.length <= 20,
+                        uppercase: /[A-Z]/.test(password),
+                        lowercase: /[a-z]/.test(password),
+                        number: /[0-9]/.test(password),
+                        noSpaces: !/\s/.test(password),
+                        specialChar: /[!@#$%_]/.test(password),
+                        noSequential: !/(?:012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password),
+                    };
+                    
+                    // Return true only if ALL checks pass
+                    return Object.values(checks).every(check => check === true);
+                }
+
                 let formData = {
                     old_password: $('#old_password').val().trim(),
                     new_password: $('#new_password').val().trim(),
@@ -466,6 +484,16 @@
                         title: messages.validationTitle,
                         html: errorMessage,
                     });
+                    return;
+                }
+
+                if (!isPasswordValid()) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '@lang("Kata Laluan Tidak Sah")',
+                        html: '@lang("Kata Laluan Tidak Memenuhi Kriteria")',
+                    });
+                    $('#new_password').addClass('is-invalid');
                     return;
                 }
 
