@@ -712,7 +712,7 @@ body {
                     </div>
                     <div class="input-box mt-3 position-relative" style="position: relative;">
                         {!! Form::password('password', ['class'=>"form-control", 'id'=>"password", 'required'=>'required' , 'placeholder'=>'Kata Laluan', 'style'=>'padding-right: 40px;' ]) !!}
-                        <i class="fa fa-eye-slash toggle-password" data-target="password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"></i>
+                       <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" data-target="password"></i>
                     </div>
                    
                     <div class="forgot float-right mt-2">

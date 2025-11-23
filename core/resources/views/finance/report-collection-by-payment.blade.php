@@ -646,9 +646,14 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{ $application->payment_status == 'completed' 
-                                                        ? 'SELESAI' 
-                                                        : ($application->payment_status == 'pending' ? 'BELUM BAYAR' : 'N/A') }}
+                                                    @php
+                                                        $statusMap = [
+                                                            'completed' => 'SELESAI',
+                                                            'pending' => 'BELUM BAYAR',
+                                                            'in_review' => 'Dalam Semakan'
+                                                        ];
+                                                        echo $statusMap[$application->payment_status] ?? 'N/A';
+                                                    @endphp
                                                 </td>
                                                 <td>{{ $application->transaction_id ?? 'N/A' }}</td>
                                                  <td>{{ number_format($application->payment_amount, 2) }}</td>
