@@ -1106,14 +1106,21 @@ class HomeController extends Controller {
                 'amount' => $application->final_amount ?? null, 
             ]);
             
-            $financeAdmin = User::where('role_id', '9e032970-5f48-4d2b-b88e-abb9da79140f')->first();
+            $roleIds = [ 
+                '27f41653-a968-4885-8000-7aaf4efc385d'   
+            ];
+
+
+            $admins = User::whereIn('role_id', $roleIds)->get();
             
-            if (!$financeAdmin) {
-                \Log::warning('No finance admin with role_id: 9e032970-5f48-4d2b-b88e-abb9da79140f');
+            if ($admins->isEmpty()) {
+                \Log::warning('No approvers found for roles: ' . implode(', ', $roleIds));
                 return response()->json(['success' => false, 'message' => 'No approver found'], 404);
             }
     
-            $financeAdmin->notify(new DepositReceiptSubmitted($application));
+            foreach ($admins as $admin) {
+                $admin->notify(new DepositReceiptSubmitted($application));
+            }
     
             return response()->json([
                 'success' => true,

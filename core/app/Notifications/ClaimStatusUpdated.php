@@ -49,7 +49,7 @@ class ClaimStatusUpdated extends Notification
             'claim_id' => $this->claim->id ?? null,
             'applicant' => $this->claim->applicant ?? 'N/A',
             'district' => $this->claim->district ?? 'N/A',
-            'message' => 'Your claim status has been updated',
+            'message' => 'Status tuntutan anda telah dikemas kini',
             'type' => 'claim_status_update'
         ];
     }
