@@ -93,25 +93,25 @@
             display: inline-block;
             padding: 8px 12px;
             border-radius: 4px;
-            color: white;
+            color: white !important;
             font-weight: bold;
             font-size: 13px;
         }
 
         .status-pending {
-            background-color: #FFA500;
+            background-color: #FFA500 !important;
         }
 
-        .status-processing {
-            background-color: #4169E1;
+        .status-approve-payment-in-process {
+            background-color: #4169E1 !important;
         }
 
         .status-rejected {
-            background-color: #DC143C;
+            background-color: #DC143C !important;
         }
 
-        .status-approved {
-            background-color: #28A745;
+        .status-approve-paid {
+            background-color: #28A745 !important;
         }
 
         .message-box {
