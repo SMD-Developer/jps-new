@@ -201,7 +201,7 @@
                         <tr>
                             <td class="label">Status Baru:</td>
                             <td class="value">
-                                <span class="status-badge status-{{ str_replace('_', '-', $claim->status) }}" style="color: #ffffff !important;">
+                                <span class="status-badge status-{{ str_replace('_', '-', $claim->status) }}">
                                     {{ $statusLabel }}
                                 </span>
                             </td>
