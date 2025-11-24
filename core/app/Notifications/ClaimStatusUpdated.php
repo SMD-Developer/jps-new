@@ -25,10 +25,6 @@ class ClaimStatusUpdated extends Notification
         return ['database', 'mail'];
     }
 
-    public function toDatabase($notifiable)
-    {
-        return $this->toArray($notifiable);
-    }
 
     public function toMail($notifiable)
     {
@@ -46,6 +42,20 @@ class ClaimStatusUpdated extends Notification
             ]);
     }
 
+
+    public function toDatabase($notifiable)
+    {
+        return [
+            'claim_id' => $this->claim->id ?? null,
+            'applicant' => $this->claim->applicant ?? 'N/A',
+            'district' => $this->claim->district ?? 'N/A',
+            'message' => 'Your claim status has been updated',
+            'type' => 'claim_status_update'
+        ];
+    }
+
+
+    
     public function toArray($notifiable)
     {
         return [
@@ -72,10 +82,10 @@ class ClaimStatusUpdated extends Notification
     protected function getStatusColor($status)
     {
         $colors = [
-            'pending' => '#FFA500',
-            'approve_payment_in_process' => '#4169E1',
-            'rejected' => '#DC143C',
-            'approve_paid' => '#28A745',
+            'pending' => '#FFA500',                      // Orange
+            'approve_payment_in_process' => '#4169E1',   // Royal Blue
+            'rejected' => '#DC143C',                     // Crimson Red
+            'approve_paid' => '#28A745',                 // Green (changed from #FFA500)
         ];
 
         return $colors[$status] ?? '#808080';

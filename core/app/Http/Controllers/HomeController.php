@@ -15,6 +15,7 @@ use App\Models\ClaimContribution;
 use App\Models\Payment;
 use App\Notifications\NewApplicationSent;
 use App\Notifications\UserApplicationStatusNotification;
+use App\Notifications\FinanceClaimNotification;
 use App\Notifications\UserApplicationRejectionNotification;
 use App\Notifications\ClaimStatusUpdated;
 use App\Notifications\ReceiptStatusUpdated;
@@ -490,7 +491,7 @@ class HomeController extends Controller {
                 $updateData['rejected_reason'] = $request->reason;
             }
 
-           if ($request->status === 'pending') {
+        if ($request->status === 'pending') {
                 if ($request->filled('visit_date')) {
                     $updateData['visit_date'] = $request->visit_date;
                 }
@@ -499,7 +500,6 @@ class HomeController extends Controller {
                     $updateData['process_remarks'] = $request->process_remarks;
                 }
             }
-
 
             DB::table('claim_contribution')
                 ->where('id', $id)
@@ -543,17 +543,49 @@ class HomeController extends Controller {
                 'updated_at' => now()
             ]);
 
-            // Send notification
+            // Send notification - UPDATED FOLLOWING YOUR PATTERN
             try {
+                \Log::info('Sending claim status notification:', [
+                    'claim_id' => $id,
+                    'user_id' => $claim->user_id,
+                    'status' => $request->status
+                ]);
+
+                // Get client record
                 $client = ClientRegisterModel::where('client_id', $claim->user_id)->first();
-                if ($client) {
-                    $claimModel = ClaimContribution::find($id);
-                    $client->notify(new ClaimStatusUpdated($claimModel));
+                
+                if (!$client) {
+                    \Log::warning('No client found for claim', [
+                        'claim_id' => $id,
+                        'user_id' => $claim->user_id
+                    ]);
                 } else {
-                    Log::warning('Client not found for claim', ['claim_id' => $id, 'user_id' => $claim->user_id]);
+                    // Get the user client
+                    $user_client = ClientUser::where('uuid', $claim->user_id)->first();
+                    
+                    if ($user_client) {
+                        $claimModel = ClaimContribution::find($id);
+                        $user_client->notify(new ClaimStatusUpdated($claimModel, $oldStatus));
+                        
+                        \Log::info('Notification sent to client', [
+                            'claim_id' => $id,
+                            'client_id' => $client->client_id,
+                            'user_uuid' => $user_client->uuid,
+                            'status' => $request->status
+                        ]);
+                    } else {
+                        \Log::warning('User client not found', [
+                            'claim_id' => $id,
+                            'user_id' => $claim->user_id
+                        ]);
+                    }
                 }
             } catch (\Exception $e) {
-                Log::error('Failed to send notification: ' . $e->getMessage());
+                \Log::error('Failed to send claim status notification: ', [
+                    'claim_id' => $id,
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
 
             return response()->json([
@@ -592,7 +624,6 @@ class HomeController extends Controller {
                 return response()->json(['success' => false, 'message' => 'Claim not found'], 404);
             }
 
-             // Get current admin info
             $admin = auth('admin')->user();
             $causerUsername = $admin ? $admin->username : 'System';
             $causerUuid = $admin ? $admin->uuid : null;
@@ -607,6 +638,8 @@ class HomeController extends Controller {
                     'updated_at' => now(),
                 ]);
 
+            // Fetch updated claim after update
+            $updatedClaim = DB::table('claim_contribution')->where('id', $id)->first();
 
             ActivityLog::create([
                 'log_name' => 'claim_contribution',
@@ -622,6 +655,31 @@ class HomeController extends Controller {
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+
+            // Send notification to finance staff
+            try {
+                $financeStaff = User::where('role_id', '9e032970-5f48-4d2b-b88e-abb9da79140f')->get();
+                
+                if ($financeStaff->isNotEmpty()) {
+                    foreach ($financeStaff as $finance) {
+                        // Check if notification already exists
+                        $existingNotification = $finance->notifications()
+                            ->where('type', 'App\Notifications\FinanceClaimNotification')
+                            ->whereJsonContains('data->claim_id', $id)
+                            ->first();
+                        
+                        if (!$existingNotification) {
+                            $finance->notify(new FinanceClaimNotification($updatedClaim, $causerUsername));
+                        }
+                    }
+                }
+            } catch (\Exception $notificationError) {
+                \Log::error('Error notifying finance staff about claim: ', [
+                    'claim_id' => $id,
+                    'message' => $notificationError->getMessage(),
+                    'trace' => $notificationError->getTraceAsString()
+                ]);
+            }
 
             return response()->json([
                 'success' => true,

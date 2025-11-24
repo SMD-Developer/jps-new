@@ -141,9 +141,17 @@
                                             <a href="{{ isset($notification->data['application_id']) ? route('application_list') . '?id=' . $notification->data['application_id'] : '#' }}"
                                                 style="text-decoration: none; color: inherit;">
                                                 <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
+                                                
                                                 <p style="font-size: 12px; margin: 5px 0;">
-                                                    {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
+                                                    @if(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_finance')
+                                                        <span style="color: #666;">Dihantar oleh:</span> {{ $notification->data['sent_by'] ?? 'Unknown' }}
+                                                        <br>
+                                                        <span style="color: #666;">Pemohon:</span> {{ $notification->data['applicant'] ?? 'N/A' }}
+                                                    @else
+                                                        {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
+                                                    @endif
                                                 </p>
+                                                
                                                 <span style="font-size: 11px; color: gray;">
                                                     {{ $notification->created_at->format('d/m/Y h:i A') }}
                                                 </span>
@@ -153,8 +161,7 @@
                                         <li class="text-center" style="padding: 10px;">No notifications available</li>
                                     @endforelse
                                 @else
-                                    <li class="text-center" style="padding: 10px;">Please log in to see notifications
-                                    </li>
+                                    <li class="text-center" style="padding: 10px;">Please log in to see notifications</li>
                                 @endif
                             </ul>
 

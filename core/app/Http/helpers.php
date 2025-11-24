@@ -579,6 +579,7 @@ if(! function_exists('getMenus')){
                         request()->is('report-collection-contribution-ditch-by-district') ||
                         request()->is('daily-receipt-report-type-finance') ||
                         request()->is('payment-summary-report-search') ||
+                        request()->is('report-collection-method-search')||
                         request()->is('claim-contribution-report-search') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('new-assignment-approver') || 
                         request()->is('daily-receipt-report-type-approver') || 
@@ -589,6 +590,7 @@ if(! function_exists('getMenus')){
                         request()->is('report-collection-contribution-ditch-by-district') ||
                         request()->is('daily-receipt-report-type-finance') ||
                         request()->is('payment-summary-report-search') ||
+                        request()->is('report-collection-method-search')||
                         request()->is('claim-contribution-report-search') ? 'block' : 'none',
                         'menu_active' => request()->is('new-assignment-approver') || 
                         request()->is('daily-receipt-report-type-approver') || 
@@ -599,6 +601,7 @@ if(! function_exists('getMenus')){
                         request()->is('report-collection-contribution-ditch-by-district') ||
                         request()->is('daily-receipt-report-type-finance') ||
                         request()->is('payment-summary-report-search') ||
+                        request()->is('report-collection-method-search')||
                         request()->is('claim-contribution-report-search') ? 'active' : '',
                         'permission' => 'reports.view-list',
                         'is_dropdown' => true,
@@ -635,7 +638,14 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search') ||
                                                 request()->is('report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district.view-lis'
+                                'permission' => 'report.district.view-list'
+                            ],
+                            [
+                                    'icon' => 'money',
+                                    'text' => 'Laporan Status Pembayaran Caruman Parit',
+                                    'route' =>  url('report-collection-method-search'),
+                                    'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                   
                             ],
                             [
                                 'icon' => 'money',
