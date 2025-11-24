@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Sayang FinanceAdmin,</p>
+                <p>Sayang FinanceApprover,</p>
                 <p><strong>A new deposit receipt has been submitted for review!</strong></p>
                 <p><strong>Application ID: {{ $application->id }}</strong></p>
                 <p><strong>Transaction Reference: {{ $application->transaction }}</strong></p>
