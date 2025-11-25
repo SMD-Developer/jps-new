@@ -399,7 +399,7 @@
                                         <div class="col-md-4">
                                             <label for="project_name">@lang('Nama dan Butiran Projek')</label>
                                             <br>
-                                            <a href="#" class="example-link" data-toggle="modal" data-target="#projectExampleModal">
+                                            <a href="#" class="example-link" data-toggle="modal" data-target="#projectExampleModal" style="font-size:12px;">
                                                 <i class="fa fa-info-circle"></i> Lihat Contoh
                                             </a>
                                         </div>

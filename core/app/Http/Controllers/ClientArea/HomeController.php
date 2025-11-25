@@ -124,10 +124,13 @@ class HomeController extends Controller {
                 "land_area" => "required",
                 "land_unit" => "required",
                 "state" => "required",
-                "land_grant" => "required|mimes:pdf|max:15000",
-                "project_name" => "required"
-                // "permission_plan" => "required|mimes:pdf|max:15000",
-                // "letter_of_support" => "required|mimes:pdf|max:15000",
+                "land_grant" => "required|array|min:1",
+                "land_grant.*" => "required|mimes:pdf|max:15000",
+                "project_name" => "required",
+                "permission_plan" => "nullable|array", 
+                "permission_plan.*" => "nullable|mimes:pdf|max:15000", 
+                "letter_of_support" => "nullable|array",  
+                "letter_of_support.*" => "nullable|mimes:pdf|max:15000",
             ];
 
             // Only require 'identities' if applicant_type is NOT 3
@@ -184,25 +187,37 @@ class HomeController extends Controller {
                 throw new \Exception("Upload path is not writable: " . $uploadPath);
             }
 
-            if ($request->hasFile('land_grant')) {
-                $landGrant = $request->file('land_grant');
-                $landGrantFileName = $landGrant->getClientOriginalName();
-                $landGrant->move($uploadPath, $landGrantFileName);
-                $uploadedFiles['land_grant'] = 'pdf/' . $landGrantFileName;
+           if ($request->hasFile('land_grant')) {
+                $landGrantPaths = [];
+                foreach ($request->file('land_grant') as $file) {
+                    $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move($uploadPath, $fileName);
+                    $landGrantPaths[] = 'pdf/' . $fileName;
+                }
+                // Store as JSON array
+                $uploadedFiles['land_grant'] = json_encode($landGrantPaths);
             }
 
             if ($request->hasFile('permission_plan')) {
-                $permissionPlan = $request->file('permission_plan');
-                $permissionPlanFileName = $permissionPlan->getClientOriginalName();
-                $permissionPlan->move($uploadPath, $permissionPlanFileName);
-                $uploadedFiles['permission_plan'] = 'pdf/' . $permissionPlanFileName;
+                $permissionPlanPaths = [];
+                foreach ($request->file('permission_plan') as $file) {
+                    $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move($uploadPath, $fileName);
+                    $permissionPlanPaths[] = 'pdf/' . $fileName;
+                }
+                // Store as JSON array
+                $uploadedFiles['permission_plan'] = json_encode($permissionPlanPaths);
             }
 
             if ($request->hasFile('letter_of_support')) {
-                $letterOfSupport = $request->file('letter_of_support');
-                $letterOfSupportFileName = $letterOfSupport->getClientOriginalName();
-                $letterOfSupport->move($uploadPath, $letterOfSupportFileName);
-                $uploadedFiles['letter_of_support'] = 'pdf/' . $letterOfSupportFileName;
+                $letterOfSupportPaths = [];
+                foreach ($request->file('letter_of_support') as $file) {
+                    $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move($uploadPath, $fileName);
+                    $letterOfSupportPaths[] = 'pdf/' . $fileName;
+                }
+                // Store as JSON array
+                $uploadedFiles['letter_of_support'] = json_encode($letterOfSupportPaths);
             }
 
             $requestData = array_merge($request->except('_token'), $uploadedFiles, ['status' => 1]);

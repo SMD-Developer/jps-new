@@ -478,85 +478,127 @@
 
                     <!-- File Upload Section -->
                     <div class="section">
-                        <h4>@lang('app.supporting_documents')</h4>
+                            <h4>@lang('app.supporting_documents')</h4>
 
-                        <!-- Land Grant -->
-                        <div class="form-group">
-                            <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
-                            <input type="file" id="land_grant" name="land_grant" class="file-input"
-                                accept="application/pdf">
-                            <label for="land_grant" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="land_grantfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->land_grant)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->land_grant)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->land_grant) }}
-                                        </a></small>
-                                @endif
-                                @error('land_grant')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <!-- Land Grant -->
+                            <div class="form-group">
+                                <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
+                                <div class="col-12">
+                                    @if ($application->land_grant)
+                                        @php
+                                            $landGrantFiles = json_decode($application->land_grant, true);
+                                        @endphp
+                                        
+                                        @if (is_array($landGrantFiles) && count($landGrantFiles) > 0)
+                                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                                                @foreach ($landGrantFiles as $index => $filePath)
+                                                    <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                        <span style="color: #666; font-size: 12px; margin-left: 10px;">
+                                                            ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                                <small style="color: #007bff; font-weight: 600; margin-top: 5px;">
+                                                    <i class="fa fa-info-circle"></i> Total files: {{ count($landGrantFiles) }}
+                                                </small>
+                                            </div>
+                                        @else
+                                            <p style="color: #999; font-style: italic;">No file uploaded</p>
+                                        @endif
+                                    @else
+                                        <p style="color: #999; font-style: italic;">No file uploaded</p>
+                                    @endif
+                                </div>
                             </div>
+
+                            <!-- Planning Permission Plan -->
+                            <div class="form-group">
+                                <label for="pelan">@lang('app.planning_permission_plan')</label>
+                                <div class="col-12">
+                                    @if ($application->permission_plan)
+                                        @php
+                                            $permissionPlanFiles = json_decode($application->permission_plan, true);
+                                        @endphp
+                                        
+                                        @if (is_array($permissionPlanFiles) && count($permissionPlanFiles) > 0)
+                                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                                                @foreach ($permissionPlanFiles as $index => $filePath)
+                                                    <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                        <span style="color: #666; font-size: 12px; margin-left: 10px;">
+                                                            ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                                <small style="color: #007bff; font-weight: 600; margin-top: 5px;">
+                                                    <i class="fa fa-info-circle"></i> Total files: {{ count($permissionPlanFiles) }}
+                                                </small>
+                                            </div>
+                                        @else
+                                            <p style="color: #999; font-style: italic;">No file uploaded</p>
+                                        @endif
+                                    @else
+                                        <p style="color: #999; font-style: italic;">No file uploaded</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Letter of Support -->
+                            <div class="form-group">
+                                <label for="sokongan">@lang('app.letter_of_support')</label>
+                                <div class="col-12">
+                                    @if ($application->letter_of_support)
+                                        @php
+                                            $letterOfSupportFiles = json_decode($application->letter_of_support, true);
+                                        @endphp
+                                        
+                                        @if (is_array($letterOfSupportFiles) && count($letterOfSupportFiles) > 0)
+                                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                                                @foreach ($letterOfSupportFiles as $index => $filePath)
+                                                    <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                        <span style="color: #666; font-size: 12px; margin-left: 10px;">
+                                                            ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                                <small style="color: #007bff; font-weight: 600; margin-top: 5px;">
+                                                    <i class="fa fa-info-circle"></i> Total files: {{ count($letterOfSupportFiles) }}
+                                                </small>
+                                            </div>
+                                        @else
+                                            <p style="color: #999; font-style: italic;">No file uploaded</p>
+                                        @endif
+                                    @else
+                                        <p style="color: #999; font-style: italic;">No file uploaded</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <p class="note">
+                                * @lang('app.files_only_pdf_format_size_not_exceed_15mb')
+                            </p>
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </div>
-
-                        <!-- Planning Permission Plan -->
-                        <div class="form-group">
-                            <label for="pelan">@lang('app.planning_permission_plan')</label>
-                            <input type="file" id="permission_plan" name="permission_plan" class="file-input"
-                                accept="application/pdf">
-                            <label for="permission_plan" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="permission_planfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->permission_plan)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->permission_plan)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->permission_plan) }}
-                                        </a></small>
-                                @endif
-                                @error('permission_plan')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Letter of Support -->
-                        <div class="form-group">
-                            <label for="sokongan">@lang('app.letter_of_support')</label>
-                            <input type="file" id="letter_of_support" name="letter_of_support" class="file-input"
-                                accept="application/pdf">
-                            <label for="letter_of_support" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="letter_of_supportfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->letter_of_support)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->letter_of_support) }}
-                                        </a></small>
-                                @endif
-                                @error('letter_of_support')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <p class="note">
-                            * @lang('app.files_only_pdf_format_size_not_exceed_15mb')
-                        </p>
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                    </div>
                     </form>
                     <div class="row">
                         <div class="col-md-12">

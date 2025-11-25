@@ -473,7 +473,7 @@ background-color: red;
                                         </div>
                                         <div class="col-md-5">
                                             <span class="star d-inline"><b>*</b></span>
-                                            <span class="star d-inline important-font"><i>@lang('Sila masukkan kata laluan sekali lagi untuk tujuan pengesahan')</i></span>
+                                            <!-- <span class="star d-inline important-font"><i>@lang('Sila masukkan kata laluan sekali lagi untuk tujuan pengesahan')</i></span> -->
                                         </div>
                                     </div>
                         </div>

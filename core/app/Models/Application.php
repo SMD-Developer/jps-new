@@ -46,6 +46,12 @@ class Application extends Model
     //   return    $this->hasOne(State::class,'idnegeri','state');
         
     // }
+
+    protected $casts = [
+        'land_grant' => 'array',
+        'permission_plan' => 'array',
+        'letter_of_support' => 'array',
+    ];
     
     public function state()
     {

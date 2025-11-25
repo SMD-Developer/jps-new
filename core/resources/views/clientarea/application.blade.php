@@ -426,7 +426,7 @@
                                     <div class="col-md-4">
                                         <label for="project_name">@lang('Nama dan Butiran Projek')</label>
                                         <br>
-                                        <a href="#" class="example-link" data-toggle="modal" data-target="#projectExampleModal">
+                                        <a href="#" class="example-link" data-toggle="modal" data-target="#projectExampleModal" style="font-size:12px;">
                                             <i class="fa fa-info-circle"></i> Lihat Contoh
                                         </a>
                                     </div>
@@ -524,44 +524,44 @@
                     <h4>@lang('app.upload_supporting_documents')</h4>
 
                     <!-- Land Grant File Upload -->
-                    <div class="form-group">
+                   <div class="form-group">
                         <div class="col-md-4">
-                        <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
+                            <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
                         </div>
                         <div class="col-md-8">
                             <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                            <input type="file" id="land_grant" name="land_grant" class="file-input"
-                                accept="application/pdf" onchange="validateFileSize(this)">
-                            <div id="land_grantfileName" class="file-name"></div>
-                            <!-- Error message will be inserted here by JavaScript -->
+                            <input type="file" id="land_grant" name="land_grant[]" class="file-input"
+                                accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'land_grant')">
+                            <div id="land_grant_fileList" class="file-list mt-2"></div>
+                            <div id="land_grant_error" class="text-danger mt-1"></div>
                         </div>        
                     </div>
 
                     <!-- Permission Plan File Upload -->
                     <div class="form-group">
                         <div class="col-md-4">
-                        <label for="pelan">@lang('app.planning_permission_plan')</label>
+                            <label for="pelan">@lang('app.planning_permission_plan')</label>
                         </div> 
                         <div class="col-md-8">
                             <label for="permission_plan" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                            <input type="file" id="permission_plan" name="permission_plan" class="file-input"
-                                accept="application/pdf" onchange="validateFileSize(this)">
-                            <div id="permission_planfileName" class="file-name"></div>
-                            <!-- Error message will be inserted here by JavaScript -->
+                            <input type="file" id="permission_plan" name="permission_plan[]" class="file-input"
+                                accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'permission_plan')">
+                            <div id="permission_plan_fileList" class="file-list mt-2"></div>
+                            <div id="permission_plan_error" class="text-danger mt-1"></div>
                         </div>
                     </div>
 
                     <!-- Letter of Support File Upload -->
                     <div class="form-group">
                         <div class="col-md-4">
-                        <label for="sokongan">@lang('app.letter_of_support')</label>
+                            <label for="sokongan">@lang('app.letter_of_support')</label>
                         </div>
                         <div class="col-md-8">
                             <label for="letter_of_support" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                            <input type="file" id="letter_of_support" name="letter_of_support" class="file-input"
-                                accept="application/pdf" onchange="validateFileSize(this)">
-                            <div id="letter_of_supportfileName" class="file-name"></div>
-                            <!-- Error message will be inserted here by JavaScript -->
+                            <input type="file" id="letter_of_support" name="letter_of_support[]" class="file-input"
+                                accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'letter_of_support')">
+                            <div id="letter_of_support_fileList" class="file-list mt-2"></div>
+                            <div id="letter_of_support_error" class="text-danger mt-1"></div>
                         </div>    
                     </div>
 
@@ -611,9 +611,6 @@
             </div>
         </div>
     </section>
-
-
-  
 
   
     <script>
@@ -705,14 +702,30 @@
                 }
 
                 requiredFields.forEach(field => {
-                    const value = $(`[name="${field}"]`).val();
+                    let value;
+                    
+                    // Special handling for file inputs
+                    if (field === 'land_grant' || field === 'permission_plan' || field === 'letter_of_support') {
+                        const fileInput = $(`[name="${field}[]"]`)[0];
+                        value = fileInput && fileInput.files.length > 0 ? 'has_files' : '';
+                    } else {
+                        value = $(`[name="${field}"]`).val();
+                    }
+                    
                     if (!value) {
-                        $(`[name="${field}"]`).addClass('is-invalid');
+                        // For file inputs, target the correct element
+                        const targetElement = field === 'land_grant' || field === 'permission_plan' || field === 'letter_of_support' 
+                            ? $(`[name="${field}[]"]`) 
+                            : $(`[name="${field}"]`);
+                            
+                        targetElement.addClass('is-invalid');
                         
                         // Check if it's a file field
-                        const errorMessage = field === 'land_grant' ? 'Fail wajib dimuatnaik' : 'Medan ini wajib diisi';
+                        const errorMessage = (field === 'land_grant' || field === 'permission_plan' || field === 'letter_of_support') 
+                            ? 'Fail wajib dimuatnaik' 
+                            : 'Medan ini wajib diisi';
                         
-                        $(`[name="${field}"]`).after(
+                        targetElement.after(
                             `<div class="invalid-feedback d-flex justify-content-end">${errorMessage}</div>`
                         );
                         isValid = false;
@@ -720,7 +733,7 @@
                         // Scroll to the first invalid field
                         if (isValid === false) {
                             $('html, body').animate({
-                                scrollTop: $(`[name="${field}"]`).offset().top - 100
+                                scrollTop: targetElement.offset().top - 100
                             }, 500);
                         }
                     }
@@ -888,24 +901,31 @@
             });
         });
 
-        // File validation functions
+        // File validation functions - UPDATED FOR MULTIPLE FILES
         function validateFileSize(input) {
-            const maxSize = 15 * 1024 * 1024; // 15MB in bytes
-            const file = input.files[0];
-            const fieldName = input.name;
-            
-            // Get the file name display element
+            const maxSize = 15 * 1024 * 1024; 
+            const files = input.files;
+            const fieldName = input.name.replace('[]', ''); 
             const fileNameDisplay = document.getElementById(fieldName + 'fileName');
             
-            // Remove any existing error message
             const existingError = input.parentElement.querySelector('.file-size-error');
             if (existingError) {
                 existingError.remove();
             }
             
-            if (file) {
-                if (file.size > maxSize) {
-                    // File is too large
+            if (files && files.length > 0) {
+                let allValid = true;
+                let invalidFiles = [];
+                
+                // Check each file
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].size > maxSize) {
+                        allValid = false;
+                        invalidFiles.push(files[i].name);
+                    }
+                }
+                
+                if (!allValid) {
                     // Clear the input
                     input.value = '';
                     
@@ -920,7 +940,7 @@
                     errorDiv.style.color = 'red';
                     errorDiv.style.fontSize = '12px';
                     errorDiv.style.marginTop = '5px';
-                    errorDiv.textContent = 'Saiz fail melebihi had 15mb.Sila pilih fail yang lebih kecil.';
+                    errorDiv.textContent = 'Fail berikut melebihi had 15MB: ' + invalidFiles.join(', ') + '. Sila pilih fail yang lebih kecil.';
                     
                     // Insert error message after the file name display
                     if (fileNameDisplay) {
@@ -931,9 +951,14 @@
                     
                     return false;
                 } else {
-                    // File is valid size
+                    // All files are valid
                     if (fileNameDisplay) {
-                        fileNameDisplay.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+                        let fileList = '';
+                        for (let i = 0; i < files.length; i++) {
+                            fileList += files[i].name + ' (' + formatFileSize(files[i].size) + ')';
+                            if (i < files.length - 1) fileList += ', ';
+                        }
+                        fileNameDisplay.textContent = fileList;
                         fileNameDisplay.style.color = 'green';
                     }
                     return true;
@@ -970,14 +995,7 @@
             return allValid;
         }
     </script>
-    <script>
-        document.querySelectorAll('.file-input').forEach(input => {
-            input.addEventListener('change', function() {
-                const fileName = this.files[0] ? this.files[0].name : '@lang('app.no_file_chosens')';
-                document.getElementById(this.id + 'fileName').textContent = fileName;
-            });
-        });
-    </script>
+
     <script>
     
       function isNumberKey(evt) {
@@ -1103,5 +1121,151 @@
             });
         }
     });
+</script>
+
+<script>
+    let fileStorage = {};
+
+    function handleMultipleFiles(input, fieldName) {
+        const newFiles = Array.from(input.files);
+        const maxSize = 15 * 1024 * 1024; // 15MB
+        const errorDiv = document.getElementById(fieldName + '_error');
+        const fileListDiv = document.getElementById(fieldName + '_fileList');
+        
+        // Clear previous errors
+        if (errorDiv) {
+            errorDiv.innerHTML = '';
+        }
+        
+        // Validate each NEW file
+        let hasError = false;
+        let errorMessages = [];
+        
+        newFiles.forEach((file, index) => {
+            // Check file type
+            if (file.type !== 'application/pdf') {
+                errorMessages.push(`${file.name}: Hanya fail PDF dibenarkan`);
+                hasError = true;
+            }
+            
+            // Check file size
+            if (file.size > maxSize) {
+                errorMessages.push(`${file.name}: Saiz fail melebihi 15MB`);
+                hasError = true;
+            }
+        });
+        
+        if (hasError) {
+            if (errorDiv) {
+                errorDiv.innerHTML = errorMessages.join('<br>');
+            }
+            input.value = ''; // Clear the input
+            return false;
+        }
+        
+        // MERGE: Add new files to existing files (don't replace)
+        const existingFiles = fileStorage[fieldName] || [];
+        const allFiles = [...existingFiles, ...newFiles];
+        
+        // Store merged files
+        fileStorage[fieldName] = allFiles;
+        
+        // Update the file input with all files
+        const dt = new DataTransfer();
+        allFiles.forEach(file => {
+            dt.items.add(file);
+        });
+        input.files = dt.files;
+        
+        // Display all files
+        displayFileList(fieldName, allFiles);
+        
+        return true;
+    }
+
+    function displayFileList(fieldName, files) {
+        const fileListDiv = document.getElementById(fieldName + '_fileList');
+        
+        if (!fileListDiv) return;
+        
+        fileListDiv.innerHTML = '';
+        
+        if (files.length === 0) {
+            return;
+        }
+        
+        // Create container for file list
+        const container = document.createElement('div');
+        container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+        
+        // Add each file
+        files.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
+            
+            // File info
+            const fileInfo = document.createElement('span');
+            fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
+            fileInfo.innerHTML = `<i class="fa fa-file-pdf" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
+            
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-danger';
+            removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
+            removeBtn.innerHTML = '<i class="fa fa-times"></i> Buang';
+            removeBtn.onclick = function(e) {
+                e.preventDefault();
+                removeFile(fieldName, index);
+            };
+            
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(removeBtn);
+            container.appendChild(fileItem);
+        });
+        
+        // Add count summary
+        const summary = document.createElement('div');
+        summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
+        summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail: ${files.length}`;
+        container.appendChild(summary);
+        
+        fileListDiv.appendChild(container);
+    }
+
+    function removeFile(fieldName, index) {
+        // Remove file from storage
+        if (fileStorage[fieldName]) {
+            fileStorage[fieldName].splice(index, 1);
+            
+            // Update the file input
+            const input = document.getElementById(fieldName);
+            const dt = new DataTransfer();
+            
+            fileStorage[fieldName].forEach(file => {
+                dt.items.add(file);
+            });
+            
+            input.files = dt.files;
+            
+            // Update display
+            displayFileList(fieldName, fileStorage[fieldName]);
+            
+            // If no files left, clear validation error if exists
+            if (fileStorage[fieldName].length === 0) {
+                $(input).removeClass('is-invalid');
+                $(input).next('.invalid-feedback').remove();
+            }
+        }
+    }
+
+    // Helper function for file size formatting
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
 </script>
 @endsection

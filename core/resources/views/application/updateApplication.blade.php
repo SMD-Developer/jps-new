@@ -481,85 +481,145 @@
 
                     <!-- File Upload Section -->
                     <div class="section">
-                        <h4>@lang('app.supporting_documents')</h4>
+                            <h4>@lang('app.supporting_documents')</h4>
 
-                        <!-- Land Grant -->
-                        <div class="form-group">
-                            <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
-                            <input type="file" id="land_grant" name="land_grant" class="file-input"
-                                accept="application/pdf">
-                            <label for="land_grant" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="land_grantfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->land_grant)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->land_grant)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->land_grant) }}
-                                        </a></small>
-                                @endif
-                                @error('land_grant')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <!-- Land Grant -->
+                            <div class="form-group">
+                                <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
+                                <input type="file" id="land_grant" name="land_grant[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'land_grant')">
+                                <label for="land_grant" class="upload-button">@lang('app.choose_file')</label>
+                                <div id="land_grant_fileList" class="file-list mt-2"></div>
+                                <div id="land_grant_error" class="text-danger mt-1"></div>
+                                
+                                <!-- Show existing files -->
+                                <div class="col-12 mt-3">
+                                    @if ($application->land_grant)
+                                        @php
+                                            $landGrantFiles = json_decode($application->land_grant, true);
+                                        @endphp
+                                        
+                                        @if (is_array($landGrantFiles) && count($landGrantFiles) > 0)
+                                            <small class="text-info"><strong>Current files:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                                @foreach ($landGrantFiles as $index => $filePath)
+                                                    <div style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                                <small style="color: #0056b3;">
+                                                    <i class="fa fa-info-circle"></i> Total: {{ count($landGrantFiles) }} file(s)
+                                                </small>
+                                            </div>
+                                        @else
+                                            <small class="text-muted">No existing files</small>
+                                        @endif
+                                    @endif
+                                    @error('land_grant')
+                                        <span class="text-danger d-block mt-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
+
+                            <!-- Planning Permission Plan -->
+                            <div class="form-group">
+                                <label for="pelan">@lang('app.planning_permission_plan')</label>
+                                <input type="file" id="permission_plan" name="permission_plan[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'permission_plan')">
+                                <label for="permission_plan" class="upload-button">@lang('app.choose_file')</label>
+                                <div id="permission_plan_fileList" class="file-list mt-2"></div>
+                                <div id="permission_plan_error" class="text-danger mt-1"></div>
+                                
+                                <!-- Show existing files -->
+                                <div class="col-12 mt-3">
+                                    @if ($application->permission_plan)
+                                        @php
+                                            $permissionPlanFiles = json_decode($application->permission_plan, true);
+                                        @endphp
+                                        
+                                        @if (is_array($permissionPlanFiles) && count($permissionPlanFiles) > 0)
+                                            <small class="text-info"><strong>Current files:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                                @foreach ($permissionPlanFiles as $index => $filePath)
+                                                    <div style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                                <small style="color: #0056b3;">
+                                                    <i class="fa fa-info-circle"></i> Total: {{ count($permissionPlanFiles) }} file(s)
+                                                </small>
+                                            </div>
+                                        @else
+                                            <small class="text-muted">No existing files</small>
+                                        @endif
+                                    @endif
+                                    @error('permission_plan')
+                                        <span class="text-danger d-block mt-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Letter of Support -->
+                            <div class="form-group">
+                                <label for="sokongan">@lang('app.letter_of_support')</label>
+                                <input type="file" id="letter_of_support" name="letter_of_support[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'letter_of_support')">
+                                <label for="letter_of_support" class="upload-button">@lang('app.choose_file')</label>
+                                <div id="letter_of_support_fileList" class="file-list mt-2"></div>
+                                <div id="letter_of_support_error" class="text-danger mt-1"></div>
+                                
+                                <!-- Show existing files -->
+                                <div class="col-12 mt-3">
+                                    @if ($application->letter_of_support)
+                                        @php
+                                            $letterOfSupportFiles = json_decode($application->letter_of_support, true);
+                                        @endphp
+                                        
+                                        @if (is_array($letterOfSupportFiles) && count($letterOfSupportFiles) > 0)
+                                            <small class="text-info"><strong>Current files:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                                @foreach ($letterOfSupportFiles as $index => $filePath)
+                                                    <div style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                                <small style="color: #0056b3;">
+                                                    <i class="fa fa-info-circle"></i> Total: {{ count($letterOfSupportFiles) }} file(s)
+                                                </small>
+                                            </div>
+                                        @else
+                                            <small class="text-muted">No existing files</small>
+                                        @endif
+                                    @endif
+                                    @error('letter_of_support')
+                                        <span class="text-danger d-block mt-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <p class="note">
+                                * @lang('app.files_only_pdf_format_size_not_exceed_15mb')
+                            </p>
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </div>
-
-                        <!-- Planning Permission Plan -->
-                        <div class="form-group">
-                            <label for="pelan">@lang('app.planning_permission_plan')</label>
-                            <input type="file" id="permission_plan" name="permission_plan" class="file-input"
-                                accept="application/pdf">
-                            <label for="permission_plan" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="permission_planfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->permission_plan)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->permission_plan)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->permission_plan) }}
-                                        </a></small>
-                                @endif
-                                @error('permission_plan')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Letter of Support -->
-                        <div class="form-group">
-                            <label for="sokongan">@lang('app.letter_of_support')</label>
-                            <input type="file" id="letter_of_support" name="letter_of_support" class="file-input"
-                                accept="application/pdf">
-                            <label for="letter_of_support" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="letter_of_supportfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->letter_of_support)
-                                    <small class="text-info">Current file:
-                                        <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}"
-                                            target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                            {{ basename($application->letter_of_support) }}
-                                        </a></small>
-                                @endif
-                                @error('letter_of_support')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <p class="note">
-                            * @lang('app.files_only_pdf_format_size_not_exceed_15mb')
-                        </p>
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                    </div>
                     </form>
                     <div class="row">
                         <div class="col-md-12">
@@ -1923,4 +1983,155 @@
             convertToHectare();
         });
     </script>
+    <script>
+    // Store files for each input
+    let fileStorage = {};
+
+    // Main function to handle multiple files
+    function handleMultipleFiles(input, fieldName) {
+        const newFiles = Array.from(input.files);
+        const maxSize = 15 * 1024 * 1024; // 15MB
+        const errorDiv = document.getElementById(fieldName + '_error');
+        const fileListDiv = document.getElementById(fieldName + '_fileList');
+        
+        // Clear previous errors
+        if (errorDiv) {
+            errorDiv.innerHTML = '';
+        }
+        
+        // Validate each NEW file
+        let hasError = false;
+        let errorMessages = [];
+        
+        newFiles.forEach((file, index) => {
+            // Check file type
+            if (file.type !== 'application/pdf') {
+                errorMessages.push(`${file.name}: Hanya fail PDF dibenarkan`);
+                hasError = true;
+            }
+            
+            // Check file size
+            if (file.size > maxSize) {
+                errorMessages.push(`${file.name}: Saiz fail melebihi 15MB`);
+                hasError = true;
+            }
+        });
+        
+        if (hasError) {
+            if (errorDiv) {
+                errorDiv.innerHTML = errorMessages.join('<br>');
+            }
+            input.value = ''; // Clear the input
+            if (fileListDiv) {
+                fileListDiv.innerHTML = '';
+            }
+            fileStorage[fieldName] = [];
+            return false;
+        }
+        
+        // MERGE: Add new files to existing files
+        const existingFiles = fileStorage[fieldName] || [];
+        const allFiles = [...existingFiles, ...newFiles];
+        
+        // Store merged files
+        fileStorage[fieldName] = allFiles;
+        
+        // Update the file input with all files
+        const dt = new DataTransfer();
+        allFiles.forEach(file => {
+            dt.items.add(file);
+        });
+        input.files = dt.files;
+        
+        // Display all files
+        displayFileList(fieldName, allFiles);
+        
+        return true;
+    }
+
+    function displayFileList(fieldName, files) {
+        const fileListDiv = document.getElementById(fieldName + '_fileList');
+        
+        if (!fileListDiv) return;
+        
+        // Clear previous content
+        fileListDiv.innerHTML = '';
+        
+        if (files.length === 0) {
+            return;
+        }
+        
+        // Create container for file list
+        const container = document.createElement('div');
+        container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+        
+        // Add each file
+        files.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
+            
+            // File info
+            const fileInfo = document.createElement('span');
+            fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
+            fileInfo.innerHTML = `<i class="fa fa-file-pdf" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
+            
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-danger';
+            removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
+            removeBtn.innerHTML = '<i class="fa fa-times"></i> Buang';
+            removeBtn.onclick = function(e) {
+                e.preventDefault();
+                removeFile(fieldName, index);
+            };
+            
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(removeBtn);
+            container.appendChild(fileItem);
+        });
+        
+        // Add count summary
+        const summary = document.createElement('div');
+        summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
+        summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
+        container.appendChild(summary);
+        
+        fileListDiv.appendChild(container);
+    }
+
+    function removeFile(fieldName, index) {
+        // Remove file from storage
+        if (fileStorage[fieldName]) {
+            fileStorage[fieldName].splice(index, 1);
+            
+            // Update the file input
+            const input = document.getElementById(fieldName);
+            const dt = new DataTransfer();
+            
+            fileStorage[fieldName].forEach(file => {
+                dt.items.add(file);
+            });
+            
+            input.files = dt.files;
+            
+            // Update display
+            displayFileList(fieldName, fileStorage[fieldName]);
+            
+            // If no files left, clear validation error if exists
+            if (fileStorage[fieldName].length === 0) {
+                const errorDiv = document.getElementById(fieldName + '_error');
+                if (errorDiv) errorDiv.innerHTML = '';
+            }
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+</script>
 @endsection
