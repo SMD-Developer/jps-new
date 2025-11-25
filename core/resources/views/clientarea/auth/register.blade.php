@@ -642,7 +642,7 @@ background-color: red;
                                 </div>
                                 <div class="col-md-5">
                                     <span class="star d-inline"><b></b></span>
-                                    <span class="star d-inline important-font"><i>@lang('Cth: 012345678')</i></span>
+                                    <span class="star d-inline important-font" style="color: grey;"><i>@lang('Cth: 012345678')</i></span>
                                 </div>
                             </div>
                             <div class="row mt-4">
@@ -660,7 +660,7 @@ background-color: red;
                                     <span id="landline-error" class="text-dangerr"></span>
                                 </div>
                                 <div class="col-md-5">
-                                    <span class="star d-inline important-font"><i>@lang('Cth: 035678901')</i></span>
+                                    <span class="star d-inline important-font" style="color: grey;"><i>@lang('Cth: 035678901')</i></span>
                                 </div>
                             </div>
                         </div>
