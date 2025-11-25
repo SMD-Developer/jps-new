@@ -1524,44 +1524,43 @@ if(! function_exists('getMenus')){
                         'menu_active' => request()->is('finance-dashboard') || request()->is('finance-dashboard/*') ? 'active' : ''
                     ],
                     
-                      [
-                        'icon' => 'line-chart',
-                        'text' => trans('app.application'),
-                        'route' => url('#'),
-                        'active_dropdown' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
-                        'menu_active' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'active' : '',
-                        // 'badge_count' => $applicationCount,
-                        'is_dropdown' => true,
-                        'submenus' => [
-                            // [
-                            //     'icon' => 'list',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('finance-user-approve'),
-                            //     'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
-                            //     'permission' => 'applications.view-list'
+                    //   [
+                    //     'icon' => 'line-chart',
+                    //     'text' => trans('app.application'),
+                    //     'route' => url('#'),
+                    //     'active_dropdown' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'menu-is-opening menu-open' : '',
+                    //     'active_dropdown_menu' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'block' : 'none',
+                    //     'menu_active' => request()->is('finance-user-approve') || request()->is('application-status') || request()->is('approved-application-list') ? 'active' : '',
+                    //     // 'badge_count' => $applicationCount,
+                    //     'is_dropdown' => true,
+                    //     'submenus' => [
+                    //         // [
+                    //         //     'icon' => 'list',
+                    //         //     'text' => trans('app.list_of_application'),
+                    //         //     'route' =>  url('finance-user-approve'),
+                    //         //     'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
+                    //         //     'permission' => 'applications.view-list'
 
-                            // ],
-                            // [
-                            //     'icon' => 'list',
-                            //     'text' => trans('app.approved_application'),
-                            //     'route' => url('approved-application-list'),
-                            //     'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                            //     'permission' => 'applications.view-list' 
-                            // ],
-                            [
-                                'icon' => 'line-chart',
-                                'text' => trans('app.list_of_application'),
-                                'route' =>  url('application-status'),
-                                'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
-                                'permission' => 'application-status.view-list'
+                    //         // ],
+                    //         // [
+                    //         //     'icon' => 'list',
+                    //         //     'text' => trans('app.approved_application'),
+                    //         //     'route' => url('approved-application-list'),
+                    //         //     'menu_active' => request()->is('approved-application-list') ? 'active' : '',
+                    //         //     'permission' => 'applications.view-list' 
+                    //         // ],
+                    //         [
+                    //             'icon' => 'line-chart',
+                    //             'text' => trans('app.list_of_application'),
+                    //             'route' =>  url('application-status'),
+                    //             'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
+                    //             'permission' => 'application-status.view-list'
 
-                            ],
+                    //         ],
                             
-                        ]
-                    ],
+                    //     ]
+                    // ],
                     
-
                      [
                         'icon' => 'money',
                         'text' => trans('Permohonan Pulang Balik (Refund)'),
