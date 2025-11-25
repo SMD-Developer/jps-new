@@ -62,6 +62,12 @@ class ClaimContribution extends Model
         'uploade_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'land_grant' => 'array',
+        'new_receipt' => 'array',
+        'refund_claim_letter' => 'array',
+        'ic_copy' => 'array',
+        'bank_statement' => 'array',
+        'statutory_declaration' => 'array'
     ];
     
     public function state()

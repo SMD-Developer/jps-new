@@ -523,21 +523,27 @@
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->land_grant)
-                                    <div class="mb-2 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-file-pdf-o text-danger"></i> 
-                                            Fail Sebelum: 
-                                            <a href="{{ url('pdf/' . basename($claim->land_grant)) }}" target="_blank" class="text-primary">
-                                                <i class="fa fa-eye"></i> Lihat Fail
-                                            </a>
-                                        </small>
-                                    </div>
+                                    @php
+                                        $landGrantFiles = json_decode($claim->land_grant, true);
+                                    @endphp
+                                    @if (is_array($landGrantFiles) && count($landGrantFiles) > 0)
+                                        <div class="mb-2 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
+                                            <small class="text-muted"><strong>Fail Sebelum:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($landGrantFiles as $filePath)
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
                                 <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                                <input type="file" id="land_grant" name="land_grant" class="file-input"
-                                    accept="application/pdf" onchange="validateFileSize(this)">
-                                <div id="land_grantfileName" class="file-name"></div>
-                                <div id="land_grant_error" class="invalid-feedback d-block" style="display:none;"></div>
+                                <input type="file" id="land_grant" name="land_grant[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'land_grant')">
+                                <div id="land_grant_fileList" class="file-list mt-2"></div>
+                                <div id="land_grant_error" class="text-danger mt-1"></div>
                             </div>
                         </div>
 
@@ -545,25 +551,32 @@
                         <!-- New Receipt Upload - Required -->
                         <div class="form-group">
                             <div class="col-md-4">
-                                <label for="new-receipt">@lang('Resit Bayaran Baru') <b class="starr">*</b></label>
+                                <label for="new-receipt">@lang('Resit Bayaran kali kedua')</label>
+                                <small class="text-muted d-block">(sekiranya membuat dua kali pembayaran)</small>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->new_receipt)
-                                    <div class="mb-2 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-file-pdf-o text-danger"></i> 
-                                            Fail Sebelum: 
-                                            <a href="{{ url('pdf/' . basename($claim->new_receipt)) }}" target="_blank" class="text-primary">
-                                                <i class="fa fa-eye"></i> Lihat Fail
-                                            </a>
-                                        </small>
-                                    </div>
+                                    @php
+                                        $newReceiptFiles = json_decode($claim->new_receipt, true);
+                                    @endphp
+                                    @if (is_array($newReceiptFiles) && count($newReceiptFiles) > 0)
+                                        <div class="mb-2 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
+                                            <small class="text-muted"><strong>Fail Sebelum:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($newReceiptFiles as $filePath)
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
                                 <label for="new_receipt" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                                <input type="file" id="new_receipt" name="new_receipt" class="file-input"
-                                    accept="application/pdf" onchange="validateFileSize(this)">
-                                <div id="new_receiptfileName" class="file-name"></div>
-                                <div id="new_receipt_error" class="invalid-feedback d-block" style="display:none;"></div>
+                                <input type="file" id="new_receipt" name="new_receipt[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'new_receipt')">
+                                <div id="new_receipt_fileList" class="file-list mt-2"></div>
+                                <div id="new_receipt_error" class="text-danger mt-1"></div>
                             </div>
                         </div>
 
@@ -574,21 +587,27 @@
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->refund_claim_letter)
-                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
-                                            <a href="{{ url('pdf/' . basename($claim->refund_claim_letter)) }}" target="_blank" class="text-primary">
-                                                <i class="fa fa-eye"></i> Lihat Fail
-                                            </a>
-                                        </small>
-                                    </div>
+                                    @php
+                                        $refundLetterFiles = json_decode($claim->refund_claim_letter, true);
+                                    @endphp
+                                    @if (is_array($refundLetterFiles) && count($refundLetterFiles) > 0)
+                                        <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                            <small class="text-muted"><strong>Fail Sebelum:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($refundLetterFiles as $filePath)
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
-
                                 <label for="refund_claim_letter" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                                <input type="file" id="refund_claim_letter" name="refund_claim_letter" class="file-input"
-                                    accept="application/pdf" onchange="validateFileSize(this)">
-                                <div id="refund_claim_letterfileName" class="file-name"></div>
-                                <div id="refund_claim_letter_error" class="invalid-feedback d-block" style="display:none;"></div>
+                                <input type="file" id="refund_claim_letter" name="refund_claim_letter[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'refund_claim_letter')">
+                                <div id="refund_claim_letter_fileList" class="file-list mt-2"></div>
+                                <div id="refund_claim_letter_error" class="text-danger mt-1"></div>
                             </div>
                         </div>
 
@@ -600,21 +619,27 @@
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->ic_copy)
-                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
-                                            <a href="{{ url('pdf/' . basename($claim->ic_copy)) }}" target="_blank" class="text-primary">
-                                                <i class="fa fa-eye"></i> Lihat Fail
-                                            </a>
-                                        </small>
-                                    </div>
+                                    @php
+                                        $icCopyFiles = json_decode($claim->ic_copy, true);
+                                    @endphp
+                                    @if (is_array($icCopyFiles) && count($icCopyFiles) > 0)
+                                        <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                            <small class="text-muted"><strong>Fail Sebelum:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($icCopyFiles as $filePath)
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
-
                                 <label for="ic_copy" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                                <input type="file" id="ic_copy" name="ic_copy" class="file-input"
-                                    accept="application/pdf" onchange="validateFileSize(this)">
-                                <div id="ic_copyfileName" class="file-name"></div>
-                                <div id="ic_copy_error" class="invalid-feedback d-block" style="display:none;"></div>
+                                <input type="file" id="ic_copy" name="ic_copy[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'ic_copy')">
+                                <div id="ic_copy_fileList" class="file-list mt-2"></div>
+                                <div id="ic_copy_error" class="text-danger mt-1"></div>
                             </div>
                         </div>
 
@@ -625,53 +650,65 @@
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->bank_statement)
-                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
-                                            <a href="{{ url('pdf/' . basename($claim->bank_statement)) }}" target="_blank" class="text-primary">
-                                                <i class="fa fa-eye"></i> Lihat Fail
-                                            </a>
-                                        </small>
-                                    </div>
+                                    @php
+                                        $bankStatementFiles = json_decode($claim->bank_statement, true);
+                                    @endphp
+                                    @if (is_array($bankStatementFiles) && count($bankStatementFiles) > 0)
+                                        <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                            <small class="text-muted"><strong>Fail Sebelum:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($bankStatementFiles as $filePath)
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
-
                                 <label for="bank_statement" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                                <input type="file" id="bank_statement" name="bank_statement" class="file-input"
-                                    accept="application/pdf" onchange="validateFileSize(this)">
-                                <div id="bank_statementfileName" class="file-name"></div>
-                                <div id="bank_statement_error" class="invalid-feedback d-block" style="display:none;"></div>
+                                <input type="file" id="bank_statement" name="bank_statement[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'bank_statement')">
+                                <div id="bank_statement_fileList" class="file-list mt-2"></div>
+                                <div id="bank_statement_error" class="text-danger mt-1"></div>
                             </div>
                         </div>
 
 
                         <div class="form-group">
-                             <div class="col-md-4">
+                            <div class="col-md-4">
                                 <label for="statutory_declaration">Surat Akuan Sumpah</label>
                                 <br>
                                 <small class="text-muted">(sekiranya dokumen/ resit asal hilang)</small>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->statutory_declaration)
-                                    <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-file-pdf-o text-danger"></i> Fail Sebelum:
-                                            <a href="{{ url('pdf/' . basename($claim->statutory_declaration)) }}" target="_blank" class="text-primary">
-                                                <i class="fa fa-eye"></i> Lihat Fail
-                                            </a>
-                                        </small>
-                                    </div>
+                                    @php
+                                        $statutoryFiles = json_decode($claim->statutory_declaration, true);
+                                    @endphp
+                                    @if (is_array($statutoryFiles) && count($statutoryFiles) > 0)
+                                        <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
+                                            <small class="text-muted"><strong>Fail Sebelum:</strong></small>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($statutoryFiles as $filePath)
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
-
                                 <label for="statutory_declaration" class="submit-button is-invalid">@lang('app.choose_file')</label>
-                                <input type="file" id="statutory_declaration" name="statutory_declaration" class="file-input"
-                                    accept="application/pdf" onchange="validateFileSize(this)">
-                                <div id="statutory_declarationfileName" class="file-name"></div>
-                                <div id="statutory_declaration_error" class="invalid-feedback d-block" style="display:none;"></div>
+                                <input type="file" id="statutory_declaration" name="statutory_declaration[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'statutory_declaration')">
+                                <div id="statutory_declaration_fileList" class="file-list mt-2"></div>
+                                <div id="statutory_declaration_error" class="text-danger mt-1"></div>
                             </div>
                         </div>
 
 
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <div class="col-md-4">
                                 <label for="company_registration">Pendaftaran Syarikat</label>
                             </div>
@@ -696,7 +733,7 @@
                         </div>
 
                         <!-- Supporting Documents Upload - Optional -->
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <div class="col-md-4">
                                 <label for="supporting-docs">@lang('Dokumen Sokongan')</label>
                             </div>
@@ -971,139 +1008,124 @@
                     showError('land_unit', "@lang('Medan ini wajib diisi')");
                 }
 
-                // Validate land_grant file
-                const landGrantFile = $('#land_grant')[0].files[0];
+                 // Validate land_grant file - MULTIPLE FILES
+                const landGrantFiles = $('#land_grant')[0].files;
                 if (!isReapply) {
-                    if (!landGrantFile) {
+                    if (landGrantFiles.length === 0) {
                         showError('land_grant', "@lang('Fail wajib dimuatnaik')");
                         $('#land_grant_error').text("@lang('Fail wajib dimuatnaik')").show();
                     } else {
-                        if (landGrantFile.size > 15 * 1024 * 1024) {
-                            showError('land_grant', "@lang('app.land_grant_max')");
-                            $('#land_grant_error').text("@lang('app.land_grant_max')").show();
-                        } else if (landGrantFile.type !== 'application/pdf') {
-                            showError('land_grant', "@lang('app.land_grant_mimes')");
-                            $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
-                        }
+                        // Validate each file
+                        Array.from(landGrantFiles).forEach((file, index) => {
+                            if (file.size > 15 * 1024 * 1024) {
+                                showError('land_grant', "@lang('app.land_grant_max')");
+                                $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                            } else if (file.type !== 'application/pdf') {
+                                showError('land_grant', "@lang('app.land_grant_mimes')");
+                                $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                            }
+                        });
                     }
                 } else {
-                    // If reapply and file is provided, validate its format and size only
-                    if (landGrantFile) {
-                        if (landGrantFile.size > 15 * 1024 * 1024) {
-                            showError('land_grant', "@lang('app.land_grant_max')");
-                            $('#land_grant_error').text("@lang('app.land_grant_max')").show();
-                        } else if (landGrantFile.type !== 'application/pdf') {
-                            showError('land_grant', "@lang('app.land_grant_mimes')");
-                            $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
-                        }
+                    // If reapply and files are provided, validate their format and size only
+                    if (landGrantFiles.length > 0) {
+                        Array.from(landGrantFiles).forEach((file, index) => {
+                            if (file.size > 15 * 1024 * 1024) {
+                                showError('land_grant', "@lang('app.land_grant_max')");
+                                $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                            } else if (file.type !== 'application/pdf') {
+                                showError('land_grant', "@lang('app.land_grant_mimes')");
+                                $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                            }
+                        });
                     }
                 }
 
-                // Validate new_receipt file - ONLY REQUIRED IF NOT REAPPLY
-                const newReceiptFile = $('#new_receipt')[0].files[0];
-                if (!isReapply) {
-                    if (!newReceiptFile) {
-                        showError('new_receipt', "@lang('Fail wajib dimuatnaik')");
-                        $('#new_receipt_error').text("@lang('Fail wajib dimuatnaik')").show();
-                    } else {
-                        if (newReceiptFile.size > 15 * 1024 * 1024) {
+                // Validate new_receipt file - NOW OPTIONAL (no required validation)
+                const newReceiptFiles = $('#new_receipt')[0].files;
+                if (newReceiptFiles.length > 0) {
+                    // Only validate if files are selected
+                    Array.from(newReceiptFiles).forEach((file, index) => {
+                        if (file.size > 15 * 1024 * 1024) {
                             showError('new_receipt', "@lang('app.land_grant_max')");
                             $('#new_receipt_error').text("@lang('app.land_grant_max')").show();
-                        } else if (newReceiptFile.type !== 'application/pdf') {
+                        } else if (file.type !== 'application/pdf') {
                             showError('new_receipt', "@lang('app.land_grant_mimes')");
                             $('#new_receipt_error').text("@lang('app.land_grant_mimes')").show();
                         }
-                    }
-                } else {
-                    // If reapply and file is provided, validate its format and size only
-                    if (newReceiptFile) {
-                        if (newReceiptFile.size > 15 * 1024 * 1024) {
-                            showError('new_receipt', "@lang('app.land_grant_max')");
-                            $('#new_receipt_error').text("@lang('app.land_grant_max')").show();
-                        } else if (newReceiptFile.type !== 'application/pdf') {
-                            showError('new_receipt', "@lang('app.land_grant_mimes')");
-                            $('#new_receipt_error').text("@lang('app.land_grant_mimes')").show();
-                        }
-                    }
+                    });
                 }
 
                 // Validate supporting_docs file (OPTIONAL - only validate if file is selected)
-                const supportingDocsFile = $('#supporting_docs')[0].files[0];
-                if (supportingDocsFile) {
-                    if (supportingDocsFile.size > 15 * 1024 * 1024) {
-                        showError('supporting_docs', "@lang('app.land_grant_max')");
-                        $('#supporting_docs_error').text("@lang('app.land_grant_max')").show();
-                    } else if (supportingDocsFile.type !== 'application/pdf') {
-                        showError('supporting_docs', "@lang('app.land_grant_mimes')");
-                        $('#supporting_docs_error').text("@lang('app.land_grant_mimes')").show();
-                    }
+                const supportingDocsFiles = $('#supporting_docs')[0];
+                if (supportingDocsFiles && supportingDocsFiles.files.length > 0) {
+                    Array.from(supportingDocsFiles.files).forEach((file, index) => {
+                        if (file.size > 15 * 1024 * 1024) {
+                            showError('supporting_docs', "@lang('app.land_grant_max')");
+                            $('#supporting_docs_error').text("@lang('app.land_grant_max')").show();
+                        } else if (file.type !== 'application/pdf') {
+                            showError('supporting_docs', "@lang('app.land_grant_mimes')");
+                            $('#supporting_docs_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    });
                 }
 
-
-                // Validate refund_claim_letter (OPTIONAL)
+                // Validate refund_claim_letter (OPTIONAL) - MULTIPLE FILES
                 const refundClaimLetterFile = $('#refund_claim_letter')[0];
-                if (refundClaimLetterFile && refundClaimLetterFile.files[0]) {
-                    const file = refundClaimLetterFile.files[0];
-                    if (file.size > 15 * 1024 * 1024) {
-                        showError('refund_claim_letter', "@lang('app.land_grant_max')");
-                        $('#refund_claim_letter_error').text("@lang('app.land_grant_max')").show();
-                    } else if (file.type !== 'application/pdf') {
-                        showError('refund_claim_letter', "@lang('app.land_grant_mimes')");
-                        $('#refund_claim_letter_error').text("@lang('app.land_grant_mimes')").show();
-                    }
+                if (refundClaimLetterFile && refundClaimLetterFile.files.length > 0) {
+                    Array.from(refundClaimLetterFile.files).forEach((file, index) => {
+                        if (file.size > 15 * 1024 * 1024) {
+                            showError('refund_claim_letter', "@lang('app.land_grant_max')");
+                            $('#refund_claim_letter_error').text("@lang('app.land_grant_max')").show();
+                        } else if (file.type !== 'application/pdf') {
+                            showError('refund_claim_letter', "@lang('app.land_grant_mimes')");
+                            $('#refund_claim_letter_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    });
                 }
 
-                // Validate ic_copy (OPTIONAL)
+                // Validate ic_copy (OPTIONAL) - MULTIPLE FILES
                 const icCopyFile = $('#ic_copy')[0];
-                if (icCopyFile && icCopyFile.files[0]) {
-                    const file = icCopyFile.files[0];
-                    if (file.size > 15 * 1024 * 1024) {
-                        showError('ic_copy', "@lang('app.land_grant_max')");
-                        $('#ic_copy_error').text("@lang('app.land_grant_max')").show();
-                    } else if (file.type !== 'application/pdf') {
-                        showError('ic_copy', "@lang('app.land_grant_mimes')");
-                        $('#ic_copy_error').text("@lang('app.land_grant_mimes')").show();
-                    }
+                if (icCopyFile && icCopyFile.files.length > 0) {
+                    Array.from(icCopyFile.files).forEach((file, index) => {
+                        if (file.size > 15 * 1024 * 1024) {
+                            showError('ic_copy', "@lang('app.land_grant_max')");
+                            $('#ic_copy_error').text("@lang('app.land_grant_max')").show();
+                        } else if (file.type !== 'application/pdf') {
+                            showError('ic_copy', "@lang('app.land_grant_mimes')");
+                            $('#ic_copy_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    });
                 }
 
-                // Validate bank_statement (OPTIONAL)
+                // Validate bank_statement (OPTIONAL) - MULTIPLE FILES
                 const bankStatementFile = $('#bank_statement')[0];
-                if (bankStatementFile && bankStatementFile.files[0]) {
-                    const file = bankStatementFile.files[0];
-                    if (file.size > 15 * 1024 * 1024) {
-                        showError('bank_statement', "@lang('app.land_grant_max')");
-                        $('#bank_statement_error').text("@lang('app.land_grant_max')").show();
-                    } else if (file.type !== 'application/pdf') {
-                        showError('bank_statement', "@lang('app.land_grant_mimes')");
-                        $('#bank_statement_error').text("@lang('app.land_grant_mimes')").show();
-                    }
+                if (bankStatementFile && bankStatementFile.files.length > 0) {
+                    Array.from(bankStatementFile.files).forEach((file, index) => {
+                        if (file.size > 15 * 1024 * 1024) {
+                            showError('bank_statement', "@lang('app.land_grant_max')");
+                            $('#bank_statement_error').text("@lang('app.land_grant_max')").show();
+                        } else if (file.type !== 'application/pdf') {
+                            showError('bank_statement', "@lang('app.land_grant_mimes')");
+                            $('#bank_statement_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    });
                 }
 
-                // Validate statutory_declaration (OPTIONAL)
+                // Validate statutory_declaration (OPTIONAL) - MULTIPLE FILES
                 const statutoryDeclarationFile = $('#statutory_declaration')[0];
-                if (statutoryDeclarationFile && statutoryDeclarationFile.files[0]) {
-                    const file = statutoryDeclarationFile.files[0];
-                    if (file.size > 15 * 1024 * 1024) {
-                        showError('statutory_declaration', "@lang('app.land_grant_max')");
-                        $('#statutory_declaration_error').text("@lang('app.land_grant_max')").show();
-                    } else if (file.type !== 'application/pdf') {
-                        showError('statutory_declaration', "@lang('app.land_grant_mimes')");
-                        $('#statutory_declaration_error').text("@lang('app.land_grant_mimes')").show();
-                    }
+                if (statutoryDeclarationFile && statutoryDeclarationFile.files.length > 0) {
+                    Array.from(statutoryDeclarationFile.files).forEach((file, index) => {
+                        if (file.size > 15 * 1024 * 1024) {
+                            showError('statutory_declaration', "@lang('app.land_grant_max')");
+                            $('#statutory_declaration_error').text("@lang('app.land_grant_max')").show();
+                        } else if (file.type !== 'application/pdf') {
+                            showError('statutory_declaration', "@lang('app.land_grant_mimes')");
+                            $('#statutory_declaration_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    });
                 }
 
-                // Validate company_registration (OPTIONAL)
-                const companyRegistrationFile = $('#company_registration')[0];
-                if (companyRegistrationFile && companyRegistrationFile.files[0]) {
-                    const file = companyRegistrationFile.files[0];
-                    if (file.size > 15 * 1024 * 1024) {
-                        showError('company_registration', "@lang('app.land_grant_max')");
-                        $('#company_registration_error').text("@lang('app.land_grant_max')").show();
-                    } else if (file.type !== 'application/pdf') {
-                        showError('company_registration', "@lang('app.land_grant_mimes')");
-                        $('#company_registration_error').text("@lang('app.land_grant_mimes')").show();
-                    }
-                }
 
 
 
@@ -1188,34 +1210,160 @@
         });
     </script>
     <script>
-       function validateFileSize(input) {
-            const file = input.files[0];
-            const errorDiv = document.getElementById(input.id + '_error');
+        let fileStorage = {};
 
-            if (file) {
-                if (file.size > 15 * 1024 * 1024) { 
-                    errorDiv.textContent = "Saiz fail melebihi had 15mb. Sila pilih fail yang lebih kecil.";
-                    errorDiv.style.display = 'block';
-                    input.value = ''; 
-                } else {
-                    errorDiv.textContent = '';
-                    errorDiv.style.display = 'none';
+        // Main function to handle multiple files
+        function handleMultipleFiles(input, fieldName) {
+            const newFiles = Array.from(input.files);
+            const maxSize = 15 * 1024 * 1024; // 15MB
+            const errorDiv = document.getElementById(fieldName + '_error');
+            const fileListDiv = document.getElementById(fieldName + '_fileList');
+            
+            // Clear previous errors
+            if (errorDiv) {
+                errorDiv.innerHTML = '';
+            }
+            
+            // Validate each NEW file
+            let hasError = false;
+            let errorMessages = [];
+            
+            newFiles.forEach((file, index) => {
+                // Check file type
+                if (file.type !== 'application/pdf') {
+                    errorMessages.push(`${file.name}: Hanya fail PDF dibenarkan`);
+                    hasError = true;
                 }
-            } else {
-                errorDiv.textContent = '';
-                errorDiv.style.display = 'none';
+                
+                // Check file size
+                if (file.size > maxSize) {
+                    errorMessages.push(`${file.name}: Saiz fail melebihi 15MB`);
+                    hasError = true;
+                }
+            });
+            
+            if (hasError) {
+                if (errorDiv) {
+                    errorDiv.innerHTML = errorMessages.join('<br>');
+                }
+                input.value = ''; // Clear the input
+                if (fileListDiv) {
+                    fileListDiv.innerHTML = '';
+                }
+                fileStorage[fieldName] = [];
+                return false;
+            }
+            
+            // MERGE: Add new files to existing files
+            const existingFiles = fileStorage[fieldName] || [];
+            const allFiles = [...existingFiles, ...newFiles];
+            
+            // Store merged files
+            fileStorage[fieldName] = allFiles;
+            
+            // Update the file input with all files
+            const dt = new DataTransfer();
+            allFiles.forEach(file => {
+                dt.items.add(file);
+            });
+            input.files = dt.files;
+            
+            // Display all files
+            displayFileList(fieldName, allFiles);
+            
+            return true;
+        }
+
+        function displayFileList(fieldName, files) {
+            const fileListDiv = document.getElementById(fieldName + '_fileList');
+            
+            if (!fileListDiv) return;
+            
+            // Clear previous content
+            fileListDiv.innerHTML = '';
+            
+            if (files.length === 0) {
+                return;
+            }
+            
+            // Create container for file list
+            const container = document.createElement('div');
+            container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+            
+            // Add each file
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
+                
+                // File info
+                const fileInfo = document.createElement('span');
+                fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
+                fileInfo.innerHTML = `<i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
+                
+                // Remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-sm btn-danger';
+                removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
+                removeBtn.innerHTML = '<i class="fa fa-times"></i> Buang';
+                removeBtn.onclick = function(e) {
+                    e.preventDefault();
+                    removeFile(fieldName, index);
+                };
+                
+                fileItem.appendChild(fileInfo);
+                fileItem.appendChild(removeBtn);
+                container.appendChild(fileItem);
+            });
+            
+            // Add count summary
+            const summary = document.createElement('div');
+            summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
+            summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
+            container.appendChild(summary);
+            
+            fileListDiv.appendChild(container);
+        }
+
+        function removeFile(fieldName, index) {
+            if (fileStorage[fieldName]) {
+                fileStorage[fieldName].splice(index, 1);
+                
+                // Update the file input
+                const input = document.getElementById(fieldName);
+                const dt = new DataTransfer();
+                
+                fileStorage[fieldName].forEach(file => {
+                    dt.items.add(file);
+                });
+                
+                input.files = dt.files;
+                
+                // Update display
+                displayFileList(fieldName, fileStorage[fieldName]);
+                
+                // If no files left, clear validation error if exists
+                if (fileStorage[fieldName].length === 0) {
+                    const errorDiv = document.getElementById(fieldName + '_error');
+                    if (errorDiv) errorDiv.innerHTML = '';
+                }
             }
         }
 
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function validateFileSize(input) {
+            const fieldName = input.id;
+            return handleMultipleFiles(input, fieldName);
+        }
     </script>
-    <script>
-        document.querySelectorAll('.file-input').forEach(input => {
-            input.addEventListener('change', function() {
-                const fileName = this.files[0] ? this.files[0].name : '@lang('app.no_file_chosens')';
-                document.getElementById(this.id + 'fileName').textContent = fileName;
-            });
-        });
-    </script>
+    
     <script>
         function isNumberKey(evt) {
             var charCode = (evt.which) ? evt.which : evt.keyCode;

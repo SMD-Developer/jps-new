@@ -210,10 +210,10 @@
 
     
 </style>
-<title>@lang('Permohonan Yang Diluluskan') | JPS</title>
+<title>@lang('Permohonan Baru') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Permohonan Yang Diluluskan')</h5>
+        <h5><i class="fa fa-plus-circle nav-icon"></i> @lang('Permohonan Baru')</h5>
     </div>
     <section class="content">
         <div class="row">
@@ -506,16 +506,26 @@
                     </div>
 
                     <h4>@lang('Muat Naik Dokumen Sokongan')</h4>
+                    <!-- Resit Bayaran Lama (Old Receipt) -->
                     <div class="form-group">
                         <label for="geran-tanah">@lang('Resit Bayaran Lama')<b class="starr">*</b></label>
                         <div class="offset-area mt-1">
-                            @if ($claim->land_grant)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->land_grant)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i>
-                                        {{ basename($claim->land_grant) }}
-                                    </a>
+                            @if ($claim->land_grant && is_array($claim->land_grant) && count($claim->land_grant) > 0)
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    @foreach ($claim->land_grant as $index => $filePath)
+                                        <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                            <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                            <a href="{{ url('pdf/' . basename($filePath)) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                {{ basename($filePath) }}
+                                            </a>
+                                            <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                ({{ number_format(file_exists(public_path('pdf/' . basename($filePath))) ? filesize(public_path('pdf/' . basename($filePath))) / 1024 / 1024 : 0, 2) }} MB)
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <small style="color: #007bff; margin-top: 8px; display: block;">
+                                    <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($claim->land_grant) }}
                                 </small>
                             @else
                                 <small class="text-muted">No file uploaded</small>
@@ -523,17 +533,37 @@
                         </div>
                     </div>
 
-
+                    <!-- Resit Bayaran Baru (New Receipt) -->
                     <div class="form-group">
-                        <label for="new_receipt">@lang('Resit Bayaran Baru') <b class="starr">*</b></label>
+                        <label for="new_receipt">@lang('Resit Bayaran Baru') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->new_receipt)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->new_receipt)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->new_receipt) }}
-                                    </a>
-                                </small>
+                                @php
+                                    $newReceiptFiles = is_array($claim->new_receipt) ? $claim->new_receipt : json_decode($claim->new_receipt, true);
+                                @endphp
+                                
+                                @if (is_array($newReceiptFiles) && count($newReceiptFiles) > 0)
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @foreach ($newReceiptFiles as $index => $filePath)
+                                            <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                                <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                <a href="{{ url('pdf/' . basename($filePath)) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                    {{ basename($filePath) }}
+                                                </a>
+                                                <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                    ({{ number_format(file_exists(public_path('pdf/' . basename($filePath))) ? filesize(public_path('pdf/' . basename($filePath))) / 1024 / 1024 : 0, 2) }} MB)
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small style="color: #007bff; margin-top: 8px; display: block;">
+                                        <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($newReceiptFiles) }}
+                                    </small>
+                                @else
+                                    <small class="text-muted">No file uploaded</small>
+                                @endif
+                            @else
+                                <small class="text-muted">No file uploaded</small>
                             @endif
                             @error('new_receipt')
                                 <span class="text-danger">{{ $message }}</span>
@@ -541,16 +571,37 @@
                         </div>
                     </div>
 
+                    <!-- Surat Permohonan Tuntutan Pulang Balik (Refund Claim Letter) -->
                     <div class="form-group">
                         <label for="refund_claim_letter">@lang('Surat Permohonan Tuntutan Pulang Balik') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->refund_claim_letter)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->refund_claim_letter)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->refund_claim_letter) }}
-                                    </a>
-                                </small>
+                                @php
+                                    $refundClaimFiles = is_array($claim->refund_claim_letter) ? $claim->refund_claim_letter : json_decode($claim->refund_claim_letter, true);
+                                @endphp
+                                
+                                @if (is_array($refundClaimFiles) && count($refundClaimFiles) > 0)
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @foreach ($refundClaimFiles as $index => $filePath)
+                                            <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                                <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                <a href="{{ url('pdf/' . basename($filePath)) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                    {{ basename($filePath) }}
+                                                </a>
+                                                <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                    ({{ number_format(file_exists(public_path('pdf/' . basename($filePath))) ? filesize(public_path('pdf/' . basename($filePath))) / 1024 / 1024 : 0, 2) }} MB)
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small style="color: #007bff; margin-top: 8px; display: block;">
+                                        <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($refundClaimFiles) }}
+                                    </small>
+                                @else
+                                    <small class="text-muted">No file uploaded</small>
+                                @endif
+                            @else
+                                <small class="text-muted">No file uploaded</small>
                             @endif
                             @error('refund_claim_letter')
                                 <span class="text-danger">{{ $message }}</span>
@@ -558,17 +609,37 @@
                         </div>
                     </div>
 
-
+                    <!-- Geran/Pelan Kelulusan KM -->
                     <div class="form-group">
                         <label for="ic_copy">@lang('Geran/Pelan Kelulusan KM') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->ic_copy)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->ic_copy)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->ic_copy) }}
-                                    </a>
-                                </small>
+                                @php
+                                    $icCopyFiles = is_array($claim->ic_copy) ? $claim->ic_copy : json_decode($claim->ic_copy, true);
+                                @endphp
+                                
+                                @if (is_array($icCopyFiles) && count($icCopyFiles) > 0)
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @foreach ($icCopyFiles as $index => $filePath)
+                                            <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                                <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                <a href="{{ url('pdf/' . basename($filePath)) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                    {{ basename($filePath) }}
+                                                </a>
+                                                <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                    ({{ number_format(file_exists(public_path('pdf/' . basename($filePath))) ? filesize(public_path('pdf/' . basename($filePath))) / 1024 / 1024 : 0, 2) }} MB)
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small style="color: #007bff; margin-top: 8px; display: block;">
+                                        <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($icCopyFiles) }}
+                                    </small>
+                                @else
+                                    <small class="text-muted">No file uploaded</small>
+                                @endif
+                            @else
+                                <small class="text-muted">No file uploaded</small>
                             @endif
                             @error('ic_copy')
                                 <span class="text-danger">{{ $message }}</span>
@@ -576,16 +647,37 @@
                         </div>
                     </div>
 
+                    <!-- Surat Penetapan Jumlah Bayaran Caruman Parit -->
                     <div class="form-group">
                         <label for="bank_statement">@lang('Surat Penetapan Jumlah Bayaran Caruman Parit') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->bank_statement)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->bank_statement)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->bank_statement) }}
-                                    </a>
-                                </small>
+                                @php
+                                    $bankStatementFiles = is_array($claim->bank_statement) ? $claim->bank_statement : json_decode($claim->bank_statement, true);
+                                @endphp
+                                
+                                @if (is_array($bankStatementFiles) && count($bankStatementFiles) > 0)
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @foreach ($bankStatementFiles as $index => $filePath)
+                                            <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                                <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                <a href="{{ url('pdf/' . basename($filePath)) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                    {{ basename($filePath) }}
+                                                </a>
+                                                <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                    ({{ number_format(file_exists(public_path('pdf/' . basename($filePath))) ? filesize(public_path('pdf/' . basename($filePath))) / 1024 / 1024 : 0, 2) }} MB)
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small style="color: #007bff; margin-top: 8px; display: block;">
+                                        <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($bankStatementFiles) }}
+                                    </small>
+                                @else
+                                    <small class="text-muted">No file uploaded</small>
+                                @endif
+                            @else
+                                <small class="text-muted">No file uploaded</small>
                             @endif
                             @error('bank_statement')
                                 <span class="text-danger">{{ $message }}</span>
@@ -593,38 +685,39 @@
                         </div>
                     </div>
 
-
+                    <!-- Surat Akuan Sumpah (Statutory Declaration) -->
                     <div class="form-group">
                         <label for="statutory_declaration">@lang('Surat Akuan Sumpah') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->statutory_declaration)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->statutory_declaration)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->statutory_declaration) }}
-                                    </a>
-                                </small>
+                                @php
+                                    $statutoryDeclarationFiles = is_array($claim->statutory_declaration) ? $claim->statutory_declaration : json_decode($claim->statutory_declaration, true);
+                                @endphp
+                                
+                                @if (is_array($statutoryDeclarationFiles) && count($statutoryDeclarationFiles) > 0)
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @foreach ($statutoryDeclarationFiles as $index => $filePath)
+                                            <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                                <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                <a href="{{ url('pdf/' . basename($filePath)) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                    {{ basename($filePath) }}
+                                                </a>
+                                                <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                    ({{ number_format(file_exists(public_path('pdf/' . basename($filePath))) ? filesize(public_path('pdf/' . basename($filePath))) / 1024 / 1024 : 0, 2) }} MB)
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small style="color: #007bff; margin-top: 8px; display: block;">
+                                        <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($statutoryDeclarationFiles) }}
+                                    </small>
+                                @else
+                                    <small class="text-muted">No file uploaded</small>
+                                @endif
+                            @else
+                                <small class="text-muted">No file uploaded</small>
                             @endif
-                            @error('bank_statement')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="company_registration">@lang('Pendaftaran Syarikat') <b class="starr"></b></label>
-
-                        <div class="offset-area">
-                            @if ($claim->company_registration)
-                                <small class="text-info">
-                                    Current file:
-                                    <a href="{{ url('pdf/' . basename($claim->company_registration)) }}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> {{ basename($claim->company_registration) }}
-                                    </a>
-                                </small>
-                            @endif
-                            @error('company_registration')
+                            @error('statutory_declaration')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>

@@ -293,12 +293,12 @@
                                                         $methodClass = 'method-online';
                                                         break;
                                                     case 'cheque':
-                                                        $paymentMethod = 'Cheque';
+                                                        $paymentMethod = 'MANUAL';
                                                         $methodClass = 'method-offline';
                                                         break;
                                                     case 'bank_transfer':
                                                     case 'bank_draf':
-                                                        $paymentMethod = 'Bank Draf';
+                                                        $paymentMethod = 'MANUAL';
                                                         $methodClass = 'method-offline';
                                                         break;
                                                     case 'EFT':
@@ -406,7 +406,15 @@
                                             </td>
                                             <td>{{ number_format($payment->amount ?? 0, 2) }}</td>
                                              <td>
-                                                <span class="payment-method-badge method-offline">EFT</span>
+                                                <span class="payment-method-badge method-offline">
+                                                    @if ($payment->method == 'cheque')
+                                                        CEK
+                                                    @elseif ($payment->method == 'bank_draf')
+                                                        BANK DRAF
+                                                    @else
+                                                        EFT
+                                                    @endif
+                                                </span>
                                             </td>
                                             <td>
                                                 <span class="payment-method-badge {{ $methodClass }}">

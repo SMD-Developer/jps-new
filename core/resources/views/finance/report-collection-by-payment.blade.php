@@ -562,12 +562,12 @@
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>
-                                                    @if ($application->deposit_date)
+                                                    @if ($application->payment_created_at)
                                                         <div style="text-align: center;">
-                                                            {{ \Carbon\Carbon::parse($application->deposit_date)->format('d/m/Y') }}
+                                                            {{ \Carbon\Carbon::parse($application->payment_created_at)->format('d/m/Y') }}
                                                         </div>
                                                         <div style="text-align: center;">
-                                                            {{ \Carbon\Carbon::parse($application->deposit_date)->format('h:i A') }}
+                                                            {{ \Carbon\Carbon::parse($application->payment_created_at)->format('h:i A') }}
                                                         </div>
                                                     @else
                                                         N/A

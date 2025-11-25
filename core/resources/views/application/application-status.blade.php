@@ -890,7 +890,7 @@
                                                                 {{ trans('app.passed') }}
                                                                 @break
                                                             @case('rejected')
-                                                                {{ trans('app.reject') }}
+                                                                {{ trans('Ditolak') }}
                                                                 @break
                                                             @default
                                                                 {{ trans('app.na') }}
@@ -932,7 +932,7 @@
                                                                 {{ trans('app.passed') }}
                                                                 @break
                                                             @case('rejected')
-                                                                {{ trans('app.reject') }}
+                                                                {{ trans('Ditolak') }}
                                                                 @break
                                                             @case('returned_to_staff')
                                                                 Dikembalikan ke Penyedia
@@ -990,7 +990,7 @@
                                                 @elseif ($application->status == 'rejected')
                                                     <div class="sbtn">
                                                         <a href="{{ route('updateApplicationForm', ['id' => $application->id]) }}"
-                                                            class="btn btn-danger btn-sm"><strong>{{ trans('app.rejected') }}</strong></a>
+                                                            class="btn btn-danger btn-sm"><strong>{{ trans('Ditolak') }}</strong></a>
                                                     </div>
 
                                                     {{-- Show rejection reason --}}

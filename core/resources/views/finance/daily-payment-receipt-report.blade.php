@@ -541,10 +541,10 @@
                                                     $charge = 0.5;
                                                 }
                                                 elseif (stripos($method, 'bank_draf') !== false) {
-                                                    $transactionCategory = 'BANK DRAF';
+                                                    $transactionCategory = 'MANUAL';
                                                 } 
                                                 elseif (stripos($method, 'cheque') !== false) {
-                                                    $transactionCategory = 'CEK';
+                                                    $transactionCategory = 'MANUAL';
                                                     $charge = 0;
                                                 }
                                                 else {
@@ -581,7 +581,13 @@
                                                 <td>{{ $kodHasil }}</td>
                                                 <td>{{ number_format($amount, 2) }}</td>
                                                 <td rowspan="{{ $rowspan }}">
-                                                   EFT 
+                                                    @if (stripos($method, 'cheque') !== false)
+                                                        CEK
+                                                    @elseif (stripos($method, 'bank_draf') !== false)
+                                                        BANK DRAF
+                                                    @else
+                                                        EFT
+                                                    @endif
                                                 </td>
                                                 <td rowspan="{{ $rowspan }}">N/A</td>
                                                 <td rowspan="{{ $rowspan }}">{{ $transactionCategory }}</td>
@@ -713,9 +719,9 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>CEK</td>
-                            <td>{{ $chequeCount }}</td>
-                            <td>{{ number_format($chequeAmount, 2) }}</td>
+                            <td>CEK/BANK DRAF</td>
+                            <td>{{ $chequeCount + $bankDraftCount }}</td>
+                            <td>{{ number_format($chequeAmount + $bankDraftAmount, 2) }}</td>
                         </tr>
                         <tr>
                             <td>3</td>
@@ -728,12 +734,6 @@
                             <td>KAD DEBIT</td>
                             <td>N/A</td>
                             <td>N/A</td>
-                        </tr>
-                         <tr>
-                            <td>5</td>
-                            <td>BANK DRAF</td>
-                            <td>{{$bankDraftCount}}</td>
-                            <td>{{ number_format($bankDraftAmount, 2) }}</td>
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>

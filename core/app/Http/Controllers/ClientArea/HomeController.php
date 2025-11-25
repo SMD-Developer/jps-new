@@ -266,17 +266,24 @@ class HomeController extends Controller {
                 "land_area" => "required",
                 "land_unit" => "required",
                 "state" => "required",
-                "land_grant" => "{$fileValidationRules}|mimes:pdf|max:15000",
-                "new_receipt" => "{$fileValidationRules}|mimes:pdf|max:15000",
-                "supporting_docs" => "nullable|mimes:pdf|max:15000",
+                "land_grant" => "required|array|min:1",
+                "land_grant.*" => "required|mimes:pdf|max:15000",
+                "new_receipt" => "nullable|array",
+                "new_receipt.*" => "nullable|mimes:pdf|max:15000",
+                "supporting_docs" => "nullable|array",
+                "supporting_docs.*" => "nullable|mimes:pdf|max:15000",
                 "claim_reason" => "nullable|string|max:1000",
                 "payment_amount" => "required|numeric|min:0",
                 
                 // New file fields (all optional)
-                "refund_claim_letter" => "nullable|mimes:pdf|max:15000",
-                "ic_copy" => "nullable|mimes:pdf|max:15000",
-                "bank_statement" => "nullable|mimes:pdf|max:15000",
-                "statutory_declaration" => "nullable|mimes:pdf|max:15000",
+                "refund_claim_letter" => "nullable|array",
+                "refund_claim_letter.*" => "nullable|mimes:pdf|max:15000",
+                "ic_copy"=>"nullable|array",
+                "ic_copy.*" => "nullable|mimes:pdf|max:15000",
+                "bank_statement"=> "nullable|array",
+                "bank_statement.*" => "nullable|mimes:pdf|max:15000",
+                "statutory_declaration" => "nullable|array",
+                "statutory_declaration.*" => "nullable|mimes:pdf|max:15000",
                 "company_registration" => "nullable|mimes:pdf|max:15000",
             ];
 
@@ -308,7 +315,6 @@ class HomeController extends Controller {
                 "land_grant.required" => trans('app.land_grant_required'),
                 "land_grant.mimes" => trans('app.land_grant_mimes'),
                 "land_grant.max" => trans('app.land_grant_max'),
-                "new_receipt.required" => trans('Resit Bayaran Baru diperlukan'),
                 "new_receipt.mimes" => trans('app.land_grant_mimes'),
                 "new_receipt.max" => trans('app.land_grant_max'),
                 "supporting_docs.mimes" => trans('app.land_grant_mimes'),
@@ -361,12 +367,21 @@ class HomeController extends Controller {
             
             foreach ($fileFields as $field) {
                 if ($request->hasFile($field)) {
-                    $file = $request->file($field);
-                    $fileName = time() . '_' . $field . '_' . $file->getClientOriginalName();
-                    $file->move($uploadPath, $fileName);
-                    $uploadedFiles[$field] = 'pdf/' . $fileName;
+
+                    $uploadedFiles[$field] = []; 
+
+                    foreach ($request->file($field) as $file) {
+                        $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                        $file->move($uploadPath, $fileName);
+
+                        $uploadedFiles[$field][] = 'pdf/' . $fileName;
+                    }
+
+                    // Store JSON array in DB
+                    $uploadedFiles[$field] = json_encode($uploadedFiles[$field]);
                 }
             }
+
 
             // Handle claim_reason (Optional)
             if ($request->filled('claim_reason')) {

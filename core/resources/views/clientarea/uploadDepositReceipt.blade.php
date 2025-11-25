@@ -274,7 +274,7 @@
                             </div>
                             
                              <div class="form-group">
-                                <label for="receipt">@lang('app.upload_receipt')*</label>
+                                <label for="receipt" class="text-danger">@lang('app.upload_receipt')*</label>
                                 <input type="file" id="receipt" name="receipt"
                                     class="form-control @error('receipt') is-invalid @enderror"
                                     accept=".pdf,.jpg,.jpeg,.png" required style="display: none;">
