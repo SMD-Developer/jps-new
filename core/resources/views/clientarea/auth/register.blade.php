@@ -421,7 +421,7 @@ background-color: red;
                                 </div>
                                 <div class="col-md-5 d-inline">
                                     <span class="star d-inline"><b>*</b></span>
-                                    <span class="star d-inline important-font"><i>@lang('Alamat emel akan digunakan sebagai ID Pengguna')</i></span>
+                                    <span class="star d-inline important-font" style="color: grey;"><i>@lang('Alamat emel akan digunakan sebagai ID Pengguna')</i></span>
                                 </div>
                             </div>
                             <!-- Password -->
@@ -472,7 +472,7 @@ background-color: red;
                                             <span class="text-danger password-match-errors" id="password-match-error" style="padding: 0px;"></span>
                                         </div>
                                         <div class="col-md-5">
-                                            <span class="star d-inline"><b>*</b></span>
+                                            <span class="star d-inline"><b></b></span>
                                             <!-- <span class="star d-inline important-font"><i>@lang('Sila masukkan kata laluan sekali lagi untuk tujuan pengesahan')</i></span> -->
                                         </div>
                                     </div>
@@ -506,7 +506,7 @@ background-color: red;
                                 </div>
                                 <div class="col-md-5">
                                     <span class="star d-inline"><b>*</b></span>
-                                    <span class="star d-inline important-font"><i>@lang('Masukkan nama seperti di dalam Kad Pengenalan')</i></span>
+                                    <span class="star d-inline important-font" style="color: grey;"><i>@lang('Masukkan nama seperti di dalam Kad Pengenalan')</i></span>
                                 </div>
                             </div>
                 
@@ -934,14 +934,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle Account Type Change
     accountTypeSelect.addEventListener('change', function() {
         const selectedAccountTypeId = parseInt(this.value);
+        
+        // Get the parent row of the ID card field
+        const idCardRow = document.querySelector('#idCardNumber').closest('.row');
 
         if (selectedAccountTypeId === 2 || selectedAccountTypeId === 3 || selectedAccountTypeId === 4) {
-            if (selectedAccountTypeId === 4 || selectedAccountTypeId === 3 || selectedAccountTypeId === 2) {
+            // Set button text based on account type
+            if (selectedAccountTypeId === 3) {
                 userInfoButton.innerText = "Maklumat Syarikat / Agensi Kerajaan";
             } else {
                 userInfoButton.innerText = "Maklumat Syarikat";
             }
-            if (userNameLabel) userNameLabel.innerText = "Nama Syarikat";
+            
+            // Set userName label based on account type
+            if (userNameLabel) {
+                if (selectedAccountTypeId === 3) {
+                    userNameLabel.innerText = "Nama Syarikat / Agensi Kerajaan";
+                } else {
+                    userNameLabel.innerText = "Nama Syarikat";
+                }
+            }
+            
             if (idCardLabel) idCardLabel.innerText = "No Pendaftaran Syarikat";
             if (userNameHintDiv) userNameHintDiv.style.display = 'none';
             
@@ -949,28 +962,37 @@ document.addEventListener('DOMContentLoaded', function() {
             idTypeSelect.style.display = 'none';
             idTypeSelect.value = '';
             
-            // Show asterisk only for account types 2 and 4, hide for type 3
-            if (idCardStar) {
-                if (selectedAccountTypeId === 2 || selectedAccountTypeId === 4) {
-                    idCardStar.style.display = 'inline';
-                } else if (selectedAccountTypeId === 3) {
-                    idCardStar.style.display = 'none';
+            // Handle ID card field visibility
+            if (selectedAccountTypeId === 3) {
+                // Hide the entire row for account type 3
+                if (idCardRow) idCardRow.style.display = 'none';
+            } else {
+                // Show the row but configure for account types 2 and 4
+                if (idCardRow) idCardRow.style.display = 'flex';
+                if (idCardStar) idCardStar.style.display = 'inline';
+                if (idCardInput) {
+                    idCardInput.style.display = 'block';
+                    idCardInput.placeholder = "";
+                    idCardInput.removeEventListener('input', handleInput);
+                    idCardInput.value = '';
+                    idCardInput.maxLength = 50;
+                    idCardInput.style.setProperty('width', '300px', 'important');
                 }
+                if (idCardLabel) idCardLabel.style.display = 'block';
             }
             
-            if (idCardInput) {
-                idCardInput.placeholder = "";
-                idCardInput.removeEventListener('input', handleInput);
-                idCardInput.value = '';
-                idCardInput.maxLength = 50;
-                idCardInput.style.setProperty('width', '300px', 'important');
-            }
         } else if (selectedAccountTypeId === 1) {
             // Account Type 1 - Show "Jenis/Nombor Pengenaian"
             userInfoButton.innerText = originalTexts.sectionHeader;
             if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
-            if (idCardLabel) idCardLabel.innerText = "Jenis/Nombor Pengenalan";
+            if (idCardLabel) {
+                idCardLabel.innerText = "Jenis/Nombor Pengenalan";
+                idCardLabel.style.display = 'block';
+            }
             if (userNameHintDiv) userNameHintDiv.style.display = '';
+            
+            // Show the entire row
+            if (idCardRow) idCardRow.style.display = 'flex';
             
             // Restore ID Type dropdown with original options
             idTypeSelect.innerHTML = originalIdTypeOptions;
@@ -978,10 +1000,11 @@ document.addEventListener('DOMContentLoaded', function() {
             idTypeSelect.style.visibility = 'visible';
             idTypeSelect.value = '';
             
-            // Show asterisk for account type 1
+            // Show asterisk and input for account type 1
             if (idCardStar) idCardStar.style.display = 'inline';
             
             if (idCardInput) {
+                idCardInput.style.display = 'block';
                 idCardInput.placeholder = "";
                 idCardInput.value = '';
                 idCardInput.maxLength = 14;
@@ -991,8 +1014,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Individual Type - Restore everything (for other account types)
             userInfoButton.innerText = originalTexts.sectionHeader;
             if (userNameLabel) userNameLabel.innerText = originalTexts.userName;
-            if (idCardLabel) idCardLabel.innerText = originalTexts.idCard;
+            if (idCardLabel) {
+                idCardLabel.innerText = originalTexts.idCard;
+                idCardLabel.style.display = 'block';
+            }
             if (userNameHintDiv) userNameHintDiv.style.display = '';
+            
+            // Show the entire row
+            if (idCardRow) idCardRow.style.display = 'flex';
             
             // Restore ID Type dropdown with original options
             idTypeSelect.innerHTML = originalIdTypeOptions;
@@ -1003,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (idCardStar) idCardStar.style.display = 'inline';
             
             if (idCardInput) {
+                idCardInput.style.display = 'block';
                 idCardInput.placeholder = "";
                 idCardInput.value = '';
                 idCardInput.maxLength = 14;

@@ -339,6 +339,7 @@ input.btn.btn-primary.login-button.btn-sm.form-control.disabled {
     background: #2c2cb7;
     border-radius: 15px;
     border: 2px solid #cecece;
+    font-size: inherit;
 }
 a.btn.btn-primary.login-button.btn-sm.form-control.disabled {
     background: #2c2cb7;
@@ -1731,22 +1732,16 @@ $(document).ready(function() {
 </script>
 <script>
      // Password toggle functionality - KEEP THIS ONE
-document.querySelectorAll('.toggle-password').forEach(item => {
-    item.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
-        const input = document.getElementById(targetId);
-        
-        if (input.type === 'password') {
-            input.type = 'text';
-            this.classList.remove('fa-eye-slash');
-            this.classList.add('fa-eye');
-        } else {
-            input.type = 'password';
-            this.classList.remove('fa-eye');
-            this.classList.add('fa-eye-slash');
-        }
+    $(document).ready(function() {
+        $('.toggle-password').on('click', function() {
+            const targetId = $(this).data('target');
+            const input = $('#' + targetId);
+            const type = input.attr('type') === 'password' ? 'text' : 'password';
+            
+            input.attr('type', type);
+            $(this).toggleClass('bi-eye-slash bi-eye');
+        });
     });
-});
     function resetLoginForm(el) {
     // find the nearest form inside same column
     let form = el.closest('.col-lg-4').querySelector('form');
