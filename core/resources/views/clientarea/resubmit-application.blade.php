@@ -540,91 +540,160 @@
 
                         <!-- Land Grant -->
                         <div class="form-group">
-                            <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
-                            <input type="file" id="land_grant" name="land_grant" class="file-input"
-                                accept="application/pdf">
-                            <label for="land_grant" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="land_grantfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->land_grant)
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <small class="text-info">
-                                            <a href="{{ url('pdf/' . basename($application->land_grant)) }}" 
-                                               target="_blank">
-                                               <i class="fa fa-file-pdf-o"></i> {{ basename($application->land_grant) }}
-                                            </a>
-                                        </small>
-                                        <button type="button" class="btn btn-link text-danger remove-file-btn" 
-                                                data-target="land_grant" style="font-size: larger;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        <input type="hidden" name="remove_land_grant" id="remove_land_grant" value="0">
-                                    </div>
-                                @endif
-                                @error('land_grant')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <div class="col-md-4">
+                                <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
                             </div>
+                            <div class="col-md-8">
+                                <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="land_grant" name="land_grant[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'land_grant')">
+                                <div id="land_grant_fileList" class="file-list mt-2"></div>
+                                <div id="land_grant_error" class="text-danger mt-1"></div>
+                                
+                                <!-- Show existing files with remove option -->
+                                @if ($application->land_grant)
+                                    @php
+                                        // Handle both JSON string and array
+                                        if (is_string($application->land_grant)) {
+                                            $landGrantFiles = json_decode($application->land_grant, true);
+                                        } else {
+                                            $landGrantFiles = $application->land_grant;
+                                        }
+                                    @endphp
+                                    @if (is_array($landGrantFiles) && count($landGrantFiles) > 0)
+                                        <div class="mt-3">
+                                            <small class="text-info"><strong>Current files:</strong></small>
+                                            <div id="existing_land_grant_files" style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                                @foreach ($landGrantFiles as $index => $filePath)
+                                                    <div class="existing-file-item" data-field="land_grant" data-index="{{ $index }}" style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px; flex-shrink: 0;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
+                                                            <i class="fa fa-times"></i> Buang
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <small id="land_grant_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($landGrantFiles) }}</span> file(s)
+                                            </small>
+                                        </div>
+                                    @endif
+                                @endif
+                                <!-- Hidden input to track removed files -->
+                                <input type="hidden" name="removed_land_grant" id="removed_land_grant" value="">
+                                @error('land_grant')
+                                    <span class="text-danger d-block mt-2">{{ $message }}</span>
+                                @enderror
+                            </div>        
                         </div>
 
                         <!-- Planning Permission Plan -->
                         <div class="form-group">
-                            <label for="pelan">@lang('app.planning_permission_plan')</label>
-                            <input type="file" id="permission_plan" name="permission_plan" class="file-input"
-                                accept="application/pdf">
-                            <label for="permission_plan" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="permission_planfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
+                            <div class="col-md-4">
+                                <label for="pelan">@lang('app.planning_permission_plan')</label>
+                            </div> 
+                            <div class="col-md-8">
+                                <label for="permission_plan" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="permission_plan" name="permission_plan[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'permission_plan')">
+                                <div id="permission_plan_fileList" class="file-list mt-2"></div>
+                                <div id="permission_plan_error" class="text-danger mt-1"></div>
+                                
+                                <!-- Show existing files with remove option -->
                                 @if ($application->permission_plan)
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <small class="text-info">
-                                            <a href="{{ url('pdf/' . basename($application->permission_plan)) }}" 
-                                            target="_blank">
-                                            <i class="fa fa-file-pdf-o"></i> {{ basename($application->permission_plan) }}
-                                            </a>
-                                        </small>
-                                        <button type="button" class="btn btn-link text-danger remove-file-btn" 
-                                                data-target="permission_plan" style="font-size: larger;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        <input type="hidden" name="remove_permission_plan" id="remove_permission_plan" value="0">
-                                    </div>
+                                    @php
+                                        // Handle both JSON string and array
+                                        if (is_string($application->permission_plan)) {
+                                            $permissionPlanFiles = json_decode($application->permission_plan, true);
+                                        } else {
+                                            $permissionPlanFiles = $application->permission_plan;
+                                        }
+                                    @endphp
+                                    @if (is_array($permissionPlanFiles) && count($permissionPlanFiles) > 0)
+                                        <div class="mt-3">
+                                            <small class="text-info"><strong>Current files:</strong></small>
+                                            <div id="existing_permission_plan_files" style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                                @foreach ($permissionPlanFiles as $index => $filePath)
+                                                    <div class="existing-file-item" data-field="permission_plan" data-index="{{ $index }}" style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px; flex-shrink: 0;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
+                                                            <i class="fa fa-times"></i> Buang
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <small id="permission_plan_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($permissionPlanFiles) }}</span> file(s)
+                                            </small>
+                                        </div>
+                                    @endif
                                 @endif
+                                <!-- Hidden input to track removed files -->
+                                <input type="hidden" name="removed_permission_plan" id="removed_permission_plan" value="">
                                 @error('permission_plan')
-                                    <span class="text-danger">{{ $message }}</span>
+                                    <span class="text-danger d-block mt-2">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
+
 
                         <!-- Letter of Support -->
                         <div class="form-group">
-                            <label for="sokongan">@lang('app.letter_of_support')</label>
-                            <input type="file" id="letter_of_support" name="letter_of_support" class="file-input"
-                                accept="application/pdf">
-                            <label for="letter_of_support" class="upload-button">@lang('app.choose_file')</label>
-                            <div id="letter_of_supportfileName" class="file-name"></div>
-                            <div class="col-9 text-center">
-                                @if ($application->letter_of_support)
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <small class="text-info">
-                                            <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}" 
-                                            target="_blank">
-                                            <i class="fa fa-file-pdf-o"></i> {{ basename($application->letter_of_support) }}
-                                            </a>
-                                        </small>
-                                        <button type="button" class="btn btn-link text-danger remove-file-btn" 
-                                                data-target="letter_of_support" style="font-size: larger;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        <input type="hidden" name="remove_letter_of_support" id="remove_letter_of_support" value="0">
-                                    </div>
-                                @endif
-                                @error('letter_of_support')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <div class="col-md-4">
+                                <label for="sokongan">@lang('app.letter_of_support')</label>
                             </div>
+                            <div class="col-md-8">
+                                <label for="letter_of_support" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <input type="file" id="letter_of_support" name="letter_of_support[]" class="file-input"
+                                    accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'letter_of_support')">
+                                <div id="letter_of_support_fileList" class="file-list mt-2"></div>
+                                <div id="letter_of_support_error" class="text-danger mt-1"></div>
+                                
+                                <!-- Show existing files with remove option -->
+                                @if ($application->letter_of_support)
+                                    @php
+                                        // Handle both JSON string and array
+                                        if (is_string($application->letter_of_support)) {
+                                            $letterOfSupportFiles = json_decode($application->letter_of_support, true);
+                                        } else {
+                                            $letterOfSupportFiles = $application->letter_of_support;
+                                        }
+                                    @endphp
+                                    @if (is_array($letterOfSupportFiles) && count($letterOfSupportFiles) > 0)
+                                        <div class="mt-3">
+                                            <small class="text-info"><strong>Current files:</strong></small>
+                                            <div id="existing_letter_of_support_files" style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                                @foreach ($letterOfSupportFiles as $index => $filePath)
+                                                    <div class="existing-file-item" data-field="letter_of_support" data-index="{{ $index }}" style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
+                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px; flex-shrink: 0;"></i>
+                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            {{ basename($filePath) }}
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
+                                                            <i class="fa fa-times"></i> Buang
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <small id="letter_of_support_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($letterOfSupportFiles) }}</span> file(s)
+                                            </small>
+                                        </div>
+                                    @endif
+                                @endif
+                                <!-- Hidden input to track removed files -->
+                                <input type="hidden" name="removed_letter_of_support" id="removed_letter_of_support" value="">
+                                @error('letter_of_support')
+                                    <span class="text-danger d-block mt-2">{{ $message }}</span>
+                                @enderror
+                            </div>    
                         </div>
-
                         <p class="note">
                             * @lang('app.files_only_pdf_format_size_not_exceed_15mb')
                         </p>
@@ -725,7 +794,7 @@
                 squareMetersInput.addEventListener("input", function() {
                     validateInput(this);
                     convertToHectare();
-                    updateAllValues(); // Update calculations when square meters changes
+                    updateAllValues(); 
                 });
             }
 
@@ -762,43 +831,173 @@
                     fileInput.addEventListener('change', function() {
                         const fileName = this.files[0] ? this.files[0].name : '';
                         fileNameDisplay.textContent = fileName ? `${fileName}` : '';
-
-                        // Optional: Log file details for debugging
-                        if (this.files[0]) {
-                            console.log(`${input} file selected:`, {
-                                name: this.files[0].name,
-                                type: this.files[0].type,
-                                size: this.files[0].size
-                            });
-                        }
                     });
                 }
             });
         });
     </script>
     <script>
+        // Store files for each input
+        let fileStorage = {};
+
+        // Main function to handle multiple files
+        function handleMultipleFiles(input, fieldName) {
+            const newFiles = Array.from(input.files);
+            const maxSize = 15 * 1024 * 1024; // 15MB
+            const errorDiv = document.getElementById(fieldName + '_error');
+            const fileListDiv = document.getElementById(fieldName + '_fileList');
+            
+            // Clear previous errors
+            if (errorDiv) {
+                errorDiv.innerHTML = '';
+            }
+            
+            // Validate each NEW file
+            let hasError = false;
+            let errorMessages = [];
+            
+            newFiles.forEach((file, index) => {
+                // Check file type
+                if (file.type !== 'application/pdf') {
+                    errorMessages.push(`${file.name}: Hanya fail PDF dibenarkan`);
+                    hasError = true;
+                }
+                
+                // Check file size
+                if (file.size > maxSize) {
+                    errorMessages.push(`${file.name}: Saiz fail melebihi 15MB`);
+                    hasError = true;
+                }
+            });
+            
+            if (hasError) {
+                if (errorDiv) {
+                    errorDiv.innerHTML = errorMessages.join('<br>');
+                }
+                input.value = ''; // Clear the input
+                if (fileListDiv) {
+                    fileListDiv.innerHTML = '';
+                }
+                fileStorage[fieldName] = [];
+                return false;
+            }
+            
+            // MERGE: Add new files to existing files
+            const existingFiles = fileStorage[fieldName] || [];
+            const allFiles = [...existingFiles, ...newFiles];
+            
+            // Store merged files
+            fileStorage[fieldName] = allFiles;
+            
+            // Update the file input with all files
+            const dt = new DataTransfer();
+            allFiles.forEach(file => {
+                dt.items.add(file);
+            });
+            input.files = dt.files;
+            
+            // Display all files
+            displayFileList(fieldName, allFiles);
+            
+            return true;
+        }
+
+        function displayFileList(fieldName, files) {
+            const fileListDiv = document.getElementById(fieldName + '_fileList');
+            
+            if (!fileListDiv) return;
+            
+            // Clear previous content
+            fileListDiv.innerHTML = '';
+            
+            if (files.length === 0) {
+                return;
+            }
+            
+            // Create container for file list
+            const container = document.createElement('div');
+            container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+            
+            // Add each file
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
+                
+                // File info
+                const fileInfo = document.createElement('span');
+                fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
+                fileInfo.innerHTML = `<i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
+                
+                // Remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-sm btn-danger';
+                removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
+                removeBtn.innerHTML = '<i class="fa fa-times"></i> Buang';
+                removeBtn.onclick = function(e) {
+                    e.preventDefault();
+                    removeFile(fieldName, index);
+                };
+                
+                fileItem.appendChild(fileInfo);
+                fileItem.appendChild(removeBtn);
+                container.appendChild(fileItem);
+            });
+            
+            // Add count summary
+            const summary = document.createElement('div');
+            summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
+            summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
+            container.appendChild(summary);
+            
+            fileListDiv.appendChild(container);
+        }
+
+        function removeFile(fieldName, index) {
+            // Remove file from storage
+            if (fileStorage[fieldName]) {
+                fileStorage[fieldName].splice(index, 1);
+                
+                // Update the file input
+                const input = document.getElementById(fieldName);
+                const dt = new DataTransfer();
+                
+                fileStorage[fieldName].forEach(file => {
+                    dt.items.add(file);
+                });
+                
+                input.files = dt.files;
+                
+                // Update display
+                displayFileList(fieldName, fileStorage[fieldName]);
+                
+                // If no files left, clear validation error if exists
+                if (fileStorage[fieldName].length === 0) {
+                    const errorDiv = document.getElementById(fieldName + '_error');
+                    if (errorDiv) errorDiv.innerHTML = '';
+                }
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // File size validation constants
-            const maxFileSize = 15 * 1024 * 1024; // 15MB in bytes
+            const maxFileSize = 15 * 1024 * 1024; 
             const allowedTypes = ['application/pdf'];
             
-            // Track file validation status
             let fileValidationStatus = {
                 land_grant: true,
                 permission_plan: true,
                 letter_of_support: true
             };
             
-            // Function to format file size
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-            
-            // Function to validate file
             function validateFile(file, fieldName) {
                 const errors = [];
                 
@@ -815,7 +1014,7 @@
                 return errors;
             }
             
-            // Function to show file error
+    
             function showFileError(inputElement, message) {
                 const errorId = inputElement.id + '-file-error';
                 
@@ -832,18 +1031,11 @@
                 // Add error styling to input
                 inputElement.classList.add('is-invalid');
                 
-                // Clear file input
-                inputElement.value = '';
-                const fileNameDisplay = document.getElementById(inputElement.id.replace('_', '_') + 'fileName');
-                if (fileNameDisplay) {
-                    fileNameDisplay.textContent = '';
-                }
-                
                 // Update validation status
                 fileValidationStatus[inputElement.id] = false;
             }
             
-            // Function to clear file error
+
             function clearFileError(inputElement) {
                 const errorId = inputElement.id + '-file-error';
                 document.getElementById(errorId)?.remove();
@@ -858,7 +1050,6 @@
                 return Object.values(fileValidationStatus).every(status => status === true);
             }
         
-            // Function to validate files on form submission
             function validateFilesOnSubmit() {
                 const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support'];
                 let allValid = true;
@@ -866,17 +1057,17 @@
                 fileInputs.forEach(inputId => {
                     const fileInput = document.getElementById(inputId);
                     if (fileInput && fileInput.files.length > 0) {
-                        const file = fileInput.files[0];
-                        const errors = validateFile(file, inputId);
-                        
-                        if (errors.length > 0) {
-                            showFileError(fileInput, errors.join(' '));
-                            allValid = false;
-                        } else {
-                            clearFileError(fileInput);
-                        }
+                        Array.from(fileInput.files).forEach(file => {
+                            const errors = validateFile(file, inputId);
+                            
+                            if (errors.length > 0) {
+                                showFileError(fileInput, errors.join(' '));
+                                allValid = false;
+                            } else {
+                                clearFileError(fileInput);
+                            }
+                        });
                     } else {
-                        // No file selected, clear any existing errors
                         if (fileInput) {
                             clearFileError(fileInput);
                         }
@@ -885,61 +1076,6 @@
                 
                 return allValid;
             }
-        
-            const fileInputs = [{
-                    input: 'land_grant',
-                    display: 'land_grantfileName'
-                },
-                {
-                    input: 'permission_plan',
-                    display: 'permission_planfileName'
-                },
-                {
-                    input: 'letter_of_support',
-                    display: 'letter_of_supportfileName'
-                }
-            ];
-        
-            fileInputs.forEach(({input, display}) => {
-                const fileInput = document.getElementById(input);
-                const fileNameDisplay = document.getElementById(display);
-        
-                if (fileInput && fileNameDisplay) {
-                    fileInput.addEventListener('change', function() {
-                        const file = this.files[0];
-                        
-                        if (file) {
-                            // Validate file
-                            const errors = validateFile(file, input);
-                            
-                            if (errors.length > 0) {
-                                showFileError(this, errors.join(' '));
-                                return;
-                            }
-                            
-                            // Clear any previous errors
-                            clearFileError(this);
-                            
-                            // Display file name with size
-                            const fileName = `${file.name} (${formatFileSize(file.size)})`;
-                            fileNameDisplay.textContent = fileName;
-                            
-                            // Optional: Log file details for debugging
-                            console.log(`${input} file selected:`, {
-                                name: file.name,
-                                type: file.type,
-                                size: file.size,
-                                sizeFormatted: formatFileSize(file.size)
-                            });
-                        } else {
-                            fileNameDisplay.textContent = '';
-                            clearFileError(this);
-                        }
-                    });
-                }
-            });
-        
-            // Add global validation function for form submission
             window.validateFileSize = function() {
                 return validateFilesOnSubmit() && areAllFilesValid();
             };
@@ -948,8 +1084,8 @@
     <script>
         function confirmNavigation(url) {
             Swal.fire({
-                title: "@lang('app.are_you_sure')", // Localization string
-                text: "@lang('app.you_want_to_generate_letter')", // Custom message
+                title: "@lang('app.are_you_sure')", 
+                text: "@lang('app.you_want_to_generate_letter')", 
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -1039,559 +1175,611 @@
     </script>
     <script>
        $(document).ready(function() {
-        let formIsReady = true;
+            let formIsReady = true;
 
-        // Get application type from backend - THIS IS THE KEY FIX
-        const applicationType = '{{ $application->applicant_type }}';
+            // Get application type from backend - THIS IS THE KEY FIX
+            const applicationType = '{{ $application->applicant_type }}';
 
-        // Function to get current application type
-        function getApplicationType() {
-            return applicationType;
-        }
+            // Function to get current application type
+            function getApplicationType() {
+                return applicationType;
+            }
 
-        // Function to update ID card field requirement based on account type
-        function updateIdCardRequirement() {
-            const appType = getApplicationType();
-            const ssmField = $('#ssm');
-            const ssmLabel = $('label[for="ssm"]');
-            
-            if (appType == '3') {
-                // Remove required validation for account type 3
-                ssmField.removeClass('is-invalid');
-                ssmField.next('.invalid-feedback').remove();
-                $('#ssm-error').remove();
+            // Function to update ID card field requirement based on account type
+            function updateIdCardRequirement() {
+                const appType = getApplicationType();
+                const ssmField = $('#ssm');
+                const ssmLabel = $('label[for="ssm"]');
                 
-                // Remove red asterisk
-                ssmLabel.find('.starr').remove();
-            } else {
-                // Add red asterisk for other account types
-                if (!ssmLabel.find('.starr').length) {
-                    ssmLabel.append(' <b class="starr">*</b>');
+                if (appType == '3') {
+                    // Remove required validation for account type 3
+                    ssmField.removeClass('is-invalid');
+                    ssmField.next('.invalid-feedback').remove();
+                    $('#ssm-error').remove();
+                    
+                    // Remove red asterisk
+                    ssmLabel.find('.starr').remove();
+                } else {
+                    // Add red asterisk for other account types
+                    if (!ssmLabel.find('.starr').length) {
+                        ssmLabel.append(' <b class="starr">*</b>');
+                    }
                 }
             }
-        }
 
-        // Initial check on page load
-        updateIdCardRequirement();
+            // Initial check on page load
+            updateIdCardRequirement();
 
-        // Function to check if form is valid
-        function checkFormAndToggleButton() {
-            let formIsValid = true;
-            const appType = getApplicationType();
+            // Function to check if form is valid
+            function checkFormAndToggleButton() {
+                let formIsValid = true;
+                const appType = getApplicationType();
 
-            // Build required fields list based on account type
-            let requiredFields = [
-                'pemohon', 'alamat', 'poskod',
-                'bandar', 'negeri', 'daerah', 'emel', 'telefon',
-                'lot-tanah', 'keluasan', 'land_district', 'mukim', 'project_name'
-            ];
+                // Build required fields list based on account type
+                let requiredFields = [
+                    'pemohon', 'alamat', 'poskod',
+                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                    'lot-tanah', 'keluasan', 'land_district', 'mukim', 'project_name'
+                ];
 
-            // Only add ssm if NOT account type 3
-            if (appType != '3') {
-                requiredFields.push('ssm');
-            }
+                // Only add ssm if NOT account type 3
+                if (appType != '3') {
+                    requiredFields.push('ssm');
+                }
 
-            // Check each required field
-            requiredFields.forEach(field => {
-                const element = $('#' + field);
-                if (element.length) {
-                    let value = element.val();
+                // Check each required field
+                requiredFields.forEach(field => {
+                    const element = $('#' + field);
+                    if (element.length) {
+                        let value = element.val();
 
-                    // Skip validation for fields that are read-only or disabled
-                    if (element.prop('readonly') || element.prop('disabled')) {
-                        return;
+                        // Skip validation for fields that are read-only or disabled
+                        if (element.prop('readonly') || element.prop('disabled')) {
+                            return;
+                        }
+
+                        if (!value || value.trim() === '') {
+                            formIsValid = false;
+                        }
                     }
+                });
 
-                    if (!value || value.trim() === '') {
+                // Check email validation
+                const emailElement = $('#emel');
+                if (emailElement.length && emailElement.val().trim() !== '') {
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(emailElement.val())) {
                         formIsValid = false;
                     }
                 }
-            });
 
-            // Check email validation
-            const emailElement = $('#emel');
-            if (emailElement.length && emailElement.val().trim() !== '') {
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(emailElement.val())) {
-                    formIsValid = false;
+                // Check postal code validation
+                const postalElement = $('#poskod');
+                if (postalElement.length && postalElement.val().trim() !== '') {
+                    const postalPattern = /^[0-9]+$/;
+                    if (!postalPattern.test(postalElement.val())) {
+                        formIsValid = false;
+                    }
+                }
+
+                // Check phone validation
+                const phoneElement = $('#telefon');
+                if (phoneElement.length && phoneElement.val().trim() !== '') {
+                    const phonePattern = /^[0-9]+$/;
+                    if (!phonePattern.test(phoneElement.val())) {
+                        formIsValid = false;
+                    }
+                }
+                
+                const landGrantInput = $('#land_grant');
+                if (landGrantInput.length) {
+                    const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
+                    if (!hasExistingFile && landGrantInput[0].files.length === 0) {
+                        formIsValid = false;
+                    }
+                }
+
+                // Enable or disable the Generate Letter button based on form validity
+                if (formIsValid) {
+                    $('#generateLetterButton').removeClass('disabled').attr('onclick',
+                        "confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
+                    );
+                } else {
+                    $('#generateLetterButton').addClass('disabled').attr('onclick', 'return false;');
                 }
             }
 
-            // Check postal code validation
-            const postalElement = $('#poskod');
-            if (postalElement.length && postalElement.val().trim() !== '') {
-                const postalPattern = /^[0-9]+$/;
-                if (!postalPattern.test(postalElement.val())) {
-                    formIsValid = false;
+            // Validate form function
+            function validateForm() {
+                let isValid = true;
+                let firstInvalidField = null;
+                const appType = getApplicationType();
+
+                // Build required fields based on account type
+                const requiredFields = [];
+                
+                const allFields = [
+                    { id: 'pemohon', name: 'Applicant' },
+                    { id: 'alamat', name: 'Address' },
+                    { id: 'poskod', name: 'Postal Code' },
+                    { id: 'bandar', name: 'City' },
+                    { id: 'negeri', name: 'State' },
+                    { id: 'daerah', name: 'District' },
+                    { id: 'emel', name: 'Email' },
+                    { id: 'telefon', name: 'Telephone' },
+                    { id: 'lot-tanah', name: 'Land Lot' },
+                    { id: 'keluasan', name: 'Land Area' },
+                    { id: 'land_district', name: 'Land District' },
+                    { id: 'mukim', name: 'Mukim' }
+                ];
+
+                // Add ssm only if NOT account type 3
+                if (appType != '3') {
+                    requiredFields.push({ id: 'ssm', name: 'Identification Card No' });
                 }
-            }
 
-            // Check phone validation
-            const phoneElement = $('#telefon');
-            if (phoneElement.length && phoneElement.val().trim() !== '') {
-                const phonePattern = /^[0-9]+$/;
-                if (!phonePattern.test(phoneElement.val())) {
-                    formIsValid = false;
+                // Add all other fields
+                requiredFields.push(...allFields);
+
+                // Check each required field
+                requiredFields.forEach(field => {
+                    const element = $('#' + field.id);
+                    if (element.length) {
+                        let value = element.val();
+
+                        // Skip validation for fields that are read-only or disabled
+                        if (element.prop('readonly') || element.prop('disabled')) {
+                            return;
+                        }
+
+                        if (!value || value.trim() === '') {
+                            isValid = false;
+
+                            // Add error class and message
+                            element.addClass('is-invalid');
+
+                            // Create error message if it doesn't exist
+                            let errorId = field.id + '-error';
+                            if ($('#' + errorId).length === 0) {
+                                element.after('<div id="' + errorId +
+                                    '" class="text-danger">This field is required</div>');
+                            } else {
+                                $('#' + errorId).text('This field is required').show();
+                            }
+
+                            // Store first invalid field for scrolling
+                            if (!firstInvalidField) {
+                                firstInvalidField = element;
+                            }
+                        } else {
+                            // Remove error class and hide message
+                            element.removeClass('is-invalid');
+                            $('#' + field.id + '-error').hide();
+                        }
+                    }
+                });
+
+                // Validate email format if provided
+                const emailElement = $('#emel');
+                if (emailElement.length && emailElement.val().trim() !== '') {
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(emailElement.val())) {
+                        isValid = false;
+                        emailElement.addClass('is-invalid');
+
+                        if ($('#emel-error').length === 0) {
+                            emailElement.after(
+                                '<div id="emel-error" class="text-danger">Please enter a valid email address</div>'
+                            );
+                        } else {
+                            $('#emel-error').text('Please enter a valid email address').show();
+                        }
+
+                        if (!firstInvalidField) {
+                            firstInvalidField = emailElement;
+                        }
+                    }
                 }
-            }
 
-            // Check land grant file validation
-            const landGrantInput = $('#land_grant');
-            if (landGrantInput.length) {
-                const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
-                if (!hasExistingFile && landGrantInput[0].files.length === 0) {
-                    formIsValid = false;
+                // Validate postal code format if provided (numeric only)
+                const postalElement = $('#poskod');
+                if (postalElement.length && postalElement.val().trim() !== '') {
+                    const postalPattern = /^[0-9]+$/;
+                    if (!postalPattern.test(postalElement.val())) {
+                        isValid = false;
+                        postalElement.addClass('is-invalid');
+
+                        if ($('#poskod-error').length === 0) {
+                            postalElement.after(
+                                '<div id="poskod-error" class="text-danger">Postal code must contain only numbers</div>'
+                            );
+                        } else {
+                            $('#poskod-error').text('Postal code must contain only numbers').show();
+                        }
+
+                        if (!firstInvalidField) {
+                            firstInvalidField = postalElement;
+                        }
+                    }
                 }
+
+                // Validate phone number format if provided (numeric only)
+                const phoneElement = $('#telefon');
+                if (phoneElement.length && phoneElement.val().trim() !== '') {
+                    const phonePattern = /^[0-9]+$/;
+                    if (!phonePattern.test(phoneElement.val())) {
+                        isValid = false;
+                        phoneElement.addClass('is-invalid');
+
+                        if ($('#telefon-error').length === 0) {
+                            phoneElement.after(
+                                '<div id="telefon-error" class="text-danger">Phone number must contain only numbers</div>'
+                            );
+                        } else {
+                            $('#telefon-error').text('Phone number must contain only numbers').show();
+                        }
+
+                        if (!firstInvalidField) {
+                            firstInvalidField = phoneElement;
+                        }
+                    }
+                }
+
+                // Check land grant file only if there is no existing file
+                const landGrantInput = $('#land_grant');
+                if (landGrantInput.length) {
+                    const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
+
+                    if (!hasExistingFile && landGrantInput[0].files.length === 0) {
+                        isValid = false;
+
+                        if ($('#land_grant-error').length === 0) {
+                            landGrantInput.closest('.form-group').append(
+                                '<div id="land_grant-error" class="text-danger">Land grant document is required</div>'
+                            );
+                        } else {
+                            $('#land_grant-error').text('Land grant document is required').show();
+                        }
+
+                        if (!firstInvalidField) {
+                            firstInvalidField = landGrantInput;
+                        }
+                    } else {
+                        $('#land_grant-error').hide();
+                    }
+                }
+
+                // Scroll to the first invalid field if validation fails
+                if (firstInvalidField) {
+                    $('html, body').animate({
+                        scrollTop: firstInvalidField.offset().top - 100
+                    }, 500);
+                }
+
+                return isValid;
             }
 
-            // Enable or disable the Generate Letter button based on form validity
-            if (formIsValid) {
-                $('#generateLetterButton').removeClass('disabled').attr('onclick',
-                    "confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
-                );
-            } else {
-                $('#generateLetterButton').addClass('disabled').attr('onclick', 'return false;');
-            }
-        }
+            // Run the check when page loads
+            checkFormAndToggleButton();
 
-        // Validate form function
-        function validateForm() {
-            let isValid = true;
-            let firstInvalidField = null;
-            const appType = getApplicationType();
-
-            // Build required fields based on account type
-            const requiredFields = [];
-            
-            const allFields = [
-                { id: 'pemohon', name: 'Applicant' },
-                { id: 'alamat', name: 'Address' },
-                { id: 'poskod', name: 'Postal Code' },
-                { id: 'bandar', name: 'City' },
-                { id: 'negeri', name: 'State' },
-                { id: 'daerah', name: 'District' },
-                { id: 'emel', name: 'Email' },
-                { id: 'telefon', name: 'Telephone' },
-                { id: 'lot-tanah', name: 'Land Lot' },
-                { id: 'keluasan', name: 'Land Area' },
-                { id: 'land_district', name: 'Land District' },
-                { id: 'mukim', name: 'Mukim' }
-            ];
-
-            // Add ssm only if NOT account type 3
-            if (appType != '3') {
-                requiredFields.push({ id: 'ssm', name: 'Identification Card No' });
-            }
-
-            // Add all other fields
-            requiredFields.push(...allFields);
-
-            // Check each required field
-            requiredFields.forEach(field => {
-                const element = $('#' + field.id);
-                if (element.length) {
-                    let value = element.val();
-
-                    // Skip validation for fields that are read-only or disabled
-                    if (element.prop('readonly') || element.prop('disabled')) {
+            // Add input validation on blur for all required fields
+            $('.form-control').on('blur', function() {
+                const id = $(this).attr('id');
+                const appType = getApplicationType();
+                
+                if (id) {
+                    // Skip validation for land_grant field
+                    if (id === 'land_grant') {
                         return;
                     }
 
-                    if (!value || value.trim() === '') {
-                        isValid = false;
+                    // Skip ssm validation if account type is 3
+                    if (id === 'ssm' && appType == '3') {
+                        return;
+                    }
 
-                        // Add error class and message
-                        element.addClass('is-invalid');
+                    const value = $(this).val();
+                    if (!value || value.trim() === '') {
+                        $(this).addClass('is-invalid');
 
                         // Create error message if it doesn't exist
-                        let errorId = field.id + '-error';
-                        if ($('#' + errorId).length === 0) {
-                            element.after('<div id="' + errorId +
-                                '" class="text-danger">This field is required</div>');
+                        if ($('#' + id + '-error').length === 0) {
+                            $(this).after('<div id="' + id +
+                                '-error" class="text-danger">This field is required</div>');
                         } else {
-                            $('#' + errorId).text('This field is required').show();
-                        }
-
-                        // Store first invalid field for scrolling
-                        if (!firstInvalidField) {
-                            firstInvalidField = element;
+                            $('#' + id + '-error').text('This field is required').show();
                         }
                     } else {
-                        // Remove error class and hide message
-                        element.removeClass('is-invalid');
-                        $('#' + field.id + '-error').hide();
+                        $(this).removeClass('is-invalid');
+                        $('#' + id + '-error').hide();
                     }
                 }
+                checkFormAndToggleButton();
             });
 
-            // Validate email format if provided
-            const emailElement = $('#emel');
-            if (emailElement.length && emailElement.val().trim() !== '') {
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(emailElement.val())) {
-                    isValid = false;
-                    emailElement.addClass('is-invalid');
+            $('.form-control').on('input', function() {
+                $(this).removeClass('is-invalid');
+                $('#' + $(this).attr('id') + '-error').hide();
+                checkFormAndToggleButton();
+            });
 
-                    if ($('#emel-error').length === 0) {
-                        emailElement.after(
-                            '<div id="emel-error" class="text-danger">Please enter a valid email address</div>'
-                        );
-                    } else {
-                        $('#emel-error').text('Please enter a valid email address').show();
-                    }
+            $('select').on('change', function() {
+                checkFormAndToggleButton();
+            });
 
-                    if (!firstInvalidField) {
-                        firstInvalidField = emailElement;
-                    }
-                }
-            }
+    
+            $('#negeri').on('change', function() {
+                const stateId = $(this).val();
+                $('#daerah').html('<option value="">Loading...</option>');
 
-            // Validate postal code format if provided (numeric only)
-            const postalElement = $('#poskod');
-            if (postalElement.length && postalElement.val().trim() !== '') {
-                const postalPattern = /^[0-9]+$/;
-                if (!postalPattern.test(postalElement.val())) {
-                    isValid = false;
-                    postalElement.addClass('is-invalid');
-
-                    if ($('#poskod-error').length === 0) {
-                        postalElement.after(
-                            '<div id="poskod-error" class="text-danger">Postal code must contain only numbers</div>'
-                        );
-                    } else {
-                        $('#poskod-error').text('Postal code must contain only numbers').show();
-                    }
-
-                    if (!firstInvalidField) {
-                        firstInvalidField = postalElement;
-                    }
-                }
-            }
-
-            // Validate phone number format if provided (numeric only)
-            const phoneElement = $('#telefon');
-            if (phoneElement.length && phoneElement.val().trim() !== '') {
-                const phonePattern = /^[0-9]+$/;
-                if (!phonePattern.test(phoneElement.val())) {
-                    isValid = false;
-                    phoneElement.addClass('is-invalid');
-
-                    if ($('#telefon-error').length === 0) {
-                        phoneElement.after(
-                            '<div id="telefon-error" class="text-danger">Phone number must contain only numbers</div>'
-                        );
-                    } else {
-                        $('#telefon-error').text('Phone number must contain only numbers').show();
-                    }
-
-                    if (!firstInvalidField) {
-                        firstInvalidField = phoneElement;
-                    }
-                }
-            }
-
-            // Check land grant file only if there is no existing file
-            const landGrantInput = $('#land_grant');
-            if (landGrantInput.length) {
-                const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
-
-                if (!hasExistingFile && landGrantInput[0].files.length === 0) {
-                    isValid = false;
-
-                    if ($('#land_grant-error').length === 0) {
-                        landGrantInput.closest('.form-group').append(
-                            '<div id="land_grant-error" class="text-danger">Land grant document is required</div>'
-                        );
-                    } else {
-                        $('#land_grant-error').text('Land grant document is required').show();
-                    }
-
-                    if (!firstInvalidField) {
-                        firstInvalidField = landGrantInput;
-                    }
-                } else {
-                    $('#land_grant-error').hide();
-                }
-            }
-
-            // Scroll to the first invalid field if validation fails
-            if (firstInvalidField) {
-                $('html, body').animate({
-                    scrollTop: firstInvalidField.offset().top - 100
-                }, 500);
-            }
-
-            return isValid;
-        }
-
-        // Run the check when page loads
-        checkFormAndToggleButton();
-
-        // Add input validation on blur for all required fields
-        $('.form-control').on('blur', function() {
-            const id = $(this).attr('id');
-            const appType = getApplicationType();
-            
-            if (id) {
-                // Skip validation for land_grant field
-                if (id === 'land_grant') {
-                    return;
-                }
-
-                // Skip ssm validation if account type is 3
-                if (id === 'ssm' && appType == '3') {
-                    return;
-                }
-
-                const value = $(this).val();
-                if (!value || value.trim() === '') {
-                    $(this).addClass('is-invalid');
-
-                    // Create error message if it doesn't exist
-                    if ($('#' + id + '-error').length === 0) {
-                        $(this).after('<div id="' + id +
-                            '-error" class="text-danger">This field is required</div>');
-                    } else {
-                        $('#' + id + '-error').text('This field is required').show();
-                    }
-                } else {
-                    $(this).removeClass('is-invalid');
-                    $('#' + id + '-error').hide();
-                }
-            }
-            checkFormAndToggleButton();
-        });
-
-        $('.form-control').on('input', function() {
-            $(this).removeClass('is-invalid');
-            $('#' + $(this).attr('id') + '-error').hide();
-            checkFormAndToggleButton();
-        });
-
-        $('select').on('change', function() {
-            checkFormAndToggleButton();
-        });
-
-    // Handle State Change for Districts
-    $('#negeri').on('change', function() {
-        const stateId = $(this).val();
-        $('#daerah').html('<option value="">Loading...</option>');
-
-        if (stateId) {
-            $.ajax({
-                url: `/districts/${stateId}`,
-                type: 'GET',
-                success: function(data) {
-                    let options = '<option value="">Sila Pilih Daerah</option>';
-                    data.forEach(district => {
-                        options +=
-                            `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
+                if (stateId) {
+                    $.ajax({
+                        url: `/districts/${stateId}`,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Sila Pilih Daerah</option>';
+                            data.forEach(district => {
+                                options +=
+                                    `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
+                            });
+                            $('#daerah').html(options);
+                            checkFormAndToggleButton();
+                        },
+                        error: function() {
+                            $('#daerah').html(
+                                '<option value="">Error loading districts</option>');
+                            checkFormAndToggleButton();
+                        }
                     });
-                    $('#daerah').html(options);
-                    checkFormAndToggleButton();
-                },
-                error: function() {
-                    $('#daerah').html(
-                        '<option value="">Error loading districts</option>');
+                } else {
+                    $('#daerah').html('<option value="">Sila Pilih Daerah</option>');
                     checkFormAndToggleButton();
                 }
             });
-        } else {
-            $('#daerah').html('<option value="">Sila Pilih Daerah</option>');
-            checkFormAndToggleButton();
-        }
-    });
 
-    $('#land_district').on('change', function() {
-        const districtId = $(this).val();
-        $('#mukim').html('<option value="">Loading...</option>');
+            $('#land_district').on('change', function() {
+                const districtId = $(this).val();
+                $('#mukim').html('<option value="">Loading...</option>');
 
-        if (districtId) {
-            $.ajax({
-                url: `/division/${districtId}`,
-                type: 'GET',
-                success: function(data) {
-                    let options = '<option value="">Sila Pilih</option>';
-                    data.forEach(mukin => {
-                        options +=
-                            `<option value="${mukin.idmukim}">${mukin.mukim_code} - ${mukin.mukim}</option>`;
+                if (districtId) {
+                    $.ajax({
+                        url: `/division/${districtId}`,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Sila Pilih</option>';
+                            data.forEach(mukin => {
+                                options +=
+                                    `<option value="${mukin.idmukim}">${mukin.mukim_code} - ${mukin.mukim}</option>`;
+                            });
+                            $('#mukim').html(options);
+                            checkFormAndToggleButton();
+                        },
+                        error: function() {
+                            $('#mukim').html('<option value="">Error loading mukim</option>');
+                            checkFormAndToggleButton();
+                        }
                     });
-                    $('#mukim').html(options);
-                    checkFormAndToggleButton();
-                },
-                error: function() {
-                    $('#mukim').html('<option value="">Error loading mukim</option>');
+                } else {
+                    $('#mukim').html('<option value="">Sila Pilih</option>');
                     checkFormAndToggleButton();
                 }
             });
-        } else {
-            $('#mukim').html('<option value="">Sila Pilih</option>');
-            checkFormAndToggleButton();
-        }
-    });
 
-    $('#updatetButton').on('click', function(e) {
-        e.preventDefault();
+            $('#updatetButton').on('click', function(e) {
+                e.preventDefault();
 
-        if (validateForm()) {
-            $('#updateApplicationForm').submit();
-        }
-    });
-
-    $('#updateApplicationForm').on('submit', function(e) {
-        if (!formIsReady) {
-            e.preventDefault();
-            Swal.fire({
-                title: "Error",
-                text: "Please wait for the form to load fully before submitting.",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
-            return;
-        }
-
-        if (!validateForm()) {
-            e.preventDefault();
-            return;
-        }
-
-        e.preventDefault();
-        
-        let formData = new FormData(this);
-        const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support'];
-        
-        let fileSizeValid = true;
-        fileInputs.forEach(inputName => {
-            const fileInput = $(`#${inputName}`)[0];
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                if (file.size > 15 * 1024 * 1024) {
-                    fileSizeValid = false;
-                    return;
+                if (validateForm()) {
+                    $('#updateApplicationForm').submit();
                 }
-                formData.append(inputName, file);
-            }
-        });
-
-        if (!fileSizeValid) {
-            Swal.fire({
-                title: "Error!",
-                text: "One or more files exceed the 15MB size limit. Please choose smaller files.",
-                icon: "error",
-                confirmButtonText: "OK"
             });
-            return;
-        }
 
-        Swal.fire({
-            title: "@lang('app.uploading')",
-            text: "@lang('app.please_wait_while_uploading')",
-            icon: "info",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        $.ajax({
-            url: "{{ route('updateResubmitApplication', $application->id) }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.success) {
+            $('#updateApplicationForm').on('submit', function(e) {
+                if (!formIsReady) {
+                    e.preventDefault();
                     Swal.fire({
-                        title: "@lang('app.success')",
-                        text: response.message || "@lang('app.application_has_been_updated')",
-                        icon: "success",
+                        title: "Error",
+                        text: "Please wait for the form to load fully before submitting.",
+                        icon: "error",
                         confirmButtonText: "OK"
-                    }).then(() => {
-                        window.location.href = "{{ route('client_application_status') }}";
                     });
-                } else {
+                    return;
+                }
+
+                if (!validateForm()) {
+                    e.preventDefault();
+                    return;
+                }
+
+                e.preventDefault();
+                
+                let formData = new FormData(this);
+                const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support'];
+                
+                let fileSizeValid = true;
+                fileInputs.forEach(inputName => {
+                    const fileInput = $(`#${inputName}`)[0];
+                    if (fileInput.files.length > 0) {
+                        // Check all files
+                        Array.from(fileInput.files).forEach(file => {
+                            if (file.size > 15 * 1024 * 1024) {
+                                fileSizeValid = false;
+                                return;
+                            }
+                        });
+                        // Append all files - Laravel will receive them as array
+                        // No need to manually append, FormData will handle the array
+                    }
+                });
+                if (!fileSizeValid) {
                     Swal.fire({
                         title: "Error!",
-                        text: response.message || "@lang('app.unexpected_error_occurred')",
+                        text: "One or more files exceed the 15MB size limit. Please choose smaller files.",
                         icon: "error",
                         confirmButtonText: "OK"
                     });
+                    return;
                 }
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    Swal.fire({
-                        title: "@lang('app.validation_error')",
-                        text: "@lang('app.please_fill_up')",
-                        icon: "error",
-                        confirmButtonText: "OK"
-                    });
 
-                    $.each(errors, function(key, value) {
-                        $("#" + key + "-error").text(value[0]);
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "@lang('app.unexpected_error_occurred')",
-                        icon: "error",
-                        confirmButtonText: "OK"
-                    });
+                Swal.fire({
+                    title: "@lang('app.uploading')",
+                    text: "@lang('app.please_wait_while_uploading')",
+                    icon: "info",
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ route('updateResubmitApplication', $application->id) }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "@lang('app.success')",
+                                text: response.message || "@lang('app.application_has_been_updated')",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                window.location.href = "{{ route('client_application_status') }}";
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: response.message || "@lang('app.unexpected_error_occurred')",
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            Swal.fire({
+                                title: "@lang('app.validation_error')",
+                                text: "@lang('app.please_fill_up')",
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+
+                            $.each(errors, function(key, value) {
+                                $("#" + key + "-error").text(value[0]);
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: "@lang('app.unexpected_error_occurred')",
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Add asterisks to required fields
+            setTimeout(function() {
+                const appType = getApplicationType();
+                
+                let requiredFields = [
+                    'pemohon', 'alamat', 'poskod',
+                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                    'lot-tanah', 'keluasan', 'land_district', 'mukim'
+                ];
+
+                // Only add ssm if NOT account type 3
+                if (appType != '3') {
+                    requiredFields.push('ssm');
                 }
-            }
+
+                requiredFields.forEach(field => {
+                    const label = $(`label[for="${field}"]`);
+                    if (label.length && !label.find('.starr').length) {
+                        label.append(' <b class="starr">*</b>');
+                    }
+                });
+
+                // If account type is 3, ensure ssm doesn't have asterisk
+                if (appType == '3') {
+                    $('label[for="ssm"]').find('.starr').remove();
+                }
+
+                const landGrantInput = $('#land_grant');
+                if (landGrantInput.length) {
+                    const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
+                    if (hasExistingFile) {
+                        $('label[for="land_grant"]').find('.starr').remove();
+                    }
+                }
+                
+                checkFormAndToggleButton();
+            }, 500);
         });
-    });
-
-    // Add asterisks to required fields
-    setTimeout(function() {
-        const appType = getApplicationType();
-        
-        let requiredFields = [
-            'pemohon', 'alamat', 'poskod',
-            'bandar', 'negeri', 'daerah', 'emel', 'telefon',
-            'lot-tanah', 'keluasan', 'land_district', 'mukim'
-        ];
-
-        // Only add ssm if NOT account type 3
-        if (appType != '3') {
-            requiredFields.push('ssm');
-        }
-
-        requiredFields.forEach(field => {
-            const label = $(`label[for="${field}"]`);
-            if (label.length && !label.find('.starr').length) {
-                label.append(' <b class="starr">*</b>');
-            }
-        });
-
-        // If account type is 3, ensure ssm doesn't have asterisk
-        if (appType == '3') {
-            $('label[for="ssm"]').find('.starr').remove();
-        }
-
-        const landGrantInput = $('#land_grant');
-        if (landGrantInput.length) {
-            const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
-            if (hasExistingFile) {
-                $('label[for="land_grant"]').find('.starr').remove();
-            }
-        }
-        
-        checkFormAndToggleButton();
-    }, 500);
-});
     </script>
     <script>
-$(document).ready(function() {
-    $('.remove-file-btn').click(function() {
-        // Set the hidden input to indicate file should be removed
-        $('#remove_' + $(this).data('target')).val('1');
-        // Remove the file display element
-        $(this).parent().remove();
-    });
-});
-</script>
+        $(document).ready(function() {
+            $('.remove-file-btn').click(function() {
+                $('#remove_' + $(this).data('target')).val('1');
+                $(this).parent().remove();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Handle removing existing files
+            $(document).on('click', '.remove-existing-file', function() {
+                const fileItem = $(this).closest('.existing-file-item');
+                const fieldName = fileItem.data('field');
+                const fileIndex = fileItem.data('index');
+                
+                Swal.fire({
+                    title: 'Adakah anda pasti?',
+                    text: "Fail ini akan dibuang!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, buang!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const removedInput = $(`#removed_${fieldName}`);
+                        let removedFiles = removedInput.val() ? removedInput.val().split(',') : [];
+                        removedFiles.push(fileIndex);
+                        removedInput.val(removedFiles.join(','));
+                        
+                        // Remove the file item from display
+                        fileItem.fadeOut(300, function() {
+                            $(this).remove();
+                            
+                            // Update file count
+                            const container = $(`#existing_${fieldName}_files`);
+                            const remainingCount = container.find('.existing-file-item').length;
+                            $(`#${fieldName}_file_count .file-count`).text(remainingCount);
+                            
+                            // If no files left, hide the entire section
+                            if (remainingCount === 0) {
+                                container.parent().fadeOut();
+                            }
+                        });
+                        
+                        // Show success message
+                        Swal.fire({
+                            title: 'Berjaya!',
+                            text: 'Fail telah dibuang.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
+        });
+    </script>
     
 @endsection

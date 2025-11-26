@@ -508,7 +508,7 @@
                     <h4>@lang('Muat Naik Dokumen Sokongan')</h4>
                     <!-- Resit Bayaran Lama (Old Receipt) -->
                     <div class="form-group">
-                        <label for="geran-tanah">@lang('Resit Bayaran Lama')<b class="starr">*</b></label>
+                        <label for="geran-tanah">@lang('Resit Bayaran Asal')<b class="starr">*</b></label>
                         <div class="offset-area mt-1">
                             @if ($claim->land_grant && is_array($claim->land_grant) && count($claim->land_grant) > 0)
                                 <div style="display: flex; flex-direction: column; gap: 8px;">

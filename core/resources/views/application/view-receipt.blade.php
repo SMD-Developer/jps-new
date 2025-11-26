@@ -358,7 +358,7 @@
                                                             data-reference-no="{{ $item->refference_no }}"
                                                             data-applicant="{{ $item->applicant }}"
                                                             data-amount="{{ $item->final_amount }}"
-                                                            data-current-status="Not Set"
+                                                            data-current-status="Belum Bayar"
                                                             title="{{ trans('app.update_payment') }}">
                                                             <i class="fa fa-edit"></i>
                                                         </button>
@@ -643,7 +643,7 @@
                     const refNo = btn.getAttribute('data-reference-no');
                     const applicant = btn.getAttribute('data-applicant');
                     const amount = btn.getAttribute('data-amount');
-                    const currentStatus = btn.getAttribute('data-current-status') || 'Not Set';
+                    const currentStatus = btn.getAttribute('data-current-status') || 'Belum Bayar';
 
                     document.getElementById('modal-ref-no').textContent = refNo;
                     document.getElementById('modal-applicant').textContent = applicant;

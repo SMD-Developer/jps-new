@@ -346,6 +346,9 @@ a.btn.btn-primary.login-button.btn-sm.form-control.disabled {
     border-radius: 15px;
     border: 2px solid #cecece;
     font-size: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 input.btn.btn-primary.login-button.btn-sm.form-control {
     background: #3649B8;

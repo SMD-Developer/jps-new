@@ -272,7 +272,7 @@ class HomeController extends Controller {
                 "new_receipt.*" => "nullable|mimes:pdf|max:15000",
                 "supporting_docs" => "nullable|array",
                 "supporting_docs.*" => "nullable|mimes:pdf|max:15000",
-                "claim_reason" => "nullable|string|max:1000",
+                "claim_reason" => "required|string|max:1000",
                 "payment_amount" => "required|numeric|min:0",
                 
                 // New file fields (all optional)
@@ -1235,32 +1235,21 @@ class HomeController extends Controller {
 
             // Custom validation messages
             $customMessages = [
-                'land_grant.max' => 'The land grant file size cannot exceed 15MB.',
-                'permission_plan.max' => 'The permission plan file size cannot exceed 15MB.',
-                'letter_of_support.max' => 'The letter of support file size cannot exceed 15MB.',
-                'land_grant.mimes' => 'The land grant file must be a PDF.',
-                'permission_plan.mimes' => 'The permission plan file must be a PDF.',
-                'letter_of_support.mimes' => 'The letter of support file must be a PDF.',
+                'land_grant.*.max' => 'Each land grant file size cannot exceed 15MB.',
+                'permission_plan.*.max' => 'Each permission plan file size cannot exceed 15MB.',
+                'letter_of_support.*.max' => 'Each letter of support file size cannot exceed 15MB.',
+                'land_grant.*.mimes' => 'Each land grant file must be a PDF.',
+                'permission_plan.*.mimes' => 'Each permission plan file must be a PDF.',
+                'letter_of_support.*.mimes' => 'Each letter of support file must be a PDF.',
                 'identities.required' => 'The identification card number is required.',
             ];
 
-            // Check if files are uploaded and add validation rules
+            // Check if files are uploaded and add validation rules for MULTIPLE FILES
             $fileKeys = ['land_grant', 'permission_plan', 'letter_of_support'];
             foreach ($fileKeys as $key) {
                 if ($request->hasFile($key)) {
-                    $file = $request->file($key);
-                    
-                    // Check file size before validation (15MB = 15360KB)
-                    if ($file->getSize() > 15728640) { // 15MB in bytes
-                        return response()->json([
-                            'success' => false,
-                            'message' => "The {$key} file size (" . $this->formatFileSize($file->getSize()) . ") exceeds the maximum limit of 15MB.",
-                            'errors' => [$key => ["File size exceeds 15MB limit"]]
-                        ], 422);
-                    }
-                    
-                    // Add validation rules for the uploaded file
-                    $validationRules[$key] = 'file|mimes:pdf|max:15360'; // 15MB in KB
+                    $validationRules[$key] = 'array';
+                    $validationRules[$key . '.*'] = 'file|mimes:pdf|max:15360'; // 15MB in KB
                 }
             }
 
@@ -1275,51 +1264,95 @@ class HomeController extends Controller {
                 ], 422);
             }
 
-            // Handle file uploads with additional size checking
-            $uploadedFiles = [];
             $uploadPath = public_path('pdf');
             
             // Ensure upload directory exists
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
-        
+
+            // Handle file removals FIRST
+            $fileFields = ['land_grant', 'permission_plan', 'letter_of_support'];
+            $updatedFileArrays = [];
+
+            foreach ($fileFields as $field) {
+                $removedKey = "removed_{$field}";
+                
+                $existingFiles = $application->$field;
+                if ($existingFiles) {
+                    if (is_string($existingFiles)) {
+                        $existingFiles = json_decode($existingFiles, true);
+                    }
+                    
+                    if (!is_array($existingFiles)) {
+                        $existingFiles = [$existingFiles]; 
+                    }
+                } else {
+                    $existingFiles = [];
+                }
+                
+    
+                if ($request->has($removedKey) && $request->$removedKey) {
+                    $indicesToRemove = explode(',', $request->$removedKey);
+                    
+                    foreach ($indicesToRemove as $index) {
+                        if (isset($existingFiles[$index])) {
+                            // Delete physical file
+                            $filePath = public_path($existingFiles[$index]);
+                            if (file_exists($filePath)) {
+                                unlink($filePath);
+                            }
+                            // Mark for removal
+                            unset($existingFiles[$index]);
+                        }
+                    }
+                    
+                    // Reindex array to remove gaps
+                    $existingFiles = array_values($existingFiles);
+                }
+                
+                $updatedFileArrays[$field] = $existingFiles;
+            }
+
+
             foreach ($fileKeys as $fileKey) {
                 if ($request->hasFile($fileKey)) {
-                    $file = $request->file($fileKey);
+                    $files = $request->file($fileKey);
                     
-                    // Double-check file size (extra security)
-                    if ($file->getSize() > 15728640) { // 15MB in bytes
-                        return response()->json([
-                            'success' => false,
-                            'message' => "File {$file->getClientOriginalName()} exceeds the 15MB size limit.",
-                            'errors' => [$fileKey => ["File size exceeds 15MB limit"]]
-                        ], 422);
-                    }
-                    
-                    // Check if file is actually a PDF by checking MIME type
-                    if ($file->getMimeType() !== 'application/pdf') {
-                        return response()->json([
-                            'success' => false,
-                            'message' => "File {$file->getClientOriginalName()} is not a valid PDF file.",
-                            'errors' => [$fileKey => ["File must be a PDF"]]
-                        ], 422);
-                    }
-                    
-                    $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); 
-                    $fileExtension = $file->getClientOriginalExtension(); 
-                    $newFileName = $fileName . '_' . time() . '.' . $fileExtension; // Add timestamp to avoid conflicts
-            
-                    try {
-                        $file->move($uploadPath, $newFileName);
-                        $uploadedFiles[$fileKey] = 'pdf/' . $newFileName;
-                    } catch (\Exception $e) {
-                        \Log::error("File upload failed for {$fileKey}: " . $e->getMessage());
-                        return response()->json([
-                            'success' => false,
-                            'message' => "Failed to upload {$fileKey}. Please try again.",
-                            'errors' => [$fileKey => ["Upload failed"]]
-                        ], 500);
+                    foreach ($files as $file) {
+                        // Check file size
+                        if ($file->getSize() > 15728640) { 
+                            return response()->json([
+                                'success' => false,
+                                'message' => "File {$file->getClientOriginalName()} exceeds the 15MB size limit.",
+                                'errors' => [$fileKey => ["File size exceeds 15MB limit"]]
+                            ], 422);
+                        }
+                        
+                        // Check if file is actually a PDF
+                        if ($file->getMimeType() !== 'application/pdf') {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "File {$file->getClientOriginalName()} is not a valid PDF file.",
+                                'errors' => [$fileKey => ["File must be a PDF"]]
+                            ], 422);
+                        }
+                        
+                        // Generate unique filename
+                        $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                        
+                        try {
+                            $file->move($uploadPath, $fileName);
+                            // Add new file to existing files array
+                            $updatedFileArrays[$fileKey][] = 'pdf/' . $fileName;
+                        } catch (\Exception $e) {
+                            \Log::error("File upload failed for {$fileKey}: " . $e->getMessage());
+                            return response()->json([
+                                'success' => false,
+                                'message' => "Failed to upload {$fileKey}. Please try again.",
+                                'errors' => [$fileKey => ["Upload failed"]]
+                            ], 500);
+                        }
                     }
                 }
             }
@@ -1349,41 +1382,27 @@ class HomeController extends Controller {
 
             // Handle identities field conditionally
             if ($applicantType != 3) {
-                // For non-Agency types, update identities if provided
                 $updateData["identities"] = $request->input('identities', $application->identities);
             } else {
-                // For Agency (type 3), keep existing identities or set to null if empty
                 $updateData["identities"] = $request->input('identities') ?: null;
             }
 
-            // Handle file removal requests
-            $removeFields = ['remove_land_grant', 'remove_permission_plan', 'remove_letter_of_support'];
-            foreach ($removeFields as $removeField) {
-                if ($request->input($removeField) == '1') {
-                    $fileField = str_replace('remove_', '', $removeField);
-                    $updateData[$fileField] = null;
-                    
-                    // Optionally delete the old file from disk
-                    $oldFilePath = public_path($application->{$fileField});
-                    if (file_exists($oldFilePath)) {
-                        unlink($oldFilePath);
-                    }
+            // Add updated file arrays as JSON to update data
+            foreach ($fileFields as $field) {
+                if (!empty($updatedFileArrays[$field])) {
+                    $updateData[$field] = json_encode($updatedFileArrays[$field]);
+                } else {
+                    // If no files remain, set to null or keep existing
+                    $updateData[$field] = null;
                 }
             }
-
-            // Merge uploaded files data
-            if (!empty($uploadedFiles)) {
-                $updateData = array_merge($updateData, $uploadedFiles);
-            }
-
-            \Log::info("Update data:", $updateData);
         
             DB::beginTransaction();
             
             try {
                 DB::table('applications')->where('id', $id)->update($updateData);
                 
-                // Log the resubmission
+
                 DB::table('application_logs')->insert([
                     'application_id' => $id,
                     'user_type' => 'applicant', 
@@ -1395,7 +1414,11 @@ class HomeController extends Controller {
                     'additional_data' => json_encode([
                         'performed_by' => $currentUser->name ?? 'User',
                         'reapplication_date' => now()->format('Y-m-d H:i:s'),
-                        'uploaded_files' => array_keys($uploadedFiles),
+                        'file_counts' => [
+                            'land_grant' => count($updatedFileArrays['land_grant'] ?? []),
+                            'permission_plan' => count($updatedFileArrays['permission_plan'] ?? []),
+                            'letter_of_support' => count($updatedFileArrays['letter_of_support'] ?? [])
+                        ],
                         'applicant_type' => $applicantType
                     ]),
                     'action_at' => now(),

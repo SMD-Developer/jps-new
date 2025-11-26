@@ -519,7 +519,7 @@
                         <!-- Old Receipt Upload -->
                         <div class="form-group">
                             <div class="col-md-4">
-                                <label for="geran-tanah">Resit Bayaran Lama <b class="starr">*</b></label>
+                                <label for="geran-tanah">Resit Bayaran Asal <b class="starr">*</b></label>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->land_grant)
@@ -760,7 +760,7 @@
                         <!-- Claim Reason Text Area - Optional -->
                         <div class="form-group">
                             <div class="col-md-4">
-                                <label for="claim-reason">@lang('Nyatakan Alasan Tuntutan')</label>
+                                <label for="claim-reason">@lang('Nyatakan Alasan Tuntutan')<b class="starr">*</b></label>
                             </div>
                             <div class="col-md-8">
                                 <textarea id="claim-reason" name="claim_reason" class="form-control" rows="4" 
@@ -976,6 +976,11 @@
                     showError('payment_amount', "@lang('app.claim_amount_numeric')");
                 } else if (parseFloat(paymentAmount) <= 0) {
                     showError('payment_amount', "@lang('app.claim_amount_positive')");
+                }
+
+                const claimReason = $('[name="claim_reason"]').val();
+                if(!claimReason){
+                     showError('claim_reason', "@lang('Medan ini wajib diisi')");
                 }
                 
                 // Validate email
