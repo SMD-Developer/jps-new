@@ -369,9 +369,16 @@
                     <button type="button" id="downloadButton" class="btn btn-danger mx-2" style="display:none;">
                         @lang('app.download')
                     </button>
-                    <button type="button" id="printButton" class="btn btn-primary mx-2" style="white-space: nowrap;">
+                    <button 
+                        type="button" 
+                        id="printButton" 
+                        class="btn btn-primary mx-2" 
+                        style="white-space: nowrap;"
+                        data-app-id="{{ $application->id }}"
+                    >
                         @lang('app.print_receipt')
                     </button>
+
                 </div>
             </div>
 
@@ -444,4 +451,22 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById('printButton');
+            const appId = btn.getAttribute("data-app-id");
+
+            const storageKey = "print_disabled_app_" + appId;
+
+            if (localStorage.getItem(storageKey) === "true") {
+                btn.disabled = true;
+            }
+
+            btn.addEventListener("click", function () {
+                btn.disabled = true;
+                localStorage.setItem(storageKey, "true");
+            });
+        });
+    </script>
+
 @endsection
