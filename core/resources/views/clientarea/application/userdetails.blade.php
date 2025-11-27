@@ -313,7 +313,7 @@
                                 * @lang('app.file_only_pdf_format_size_not_exceed_15mb')
                             </p>
                             <div class="back-button" style="float:right;">
-                                <button class="btn btn-success" onClick="window.history.back()">Kembali</button>
+                               <button type="button" class="btn btn-success" onClick="window.history.back()">Kembali</button>
                             <div>
                         </form>
                     </div>
