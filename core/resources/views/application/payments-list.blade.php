@@ -261,7 +261,7 @@
                                         <th><strong>{{ trans('Bil') }}</strong></th>
                                         <th style="width: 100px;"><strong>{{ trans('Tarikh') }}</strong></th>
                                         <th><strong>{{ trans('app.reference_no') }}</strong></th>
-                                        <th><strong>{{trans('Jenis Akaun')}}</strong></th>
+                                        <!-- <th><strong>{{trans('Jenis Akaun')}}</strong></th> -->
                                         <th><strong>{{ trans('Jenis Pembayaran') }}</strong></th>
                                         <th><strong>{{ trans('Nama Pembayar') }}</strong></th>
                                         <th><strong>{{ trans('Lot/PT') }}</strong></th> 
@@ -338,7 +338,7 @@
                                                    ($payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d M Y') : 'N/A') }}
                                             </td>
                                             <td>{{ $application->refference_no ?? '-' }}</td>
-                                            <td>
+                                            <!-- <td>
                                                 @php
                                                     $clientType = '';
                                                     $applicantType = '';
@@ -388,7 +388,7 @@
                                                         echo '-';
                                                     }
                                                 @endphp
-                                            </td>
+                                            </td> -->
                                             <td>
                                                 @if($payment && in_array($payment->payment_type, ['reprint', 'third_party']))
                                                     <span class="badge bg-warning text-dark">Salinan Resit</span>
@@ -450,9 +450,11 @@
                                             <td>
                                                 @if ($canApproverViewReciept && $payment && $payment->payment_status === 'completed')
                                                     <a href="{{ route('user_original_receipts', ['application_id' => $application->id, 'payment_uuid' => $payment->uuid]) }}" 
-                                                       class="btn btn-view-receipt btn-sm">
-                                                        <i class="fa fa-eye"></i> 
+                                                        class="btn btn-view-receipt btn-sm"
+                                                        style="border-radius: 19px; font-size: 11px; padding: 3px 8px; white-space: nowrap;">
+                                                            Lihat Resit
                                                     </a>
+
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif

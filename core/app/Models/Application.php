@@ -38,7 +38,8 @@ class Application extends Model
         'applicant_type',
         'project_name',
         'approver_rejection_reason',
-        'returned_to_staff_at'
+        'returned_to_staff_at',
+        'appeal_letter'
     ];
     
     // public function state(){

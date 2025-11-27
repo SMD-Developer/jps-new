@@ -688,45 +688,6 @@
                                         <td>H0161304</td>
                                         <td></td>
                                     </tr>
-                                    {{-- <tr class="total-row">
-                                        <td colspan="5">
-                                            <div class=" d-flex align-items-center justify-content-end"
-                                                style="gap: 10px;">
-                                                @lang('app.adjustment')
-                                                <input type="text" id="discount" class="form-control small-input"
-                                                    placeholder="@lang('app.adjustment')" style="max-width: 100px;">%
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="position: relative;">
-                                                <span style=" right: 50px; top: 50%; transform: translateY(-50%);"></span>
-                                            </div>
-                                        </td>
-                                    </tr> --}}
-
-                                    <!--<tr class="total-row">-->
-                                    <!--    <td colspan="5">-->
-                                    <!--        <div class="d-flex align-items-center justify-content-end" style="gap: 10px;">-->
-                                    <!--            @lang('app.adjustment')-->
-                                    <!--            <div class="adjustment-container"-->
-                                    <!--                style="display: flex; align-items: center; gap: 5px;">-->
-                                    <!--                <select id="adjustment_type" class="form-control"-->
-                                    <!--                    style="min-width: 100px;">-->
-                                    <!--                    <option value="percentage">Percentage</option>-->
-                                    <!--                    <option value="fixed">Fixed</option>-->
-                                    <!--                </select>-->
-                                    <!--                <input type="text" id="discount" class="form-control small-input"-->
-                                    <!--                    placeholder="@lang('app.adjustment')" style="max-width: 100px;">-->
-                                    <!--                <span id="adjustment_unit">%</span>-->
-                                    <!--            </div>-->
-                                    <!--        </div>-->
-                                    <!--    </td>-->
-                                    <!--    <td>-->
-                                    <!--        <div style="position: relative;">-->
-                                    <!--            <span id="adjustment_amount_display">0.00</span>-->
-                                    <!--        </div>-->
-                                    <!--    </td>-->
-                                    <!--</tr>-->
                                     <tr class="total-row">
                                         <td colspan="5">
                                              <div class="d-flex align-items-center justify-content-end" style="gap: 15px;">
@@ -760,6 +721,29 @@
                                                 <span id="adjustment_amount_display">0.00</span>
                                             </div>
                                         </td>
+                                    </tr>
+                                    <tr class="appeal-letter-row" id="appeal_letter_row" style="display: none;">
+                                        <td colspan="5">
+                                            <div class="d-flex align-items-center justify-content-end" style="gap: 10px;">
+                                                <label for="appeal_letter" style="margin: 0; font-weight: bold;">@lang('Appeal Letter')</label>
+                                                <input type="file" 
+                                                    id="appeal_letter" 
+                                                    name="appeal_letter" 
+                                                    class="form-control" 
+                                                    accept=".pdf,.jpg,.jpeg,.png" 
+                                                    style="width: 250px;">
+                                            </div>
+                                            @if(isset($application->appeal_letter_path) && $application->appeal_letter_path)
+                                                <div class="text-right mt-2">
+                                                    <small class="text-info">
+                                                        <a href="{{ url($application->appeal_letter_path) }}" target="_blank">
+                                                            <i class="fa fa-file-pdf-o"></i> View Current Letter
+                                                        </a>
+                                                    </small>
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td></td>
                                     </tr>
                                      <tr class="remark-row">
                                         <td colspan="5">
@@ -1177,10 +1161,10 @@
                 const appealValue = $('#appeal_type').val() || '';
         
                 let formData = new FormData(this);
-                const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support'];
+                const fileInputs = ['land_grant', 'permission_plan', 'letter_of_support', 'appeal_letter'];
                 fileInputs.forEach(inputName => {
                     const fileInput = $(`#${inputName}`)[0];
-                    if (fileInput.files.length > 0) {
+                    if (fileInput && fileInput.files.length > 0) {
                         formData.append(inputName, fileInput.files[0]);
                     }
                 });
@@ -1593,8 +1577,19 @@
             
             appealTypeSelect.addEventListener("change", function() {
                 document.getElementById('appeal_input').value = this.value;
+                const appealLetterRow = document.getElementById('appeal_letter_row');
+                if (this.value === 'yes') {
+                    appealLetterRow.style.display = '';
+                } else {
+                    appealLetterRow.style.display = 'none';
+                }
+                
                 updateAllValues();
             });
+
+            if (savedAppealValue === 'yes') {
+                document.getElementById('appeal_letter_row').style.display = '';
+            }
 
             landCategorySelect.addEventListener("change", function() {
                 document.getElementById('land_category_input').value = this.value;

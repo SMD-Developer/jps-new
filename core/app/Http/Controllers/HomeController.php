@@ -953,6 +953,7 @@ class HomeController extends Controller {
                 "final_amount" => "nullable|numeric",
                 "cost" => "nullable|numeric",
                 "appeal" => "nullable|in:yes,no",
+                "appeal_letter" => "nullable|file|mimes:pdf,jpg,jpeg,png|max:15000",
                 "remark" => "nullable|string|max:255",
             ];
 
@@ -978,7 +979,7 @@ class HomeController extends Controller {
             $uploadedFiles = [];
             $uploadPath = public_path('pdf');
         
-            foreach (['land_grant', 'permission_plan', 'letter_of_support'] as $fileKey) {
+            foreach (['land_grant', 'permission_plan', 'letter_of_support', 'appeal_letter'] as $fileKey) {
                 if ($request->hasFile($fileKey)) {
                     $file = $request->file($fileKey);
                     $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); 

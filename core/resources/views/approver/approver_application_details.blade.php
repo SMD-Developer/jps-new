@@ -666,30 +666,6 @@
                                         <td>H0161304</td>
                                         <td></td>
                                     </tr>
-
-                                    <!--<tr class="total-row">-->
-                                    <!--    <td colspan="5">-->
-                                    <!--        <div class="d-flex align-items-center justify-content-end" style="gap: 10px;">-->
-                                    <!--            @lang('app.adjustment')-->
-                                    <!--            <div class="adjustment-container"-->
-                                    <!--                style="display: flex; align-items: center; gap: 5px;">-->
-                                    <!--                <select id="adjustment_type" class="form-control"-->
-                                    <!--                    style="min-width: 100px;">-->
-                                    <!--                    <option value="percentage">@lang('app.percentage')</option>-->
-                                    <!--                    <option value="fixed">@lang('app.fixed_amount')</option>-->
-                                    <!--                </select>-->
-                                    <!--                <input type="text" id="discount" class="form-control small-input"-->
-                                    <!--                    placeholder="@lang('app.adjustment')" style="max-width: 100px;">-->
-                                    <!--                <span id="adjustment_unit">%</span>-->
-                                    <!--            </div>-->
-                                    <!--        </div>-->
-                                    <!--    </td>-->
-                                    <!--    <td>-->
-                                    <!--        <div style="position: relative;">-->
-                                    <!--            <span id="adjustment_amount_display">0.00</span>-->
-                                    <!--        </div>-->
-                                    <!--    </td>-->
-                                    <!--</tr>-->
                                     <tr class="total-row">
                                        <td colspan="5">
                                             <div class="d-flex align-items-center justify-content-end" style="gap: 15px;">
@@ -952,91 +928,7 @@
                 return rate * hectare;
             }
 
-            // function updateAllValues() {
-            //     let selectedId = landCategorySelect.value;
-            //     let rate;
-            //     if (selectedId === '4') {
-            //         let costValue = costInput.value.replace('RM ', '');
-            //         rate = parseFloat(costValue) || 0;
-            //     } else {
-            //         let selectedCategory = landCategories.find(cat => cat.id == selectedId);
-            //         if (!selectedCategory) return;
-            //         rate = parseFloat(selectedCategory.rate);
-            //     }
-
-            //     document.getElementById('cost_input').value = rate.toFixed(2);
-            //     let hectare = parseFloat(hectareInput.value) || 0;
-            //     let discountValue = parseFloat(discountInput.value) || 0;
-            //     let adjustmentType = adjustmentTypeSelect.value;
-            //     let marginPercentage = parseFloat(marginInput?.value) || 0;
-
-            //     let baseAmount = rate * hectare;
-            //     let marginAmount = baseAmount * (marginPercentage / 100);
-            //     let discountAmount = adjustmentType === "percentage" ?
-            //         baseAmount * (discountValue / 100) : discountValue;
-            //     let finalAmount = Math.max(0, baseAmount + marginAmount - discountAmount); // Prevent negative
-            //     let halfAmount = finalAmount / 2;
-
-            //     let firstRow = document.querySelector("tbody tr:first-child");
-            //     if (firstRow) {
-            //         firstRow.innerHTML = `
-            //     <td>${rate.toFixed(2)}</td>
-            //     <td>${hectare.toFixed(3)}</td>
-            //     <td>${baseAmount.toFixed(2)}</td>
-            //     <td>L453</td>
-            //     <td>H0161304</td>
-            //     <td>${halfAmount.toFixed(2)}</td>
-            // `;
-            //     }
-
-            //     let secondRow = document.querySelector("tbody tr:nth-child(2)");
-            //     if (secondRow) {
-            //         secondRow.innerHTML = `
-            //     <td></td>
-            //     <td></td>
-            //     <td></td>
-            //     <td>G001</td>
-            //     <td>H0161304</td>
-            //     <td>${halfAmount.toFixed(2)}</td>
-            // `;
-            //     }
-
-            //     let marginRow = document.querySelector("tbody tr:nth-child(3)");
-            //     if (marginPercentage > 0) {
-            //         if (!marginRow || marginRow.className === "total-row") {
-            //             marginRow = document.createElement("tr");
-            //             document.querySelector("tbody").insertBefore(marginRow, document.querySelector(
-            //                 "tr.total-row"));
-            //         }
-            //         marginRow.innerHTML = `
-            //     <td colspan="5">@lang('app.margin')</td>
-            //     <td>${marginPercentage.toFixed(2)} % (${marginAmount.toFixed(2)})</td>
-            // `;
-            //     } else if (marginRow && marginRow.querySelector("td")?.textContent.includes("margin")) {
-            //         marginRow.remove();
-            //     }
-
-            //     document.getElementById('cost_input').value = rate.toFixed(2);
-            //     document.getElementById('base_amount_input').value = baseAmount.toFixed(2);
-            //     document.getElementById('discount_amount_input').value = discountAmount.toFixed(2);
-            //     document.getElementById('final_amount_input').value = finalAmount.toFixed(2);
-            //     document.querySelector('input[name="land_category"]').value = selectedId;
-            //     document.querySelector('input[name="hectare"]').value = hectare.toFixed(3);
-            //     document.querySelector('input[name="adjustment_percentage"]').value = discountValue.toFixed(2);
-            //     document.getElementById('adjustment_type_input').value = adjustmentType;
-
-            //     let adjustmentAmountSpan = document.getElementById("adjustment_amount_display");
-            //     if (adjustmentAmountSpan) {
-            //         adjustmentAmountSpan.textContent = adjustmentType === "percentage" ?
-            //             `${discountValue.toFixed(2)}% (${discountAmount.toFixed(2)})` :
-            //             discountAmount.toFixed(2);
-            //     }
-
-            //     let totalAmountElement = document.getElementById("total_amount");
-            //     if (totalAmountElement) {
-            //         totalAmountElement.textContent = finalAmount.toFixed(2);
-            //     }
-            // }
+            
             function updateAllValues() {
             let selectedId = landCategorySelect.value;
             let rate;
