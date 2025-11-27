@@ -241,26 +241,27 @@ class financeController extends Controller {
         return view('finance.collectors-statement-report-ispeck');
     }
 
-       public function financePaymentLetter(Request $request, $application_id)
-       {
-    
-            $application = Application::select(
-                'applications.*',
-                'state.negeri',
-                'district.daerah',
-                'division.mukim as land_mukim',
-                'land_district.daerah as land_daerah'
-            )
-                ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
-                ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-                ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
-                ->leftJoin('district as land_district', 'division.daerah_id', '=', 'land_district.iddaerah')
-                ->where('applications.id', $application_id)
-                ->firstOrFail();
-                $canFinanceAdminApproveReject = auth('admin')->user()->hasPermission('payments_agency.approve_reject');
-    
-            return view('finance.finance-pay-letter', compact('application', 'canFinanceAdminApproveReject'));
-      }
+    public function financePaymentLetter(Request $request, $application_id)
+    {
+        $application = Application::select(
+            'applications.*',
+            'state.negeri',
+            'district.daerah',
+            'division.mukim as land_mukim',
+            'land_district.daerah as land_daerah'
+        )
+            ->with('payment') 
+            ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+            ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+            ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+            ->leftJoin('district as land_district', 'division.daerah_id', '=', 'land_district.iddaerah')
+            ->where('applications.id', $application_id)
+            ->firstOrFail();
+            
+        $canFinanceAdminApproveReject = auth('admin')->user()->hasPermission('payments_agency.approve_reject');
+
+        return view('finance.finance-pay-letter', compact('application', 'canFinanceAdminApproveReject'));
+    }
       
     
 

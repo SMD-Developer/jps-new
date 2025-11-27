@@ -421,7 +421,17 @@
                                                     {{ $paymentMethod }}
                                                 </span>
                                             </td>
-                                            <td>{{ $payment->transaction_id ?? '-' }}</td>
+                                            <td>
+                                                <div>{{ $payment->transaction_id ?? '-' }}</div>
+                                                
+                                                @if($payment->method == 'EFT' && $payment->receipt_path)
+                                                    <a href="{{ url($payment->receipt_path) }}" 
+                                                    target="_blank" 
+                                                    class=" mt-1" >
+                                                        <i class="fa fa-paperclip"></i> EFT Baucar
+                                                    </a>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <span class="status-badge {{ $statusClass }}">
                                                     @if ($payment->payment_status == 'completed')

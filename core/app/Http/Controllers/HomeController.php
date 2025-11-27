@@ -1990,9 +1990,8 @@ class HomeController extends Controller {
             ->whereHas('application', function($appQuery) {
                 $appQuery->where('status', 'approved');
             })
-            ->orderBy('payment_date', 'desc')
-            ->orderBy('created_at', 'desc');
-
+           ->orderBy(DB::raw('IFNULL(payment_date, created_at)'), 'desc')
+           ->orderBy('uuid', 'desc');
         // Apply status filter
         if ($statusFilter !== 'all') {
             if (in_array($statusFilter, ['completed','failed','pending','pending_authorization','in_review'])) {

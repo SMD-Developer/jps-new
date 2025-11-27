@@ -198,47 +198,37 @@
                             <div class="form-group">
                                 <label for="deposit_date">@lang('app.deposited_date')*</label>
                                 <input type="date" 
-                                       id="deposit_date" 
-                                       name="deposit_date" 
-                                       value="{{ $application->deposit_date ? \Carbon\Carbon::parse($application->deposit_date)->format('Y-m-d') : '' }}" 
-                                       class="form-control @error('deposit_date') is-invalid @enderror" 
-                                       readonly>
+                                    id="deposit_date" 
+                                    name="deposit_date" 
+                                    value="{{ $application->payment && $application->payment->payment_date ? \Carbon\Carbon::parse($application->payment->payment_date)->format('Y-m-d') : '' }}" 
+                                    class="form-control @error('deposit_date') is-invalid @enderror" 
+                                    readonly>
                                 @error('deposit_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         
                             <div class="form-group">
-                                <label for="transaction">@lang('app.transaction_no')*</label>
-                                <input type="text" id="transaction" name="transaction" value="{{ $application->transaction }}" class="form-control @error('transaction') is-invalid @enderror" readonly>
+                                <label for="transaction">@lang('No Transaksi EFT')*</label>
+                                <input type="text" id="transaction" name="transaction" 
+                                    value="{{ $application->payment && $application->payment->transaction_id ? $application->payment->transaction_id : '' }}" 
+                                    class="form-control @error('transaction') is-invalid @enderror" readonly>
                                 @error('transaction')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                           <!--<div class="form-group">-->
-                           <!--     <label for="receipt">@lang('app.upload_receipt')*</label>-->
-                                
-                           <!--     <label for="receipt" class="submit-button is-invalid">@lang('app.choose_file')</label>-->
-                           <!--     <input type="file" id="receipt" name="receipt" class="file-input @error('receipt') is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFileSize(this)" readonly>-->
-                           <!--     <div id="land_grantfileName" class="file-name"></div>-->
-                                
-                           <!--     @if($application->receipt_path)-->
-                           <!--         <div class="col-9 text-center mt-2">-->
-                           <!--             <small class="text-info">Current file:-->
-                           <!--                 <a href="{{ url('core/' . $application->receipt_path) }}" target="_blank">-->
-                           <!--                     <i class="fa fa-file-pdf-o"></i>-->
-                           <!--                     {{ basename($application->receipt_path) }}-->
-                           <!--                 </a>-->
-                           <!--             </small>-->
-                           <!--         </div>-->
-                           <!--     @endif-->
-                                
-                           <!--     @error('receipt')-->
-                           <!--         <div class="invalid-feedback">{{ $message }}</div>-->
-                           <!--     @enderror-->
-                           <!-- </div>-->
+
+                            <div class="form-group">
+                                <label for="voucher_number">No Baucar Bayaran<span class="text-danger">*</span></label>
+                                <input type="text" id="voucher_number" name="voucher_number" 
+                                    value="{{ $application->payment && $application->payment->voucher_number ? $application->payment->voucher_number : '' }}" 
+                                    class="form-control @error('voucher_number') is-invalid @enderror" readonly>
+                                @error('voucher_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                            <div class="form-group">
-                                <label for="receipt">@lang('app.upload_receipt')*</label>
+                                <label for="receipt" class="text-danger">@lang('app.upload_receipt')*</label>
                                 
                                 <label for="receipt" class="submit-button is-invalid">@lang('app.choose_file')</label>
                                 <input type="file" id="receipt" name="receipt" class="file-input @error('receipt') is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFileSize(this)" readonly>
