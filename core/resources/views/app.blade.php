@@ -134,11 +134,30 @@
                                     @endphp
 
                                     @forelse ($notifications as $notification)
+                                        @php
+                                            // Determine the correct route based on notification type
+                                            if (isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_finance') {
+                                                $redirectUrl = route('claim.list');
+                                                // Optionally add query parameters if needed
+                                                if (isset($notification->data['claim_id'])) {
+                                                    $redirectUrl .= '?id=' . $notification->data['claim_id'];
+                                                }
+                                            } else {
+                                                // Default route for other notifications
+                                                $redirectUrl = isset($notification->data['application_id']) 
+                                                    ? route('application_list') . '?id=' . $notification->data['application_id'] 
+                                                    : '#';
+                                            }
+                                        @endphp
+
+                                        {{-- Debug: Check notification data --}}
+                                        {{-- {{ dd($notification->data) }} --}}
+                                        
                                         <li class="notification {{ $notification->read_at ? 'read' : 'unread' }}"
                                             data-id="{{ $notification->id }}"
                                             style="padding: 10px; border-bottom: 1px solid #ddd; cursor: pointer;">
 
-                                            <a href="{{ isset($notification->data['application_id']) ? route('application_list') . '?id=' . $notification->data['application_id'] : '#' }}"
+                                            <a href="{{ $redirectUrl }}"
                                                 style="text-decoration: none; color: inherit;">
                                                 <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
                                                 
@@ -475,7 +494,7 @@
                     showCancelButton: true,
                     confirmButtonText: 'Ya',
                     cancelButtonText: 'Log Keluar',
-                    timer: 60000,
+                    timer: 900000,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -501,8 +520,8 @@
             function resetTimer() {
                 clearTimeout(warningTime);
                 clearTimeout(logoutTime);
-                warningTime = setTimeout(showWarning, 540000); 
-                logoutTime = setTimeout(logout, 600000); 
+                warningTime = setTimeout(showWarning, 840000); 
+                logoutTime = setTimeout(logout, 900000); 
             }
         };
 

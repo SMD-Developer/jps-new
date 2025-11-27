@@ -348,7 +348,7 @@
                     showCancelButton: true,
                     confirmButtonText: 'Ya',
                     cancelButtonText: 'Log Keluar',
-                    timer: 60000,
+                    timer: 900000,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -374,8 +374,8 @@
             function resetTimer() {
                 clearTimeout(warningTime);
                 clearTimeout(logoutTime);
-                warningTime = setTimeout(showWarning, 540000); // 9 minutes
-                logoutTime = setTimeout(logout, 600000); // 10 minutes
+                warningTime = setTimeout(showWarning, 840000); // 9 minutes
+                logoutTime = setTimeout(logout, 900000); // 10 minutes
             }
         };
 
