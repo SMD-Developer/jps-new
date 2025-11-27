@@ -906,7 +906,7 @@
                                                         // Show a note if this is an override status or waiting for staff action
                                                         $overrideNote = '';
                                                         if (isset($displayStaffStatus->is_waiting_staff_action)) {
-                                                            $overrideNote = ' (Menunggu tindakan kakitangan)';
+                                                            $overrideNote = ' (Menunggu tindakan penyedia)';
                                                         } elseif (isset($displayStaffStatus->is_override)) {
                                                             $overrideNote = ' (Status dikemaskini selepas penolakan)';
                                                         }
