@@ -923,7 +923,7 @@
                                                         @switch($displayApproverStatus->status_to ?? '')
                                                             @case('pending')
                                                                 @if(isset($displayApproverStatus->is_auto_status))
-                                                                Belum Terima
+                                                                Dalam Proses
                                                                 @else
                                                                     {{ trans('app.in_process') }}
                                                                 @endif
