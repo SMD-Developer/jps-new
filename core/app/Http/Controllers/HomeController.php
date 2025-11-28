@@ -1612,7 +1612,7 @@ class HomeController extends Controller {
             }
         ])
         ->whereIn('status', ['pending', 'rejected', 'returned_to_staff'])
-        ->orderBy('created_at', 'desc');    
+        ->orderBy('updated_at', 'desc');    
         
         
          if ($searchTerm) {
