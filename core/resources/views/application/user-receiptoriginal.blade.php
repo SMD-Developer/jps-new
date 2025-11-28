@@ -176,9 +176,22 @@
                                 <div class="label">NOMBOR RESIT</div>
                                 <div class="value">{{ $application->receipt_number }}</div>
                             </div>
-                            <div class="info-row">
+                           <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
-                                <div class="value">{{ $application->fpx_payment_time ?? $application->payment_date }}</div>
+                                <div class="value">
+                                    @php
+                                        $dateTime = $application->fpx_payment_time ?? $application->payment_date;
+                                        if ($dateTime) {
+                                            try {
+                                                echo \Carbon\Carbon::parse($dateTime)->format('d/m/Y h:i:s A');
+                                            } catch (\Exception $e) {
+                                                echo $dateTime;
+                                            }
+                                        } else {
+                                            echo 'N/A';
+                                        }
+                                    @endphp
+                                </div>
                             </div>
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
@@ -218,6 +231,7 @@
                                             $methodLabel = match($application->payment_method) {
                                                 'FPX_B2C' => 'EFT_B2C',
                                                 'FPX_B2B' => 'EFT_B2B',
+                                                'bank_draf' => 'BANK DRAF',
                                                 default => $application->payment_method,
                                             };
                                         @endphp
