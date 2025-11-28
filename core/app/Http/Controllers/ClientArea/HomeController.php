@@ -249,9 +249,7 @@ class HomeController extends Controller {
 
         try {
             $isReapply = $request->has('is_reapply') && $request->is_reapply == 1;
-            $fileValidationRules = $isReapply ? 'nullable' : 'required';
-            
-            // Base validation rules
+
             $rules = [
                 "uploade_date" => "required",
                 "applicant" => "required",
@@ -266,8 +264,10 @@ class HomeController extends Controller {
                 "land_area" => "required",
                 "land_unit" => "required",
                 "state" => "required",
-                "land_grant" => "required|array|min:1",
-                "land_grant.*" => "required|mimes:pdf|max:15000",
+            
+                "land_grant" => $isReapply ? "nullable|array" : "required|array|min:1",
+                "land_grant.*" => $isReapply ? "nullable|mimes:pdf|max:15000" : "required|mimes:pdf|max:15000",
+                
                 "new_receipt" => "nullable|array",
                 "new_receipt.*" => "nullable|mimes:pdf|max:15000",
                 "supporting_docs" => "nullable|array",
@@ -382,7 +382,6 @@ class HomeController extends Controller {
                 }
             }
 
-
             // Handle claim_reason (Optional)
             if ($request->filled('claim_reason')) {
                 $uploadedFiles['claim_reason'] = $request->claim_reason;
@@ -409,6 +408,11 @@ class HomeController extends Controller {
                     
                 if (!$existingClaim) {
                     throw new \Exception("Invalid claim for reapplication.");
+                }
+                
+                // **IMPORTANT: Keep old land_grant if no new file uploaded**
+                if (!$request->hasFile('land_grant')) {
+                    $requestData['land_grant'] = $existingClaim->land_grant;
                 }
                 
                 // Update the existing record

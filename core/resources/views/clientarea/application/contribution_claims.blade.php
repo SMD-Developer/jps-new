@@ -204,8 +204,10 @@
 
                                 <!-- Hidden fields for reapplication -->
                                 @if(isset($claim))
-                                    <input type="hidden" name="is_reapply" id="is_reapply" value="{{ isset($claim) ? '1' : '0' }}">
+                                    <input type="hidden" name="is_reapply" id="is_reapply" value="1">
                                     <input type="hidden" name="original_claim_id" value="{{ $claim->id }}">
+                                @else
+                                    <input type="hidden" name="is_reapply" id="is_reapply" value="0">
                                 @endif
 
                                 <div class="container">
@@ -519,7 +521,12 @@
                         <!-- Old Receipt Upload -->
                         <div class="form-group">
                             <div class="col-md-4">
-                                <label for="geran-tanah">Resit Bayaran Asal <b class="starr">*</b></label>
+                                <label for="geran-tanah">
+                                    Resit Bayaran Asal 
+                                    @if(!isset($claim))
+                                        <b class="starr">*</b>
+                                    @endif
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->land_grant)
@@ -539,11 +546,17 @@
                                         </div>
                                     @endif
                                 @endif
-                                <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>
+                                <label for="land_grant" class="submit-button">@lang('app.choose_file')</label>
                                 <input type="file" id="land_grant" name="land_grant[]" class="file-input"
                                     accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'land_grant')">
                                 <div id="land_grant_fileList" class="file-list mt-2"></div>
                                 <div id="land_grant_error" class="text-danger mt-1"></div>
+                                
+                                @if(isset($claim))
+                                    <small class="text-muted">
+                                        <i class="fa fa-info-circle"></i> Tidak wajib - Fail sedia ada akan digunakan jika tidak dimuatnaik
+                                    </small>
+                                @endif
                             </div>
                         </div>
 
@@ -920,7 +933,7 @@
                 $('.invalid-feedback').remove();
                 $('.form-control').removeClass('is-invalid');
 
-                const isReapply = $('#is_reapply').val() == '1';
+                const isReapply = $('#is_reapply').length > 0 && $('#is_reapply').val() === '1';
 
                 // Get the selected account type from the dropdown
                 const selectedAccountType = $('#account_types').val();

@@ -126,6 +126,24 @@
             gap: 1rem !important;
         }
     }
+
+    .modal-body label {
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.modal-body p {
+    font-size: 15px;
+    margin-bottom: 0;
+    color: #555;
+}
+
+#receipt-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+}
 </style>
 
 <title>{{ trans('Pembayaran Selesai') }} | JPS</title>
@@ -423,14 +441,6 @@
                                             </td>
                                             <td>
                                                 <div>{{ $payment->transaction_id ?? '-' }}</div>
-                                                
-                                                @if($payment->method == 'EFT' && $payment->receipt_path)
-                                                    <a href="{{ url($payment->receipt_path) }}" 
-                                                    target="_blank" 
-                                                    class=" mt-1" >
-                                                        <i class="fa fa-paperclip"></i> EFT Baucar
-                                                    </a>
-                                                @endif
                                             </td>
                                             <td>
                                                 <span class="status-badge {{ $statusClass }}">
@@ -447,14 +457,31 @@
                                                     @endif
                                                 </span>
                                             </td>
-                                            <td>
+                                             <td>
                                                 @if ($canApproverViewReciept && $payment && $payment->payment_status === 'completed')
                                                     <a href="{{ route('user_original_receipts', ['application_id' => $application->id, 'payment_uuid' => $payment->uuid]) }}" 
                                                         class="btn btn-view-receipt btn-sm"
                                                         style="border-radius: 19px; font-size: 11px; padding: 3px 8px; white-space: nowrap;">
                                                             Lihat Resit
                                                     </a>
-
+                                                    
+                                                    @if($payment->method == 'EFT')
+                                                        <br>
+                                                        <a href="javascript:void(0)" 
+                                                            class="btn  mt-1 view-payment-details" 
+                                                            data-payment-id="{{ $payment->id }}"
+                                                            data-ref-no="{{ $application->refference_no ?? '-' }}"
+                                                            data-applicant="{{ $application->applicant ?? '-' }}"
+                                                            data-amount="{{ number_format($payment->amount ?? 0, 2) }}"
+                                                            data-transaction-date="{{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d M Y, h:i A') : 'N/A' }}"
+                                                            data-transaction-id="{{ $payment->transaction_id ?? '-' }}"
+                                                            data-method="{{ $payment->method }}"
+                                                            data-voucher="{{ $payment->voucher_number}}"
+                                                            data-receipt-path="{{ $payment->receipt_path ?? '' }}"
+                                                            style="border-radius: 19px; font-size: 11px; padding: 3px 8px; white-space: nowrap; color:#007bff;">
+                                                            <i class="fa fa-eye"></i> Lihat Maklumat
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif
@@ -542,6 +569,76 @@
                     </div>
                 </div>
             </div>
+            <!-- Payment Details Modal -->
+            <div class="modal fade" id="paymentDetailsModal" tabindex="-1" role="dialog" aria-labelledby="paymentDetailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="paymentDetailsModalLabel">
+                                <i class="fa fa-info-circle"></i> Maklumat Pembayaran
+                            </h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="font-weight-bold">Nombor Rujukan:</label>
+                                    <p id="modal-ref-no" class="text-muted">-</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="font-weight-bold">Nama Pembayar:</label>
+                                    <p id="modal-applicant" class="text-muted">-</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="font-weight-bold">Jumlah Bayaran (RM):</label>
+                                    <p id="modal-amount" class="text-muted">-</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="font-weight-bold">Tarikh Bayaran:</label>
+                                    <p id="modal-transaction-date" class="text-muted">-</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label class="font-weight-bold">No Transaksi EFT:</label>
+                                    <p id="modal-transaction-id" class="text-muted">-</p>
+                                </div>
+                            </div>
+
+                             <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label class="font-weight-bold">No Baucar Bayaran:</label>
+                                    <p id="modal-voucher" class="text-muted">-</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Receipt Section (Only for EFT) -->
+                            <div id="receipt-section" style="display: none;">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="font-weight-bold">
+                                            <i class="fa fa-paperclip"></i> Resit Dimuat Naik:
+                                        </label>
+                                        <div class="mt-2">
+                                            <a id="modal-receipt-link" href="#" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fa fa-file-pdf-o"></i> Lihat Resit EFT
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -603,4 +700,39 @@
             applyDateFilter();
         }
     </script>
+   <script>
+    $(document).ready(function() {
+        // Handle view payment details button click
+        $('.view-payment-details').on('click', function() {
+            // Get data from button attributes
+            var refNo = $(this).data('ref-no');
+            var applicant = $(this).data('applicant');
+            var amount = $(this).data('amount');
+            var transactionDate = $(this).data('transaction-date');
+            var transactionId = $(this).data('transaction-id');
+            var method = $(this).data('method');
+            var voucher = $(this).data('voucher'); // Add this line
+            var receiptPath = $(this).data('receipt-path');
+            
+            // Populate modal fields
+            $('#modal-ref-no').text(refNo);
+            $('#modal-applicant').text(applicant.toUpperCase());
+            $('#modal-amount').text(amount);
+            $('#modal-transaction-date').text(transactionDate);
+            $('#modal-transaction-id').text(transactionId);
+            $('#modal-voucher').text(voucher ? voucher : '-'); // Add this line
+            
+            // Show receipt section only for EFT method with receipt
+            if (method === 'EFT' && receiptPath) {
+                $('#receipt-section').show();
+                $('#modal-receipt-link').attr('href', '{{ url('') }}/' + receiptPath);
+            } else {
+                $('#receipt-section').hide();
+            }
+            
+            // Show the modal
+            $('#paymentDetailsModal').modal('show');
+        });
+    });
+</script>
 @endsection
