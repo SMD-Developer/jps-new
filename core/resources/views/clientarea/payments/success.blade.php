@@ -190,12 +190,12 @@
             </a>
         @endif
     
-        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
+        <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
       @elseif($transactionStatus == 'PENDING')
         <a href="{{ route('pay.status') }}" class="btn btn-warning me-2" style="display:none;">Check Status</a>
-        <a href="{{ route('client_application_status') }}" class="btn btn-primary rounded-pill px-5">
+        <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
       @else

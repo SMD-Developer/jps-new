@@ -329,7 +329,10 @@
                                                 }
 
                                                 // Government agency override
-                                                if ($application && $application->client && $application->client->accountType == 3) {
+                                                if ($payment->method == 'EFT' && 
+                                                    $application && 
+                                                    $application->client && 
+                                                    $application->client->accountType == 3) {
                                                     $paymentMethod = 'BAUCAR BAYARAN';
                                                     $methodClass = 'method-offline';
                                                 }
