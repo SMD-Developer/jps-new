@@ -7,7 +7,6 @@
         margin: 20px;
         color: #333;
         font-weight: 700;
-        /*background-color: #f4f6f9;*/
     }
 
     @import url(https://fonts.googleapis.com/css?family=Denk+One);
@@ -23,22 +22,17 @@
         position: absolute;
         font-family: 'Denk One', sans-serif;
         text-transform: uppercase;
-        /*padding-left: 10%;*/
-        /*display: flex;*/
-        /*text-align: center;*/
         font-weight: 700;
         top: 26rem;
         left: 25%;
         opacity: 0.5;
-
     }
     
-      .receipt-table th {
+    .receipt-table th {
         font-size: 14px; 
     }
     
-    
-     .receipt-footer .info-row {
+    .receipt-footer .info-row {
         display: flex;
         margin-bottom: 5px;
         align-items: flex-start;
@@ -97,7 +91,6 @@
 
     .container {
         padding-inline: 120px !important;
-
     }
 
     .row1 {
@@ -121,15 +114,14 @@
         width: max-content;
     }
 
-    .custome-text{
-        font-size:14px;
+    .custome-text {
+        font-size: 14px;
     }
     
     @media print {
-        #printButton, #downloadButton, #backButton {
+        #printButton, #printSalinanButton, #downloadButton, #backButton {
             display: none !important;
         }
-        
     }
 </style>
 <title>@lang('app.receipt') | JPS</title>
@@ -144,13 +136,6 @@
                     <p class="mb-0">(Kew.38E 03-2021)</p>
                 </div>
                 <div class="col-md-12">
-                    <!--<p class="rotingtxt">ASAL</p>-->
-                    <!--<div class="row">-->
-                    <!--    <div class="col-12 row1" style="padding-right: 100px;">-->
-                    <!--        <img src="{{ asset('assets/images/uploads/settings/logo_jps-removebg-preview.png') }}" style="width:30%; height:80%;" class="img "-->
-                    <!--            alt="...">-->
-                    <!--    </div>-->
-                    <!--</div>-->
                     <div class="row">
                         <div class="col-12 row1" style="text-align: center;">
                             <img src="{{ asset('assets/images/uploads/settings/logo_jps-removebg-preview.png') }}" style="width:30%; height:80%;" class="img" alt="...">
@@ -161,14 +146,10 @@
                         <div class="col-5 px-0">
                             <p class="mb-0 pl-3"><strong>KERAJAAN NEGERI SELANGOR DARUL EHSAN</strong></p>
                             <p class="mb-0 text-center"><strong>RESIT RASMI</strong></p>
-                            <p class="text-center"><strong>ASAL</strong></p>
+                            <p class="text-center" id="receipt-type"><strong>ASAL</strong></p>
                         </div>
-                        <!--<div class="col-4 text-right">-->
-                        <!--    <p class="mb-0">(Kew.38E 03-2021)</p>-->
-                        <!--</div>-->
                     </div>
-                    <div class="receipt-container"
-                        style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+                    <div class="receipt-container" style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
                         <div class="receipt-header">
                             <div class="info-row">
                                 <div class="label">DITERIMA DARIPADA</div>
@@ -219,15 +200,13 @@
                             <tr style="background-color: #f2f2f2;">
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">BIL</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">CARA BAYARAN</th>
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">NO RUJUKAN /<br>TARIKH
-                                </th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">NO RUJUKAN /<br>TARIKH</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">VOT/DANA</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">KOD AKAUN</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">AMAUN (RM)</th>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                    1</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">1</td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
                                     @if($application->payment_method === 'cheque')
                                         Cek<br>
@@ -245,8 +224,7 @@
                                         {{ $methodLabel }}
                                     @endif
                                 </td>
-
-                               <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; line-height: 20px;" class="custome-text">
                                     @php
                                         $txnId = $application->transaction_id ?? 'N/A';
                                         if ($txnId !== 'N/A' && str_starts_with($txnId, 'TXN-')) {
@@ -256,41 +234,41 @@
                                     {{ $txnId }}<br>
                                     {{ $application->payment_date ? \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y') : 'N/A' }}
                                 </td>
-                               <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
-                                    G001
-                                @else
-                                    L453<br>G001
-                                @endif
-                            </td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
-                                @if($application->payment_type === 'reprint')
-                                    H0272499
-                                @elseif($application->payment_type === 'third_party')
-                                    H0272499
-                                @else
-                                    H0161304<br>H0161304
-                                @endif
-                            </td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
-                                @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
-                                    {{ number_format($application->payment_amount, 2) }}
-                                @else
-                                    {{ number_format($application->payment_amount / 2, 2) }}<br>
-                                    {{ number_format($application->payment_amount / 2, 2) }}
-                                @endif
-                            </td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
+                                        G001
+                                    @else
+                                        L453<br>G001
+                                    @endif
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;" class="custome-text">
+                                    @if($application->payment_type === 'reprint')
+                                        H0272499
+                                    @elseif($application->payment_type === 'third_party')
+                                        H0272499
+                                    @else
+                                        H0161304<br>H0161304
+                                    @endif
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
+                                    @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
+                                        {{ number_format($application->payment_amount, 2) }}
+                                    @else
+                                        {{ number_format($application->payment_amount / 2, 2) }}<br>
+                                        {{ number_format($application->payment_amount / 2, 2) }}
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
-                                <td colspan="5"
-                                    style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">
-                                    JUMLAH KESELURUHAN </td>
+                                <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">
+                                    JUMLAH KESELURUHAN 
+                                </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;" class="custome-text">
                                     {{ number_format($application->payment_amount, 2) }}
                                 </td>
                             </tr>
                         </table>
-                         <div class="receipt-footer">
+                        <div class="receipt-footer">
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
@@ -307,32 +285,17 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row my-5">
-                        <div class="col-7">
-                            <P> (SURIAH BT MOHAMAD)</P>
-
-                        </div>
-                        <div class="col-5">
-                            <p>{{ $application->created_at->format('d/m/Y h:i:s A') }}</p>
-                        </div>
-                    </div> --}}
                     <div class="row mt-5">
                         <div class="col-12">
                             <p class="text-center">INI ADALAH CETAKAN KOMPUTER DAN TIDAK PERLU DITANDATANGANI </p>
                         </div>
                     </div>
-                    <div class="row">
-                        <!--<div class="col-12">-->
-                        <!--    <p class="text-center">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>-->
-                        <!--</div>-->
-                    </div>
-                     <div class="row mb-5 mt-5">
+                    <div class="row mb-5 mt-5">
                         <div class="col-9">
                             <p class="text-left">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>
                             <p class="">NO KELULUSAN PERBENDAHARAAN : PWN.SEL.600-5/1/1 JLD.1 (49)</p>
                         </div>
                         <div class="col-3 ml-auto text-right pr-0">
-                            <!--<p class="">JANM 11 </p>-->
                         </div>
                     </div>
                 </div>
@@ -347,17 +310,20 @@
                     <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
                 </div>
                 <div class="col-auto">
-                    <button type="button" id="printButton" class="btn btn-primary">@lang('app.print_receipt')</button>
+                    <button type="button" id="printButton" class="btn btn-primary">Cetak ASAL</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" id="printSalinanButton" class="btn btn-info">Cetak SALINAN</button>
                 </div>
             </div>
 
-            <div class="row justify-content-end">
+            <!-- <div class="row justify-content-end">
                 <div class="col-auto text-end">
                     <p style="font-size: 14px; color: #555; font-style: italic; margin-top: 5px;">
                         <strong>Nota:</strong> Sila pastikan Resit <u>ASAL</u> dicetak.
                     </p>
                 </div>
-            </div>
+            </div> -->
         </div>
 
     </section>
@@ -367,9 +333,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         document.getElementById('downloadButton').addEventListener('click', function() {
-            const {
-                jsPDF
-            } = window.jspdf;
+            const {jsPDF} = window.jspdf;
             const doc = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
@@ -396,8 +360,20 @@
             });
         });
 
+        // Print ASAL button
         document.getElementById('printButton').addEventListener('click', function() {
+            document.getElementById('receipt-type').innerHTML = '<strong>ASAL</strong>';
             window.print();
+        });
+
+        // Print SALINAN button
+        document.getElementById('printSalinanButton').addEventListener('click', function() {
+            document.getElementById('receipt-type').innerHTML = '<strong>SALINAN</strong>';
+            window.print();
+            // Reset back to ASAL after printing
+            setTimeout(function() {
+                document.getElementById('receipt-type').innerHTML = '<strong>ASAL</strong>';
+            }, 1000);
         });
     </script>
 @endsection
