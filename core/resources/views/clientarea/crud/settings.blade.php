@@ -225,7 +225,8 @@
                                 <div class="col-md-6 col-12">
                                     <div class="password-input-container">
                                         <input type="password" id="new_password_confirmation" class="form-control"
-                                            name="new_password_confirmation" placeholder="@lang('app.confirm_new_password')">
+                                        name="new_password_confirmation" placeholder="@lang('app.confirm_new_password')"
+                                        onblur="matchPasswords()" oninput="clearMatchError()">
                                         <i class="bi bi-eye-slash toggle-password eye-icon2" id="eye-slash"
                                             data-target="new_password_confirmation"></i>
                                     </div>
@@ -278,7 +279,7 @@
             let passwordInput = document.getElementById("new_password");
             let confirmPasswordInput = document.getElementById("new_password_confirmation");
             let validationBox = document.getElementById("password-validation");
-            $('#password-validation').hide(); // Ensure it's hidden on page load
+            $('#password-validation').hide(); 
 
             if (passwordInput) {
                 // Show/hide validation box based on typing
@@ -308,7 +309,8 @@
             }
 
             if (confirmPasswordInput) {
-                confirmPasswordInput.addEventListener("input", matchPasswords);
+                confirmPasswordInput.addEventListener("input", clearMatchError);
+                confirmPasswordInput.addEventListener("blur", matchPasswords);
             }
         });
 
@@ -348,20 +350,34 @@
                 " {{ trans('app.no_sequential_characters') }} (abc, 123)";
         }
 
+        function clearMatchError() {
+            let matchError = document.getElementById("password-match-error");
+            matchError.innerHTML = "";
+        }
+
         function matchPasswords() {
             let password = document.getElementById("new_password").value;
             let confirmPassword = document.getElementById("new_password_confirmation").value;
             let matchError = document.getElementById("password-match-error");
 
+            // If confirm password is empty, clear any messages
             if (confirmPassword === "") {
                 matchError.innerHTML = "";
-            } else if (password !== confirmPassword) {
+                return false;
+            }
+            
+            // Validate passwords only when user has finished typing
+            if (password !== confirmPassword) {
                 matchError.innerHTML = "❌ {{ trans('app.passwords_do_not_match') }}";
                 matchError.style.color = "red";
-            } else {
+                return false;
+            } else if (password === confirmPassword && password !== "") {
                 matchError.innerHTML = "✅ {{ trans('app.passwords_match') }}";
                 matchError.style.color = "green";
+                return true;
             }
+            
+            return false;
         }
 
         $(document).ready(function() { 

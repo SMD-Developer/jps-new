@@ -456,7 +456,7 @@ background-color: red;
                                         </div>
                                 <div class="col-md-5"></div>
                             </div>
-                            <div class="row mt-4">
+                                <div class="row mt-4">
                                         <div class="col-md-3 col-6">
                                             <div class="form-group">
                                                 <label for="confirmPassword">@lang('app.set_password')</label>
@@ -466,7 +466,13 @@ background-color: red;
                                         <div class="col-md-4 col-6 position-relative">
                                             <div class="form-group inlin">
                                                 <span class="pe-3"><b> : </b></span>
-                                                <input type="password" id="setPassword" class="form-control rounded-3 pe-5" name="setPassword" value="{{ old('setPassword') }}" onkeyup="matchPasswords()">
+                                                <input type="password" 
+                                                    id="setPassword" 
+                                                    class="form-control rounded-3 pe-5" 
+                                                    name="setPassword" 
+                                                    value="{{ old('setPassword') }}" 
+                                                    onblur="matchPasswords()"
+                                                    oninput="clearMatchError()">
                                                 <i class="bi bi-eye-slash toggle-password position-absolute end-0 top-50 translate-middle-y me-3 text-muted cursor-pointer" data-target="setPassword"></i>
                                             </div>
                                             <span class="text-danger password-match-errors" id="password-match-error" style="padding: 0px;"></span>
@@ -475,7 +481,7 @@ background-color: red;
                                             <span class="star d-inline"><b></b></span>
                                             <!-- <span class="star d-inline important-font"><i>@lang('Sila masukkan kata laluan sekali lagi untuk tujuan pengesahan')</i></span> -->
                                         </div>
-                                    </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -816,15 +822,24 @@ function validatePassword() {
     return allValid;
 }
 
+function clearMatchError() {
+    let matchError = document.getElementById("password-match-error");
+    matchError.innerHTML = "";
+}
+
 function matchPasswords() {
     let password = document.getElementById("password").value;
     let confirmPassword = document.getElementById("setPassword").value;
     let matchError = document.getElementById("password-match-error");
 
-    if (confirmPassword === "" && password === "") {
+    // If confirm password is empty, clear any messages
+    if (confirmPassword === "") {
         matchError.innerHTML = "";
         return false;
-    } else if (password !== confirmPassword) {
+    }
+    
+    // Validate passwords
+    if (password !== confirmPassword) {
         matchError.innerHTML = "❌ {{ trans('app.passwords_do_not_match') }}";
         matchError.style.color = "red";
         return false;
@@ -844,6 +859,8 @@ function matchPasswords() {
         }
         return true;
     }
+    
+    return false;
 }
 
 // ============================================
