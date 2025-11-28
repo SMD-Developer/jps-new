@@ -282,14 +282,16 @@ class HomeController extends Controller {
         $canAdminStaffEditClaimApplication = auth('admin')->user()->hasPermission('claim-contribution.edit');                  
         $isAdminOrStaff = false;         
         $financeStaff = false;
+        
         if ($isAuthenticated) {             
             $roleId = auth('admin')->user()->role_id;             
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa'); 
             $financeStaff = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');       
         }                  
 
+        // Build the query WITHOUT ->get()
         $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client'])
-        ->where('status', '!=', 'approve_paid'); 
+            ->where('status', '!=', 'approve_paid');
         
         if ($financeStaff) {
             $query->where('send_to_finance', 1);
@@ -311,8 +313,8 @@ class HomeController extends Controller {
             $query->where('status', $request->status);         
         }    
 
-        // Get the paginated results with activity tracking
-        $list = $query->latest()
+        // Get the paginated results with ordering - call ->get() or ->paginate() at the END
+        $list = $query->orderBy('updated_at', 'desc')
             ->paginate($perPage)
             ->appends($request->except('page'));
 
@@ -320,8 +322,8 @@ class HomeController extends Controller {
         $currentUserId = auth('admin')->id();
 
         $district = DB::table('district')->where('stat', 1)
-        ->where('idnegeri', 1)
-        ->orderBy('daerah_code', 'asc')->get(); 
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get(); 
 
         $statuses = [
             'all' => 'Semua',
@@ -331,7 +333,8 @@ class HomeController extends Controller {
             'rejected' => 'Ditolak'
         ];
         
-        return view('claim.claim-contribution-list', compact( 'list',              
+        return view('claim.claim-contribution-list', compact(
+            'list',              
             'district',              
             'perPage',              
             'isAdminOrStaff', 
@@ -339,7 +342,8 @@ class HomeController extends Controller {
             'canAdminStaffViewApplication',
             'statuses',              
             'canAdminStaffEditClaimApplication',
-            'currentUserId'));
+            'currentUserId'
+        ));
     }
 
 

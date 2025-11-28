@@ -888,7 +888,8 @@ class HomeController extends Controller {
                 $query->where('land_lot', 'LIKE', '%' . $request->lot . '%');         
             }                  
             
-            $list = $query->latest()
+            // Changed from ->latest() to ->orderBy('updated_at', 'desc')
+            $list = $query->orderBy('updated_at', 'desc')
                     ->paginate($perPage)
                     ->appends($request->except('page'));
             
