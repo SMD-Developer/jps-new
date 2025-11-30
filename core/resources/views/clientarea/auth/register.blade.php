@@ -840,7 +840,7 @@ function matchPasswords() {
     
     // Validate passwords
     if (password !== confirmPassword) {
-        matchError.innerHTML = "❌ {{ trans('app.passwords_do_not_match') }}";
+        matchError.innerHTML = "❌ {{ trans('Kata Laluan Tidak Sepadan') }}";
         matchError.style.color = "red";
         return false;
     } else if (password === confirmPassword && password !== "") {

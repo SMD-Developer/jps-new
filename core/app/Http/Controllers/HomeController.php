@@ -17,6 +17,7 @@ use App\Notifications\NewApplicationSent;
 use App\Notifications\UserApplicationStatusNotification;
 use App\Notifications\FinanceClaimNotification;
 use App\Notifications\UserApplicationRejectionNotification;
+use App\Notifications\ApproverClaimNotification;
 use App\Notifications\ClaimStatusUpdated;
 use App\Notifications\ReceiptStatusUpdated;
 use App\Notifications\AccountUnblockedNotification;
@@ -286,7 +287,8 @@ class HomeController extends Controller {
         if ($isAuthenticated) {             
             $roleId = auth('admin')->user()->role_id;             
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa'); 
-            $financeStaff = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');       
+            $financeStaff = ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f'); 
+            $isApplicationApprover = ($roleId === '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d');      
         }                  
 
         // Build the query WITHOUT ->get()
@@ -295,6 +297,10 @@ class HomeController extends Controller {
         
         if ($financeStaff) {
             $query->where('send_to_finance', 1);
+        }
+
+        if ($isApplicationApprover){
+            $query->where('sent_to_approver', 1);
         }
 
         if ($request->has('district') && $request->district) {             
@@ -342,7 +348,8 @@ class HomeController extends Controller {
             'canAdminStaffViewApplication',
             'statuses',              
             'canAdminStaffEditClaimApplication',
-            'currentUserId'
+            'currentUserId',
+            'isApplicationApprover'
         ));
     }
 
@@ -423,6 +430,7 @@ class HomeController extends Controller {
                 $roleId = auth('admin')->user()->role_id;
                 $isAdminStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');
                 $isFinanceStaff= ($roleId === '9e032970-5f48-4d2b-b88e-abb9da79140f');
+                $isApplicationApprover= ($roleId === '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d');
             }
             $claim = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client'])
                 ->findOrFail($id);
@@ -441,12 +449,149 @@ class HomeController extends Controller {
                 'landMeasurement',
                 'division',
                 'isAdminStaff',
-                'isFinanceStaff'
+                'isFinanceStaff',
+                'isApplicationApprover'
             ));
             
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Claim not found or an error occurred.');
         }
+    }
+
+
+    public function claimSendToApprover($id)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $claim = DB::table('claim_contribution')
+                ->where('id', $id)
+                ->first();
+
+            if (!$claim) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tuntutan tidak dijumpai'
+                ], 404);
+            }
+
+            // Allow resending if rejected, otherwise check if already sent
+            if ($claim->sent_to_approver == 1 && $claim->status !== 'rejected') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tuntutan ini telah dihantar ke pelulus'
+                ], 400);
+            }
+
+            if (in_array($claim->status, ['approve_paid'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tuntutan ini tidak boleh dihantar ke pelulus'
+                ], 400);
+            }
+
+            // Get admin user information
+            $admin = auth('admin')->user();
+            $causerUsername = $admin ? $admin->username : 'System';
+            $causerUuid = $admin ? $admin->uuid : null;
+
+            // Prepare update data
+            $updateData = [
+                'sent_to_approver' => 1,
+                'sent_to_approver_at' => now(),
+                'sent_to_approver_by' => $causerUsername,
+                'updated_at' => now()
+            ];
+
+            // If claim was rejected, reset status and clear rejection fields
+            if ($claim->status === 'rejected') {
+                $updateData['status'] = 'pending';
+                $updateData['rejected_reason'] = null;
+                $updateData['rejected_by'] = null;
+                $updateData['rejected_by_role'] = null;
+            }
+
+            // Update the claim
+            DB::table('claim_contribution')
+                ->where('id', $id)
+                ->update($updateData);
+
+            // Fetch updated claim after update
+            $updatedClaim = DB::table('claim_contribution')->where('id', $id)->first();
+
+            // Log activity
+            $activityDescription = 'Claim sent to approver by admin: ' . $causerUsername;
+            if ($claim->status === 'rejected') {
+                $activityDescription .= ' (Resent after rejection - Status changed to pending)';
+            }
+
+            ActivityLog::create([
+                'log_name' => 'claim_contribution',
+                'description' => $activityDescription,
+                'event' => $claim->status === 'rejected' ? 'resent_to_approver' : 'sent_to_approver',
+                'subject_type' => 'App\Models\ClaimContribution',
+                'subject_id' => $id,
+                'properties' => [
+                    'sent_to_approver' => 1,
+                    'previous_status' => $claim->status,
+                    'new_status' => $claim->status === 'rejected' ? 'pending' : $claim->status
+                ],
+                'causer_type' => $admin ? get_class($admin) : null,
+                'causer_id' => $causerUuid,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            // Send notification to approver staff
+            try {
+                // Replace with your actual approver role_id
+                $approverStaff = User::where('role_id', '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d')->get();
+                
+                if ($approverStaff->isNotEmpty()) {
+                    foreach ($approverStaff as $approver) {
+                        // Check if notification already exists for this resend
+                        $existingNotification = $approver->notifications()
+                            ->where('type', 'App\Notifications\ApproverClaimNotification')
+                            ->whereJsonContains('data->claim_id', $id)
+                            ->where('read_at', null) // Only check unread notifications
+                            ->first();
+                        
+                        if (!$existingNotification) {
+                            $approver->notify(new ApproverClaimNotification($updatedClaim, $causerUsername, $claim->status === 'rejected'));
+                        }
+                    }
+                }
+            } catch (\Exception $notificationError) {
+                \Log::error('Error notifying approver staff about claim: ', [
+                    'claim_id' => $id,
+                    'message' => $notificationError->getMessage(),
+                    'trace' => $notificationError->getTraceAsString()
+                ]);
+            }
+
+            DB::commit();
+
+            $message = 'Tuntutan berjaya dihantar ke pelulus';
+            if ($claim->status === 'rejected') {
+                $message = 'Tuntutan yang ditolak berjaya dihantar semula ke pelulus';
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ], 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            
+            \Log::error('Send to Approver Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ralat sistem: ' . $e->getMessage()
+            ], 500);
+        }  
     }
 
     
@@ -460,6 +605,9 @@ class HomeController extends Controller {
                 'payment_remarks' => 'nullable|string|max:1000',
                 'visit_date' => 'nullable|date',
                 'verification_date' => 'nullable|date',
+                'reason' => 'nullable|string|max:500',
+                'eft_no' => 'nullable|string|max:100',
+                'payment_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
             ]);
 
             $claim = DB::table('claim_contribution')->where('id', $id)->first();
@@ -473,14 +621,79 @@ class HomeController extends Controller {
             $oldData = (array) $claim;
             $oldStatus = $claim->status;
 
+            // Get admin user information
+            $admin = auth('admin')->user();
+            $causerUsername = $admin ? $admin->username : 'System';
+            $causerUuid = $admin ? $admin->uuid : null;
+
+            // Determine role for rejection
+            $rejectedByRole = 'admin_staff'; // default
+            if ($admin && isset($admin->role_id)) {
+                if ($admin->role_id == '9e2714f4-3b8b-46ab-8482-3919dc9b9f4d') {
+                    $rejectedByRole = 'approver';
+                }
+            }
+
             $updateData = [
                 'status' => $request->status,
                 'updated_at' => now()
             ];
             
-            // Add payment amount if status is approve_paid
+            // Handle approve_paid status fields
+            if ($request->hasFile('payment_document')) {
+                if ($claim->payment_document && file_exists(public_path($claim->payment_document))) {
+                    unlink(public_path($claim->payment_document));
+                }
+
+                // Define upload path
+                $uploadPath = public_path('claim_docs');
+                
+                // Create directory if it doesn't exist
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+
+                $file = $request->file('payment_document');
+                $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $fileExtension = $file->getClientOriginalExtension();
+                $newFileName = $fileName . '_' . time() . '.' . $fileExtension;
+
+                // Move the file to the upload directory with the new name
+                $file->move($uploadPath, $newFileName);
+
+                // Store the new file path
+                $updateData['payment_document'] = 'claim_docs/' . $newFileName;
+            }
+
+            // Update rejection tracking
+            if ($request->status === 'rejected') {
+                if ($request->filled('reason')) {
+                    $updateData['rejected_reason'] = $request->reason;
+                }
+                $updateData['rejected_by'] = $causerUsername;
+                $updateData['rejected_by_role'] = $rejectedByRole;
+                $updateData['sent_to_approver'] = 0;
+                $updateData['sent_to_approver_by'] = NULL;
+            }
+
+            if ($request->status === 'pending' || $request->status === 'approve_payment_in_process') {
+                if ($request->filled('visit_date')) {
+                    $updateData['visit_date'] = $request->visit_date;
+                }
+
+                if ($request->filled('process_remarks')) {
+                    $updateData['process_remarks'] = $request->process_remarks;
+                }
+            }
+
+
+           // Add payment amount if status is approve_paid
             if ($request->status === 'approve_paid' && $request->payment_amount) {
                 $updateData['payment_amount'] = $request->payment_amount;
+            }
+
+            if ($request->status === 'approve_paid' && $request->eft_no) {
+                $updateData['eft_no'] = $request->eft_no;
             }
 
             if ($request->status === 'approve_paid' && $request->verification_date) {
@@ -489,20 +702,6 @@ class HomeController extends Controller {
 
             if ($request->status === 'approve_paid' && $request->payment_remarks) {
                 $updateData['payment_remarks'] = $request->payment_remarks;
-            }
-
-            if ($request->status === 'rejected' && $request->filled('reason')) {
-                $updateData['rejected_reason'] = $request->reason;
-            }
-
-        if ($request->status === 'pending') {
-                if ($request->filled('visit_date')) {
-                    $updateData['visit_date'] = $request->visit_date;
-                }
-
-                if ($request->filled('process_remarks')) {
-                    $updateData['process_remarks'] = $request->process_remarks;
-                }
             }
 
             DB::table('claim_contribution')
@@ -527,15 +726,19 @@ class HomeController extends Controller {
                 }
             }
 
-            $admin = auth('admin')->user();
-            $causerUsername = $admin ? $admin->username : 'System';
-            $causerUuid = $admin ? $admin->uuid : null;
+            $activityDescription = 'Claim status updated by admin: ' . $causerUsername . ' from "' . $oldStatus . '" to "' . $request->status . '"';
+            
+            if ($request->status === 'rejected') {
+                $activityDescription = 'Claim rejected by ' . $rejectedByRole . ': ' . $causerUsername;
+                if ($request->filled('reason')) {
+                    $activityDescription .= ' - Reason: ' . $request->reason;
+                }
+            } 
 
             ActivityLog::create([
                 'log_name' => 'claim_contribution',
-                'description' => 'Claim status updated by admin: ' . $causerUsername . ' from "' . $oldStatus . '" to "' . $request->status . '"' . 
-                            ($request->status === 'approve_paid' && $request->payment_amount ? ' with payment amount: RM ' . number_format($request->payment_amount, 2) : ''),
-                'event' => 'status_updated',
+                'description' => $activityDescription,
+                'event' => $request->status === 'rejected' ? 'rejected' : 'status_updated',
                 'subject_type' => 'App\Models\ClaimContribution',
                 'subject_id' => $id,
                 'properties' => $changes,
@@ -547,7 +750,7 @@ class HomeController extends Controller {
                 'updated_at' => now()
             ]);
 
-            // Send notification - UPDATED FOLLOWING YOUR PATTERN
+            // Send notification
             try {
                 \Log::info('Sending claim status notification:', [
                     'claim_id' => $id,
@@ -555,7 +758,6 @@ class HomeController extends Controller {
                     'status' => $request->status
                 ]);
 
-                // Get client record
                 $client = ClientRegisterModel::where('client_id', $claim->user_id)->first();
                 
                 if (!$client) {
@@ -564,7 +766,6 @@ class HomeController extends Controller {
                         'user_id' => $claim->user_id
                     ]);
                 } else {
-                    // Get the user client
                     $user_client = ClientUser::where('uuid', $claim->user_id)->first();
                     
                     if ($user_client) {
@@ -592,10 +793,25 @@ class HomeController extends Controller {
                 ]);
             }
 
+            $successMessage = 'Status tuntutan berjaya dikemaskini';
+            if ($request->status === 'rejected') {
+                $successMessage = 'Tuntutan berjaya ditolak';
+            } elseif ($request->status === 'approve_paid') {
+                $details = [];
+                if ($request->payment_amount) {
+                    $details[] = 'jumlah bayaran RM ' . number_format($request->payment_amount, 2);
+                }
+                if ($request->eft_no) {
+                    $details[] = 'No. EFT: ' . $request->eft_no;
+                }
+                if (!empty($details)) {
+                    $successMessage .= ' dengan ' . implode(' dan ', $details);
+                }
+            }
+
             return response()->json([
                 'success' => true,
-                'message' => 'Status tuntutan berjaya dikemaskini' . 
-                            ($request->status === 'approve_paid' && $request->payment_amount ? ' dengan jumlah bayaran RM ' . number_format($request->payment_amount, 2) : '')
+                'message' => $successMessage
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {

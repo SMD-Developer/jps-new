@@ -209,6 +209,8 @@
     }
 
     
+
+    
 </style>
 <title>@lang('Permohonan Baru') | JPS</title>
 @section('content')
@@ -259,7 +261,7 @@
                                         </div>
                                         <div class="col-md-8">
                                             <input type="text" id="pemohon" name="applicant" class="form-control"
-                                                placeholder="Nama Pemohon" value="{{ $claim->applicant ?? '' }}">
+                                                placeholder="Nama Pemohon" value="{{ $claim->applicant ?? '' }}" readOnly>
                                         </div>
                                     </div>
                                 </div>
@@ -272,7 +274,7 @@
                                         <div class="col-md-8">
                                             <input type="text" id="ssm" name="identities" class="form-control"
                                                 placeholder="No. Kad Pengenalan / SSM No."
-                                                value="{{ $claim->identities ?? '' }}">
+                                                value="{{ $claim->identities ?? '' }}" readOnly>
                                         </div>
                                     </div>
                                 </div>
@@ -284,7 +286,7 @@
                                             <label for="alamat">@lang('app.applicant_address')</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <textarea id="alamat" class="form-control" name="address" rows="4" placeholder="Alamat Pemohon">{{ $claim->address ?? '' }}</textarea>
+                                            <textarea id="alamat" class="form-control" name="address" rows="4" placeholder="Alamat Pemohon" readOnly>{{ $claim->address ?? '' }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -298,7 +300,7 @@
                                             <input type="text" id="poskod" name="postal_code" class="form-control"
                                                 placeholder="@lang('app.postal_code')" pattern="[0-9]*"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                value="{{ $claim->postal_code ?? '' }}">
+                                                value="{{ $claim->postal_code ?? '' }}" readOnly>
                                         </div>
                                     </div>
                                 </div>
@@ -311,7 +313,7 @@
                                         </div>
                                         <div class="col-md-8">
                                             <input type="text" id="bandar" name="city" class="form-control"
-                                                placeholder="Bandar" value="{{ $claim->city ?? '' }}">
+                                                placeholder="Bandar" value="{{ $claim->city ?? '' }}" readOnly>
                                         </div>
                                     </div>
                                 </div>
@@ -323,7 +325,7 @@
                                             <label for="negeri">@lang('app.state')</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <select id="negeri" class="form-control form-select" name="state">
+                                            <select id="negeri" class="form-control form-select" name="state" >
                                                 <option value="" disabled>@lang('Sila Pilih Negeri')</option>
                                                 @foreach ($state as $value)
                                                     <option value="{{ $value->idnegeri }}"
@@ -364,7 +366,7 @@
                                         </div>
                                         <div class="col-md-8">
                                             <input type="email" id="emel" name="email" class="form-control"
-                                                placeholder="Alamat Emel" value="{{ $claim->email ?? '' }}">
+                                                placeholder="Alamat Emel" value="{{ $claim->email ?? '' }}" readOnly>
                                         </div>
                                     </div>
                                 </div>
@@ -378,7 +380,7 @@
                                             <input type="tel" id="telefon" name="phone" class="form-control"
                                                 placeholder="No. Telefon" pattern="[0-9]*"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                value="{{ $claim->phone ?? '' }}">
+                                                value="{{ $claim->phone ?? '' }}" readOnly>
                                         </div>
                                     </div>
                                 </div>
@@ -397,7 +399,7 @@
                                             <label for="project_name">@lang('Nama dan Butiran Projek')</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <textarea id="project_name" name="project_name"  class="form-control" rows="4" placeholder="Nama Projek">{{ $claim->project_name ?? '' }}</textarea>
+                                            <textarea id="project_name" name="project_name"  class="form-control" rows="4" placeholder="Nama Projek" readOnly>{{ $claim->project_name ?? '' }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -416,7 +418,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="lot-tanah" name="land_lot" class="form-control"
-                                            placeholder="Land lot" value="{{ $claim->land_lot ?? '' }}">
+                                            placeholder="Land lot" value="{{ $claim->land_lot ?? '' }}" readOnly>
                                     </div>
                                 </div>
                             </div>
@@ -442,7 +444,7 @@
                                             </select>
                                             <input type="text" id="keluasan" name="land_area" class="form-control"
                                                 placeholder="Land area" value="{{ $claim->land_area }}"
-                                                oninput="validateInput(this); convertToHectare();">
+                                                oninput="validateInput(this); convertToHectare();" readOnly>
                                             <span class="mx-2">=</span>
                                             <input type="text" id="hectare-display" class="form-control"
                                                 placeholder="@lang('app.hectare')" readonly>
@@ -463,7 +465,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <select id="land_district" class="form-control form-select "
-                                            name="land_district">
+                                            name="land_district" >
                                             <option value="" selected disabled>@lang('app.select_district')</option>
                                             @foreach ($district as $value)
                                                 <option value="{{ $value->iddaerah }}"
@@ -771,7 +773,22 @@
                 <!-- Submit Section -->
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="window.history.back()">@lang('Kembali')</button>
+                    
                     @if($isAdminStaff)
+                        @if($claim->status == 'approve_paid' || $claim->send_to_finance == 1 || $claim->sent_to_approver == 1)
+                            <button type="button" class="btn btn-danger" disabled>@lang('app.reject')</button>
+                            <button type="button" class="btn btn-primary" disabled>
+                                <i class="fas fa-paper-plane me-1"></i> Hantar ke Pelulus
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-danger" onclick="rejectClaim({{ $claim->id }})">@lang('app.reject')</button>
+                            <button type="button" class="btn btn-primary no-print" onclick="sendToApprover({{ $claim->id }})">
+                                <i class="fas fa-paper-plane me-1"></i> Hantar ke Pelulus
+                            </button>
+                        @endif
+                    @endif
+
+                    @if($isApplicationApprover)
                         @if($claim->status == 'approve_paid' || $claim->status == 'rejected' || $claim->send_to_finance == 1)
                             <button type="button" class="btn btn-danger" disabled>@lang('app.reject')</button>
                             <button type="button" class="btn btn-info no-print" disabled>
@@ -867,7 +884,7 @@
                     </div>
 
                     <!-- Status Update Modal (for Finance Staff) - MOVED OUTSIDE MAIN FORM -->
-                    @if($isFinanceStaff)
+                   @if($isFinanceStaff)
                     <div class="modal fade" id="financeStatusModal" tabindex="-1" aria-labelledby="financeStatusModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -876,7 +893,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="statusUpdateForm" action="{{ route('updateClaimStatus', $claim->id ?? '') }}" method="POST">
+                                    <form id="statusUpdateForm" action="{{ route('updateClaimStatus', $claim->id ?? '') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="mb-3">
                                             <label for="modal_status" class="form-label">@lang('app.status')</label>
@@ -914,6 +931,7 @@
 
                                         <!-- Fields for "approve_paid" Status -->
                                         <div id="paidFields" style="display: none;">
+                                            
                                             <div class="mb-3">
                                                 <label for="modal_payment_amount" class="form-label">Jumlah Bayaran: <span class="text-danger">*</span></label>
                                                 <input type="number" 
@@ -935,6 +953,35 @@
                                                     name="verification_date"
                                                     value="{{ old('verification_date', $claim->verified_date ?? '') }}">
                                                 <small class="text-muted">Tarikh bayaran dibuat</small>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="eft_no" class="form-label">No Transaksi EFT: <span class="text-danger">*</span></label>
+                                                <input type="text" 
+                                                    class="form-control" 
+                                                    id="eft_no" 
+                                                    name="eft_no" 
+                                                    placeholder="Masukkan nombor EFT"
+                                                    value="{{ old('eft_no', $claim->eft_no ?? '') }}">
+                                                <small class="text-muted">Contoh: EFT123456789</small>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="payment_document" class="form-label">Muat Naik Dokumen: <span class="text-danger">*</span></label>
+                                                <input type="file" 
+                                                    class="form-control" 
+                                                    id="payment_document" 
+                                                    name="payment_document"
+                                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                                <small class="text-muted">Format yang diterima: PDF, JPG, PNG, DOC, DOCX (Max: 2MB)</small>
+                                                @if(isset($claim->payment_document) && $claim->payment_document)
+                                                    <div class="mt-2">
+                                                        <small class="text-success">
+                                                            <i class="fas fa-file"></i> Dokumen sedia ada: 
+                                                            <a href="{{ asset('storage/' . $claim->payment_document) }}" target="_blank">Lihat Dokumen</a>
+                                                        </small>
+                                                    </div>
+                                                @endif
                                             </div>
 
                                             <div class="mb-3">
@@ -1258,8 +1305,8 @@
     <script>
         $(document).ready(function() {
             function toggleModalFields() {
-            const status = $('#modal_status').val();
-    
+                const status = $('#modal_status').val();
+
                 // Hide all conditional fields first
                 $('#processFields').hide();
                 $('#paidFields').hide();
@@ -1273,9 +1320,13 @@
                 
                 if (status === 'approve_paid') {
                     $('#paidFields').slideDown();
+                    $('#eft_no').attr('required', 'required');
+                    $('#payment_document').attr('required', 'required');
                     $('#modal_payment_amount').attr('required', 'required');
                     $('#modal_verification_date').attr('required', 'required');
                 } else {
+                    $('#eft_no').removeAttr('required');
+                    $('#payment_document').removeAttr('required');
                     $('#modal_payment_amount').removeAttr('required');
                     $('#modal_verification_date').removeAttr('required');
                 }
@@ -1299,7 +1350,6 @@
                 
                 const status = $('#modal_status').val();
                 
-
                 if (status === 'approve_payment_in_process') {
                     const visitDate = $('#visit_date').val();
                     if (!visitDate) {
@@ -1314,8 +1364,30 @@
                 }
                 
                 if (status === 'approve_paid') {
+                    const eftNo = $('#eft_no').val();
+                    const paymentDocument = $('#payment_document')[0].files.length;
                     const amount = $('#modal_payment_amount').val();
                     const verificationDate = $('#modal_verification_date').val();
+                    
+                    if (!eftNo) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ralat!',
+                            text: 'Sila masukkan No. EFT',
+                            confirmButtonColor: '#d33'
+                        });
+                        return false;
+                    }
+                    
+                    if (paymentDocument === 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ralat!',
+                            text: 'Sila muat naik dokumen bayaran',
+                            confirmButtonColor: '#d33'
+                        });
+                        return false;
+                    }
                     
                     if (!amount || !verificationDate) {
                         Swal.fire({
@@ -1338,10 +1410,15 @@
                     }
                 });
                 
+                // Use FormData for file upload
+                var formData = new FormData(this);
+                
                 $.ajax({
                     url: $(this).attr('action'),
                     method: 'POST',
-                    data: $(this).serialize(),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     dataType: 'json',
                     success: function(response) {
                         $('#financeStatusModal').modal('hide');
@@ -1390,6 +1467,65 @@
                 });
             });
         });
+        function sendToApprover(claimId) {
+            Swal.fire({
+                title: 'Hantar ke Pelulus?',
+                text: 'Adakah anda pasti untuk menghantar tuntutan ini ke pelulus?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Hantar!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menghantar...',
+                        text: 'Sila tunggu',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('claim.sendToApprover', ':id') }}".replace(':id', claimId),
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berjaya!',
+                                text: response.message || 'Tuntutan berjaya dihantar ke pelulus',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#3085d6'
+                            }).then(() => {
+                                window.location.href = "{{ route('claim.list') }}";
+                            });
+                        },
+                        error: function(xhr) {
+                            let errorMessage = 'Gagal menghantar tuntutan';
+                            
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ralat!',
+                                text: errorMessage,
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    });
+                }
+            });
+        }
     </script>
 
  

@@ -552,11 +552,6 @@
                                 <div id="land_grant_fileList" class="file-list mt-2"></div>
                                 <div id="land_grant_error" class="text-danger mt-1"></div>
                                 
-                                @if(isset($claim))
-                                    <small class="text-muted">
-                                        <i class="fa fa-info-circle"></i> Tidak wajib - Fail sedia ada akan digunakan jika tidak dimuatnaik
-                                    </small>
-                                @endif
                             </div>
                         </div>
 

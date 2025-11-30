@@ -363,27 +363,73 @@
                                                     <span class="{{ $badgeClass }}">
                                                         {{ $badgeText }}
                                                     </span>
+                                                    
                                                     @if($item->status === 'rejected' && !empty($item->rejected_reason))
-                                                        <div class="mt-2 text-danger text-center">
+                                                        <div class="mt-2 text-danger">
                                                             <strong>Alasan:</strong> {{ $item->rejected_reason }}
+                                                            @if(!empty($item->rejected_by))
+                                                                <br>
+                                                                <small class="text-muted">
+                                                                    Ditolak oleh: <strong>{{ $item->rejected_by }}</strong>
+                                                                    @if(!empty($item->rejected_by_role))
+                                                                        <span class="badge bg-secondary ms-1">
+                                                                            {{ $item->rejected_by_role == 'admin_staff' ? 'Admin Staff' : 'Pelulus' }}
+                                                                        </span>
+                                                                    @endif
+                                                                </small>
+                                                            @endif
                                                         </div>
                                                     @endif
                                                 @else
                                                     <span class="status-badge status-unknown">N/A</span>
                                                 @endif
 
-                                                @if($item->send_to_finance == 1)
-                                                    <div class="mt-3 p-2 border-start border-3 border-primary bg-light rounded">
-                                                        <small class="text-secondary d-block mb-1">Sahkan oleh:</small>
-                                                        <strong class="text-dark">{{ $item->sent_by ?? 'N/A' }}</strong><br>
-                                                        <small class="text-muted">
-                                                            {{ $item->sent_to_finance_at 
-                                                                ? \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y h:i A') 
-                                                                : '-' }}
-                                                        </small>
-                                                    </div>
-                                                @endif
+                                                {{-- Only show forward information if NOT rejected or approved/paid --}}
+                                                @if(!in_array($item->status, ['rejected', 'approve_paid']))
+                                                    @php
+                                                        $showFinance = $item->send_to_finance == 1;
+                                                        $showApprover = $item->sent_to_approver == 1;
+                                                        
+                                                        // If both exist, compare timestamps to show only the most recent
+                                                        if ($showFinance && $showApprover) {
+                                                            $financeTime = $item->sent_to_finance_at ? \Carbon\Carbon::parse($item->sent_to_finance_at) : null;
+                                                            $approverTime = $item->sent_to_approver_at ? \Carbon\Carbon::parse($item->sent_to_approver_at) : null;
+                                                            
+                                                            if ($financeTime && $approverTime) {
+                                                                // Show only the most recent one
+                                                                if ($financeTime->gt($approverTime)) {
+                                                                    $showApprover = false;
+                                                                } else {
+                                                                    $showFinance = false;
+                                                                }
+                                                            }
+                                                        }
+                                                    @endphp
 
+                                                    @if($showFinance)
+                                                        <div class="mt-3 p-2 border-start border-3 border-primary bg-light rounded">
+                                                            <small class="text-secondary d-block mb-1">Dihantar ke Kewangan oleh:</small>
+                                                            <strong class="text-dark">{{ $item->sent_by ?? 'N/A' }}</strong><br>
+                                                            <small class="text-muted">
+                                                                {{ $item->sent_to_finance_at 
+                                                                    ? \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y h:i A') 
+                                                                    : '-' }}
+                                                            </small>
+                                                        </div>
+                                                    @endif
+
+                                                    @if($showApprover)
+                                                        <div class="mt-3 p-2 border-start border-3 border-primary bg-light rounded">
+                                                            <small class="text-secondary d-block mb-1">Dihantar ke Pelulus oleh:</small>
+                                                            <strong class="text-dark">{{ $item->sent_to_approver_by ?? 'N/A' }}</strong><br>
+                                                            <small class="text-muted">
+                                                                {{ $item->sent_to_approver_at 
+                                                                    ? \Carbon\Carbon::parse($item->sent_to_approver_at)->format('d/m/Y h:i A') 
+                                                                    : '-' }}
+                                                            </small>
+                                                        </div>
+                                                    @endif
+                                                @endif
                                             </td>
 
                                             <td>{{$item->payment_amount}}</td>

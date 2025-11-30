@@ -161,11 +161,13 @@
                                                 style="text-decoration: none; color: inherit;">
                                                 <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
                                                 
-                                                <p style="font-size: 12px; margin: 5px 0;">
+                                               <p style="font-size: 12px; margin: 5px 0;">
                                                     @if(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_finance')
                                                         <span style="color: #666;">Dihantar oleh:</span> {{ $notification->data['sent_by'] ?? 'Unknown' }}
                                                         <br>
                                                         <span style="color: #666;">Pemohon:</span> {{ $notification->data['applicant'] ?? 'N/A' }}
+                                                    @elseif(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_Approver')
+                                                        <span style="color: #666;">Dihantar oleh:</span> {{ $notification->data['sent_by'] ?? 'Unknown' }}
                                                     @else
                                                         {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
                                                     @endif

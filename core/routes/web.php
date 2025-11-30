@@ -266,7 +266,7 @@ Route::group(['middleware' => 'install'], function(){
         ->name('updateClaimStatus');
         Route::post('claims/{id}/send-to-finance', 'HomeController@sendToFinance')
         ->name('claims.send_to_finance');
-
+        Route::post('claim/send-to-approver/{id}', 'HomeController@claimSendToApprover')->name('claim.sendToApprover');
         
         Route::get('mangage-state', 'HomeController@manageState')->name('manage.state');
         Route::post('states/add', 'HomeController@addState')->name('addState');

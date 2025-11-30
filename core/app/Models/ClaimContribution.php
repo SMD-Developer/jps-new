@@ -50,7 +50,12 @@ class ClaimContribution extends Model
         'ic_copy',
         'bank_statement',
         'statutory_declaration',
-        'company_registration'
+        'company_registration',
+        'sent_to_approver_by',
+        'rejected_by',
+        'rejected_by_role',
+        'eft_no',
+        'payment_document'
     ];
 
     /**
