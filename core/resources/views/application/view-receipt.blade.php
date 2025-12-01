@@ -365,12 +365,10 @@
                                                     @endif
 
                                                 @else
-                                                    <span class="text-muted">No Access</span>
+                                                    <span class="text-muted"></span>
                                                 @endif
 
                                             </td>
-
-
                                         </tr>
                                     @empty
                                         <tr>

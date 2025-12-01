@@ -325,7 +325,7 @@
                                             <label for="negeri">@lang('app.state')</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <select id="negeri" class="form-control form-select" name="state" >
+                                            <select id="negeri" class="form-control form-select" name="state"  disabled>
                                                 <option value="" disabled>@lang('Sila Pilih Negeri')</option>
                                                 @foreach ($state as $value)
                                                     <option value="{{ $value->idnegeri }}"
@@ -345,7 +345,7 @@
                                             <label for="daerah">@lang('app.district')</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <select id="daerah" class="form-control form-select" name="district">
+                                            <select id="daerah" class="form-control form-select" name="district" disabled>
                                                 <option value="" disabled>@lang('Sila Pilih Daerah')</option>
                                                 @foreach ($district as $value)
                                                     <option value="{{ $value->iddaerah }}"
@@ -433,7 +433,7 @@
                                     <div class="col-md-8">
                                         <div class="d-flex align-items-center">
                                             <select id="land-unit" name="land_unit" class="form-control form-select me-3"
-                                                readonly onclick="return false;" style="pointer-events: none;">
+                                                readonly onclick="return false;" style="pointer-events: none;" >
                                                 <option value="" disabled>- Sila Pilih -</option>
                                                 @foreach ($landMeasurement as $land)
                                                     <option value="{{ $land->id }}"
@@ -465,7 +465,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <select id="land_district" class="form-control form-select "
-                                            name="land_district" >
+                                            name="land_district" disabled >
                                             <option value="" selected disabled>@lang('app.select_district')</option>
                                             @foreach ($district as $value)
                                                 <option value="{{ $value->iddaerah }}"
@@ -487,7 +487,7 @@
                                         <label for="mukim">@lang('Mukim')</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select id="mukim" class="form-control form-select" name="land_state">
+                                        <select id="mukim" class="form-control form-select" name="land_state" disabled>
                                             <option value="" disabled>@lang('app.select_division')</option>
                                             @foreach ($division as $value)
                                                 <option value="{{ $value->idmukim }}"
@@ -748,7 +748,7 @@
                         </div>
                         <div class="col-md-8">
                             <textarea id="claim-reason" name="claim_reason" class="form-control" rows="4" 
-                                placeholder="@lang('Nyatakan alasan tuntutan anda')">{{$claim->claim_reason}}</textarea>
+                                placeholder="@lang('Nyatakan alasan tuntutan anda')" readonly>{{$claim->claim_reason}}</textarea>
                             <div id="claim_reason_error" class="invalid-feedback d-block" style="display:none;"></div>
                         </div>
                     </div>
@@ -761,7 +761,7 @@
                         <div class="col-md-8">
                             <input type="text" id="payment_amount" name="payment_amount" class="form-control"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
-                                value="{{ old('payment_amount', $claim->payment_amount ?? '') }}">
+                                value="{{ old('payment_amount', $claim->payment_amount ?? '') }}" readonly>
                             <div id="claim_amount_error" class="invalid-feedback d-block" style="display:none;"></div>
                         </div>
                     </div>
