@@ -556,6 +556,7 @@
                                              <th>@lang('app.account_type')</th>
                                              <th>@lang('app.applicant_list')</th>
                                             <th>@lang('app.lot_pt')</th>
+                                            <th>NO TRANSAKSI EFT</th>
                                             <th>@lang('app.status')</th>
                                             <th>JUMLAH BAYARAN (RM)</th>
                                         </tr>
@@ -581,6 +582,7 @@
                                                 <td>{{ strtoupper($contribution->account_type_name ?? 'N/A') }}</td>
                                                 <td>{{ strtoupper($contribution->applicant ?? 'N/A') }}</td>
                                                 <td>{{ strtoupper($contribution->land_lot ?? 'N/A') }}, {{ strtoupper($contribution->division_name) }}, DAERAH {{strtoupper($contribution->district_name) }}, SELANGOR</td>
+                                                <td>{{$contribution->eft_no ?? 'N/A'}}</td>
                                                 <td>
                                                     @if($contribution->status)
                                                         {{ strtoupper(trans('app.' . $contribution->status)) }}
@@ -588,6 +590,7 @@
                                                         N/A
                                                     @endif
                                                 </td>
+                                                
                                                  <td>
                                                     {{ $contribution->payment_amount ? number_format($contribution->payment_amount, 2) : '0.00' }}
                                                 </td>

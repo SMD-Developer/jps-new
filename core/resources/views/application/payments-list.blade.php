@@ -477,7 +477,7 @@
                                                             data-applicant="{{ $application->applicant ?? '-' }}"
                                                             data-amount="{{ number_format($payment->amount ?? 0, 2) }}"
                                                             data-transaction-date="{{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d M Y, h:i A') : 'N/A' }}"
-                                                            data-transaction-id="{{ $payment->transaction_id ?? '-' }}"
+                                                            data-transaction-id="{{ $application->transaction ?? '-' }}"
                                                             data-method="{{ $payment->method }}"
                                                             data-voucher="{{ $payment->voucher_number}}"
                                                             data-receipt-path="{{ $payment->receipt_path ?? '' }}"
@@ -703,27 +703,30 @@
             applyDateFilter();
         }
     </script>
-   <script>
+    <script>
     $(document).ready(function() {
-        // Handle view payment details button click
-        $('.view-payment-details').on('click', function() {
-            // Get data from button attributes
-            var refNo = $(this).data('ref-no');
-            var applicant = $(this).data('applicant');
-            var amount = $(this).data('amount');
-            var transactionDate = $(this).data('transaction-date');
-            var transactionId = $(this).data('transaction-id');
-            var method = $(this).data('method');
-            var voucher = $(this).data('voucher'); // Add this line
-            var receiptPath = $(this).data('receipt-path');
+        // Use delegated event listener for dynamically loaded content
+        $(document).on('click', '.view-payment-details', function() {
+            // Get data from button attributes using .attr() to bypass cache
+            var $btn = $(this);
+            var refNo = $btn.attr('data-ref-no');
+            var applicant = $btn.attr('data-applicant');
+            var amount = $btn.attr('data-amount');
+            var transactionDate = $btn.attr('data-transaction-date');
+            var transactionId = $btn.attr('data-transaction-id');
+            var method = $btn.attr('data-method');
+            var voucher = $btn.attr('data-voucher');
+            var receiptPath = $btn.attr('data-receipt-path');
+            
+            console.log('Transaction ID from application:', transactionId); // Debug
             
             // Populate modal fields
-            $('#modal-ref-no').text(refNo);
-            $('#modal-applicant').text(applicant.toUpperCase());
-            $('#modal-amount').text(amount);
-            $('#modal-transaction-date').text(transactionDate);
-            $('#modal-transaction-id').text(transactionId);
-            $('#modal-voucher').text(voucher ? voucher : '-'); // Add this line
+            $('#modal-ref-no').text(refNo || '-');
+            $('#modal-applicant').text(applicant ? applicant.toUpperCase() : '-');
+            $('#modal-amount').text(amount || '-');
+            $('#modal-transaction-date').text(transactionDate || '-');
+            $('#modal-transaction-id').text(transactionId || '-');
+            $('#modal-voucher').text(voucher || '-');
             
             // Show receipt section only for EFT method with receipt
             if (method === 'EFT' && receiptPath) {

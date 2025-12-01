@@ -289,8 +289,8 @@
                                                     </a>
 
                                                 @elseif ($item->status == 'approve_paid')
-                                                {{-- ✅ Show verification date & payment remarks when approved and paid --}}
-                                                @if(!empty($item->verified_date) || !empty($item->payment_remarks))
+                                                {{-- ✅ Show verification date, EFT number & payment remarks when approved and paid --}}
+                                                @if(!empty($item->verified_date) || !empty($item->eft_no) || !empty($item->payment_remarks))
                                                     <div class="mb-1">
                                                         @if(!empty($item->verified_date))
                                                             <small class="text-muted">
@@ -299,10 +299,18 @@
                                                             </small>
                                                         @endif
                                                     </div>
+                                                    @if(!empty($item->eft_no))
+                                                        <div class="mb-1">
+                                                            <small class="text-muted">
+                                                                <strong>No. EFT:</strong>
+                                                                <strong>{{ $item->eft_no }}</strong>
+                                                            </small>
+                                                        </div>
+                                                    @endif
                                                     @if(!empty($item->payment_remarks))
                                                         <div>
                                                             <small class="text-muted">
-                                                                <strong>Catatan :</strong>
+                                                                <strong>Catatan:</strong>
                                                                 <strong>{{ $item->payment_remarks }}</strong>
                                                             </small>
                                                         </div>
