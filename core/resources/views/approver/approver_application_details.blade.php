@@ -698,6 +698,41 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr class="appeal-letter-row" id="appeal_letter_row" style="display: none;">
+                                        <td colspan="5">
+                                            @if(isset($application->appeal_letter) && $application->appeal_letter)
+                                                <div class="d-flex justify-content-end" style="margin-top: 10px;">
+                                                    <div style="display: flex; flex-direction: column; gap: 8px; max-width: 500px; width: 100%;">
+                                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+                                                            <label style="margin: 0; font-weight: bold;">@lang('Surat Kelulusan')</label>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                                                            <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
+                                                            <a href="{{ url($application->appeal_letter) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
+                                                                {{ basename($application->appeal_letter) }}
+                                                            </a>
+                                                            <span style="color: #666; font-size: 12px; margin-left: 10px;">
+                                                                ({{ number_format(file_exists(public_path($application->appeal_letter)) ? filesize(public_path($application->appeal_letter)) / 1024 / 1024 : 0, 2) }} MB)
+                                                            </span>
+                                                        </div>
+                                                        <small style="color: #007bff; font-weight: 600;">
+                                                            <i class="fa fa-info-circle"></i> Surat Kelulusan uploaded
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="d-flex justify-content-end" style="margin-top: 10px;">
+                                                    <div style="max-width: 500px; width: 100%;">
+                                                        <label style="margin: 0; font-weight: bold; margin-bottom: 5px; display: block;">@lang('Surat Kelulusan')</label>
+                                                        <p style="color: #999; font-style: italic; margin: 0; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                                                            No appeal letter uploaded yet
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td></td>
+                                    </tr>
                                      <tr class="remark-row">
                                         <td colspan="5">
                                             <div class="d-flex align-items-center justify-content-end" style="gap: 10px;">
@@ -1167,6 +1202,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateConversionMessage();
             convertToHectare();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const appealType = document.getElementById('appeal_type').value;
+            const appealLetterRow = document.getElementById('appeal_letter_row');
+            const hasAppealLetter = {{ isset($application->appeal_letter) && $application->appeal_letter ? 'true' : 'false' }};
+            if (appealType === 'yes' || hasAppealLetter) {
+                appealLetterRow.style.display = '';
+            }
         });
     </script>
 @endsection

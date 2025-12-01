@@ -579,15 +579,35 @@
                                                 <td>{{ strtoupper($application->applicant ?? 'N/A') }}</td>
                                                 <td>{{ $application->land_lot ?? 'N/A' }},{{ strtoupper($application->division_name) }}, DAERAH {{ strtoupper($application->district_name) }}, SELANGOR</td>
                                                 <td>
-                                                    {{ strtoupper($application->payment_method) == 'CHEQUE' ? 'CEK' : 'EFT' }}
+                                                    @php
+                                                        $method = strtoupper($application->payment_method ?? '');
+                                                    @endphp
+
+                                                    @if($method === 'CHEQUE')
+                                                        CEK
+                                                    @elseif(in_array($method, ['BANK_DRAF', 'BANK_DRAFT']))
+                                                        BANK DRAF
+                                                    @else
+                                                        EFT
+                                                    @endif
                                                 </td>
+
                                                 <td>
                                                     @if($application->applicant_type == 3)
                                                         BAUCAR BAYARAN
                                                     @else
-                                                        {{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}
+                                                        @php
+                                                            $method = strtolower($application->payment_method ?? '');
+                                                        @endphp
+
+                                                        @if(in_array($method, ['cheque', 'bank_draf', 'bank_draft']))
+                                                            MANUAL
+                                                        @else
+                                                            {{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}
+                                                        @endif
                                                     @endif
                                                 </td>
+
                                                 <td>
                                                 @php
                                                     $statusMap = [
