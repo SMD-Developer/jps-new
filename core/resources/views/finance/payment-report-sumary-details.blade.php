@@ -881,6 +881,7 @@
                                             'FPX_B2C' => 'EFT_B2C',
                                             'FPX_B2B' => 'EFT_B2B',
                                             'EFT' => 'BAUCAR BAYARAN',
+                                            'bank_draf' => 'BANK DRAF',
                                             default => $method ?? 'N/A',
                                         };
                                     @endphp
