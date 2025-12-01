@@ -936,6 +936,10 @@
 
                     <!-- Print Button -->
                     <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-secondary me-2"
+                                onclick="window.history.back()">
+                            <i class="fa fa-arrow-left"></i> Kembali
+                        </button>
                         <button type="button" class="btn btn-primary" id="print-button" onclick="window.print()">
                             <i class="fa fa-print"></i> @lang('app.print')
                         </button>
