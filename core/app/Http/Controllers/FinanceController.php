@@ -304,12 +304,11 @@ class financeController extends Controller {
                 $sequentialNumber = str_pad($nextSequence, 6, '0', STR_PAD_LEFT);
                 $receiptNumber = $year . 'JPSSEL' . $month . $day . $sequentialNumber;
 
-                  $transactionId = 'TXN-' . mt_rand(1000000000, 9999999999);
+                  $transactionId = $application->transaction;
     
                 // Update applications table
                 $application->update([
                     'payment_status' => 'completed',
-                    'transaction' => $transactionId,
                     'reciept_number' => $receiptNumber,
                     'deposit_date' => \Carbon\Carbon::now(),
                 ]);
@@ -324,7 +323,6 @@ class financeController extends Controller {
                     'amount' => $application->final_amount,
                     'method' => 'EFT',
                     'payment_status' => 'completed',
-                    'transaction_id' => $transactionId,
                     'receipt_number' => $receiptNumber,
                     'gateway_transaction_id' => $transactionId,
                     'payment_gateway' => 'Bank Transfer',
@@ -715,6 +713,7 @@ class financeController extends Controller {
                 'FPX_B2B' => 'FPX B2B',
                 'FPX_B2C' => 'FPX B2C',
                 'cheque'  =>  'Cek',
+                'bank_draf' => 'Bank Draf',
                 'kad_kredit' => 'Kad Kredit',
                 'kad_debit' => 'Kad Debit'
             ];

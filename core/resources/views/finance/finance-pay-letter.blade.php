@@ -211,7 +211,7 @@
                             <div class="form-group">
                                 <label for="transaction">@lang('No Transaksi EFT')*</label>
                                 <input type="text" id="transaction" name="transaction" 
-                                    value="{{ $application->payment && $application->payment->transaction_id ? $application->payment->transaction_id : '' }}" 
+                                    value="{{ $application->transaction ?? '' }}" 
                                     class="form-control @error('transaction') is-invalid @enderror" readonly>
                                 @error('transaction')
                                     <div class="invalid-feedback">{{ $message }}</div>
