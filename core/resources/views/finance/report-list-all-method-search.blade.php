@@ -122,7 +122,7 @@
                                                     <a href="#" onclick="selectMethod('Kad Debit', 'kad_debit')">Kad Debit</a>
                                                     <a href="#" onclick="selectMethod('Bank Draf', 'bank_draf')">Bank Draf</a>
                                                     <a href="#" onclick="selectMethod('Cek', 'cheque')">Cek</a>
-                                                    <a href="#" onclick="selectMethod('Baucar Bayaran Agensi Kerajaan', 'EFT')">Baucar Bayaran Agensi Kerajaan</a>
+                                                    <a href="#" onclick="selectMethod('Baucar Bayaran Agensi Kerajaan', 'baucar_kerajaan')">Baucar Bayaran Agensi Kerajaan</a>
                                                 </div>
                                             </div>
                                             <input type="hidden" id="selectedMethodValue" name="payment_method" value="">

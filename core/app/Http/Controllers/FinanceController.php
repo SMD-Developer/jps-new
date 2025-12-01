@@ -715,7 +715,8 @@ class financeController extends Controller {
                 'cheque'  =>  'Cek',
                 'bank_draf' => 'Bank Draf',
                 'kad_kredit' => 'Kad Kredit',
-                'kad_debit' => 'Kad Debit'
+                'kad_debit' => 'Kad Debit',
+                'baucar_kerajaan' => 'Baucar Bayaran Agensi Kerajaan'
             ];
             $selectedPaymentMethodName = $paymentMethods[$paymentMethod] ?? $paymentMethod;
         }
@@ -740,6 +741,7 @@ class financeController extends Controller {
             ->select(
                 'applications.*',
                 'client_register.userName as client_name',
+                'client_register.accountType as applicant_type',
                 'district.daerah as district_name',
                 'division.mukim as division_name',
                 'account_types.name as account_type_name',
@@ -754,10 +756,17 @@ class financeController extends Controller {
         
         // Filter by payment method if selected
         if ($paymentMethod && $paymentMethod != '') {
-            // If EFT is selected, include EFT, FPX_B2B, and FPX_B2C
+            // If EFT is selected, include EFT, FPX_B2B, and FPX_B2C (but NOT government vouchers)
             if ($paymentMethod === 'EFT') {
-                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
-            } else {
+                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C'])
+                    ->where('client_register.accountType', '!=', '3'); // Exclude government agencies
+            } 
+            // If Baucar Bayaran Agensi Kerajaan is selected
+            elseif ($paymentMethod === 'baucar_kerajaan') {
+                $query->where('payments.method', 'EFT')
+                    ->where('client_register.accountType', '3'); // Only government agencies
+            } 
+            else {
                 $query->where('payments.method', $paymentMethod);
             }
         }
