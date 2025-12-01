@@ -646,7 +646,7 @@ class HomeController extends Controller {
                 }
 
                 // Define upload path
-                $uploadPath = public_path('claim_docs');
+                $uploadPath = public_path('pdf');
                 
                 // Create directory if it doesn't exist
                 if (!file_exists($uploadPath)) {
@@ -662,7 +662,7 @@ class HomeController extends Controller {
                 $file->move($uploadPath, $newFileName);
 
                 // Store the new file path
-                $updateData['payment_document'] = 'claim_docs/' . $newFileName;
+                $updateData['payment_document'] = 'pdf/' . $newFileName;
             }
 
             // Update rejection tracking
