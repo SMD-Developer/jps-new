@@ -587,12 +587,12 @@
                                     <tbody>
                                         <tr>
                                             <td><strong>JABATAN</strong></td>
-                                            <td><strong>: 021000</strong></td>
+                                            <td><strong>021000</strong></td>
                                             <td><strong>JABATAN PENGAIRAN & SALIRAN SELANGOR</strong></td>
                                         </tr>
                                         <tr>
                                             <td><strong>PTJ</strong></td>
-                                            <td><strong>: 21000000</strong></td>
+                                            <td><strong>21000000</strong></td>
                                             <td><strong>PENGARAH PENGAIRAN & SALIRAN</strong></td>
                                         </tr>
                                     </tbody>

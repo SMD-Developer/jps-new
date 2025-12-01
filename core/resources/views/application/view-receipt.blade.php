@@ -243,7 +243,7 @@
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th><strong>{{ trans('app.no') }}</strong></th>
+                                        <th><strong>{{ trans('Bil') }}</strong></th>
                                         <th><strong>{{ trans('app.date') }}</strong></th>
                                         <th><strong>{{ trans('app.reference_no') }}</strong></th>
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>

@@ -238,7 +238,7 @@
                         <form>
                             <div class="form-group">
                                 <label for="project_name">@lang('Nama Projek')</label>
-                                <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{ $application->project_name }}</textarea>
+                                <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek" readonly>{{ $application->project_name }}</textarea>
                             </div>
                         </form>
                     </div>
