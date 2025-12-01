@@ -120,6 +120,7 @@
                                                     <a href="#" onclick="selectMethod('B2C', 'FPX_B2C')">B2C</a>
                                                     <a href="#" onclick="selectMethod('Kad Kredit', 'kad_kredit')">Kad Kredit</a>
                                                     <a href="#" onclick="selectMethod('Kad Debit', 'kad_debit')">Kad Debit</a>
+                                                    <a href="#" onclick="selectMethod('Bank Draf', 'bank_draf')">Bank Draf</a>
                                                     <a href="#" onclick="selectMethod('Baucar Bayaran Agensi Kerajaan', 'EFT')">Baucar Bayaran Agensi Kerajaan</a>
                                                 </div>
                                             </div>

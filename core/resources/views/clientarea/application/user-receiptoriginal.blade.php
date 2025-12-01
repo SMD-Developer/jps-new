@@ -363,9 +363,11 @@
         <div class="container pb-5 no-print">
             <div class="row mb-3 justify-content-end">
                 <div class="col-auto">
-                    <button type="button" class="btn btn-success mx-2" onclick="window.history.back();">
+                    <button type="button" class="btn btn-success mx-2"
+                            onclick="window.location.href='{{ route('contribution_history') }}'">
                         Kembali
                     </button>
+
                     <button type="button" id="downloadButton" class="btn btn-danger mx-2" style="display:none;">
                         @lang('app.download')
                     </button>
