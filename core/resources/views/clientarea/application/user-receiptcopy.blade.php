@@ -374,7 +374,6 @@
                         id="printButton" 
                         class="btn btn-primary mx-2" 
                         style="white-space: nowrap;"
-                        data-app-id="{{ $application->id }}"
                     >
                         @lang('app.print_receipt')
                     </button>
@@ -425,24 +424,18 @@
         });
 
         document.getElementById('printButton').addEventListener('click', function() {
+            const printButton = this;
+
+            // Disable the button
+            printButton.disabled = true;
+            printButton.style.opacity = '0.6';
+            printButton.style.cursor = 'not-allowed';
+            printButton.innerHTML = 'Printed';
+            
+            // Trigger print dialog
             window.print();
+
         });
     </script>
-     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const btn = document.getElementById('printButton');
-            const appId = btn.getAttribute("data-app-id");
-
-            const storageKey = "print_disabled_app_" + appId;
-
-            if (localStorage.getItem(storageKey) === "true") {
-                btn.disabled = true;
-            }
-
-            btn.addEventListener("click", function () {
-                btn.disabled = true;
-                localStorage.setItem(storageKey, "true");
-            });
-        });
-    </script>
+     
 @endsection
