@@ -59,7 +59,7 @@
                             <img src="{{ image_url('uploads/defaultavatar.png') }}"
                                 class="user-image" alt="User Image" />
                             <strong>
-                                <span>Welcome,</span>
+                                <span>Welcome SELAMAT DATANG,</span>
                                 <span class="hidden-xs">{{ auth('third_party')->user()->name ?? 'User' }}</span>
                             </strong>
                             <b class="caret"></b>

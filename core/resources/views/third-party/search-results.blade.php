@@ -13,6 +13,10 @@
         vertical-align: middle;
         text-align: center;
     }
+
+    .table tbody {
+        font-size: 12px;
+    }
     
     .back-btn {
         margin-bottom: 20px;

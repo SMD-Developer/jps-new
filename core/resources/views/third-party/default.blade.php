@@ -664,10 +664,18 @@ body {
 
 <div class="container-fluid ps-0 mt-5">
         <div class="row ">
-            <div class="col-md-2 col-4 pe-0 icon-text ">
+            <div class="col-md-2 col-5 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
-                    <img src="{{ asset('assets/images/selangor.png') }}" class="img-fluid" alt="Responsive image">
-                </a>
+                    @if(get_setting_value('logo') != '')
+                    <img src="{{ image_url(get_setting_value('logo')) }}" 
+                        alt="Logo" 
+                        style="max-height: 93px; width: auto; object-fit: contain;">
+                    @else
+                        <img src="{{ asset('assets/images/selangor.png') }}" 
+                            alt="Logo" 
+                            style="max-height: 60px; width: auto; object-fit: contain;">
+                    @endif
+                </a>    
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
                 <h2 class="">PORTAL e-CP (CARUMAN PARIT)</h2>
@@ -681,44 +689,44 @@ body {
                 @endif
                    <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
     
-    {{-- Display Errors --}}
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0" style="list-style: none; padding: 0;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+                        {{-- Display Errors --}}
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0" style="list-style: none; padding: 0;">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
 
-    {{-- Session Messages --}}
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+                        {{-- Session Messages --}}
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
 
-      {{-- Login Form --}}
-        <form method="POST" action="{{ route('third.party.login.submit') }}">
-            @csrf
-            <div class="mb-3">
-                <label style="font-size:18px;">Email</label>
-                <input type="email" name="email" class="form-control" required>
-            </div>
+                        {{-- Login Form --}}
+                            <form method="POST" action="{{ route('third.party.login.submit') }}">
+                                @csrf
+                                <div class="mb-3">
+                                    <label style="font-size:18px;">Emel</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
 
-           <div class="mb-3 position-relative">
-                <label style="font-size:18px;">Password</label>
-                <input type="password" name="password" id="password" class="form-control" required>
-                <i class="bi bi-eye-slash toggle-password position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer" 
-                data-target="password" 
-                style="cursor: pointer; margin-top: 12px;"></i>
-            </div>
+                            <div class="mb-3 position-relative">
+                                    <label style="font-size:18px;">Kata Laluan</label>
+                                    <input type="password" name="password" id="password" class="form-control" required>
+                                    <i class="bi bi-eye-slash toggle-password position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer" 
+                                    data-target="password" 
+                                    style="cursor: pointer; margin-top: 12px;"></i>
+                                </div>
 
-            <button type="submit" class="btn btn-primary mb-3">Login</button>
-        </form>
+                                <button type="submit" class="btn btn-primary mb-3">Log Masuk</button>
+                            </form>
 
-</div>
+                    </div>
                     <footer>
                             <div class="row">
                                 <div class="col-md-12 text-center text-light pt-3 stick-bottom">
