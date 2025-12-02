@@ -86,7 +86,7 @@
                                     <th>Lot/PT</th>
                                     <th>Tarikh Permohonan</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Untuk Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody>
