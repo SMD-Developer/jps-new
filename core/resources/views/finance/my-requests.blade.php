@@ -49,7 +49,7 @@
                 <!-- Header -->
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">
-                        <i class="fa fa-file-text"></i> Senarai Permohonan Resit Saya
+                        <i class="fa fa-file-text"></i> Senarai Permohonan Salinan Resit
                     </h3>
                 </div>
 
@@ -119,9 +119,9 @@
                                         </td>
                                         <td>
                                             @if($request->status !== 'approved')
-                                                <button class="btn btn-sm btn-primary"
+                                                <button class="btn btn-sm btn-primary" 
                                                         onclick="openFinanceModal({{ $request->id }}, '{{ $request->status }}')">
-                                                    Approve Request
+                                                    <i class="fa fa-edit"></i>
                                                 </button>
                                             @else
                                                 <button class="btn btn-sm btn-secondary" disabled>
@@ -169,8 +169,8 @@
                 <input type="hidden" name="id" id="receiptRequestId">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Process Receipt Request</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title">Proses Receipt Request</h5>
+                   <button type="button" class="btn-close" onclick="closeFinanceModal()" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
@@ -179,16 +179,27 @@
                     <div class="mb-3">
                         <label>Status</label>
                         <select name="status" id="statusSelect" class="form-control" required>
-                            <option value="pending">Pending</option>
-                            <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
+                            <option value="pending">Dalam Proses</option>
+                            <option value="approved">Diluluskan</option>
+                            <option value="rejected" style="display:none;">Rejected</option>
                         </select>
                     </div>
 
                     <!-- UPLOAD RECEIPT -->
                     <div class="mb-3" id="uploadDiv" style="display:none;">
-                        <label>Upload Receipt</label>
-                        <input type="file" name="receipt_file" class="form-control" accept=".pdf,.jpg,.png">
+                        <label>Muat Naik Resit</label>
+                        <input type="file" 
+                            name="receipt_file" 
+                            id="receiptFile"
+                            class="form-control" 
+                            accept=".pdf,.jpg,.png"
+                            style="display: none;">
+                        <button type="button" 
+                                class="btn btn-outline-secondary w-100" 
+                                onclick="document.getElementById('receiptFile').click()">
+                            <i class="fa fa-upload"></i> <span id="fileName">Pilih Fail</span>
+                        </button>
+                        <small class="text-muted d-block mt-1">Format: PDF, JPG, PNG</small>
                     </div>
 
                     <!-- REJECT REASON -->
@@ -199,7 +210,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeFinanceModal()" style="display:none">Close</button>
+                    <button type="submit" class="btn btn-success">Hantar</button>
                 </div>
 
             </form>
@@ -211,23 +223,40 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    let financeModalInstance = null;
+
     function openFinanceModal(id, currentStatus = 'pending') {
-
-        // Set hidden ID
         document.getElementById('receiptRequestId').value = id;
-
-        // Set current status as selected
         const statusSelect = document.getElementById('statusSelect');
         statusSelect.value = currentStatus;
 
         toggleFields(currentStatus);
-
-        // Open modal
-        let modal = new bootstrap.Modal(document.getElementById('financeModal'));
-        modal.show();
+        
+        const modalElement = document.getElementById('financeModal');
+        
+        if (financeModalInstance) {
+            financeModalInstance.dispose();
+        }
+        
+        financeModalInstance = new bootstrap.Modal(modalElement);
+        financeModalInstance.show();
     }
 
-    // Show/Hide Fields Based on Status
+    function closeFinanceModal() {
+        const modalElement = document.getElementById('financeModal');
+        modalElement.style.display = 'none';
+        modalElement.classList.remove('show');
+        
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+        
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
+
     function toggleFields(status) {
         document.getElementById('uploadDiv').style.display = (status === "approved") ? "block" : "none";
         document.getElementById('reasonDiv').style.display = (status === "rejected") ? "block" : "none";
@@ -235,6 +264,11 @@
 
     document.getElementById('statusSelect').addEventListener('change', function () {
         toggleFields(this.value);
+    });
+
+    document.getElementById('receiptFile').addEventListener('change', function() {
+        const fileName = this.files[0] ? this.files[0].name : 'Pilih Fail';
+        document.getElementById('fileName').textContent = fileName;
     });
 </script>
 

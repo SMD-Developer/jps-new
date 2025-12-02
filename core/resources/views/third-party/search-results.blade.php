@@ -212,9 +212,10 @@
                                                                 border-radius: 20px;
                                                                 padding: 6px 16px;
                                                                 font-weight: 600;
+                                                                white-space:nowrap;
                                                                 font-size: 13px;
                                                                 border: none;">
-                                                            <i class="fa fa-credit-card"></i> Bayar RM 10
+                                                            <i class="fa fa-credit-card"></i> Mohon Resit
                                                         </a>
                                                     @endif
                                                     
