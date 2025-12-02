@@ -306,7 +306,6 @@
                         id="printButton" 
                         class="btn btn-primary mx-2" 
                         style="white-space: nowrap;"
-                        data-app-id="{{ $application->id }}"
                     >
                         @lang('app.print_receipt')
                     </button>
@@ -355,22 +354,21 @@
                 alert('Failed to generate PDF. Please try again.');
             });
         });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const btn = document.getElementById('printButton');
-            const appId = btn.getAttribute("data-app-id");
 
-            const storageKey = "print_disabled_app_" + appId;
-
-            if (localStorage.getItem(storageKey) === "true") {
-                btn.disabled = true;
-            }
-
-            btn.addEventListener("click", function () {
-                btn.disabled = true;
-                localStorage.setItem(storageKey, "true");
-            });
+        document.getElementById('printButton').addEventListener('click', function() {
+            const printButton = this;
+            
+            // Disable the button immediately
+            printButton.disabled = true;
+            printButton.style.opacity = '0.6';
+            printButton.style.cursor = 'not-allowed';
+            printButton.innerHTML = 'Telah Dicetak';
+            
+            // Trigger print dialog
+            window.print();
+            
+        
         });
     </script>
+    
 @endsection
