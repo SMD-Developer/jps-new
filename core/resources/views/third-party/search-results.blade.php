@@ -15,7 +15,7 @@
     }
 
     .table tbody {
-        font-size: 12px;
+        font-size: 13px;
     }
     
     .back-btn {
@@ -100,8 +100,8 @@
                                     <th>Bil</th>
                                     <th>Nama Pemohon</th>
                                     <th>Lot/PT</th>
-                                    <th>Daerah</th>
-                                    <th>Mukim</th>
+                                    <!-- <th>Daerah</th>
+                                    <th>Mukim</th> -->
                                     <th>Tarikh Permohonan</th>
                                     <th>No Rujukan</th>
                                     <th>Status</th>
@@ -113,9 +113,11 @@
                                     <tr>
                                         <td>{{ $applications->firstItem() + $index }}</td>
                                         <td>{{ $app->applicant ?? 'N/A' }}</td>
-                                        <td>{{ $app->land_lot ?? 'N/A' }}</td>
-                                        <td>{{ $app->districts->daerah ?? 'N/A' }}</td>
-                                        <td>{{ $app->division->mukim ?? 'N/A' }}</td>
+                                        <td>{{ $app->land_lot ?? 'N/A' }}, {{ $app->land_area }}, {{ $app->landDivision->mukim ?? '' }},
+                                            Daerah {{ $app->landDistrict->daerah ?? '' }}
+                                        </td>
+                                        <!-- <td>{{ $app->districts->daerah ?? 'N/A' }}</td>
+                                        <td>{{ $app->division->mukim ?? 'N/A' }}</td> -->
                                         <td>{{ \Carbon\Carbon::parse($app->created_at)->format('d/m/Y') }}</td>
                                         <td>
                                             <a href="#">

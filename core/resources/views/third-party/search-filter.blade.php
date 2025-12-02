@@ -5,6 +5,10 @@
         margin-bottom: 15px;
     }
 
+    .dropdown-btn span {
+        pointer-events: none;
+    }
+
     .dropdown-container {
         position: relative;
         width: 100%;
@@ -135,7 +139,7 @@
                                     <label>Nama Pemohon</label>
                                     <div class="dropdown-container">
                                         <button type="button" class="dropdown-btn" data-target="applicantDropdown"
-                                            onclick="toggleDropdown('applicantDropdown')">
+                                                onclick="toggleDropdown('applicantDropdown', event)">
                                             <span id="selectedApplicantText">{{ __('app.select_applicant_list') }}</span>
                                             <span>▼</span>
                                         </button>
@@ -206,7 +210,7 @@
                                          value="{{ old('reference_number') }}">
                                 </div>
 
-                                <button type="submit" class="btn btn-primary float-right">{{ __('app.search') }}</button>
+                                <button type="submit" class="btn btn-primary float-right">{{ __('Cari') }}</button>
                                 <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">{{ __('app.reset') }}</button>
                             </form>
                         </div>
@@ -270,7 +274,11 @@
 
         
 
-        function toggleDropdown(dropdownId) {
+        function toggleDropdown(dropdownId, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
             const dropdowns = document.getElementsByClassName("dropdown-content");
             for (let i = 0; i < dropdowns.length; i++) {
                 if (dropdowns[i].id !== dropdownId) {
