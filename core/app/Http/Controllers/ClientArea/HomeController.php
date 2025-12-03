@@ -138,6 +138,19 @@ class HomeController extends Controller {
                 $rules['identities'] = 'required';
             }
 
+
+            if ($request->input('applicant_type') != '3') {
+                $rules['identities'] = 'required';
+            }
+
+            $selectedState = DB::table('state')->where('idnegeri', $request->state)->first();
+
+            $statesWithoutDistrict = ['14', '15', '16'];
+
+            if ($selectedState && in_array($selectedState->negeri_code, $statesWithoutDistrict)) {
+                unset($rules['district']); 
+            }
+
             // Validate the request
             $this->validate($request, $rules, [
                 "uploade_date.required" => trans('app.uploade_date_required'),

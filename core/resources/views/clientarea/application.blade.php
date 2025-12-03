@@ -306,7 +306,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                           <label for="ssm" class="required">@lang('app.identification_card_no')</label>
+                                           <label for="ssm" class="{{ $userAccountType == 3 ? '' : 'required' }}">@lang('app.identification_card_no')</label>
                                         </div>
                                         <div class="col-md-8">
                                              <input type="text" id="ssm" name="identities" class="form-control"
@@ -705,6 +705,15 @@
 
                 if (selectedAccountType != '3') {
                     requiredFields.push('identities');
+                }
+
+
+                let selectedStateCode = $('#negeri option:selected').text().trim().split('-')[0].trim();
+                let statesWithoutDistrict = ['14', '15', '16'];
+
+                if (statesWithoutDistrict.includes(selectedStateCode)) {
+                    const index = requiredFields.indexOf('district');
+                    if (index !== -1) requiredFields.splice(index, 1);
                 }
 
                 requiredFields.forEach(field => {
@@ -1274,4 +1283,18 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 </script>
+
+<script>
+    document.getElementById('applicant_type').addEventListener('change', function () {
+        let selected = parseInt(this.value);
+        let label = document.querySelector('label[for="ssm"]');
+
+        if (selected === 3) {
+            label.classList.remove('required');   
+        } else {
+            label.classList.add('required');      
+        }
+    });
+</script>
+
 @endsection
