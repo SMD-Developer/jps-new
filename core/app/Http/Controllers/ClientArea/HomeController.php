@@ -1232,16 +1232,28 @@ class HomeController extends Controller {
             // Get the applicant type from the application
             $applicantType = $application->applicant_type;
 
+            $selectedStateId = $request->input('state');
+            $isDistrictRequired = true;
+
+            if ($selectedStateId) {
+                $state = DB::table('state')->where('idnegeri', $selectedStateId)->first();
+                
+                if ($state) {
+                    $stateCode = (int)$state->negeri_code;
+                    $exemptStateCodes = [14, 15, 16];
+                    $isDistrictRequired = !in_array($stateCode, $exemptStateCodes);
+                }
+            }
+
             // Define base validation rules
             $validationRules = [
                 "uploade_date" => "required",
                 "applicant" => "required",
                 "address" => "required",
-                "phone" => "required|numeric|digits_between:8,12",
+                "phone" => "numeric|digits_between:8,12",
                 "email" => "required|email",
                 "state" => "required",
                 "city" => "required",
-                "district" => "required",
                 "project_name" => "required",
                 "land_lot" => "required",
                 "land_area" => "required",
@@ -1249,6 +1261,11 @@ class HomeController extends Controller {
                 "land_state" => "required",
                 "land_unit" => "required"
             ];
+
+
+            if ($isDistrictRequired) {
+                $validationRules["district"] = "required";
+            }
 
             // Only add identities validation if applicant_type is NOT 3 (Agency)
             if ($applicantType != 3) {
@@ -1407,6 +1424,12 @@ class HomeController extends Controller {
                 $updateData["identities"] = $request->input('identities', $application->identities);
             } else {
                 $updateData["identities"] = $request->input('identities') ?: null;
+            }
+
+            if ($isDistrictRequired) {
+                $updateData["district"] = $request->input('district', $application->district);
+            } else {
+                $updateData["district"] = $request->input('district') ?: null;
             }
 
             // Add updated file arrays as JSON to update data

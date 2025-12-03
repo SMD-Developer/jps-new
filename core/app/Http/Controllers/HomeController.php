@@ -1149,6 +1149,19 @@ class HomeController extends Controller {
                 return redirect()->back()->with('error', __('app.application_not_found'));
             }
 
+            $selectedStateId = $request->input('state');
+            $isDistrictRequired = true;
+
+            if ($selectedStateId) {
+                $state = DB::table('state')->where('idnegeri', $selectedStateId)->first();
+                
+                if ($state) {
+                    $stateCode = (int)$state->negeri_code;
+                    $exemptStateCodes = [14, 15, 16];
+                    $isDistrictRequired = !in_array($stateCode, $exemptStateCodes);
+                }
+            }
+
             // Define base validation rules
             $validationRules = [
                 "uploade_date" => "required",
@@ -1160,7 +1173,6 @@ class HomeController extends Controller {
                 "email" => "required|email",
                 "state" => "required",
                 "city" => "required",
-                "district" => "required",
                 "land_lot" => "required",
                 "land_area" => "required",
                 "land_district" => "required",
@@ -1178,6 +1190,11 @@ class HomeController extends Controller {
             ];
 
             $applicantType = $application->applicant_type ?? $request->input('applicant_type');
+
+            if ($isDistrictRequired) {
+                $validationRules["district"] = "required";
+            }
+
             if ($applicantType != 3) {
                 $validationRules['identities'] = 'required';
             } else {
@@ -1246,6 +1263,12 @@ class HomeController extends Controller {
                 "project_name" => $request->input('project_name'),
                 "appeal_status" => $request->input('appeal') === 'yes' ? 'approved' : 'rejected'
             ];
+
+            if ($isDistrictRequired) {
+                $updateData["district"] = $request->input('district', $application->district);
+            } else {
+                $updateData["district"] = $request->input('district') ?: null;
+            }
             
             // If appeal is 'yes', change application status to pending
             if ($request->input('appeal') === 'yes') {

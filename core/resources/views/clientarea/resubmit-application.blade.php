@@ -291,6 +291,13 @@
     .remove-file-btn:hover {
         opacity: 0.8;
     }
+
+    .submit-button.is-invalid {
+        border: 1px solid grey !important;
+        border-radius: 4px;
+        padding: 6px 12px;
+    }
+
 </style>
 <title>@lang('app.resumbit_application') | JPS</title>
 @section('content')
@@ -380,8 +387,9 @@
                                 <select id="negeri" class="form-control form-select" name="state">
                                     <option value="" disabled>@lang('app.please_select_state')</option>
                                     @foreach ($state as $value)
-                                        <option value="{{ $value->idnegeri }}"
-                                            {{ $application->state == $value->idnegeri ? 'selected' : '' }}>
+                                        <option value="{{ $value->idnegeri }}" 
+                                                data-state-code="{{ $value->negeri_code }}"
+                                                {{ $application->state == $value->idnegeri ? 'selected' : '' }}>
                                             {{ $value->negeri_code }} - {{ $value->negeri }}
                                         </option>
                                     @endforeach
@@ -393,7 +401,7 @@
                             <div class="form-group">
                                 <label for="daerah">@lang('app.district')</label>
                                 <select id="daerah" class="form-control form-select" name="district">
-                                    <option value="" disabled>@lang('app.select_district')</option>
+                                    <option value="">@lang('app.select_district')</option>
                                     @foreach ($district as $value)
                                         <option value="{{ $value->iddaerah }}"
                                             {{ $application->district == $value->iddaerah ? 'selected' : '' }}>
@@ -1173,16 +1181,45 @@
             convertToHectare();
         });
     </script>
-    <script>
-       $(document).ready(function() {
+     <script>
+        $(document).ready(function() {
             let formIsReady = true;
-
-            // Get application type from backend - THIS IS THE KEY FIX
             const applicationType = '{{ $application->applicant_type }}';
-
-            // Function to get current application type
             function getApplicationType() {
                 return applicationType;
+            }
+
+            function isDistrictRequired() {
+                const selectedOption = $('#negeri option:selected');
+                const stateCode = selectedOption.data('state-code');
+                
+                // District is NOT required for state codes 14, 15, 16
+                const exemptStateCodes = [14, 15, 16];
+                return !exemptStateCodes.includes(parseInt(stateCode));
+            }
+
+            // Function to update district field requirement
+            function updateDistrictRequirement() {
+                const districtField = $('#daerah');
+                const districtLabel = $('label[for="daerah"]');
+                
+                if (!isDistrictRequired()) {
+                    // Remove required validation for exempt states
+                    districtField.removeClass('is-invalid');
+                    districtField.next('.invalid-feedback').remove();
+                    $('#daerah-error').remove();
+                    
+                    // Remove red asterisk
+                    districtLabel.find('.starr').remove();
+                    
+                    // Clear the field if desired
+                    // districtField.val('');
+                } else {
+                    // Add red asterisk for states that require district
+                    if (!districtLabel.find('.starr').length) {
+                        districtLabel.append(' <b class="starr">*</b>');
+                    }
+                }
             }
 
             // Function to update ID card field requirement based on account type
@@ -1209,6 +1246,7 @@
 
             // Initial check on page load
             updateIdCardRequirement();
+            updateDistrictRequirement();
 
             // Function to check if form is valid
             function checkFormAndToggleButton() {
@@ -1218,13 +1256,18 @@
                 // Build required fields list based on account type
                 let requiredFields = [
                     'pemohon', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                    'bandar', 'negeri', 'emel',
                     'lot-tanah', 'keluasan', 'land_district', 'mukim', 'project_name'
                 ];
 
                 // Only add ssm if NOT account type 3
                 if (appType != '3') {
                     requiredFields.push('ssm');
+                }
+
+                // Only add district if required (not state codes 14, 15, 16)
+                if (isDistrictRequired()) {
+                    requiredFields.push('daerah');
                 }
 
                 // Check each required field
@@ -1258,15 +1301,6 @@
                 if (postalElement.length && postalElement.val().trim() !== '') {
                     const postalPattern = /^[0-9]+$/;
                     if (!postalPattern.test(postalElement.val())) {
-                        formIsValid = false;
-                    }
-                }
-
-                // Check phone validation
-                const phoneElement = $('#telefon');
-                if (phoneElement.length && phoneElement.val().trim() !== '') {
-                    const phonePattern = /^[0-9]+$/;
-                    if (!phonePattern.test(phoneElement.val())) {
                         formIsValid = false;
                     }
                 }
@@ -1304,9 +1338,7 @@
                     { id: 'poskod', name: 'Postal Code' },
                     { id: 'bandar', name: 'City' },
                     { id: 'negeri', name: 'State' },
-                    { id: 'daerah', name: 'District' },
                     { id: 'emel', name: 'Email' },
-                    { id: 'telefon', name: 'Telephone' },
                     { id: 'lot-tanah', name: 'Land Lot' },
                     { id: 'keluasan', name: 'Land Area' },
                     { id: 'land_district', name: 'Land District' },
@@ -1316,6 +1348,11 @@
                 // Add ssm only if NOT account type 3
                 if (appType != '3') {
                     requiredFields.push({ id: 'ssm', name: 'Identification Card No' });
+                }
+
+                // Add district only if required (not state codes 14, 15, 16)
+                if (isDistrictRequired()) {
+                    requiredFields.push({ id: 'daerah', name: 'District' });
                 }
 
                 // Add all other fields
@@ -1425,7 +1462,7 @@
                     }
                 }
 
-                // Check land grant file only if there is no existing file
+                
                 const landGrantInput = $('#land_grant');
                 if (landGrantInput.length) {
                     const hasExistingFile = landGrantInput.closest('.form-group').find('.text-info').length > 0;
@@ -1449,7 +1486,7 @@
                     }
                 }
 
-                // Scroll to the first invalid field if validation fails
+                
                 if (firstInvalidField) {
                     $('html, body').animate({
                         scrollTop: firstInvalidField.offset().top - 100
@@ -1478,16 +1515,26 @@
                         return;
                     }
 
-                    const value = $(this).val();
-                    if (!value || value.trim() === '') {
-                        $(this).addClass('is-invalid');
+                    // Skip district validation if not required (state codes 14, 15, 16)
+                    if (id === 'daerah' && !isDistrictRequired()) {
+                        return;
+                    }
 
-                        // Create error message if it doesn't exist
-                        if ($('#' + id + '-error').length === 0) {
-                            $(this).after('<div id="' + id +
-                                '-error" class="text-danger">This field is required</div>');
-                        } else {
-                            $('#' + id + '-error').text('This field is required').show();
+                    const value = $(this).val();
+                    if (id !== 'telefon') {
+                        if (!value || value.trim() === '') {
+                            $(this).addClass('is-invalid');
+
+                            // Create error message if it doesn't exist
+                            if ($('#' + id + '-error').length === 0) {
+                                $(this).after('<div id="' + id +
+                                    '-error" class="text-danger">This field is required</div>');
+                            } else {
+                                $('#' + id + '-error').text('This field is required').show();
+                            }
+                        } else {    
+                            $(this).removeClass('is-invalid');
+                            $('#' + id + '-error').hide();
                         }
                     } else {
                         $(this).removeClass('is-invalid');
@@ -1507,10 +1554,13 @@
                 checkFormAndToggleButton();
             });
 
-    
+            // Update district requirement when state changes
             $('#negeri').on('change', function() {
                 const stateId = $(this).val();
                 $('#daerah').html('<option value="">Loading...</option>');
+
+                // Update district requirement based on new state
+                updateDistrictRequirement();
 
                 if (stateId) {
                     $.ajax({
@@ -1599,17 +1649,15 @@
                 fileInputs.forEach(inputName => {
                     const fileInput = $(`#${inputName}`)[0];
                     if (fileInput.files.length > 0) {
-                        // Check all files
                         Array.from(fileInput.files).forEach(file => {
                             if (file.size > 15 * 1024 * 1024) {
                                 fileSizeValid = false;
                                 return;
                             }
                         });
-                        // Append all files - Laravel will receive them as array
-                        // No need to manually append, FormData will handle the array
                     }
                 });
+                
                 if (!fileSizeValid) {
                     Swal.fire({
                         title: "Error!",
@@ -1687,13 +1735,18 @@
                 
                 let requiredFields = [
                     'pemohon', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 'telefon',
+                    'bandar', 'negeri', 'emel',
                     'lot-tanah', 'keluasan', 'land_district', 'mukim'
                 ];
 
                 // Only add ssm if NOT account type 3
                 if (appType != '3') {
                     requiredFields.push('ssm');
+                }
+
+                // Only add district if required (not state codes 14, 15, 16)
+                if (isDistrictRequired()) {
+                    requiredFields.push('daerah');
                 }
 
                 requiredFields.forEach(field => {
@@ -1703,9 +1756,14 @@
                     }
                 });
 
-                // If account type is 3, ensure ssm doesn't have asterisk
+                // Ensure ssm doesn't have asterisk for account type 3
                 if (appType == '3') {
                     $('label[for="ssm"]').find('.starr').remove();
+                }
+
+                // Ensure district doesn't have asterisk for exempt states
+                if (!isDistrictRequired()) {
+                    $('label[for="daerah"]').find('.starr').remove();
                 }
 
                 const landGrantInput = $('#land_grant');

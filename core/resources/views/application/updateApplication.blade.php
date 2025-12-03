@@ -327,8 +327,9 @@
                                 <select id="negeri" class="form-control form-select" name="state">
                                     <option value="" disabled>@lang('app.please_select_state')</option>
                                     @foreach ($state as $value)
-                                        <option value="{{ $value->idnegeri }}"
-                                            {{ $application->state == $value->idnegeri ? 'selected' : '' }}>
+                                        <option value="{{ $value->idnegeri }}" 
+                                                data-state-code="{{ $value->negeri_code }}"
+                                                {{ $application->state == $value->idnegeri ? 'selected' : '' }}>
                                             {{ $value->negeri_code }} - {{ $value->negeri }}
                                         </option>
                                     @endforeach
@@ -340,7 +341,7 @@
                             <div class="form-group">
                                 <label for="daerah">@lang('app.district')</label>
                                 <select id="daerah" class="form-control form-select" name="district">
-                                    <option value="" disabled>@lang('app.select_district')</option>
+                                    <option value="">@lang('app.select_district')</option>
                                     @foreach ($district as $value)
                                         <option value="{{ $value->iddaerah }}"
                                             {{ $application->district == $value->iddaerah ? 'selected' : '' }}>
@@ -352,7 +353,6 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-
                             <div class="form-group">
                                 <label for="emel">@lang('app.email_address')</label>
                                 <input type="email" id="emel" name="email" class="form-control"
@@ -794,6 +794,9 @@
             let timeout;
             let isDuplicateRef = false;
             let isChecking = false;
+
+            updateDistrictRequirement();
+            checkFormAndToggleButton();
             
             // Form validation variables
             let formIsReady = true;
@@ -886,6 +889,34 @@
                     }
                 });
             }
+
+            function isDistrictRequired() {
+                const selectedOption = $('#negeri option:selected');
+                const stateCode = selectedOption.data('state-code');
+                const exemptStateCodes = [14, 15, 16];
+                return !exemptStateCodes.includes(parseInt(stateCode));
+            }
+
+
+            function updateDistrictRequirement() {
+                const districtField = $('#daerah');
+                const districtLabel = $('label[for="daerah"]');
+                
+                if (!isDistrictRequired()) {
+                    // Remove required validation for exempt states
+                    districtField.removeClass('is-invalid');
+                    districtField.next('.invalid-feedback').remove();
+                    $('#daerah-error').remove();
+                    
+                    // Remove red asterisk
+                    districtLabel.find('.starr').remove();
+                } else {
+                    // Add red asterisk for states that require district
+                    if (!districtLabel.find('.starr').length) {
+                        districtLabel.append(' <b class="starr">*</b>');
+                    }
+                }
+            }
         
             // GENERAL FORM VALIDATION
             function validateForm() {
@@ -908,7 +939,6 @@
                     { id: 'poskod', name: 'Postal Code' },
                     { id: 'bandar', name: 'City' },
                     { id: 'negeri', name: 'State' },
-                    { id: 'daerah', name: 'District' },
                     { id: 'emel', name: 'Email' },
                     { id: 'lot-tanah', name: 'Land Lot' },
                     { id: 'keluasan', name: 'Land Area' },
@@ -917,6 +947,10 @@
                     { id: 'mukim', name: 'Mukim' },
                     { id: 'land_category', name: 'Land Category' }
                 ]);
+
+                if (isDistrictRequired()) {
+                    requiredFields.push({ id: 'daerah', name: 'District' });
+                }
         
                 // Check each required field
                 requiredFields.forEach(field => {
@@ -1031,13 +1065,18 @@
         
                 let requiredFields = [
                     'application_reference', 'pemohon', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel', 
+                    'bandar', 'negeri', 'emel', 
                     'lot-tanah', 'keluasan', 'land-unit', 'land_district', 'mukim', 'land_category'
                 ];
         
                 if (applicantType != '3') {
                     requiredFields.splice(2, 0, 'ssm'); 
                 }
+
+                if (isDistrictRequired()) {
+                    requiredFields.push('daerah');
+                }
+
                 requiredFields.forEach(field => {
                     const element = $('#' + field);
                     if (element.length) {
@@ -1239,14 +1278,33 @@
             // EVENT HANDLERS
             $('.form-control').on('blur', function() {
                 const id = $(this).attr('id');
-                if (id && id !== 'land_grant' && id !== 'discount') {
+                const applicantType = $('#applicant_type').val();
+                
+                if (id) {
+                    // Skip validation for certain fields
+                    if (id === 'land_grant' || id === 'telefon') {
+                        return;
+                    }
+
+                    // Skip ssm validation if account type is 3
+                    if (id === 'ssm' && applicantType == '3') {
+                        return;
+                    }
+
+                    // Skip district validation if not required (state codes 14, 15, 16)
+                    if (id === 'daerah' && !isDistrictRequired()) {
+                        $(this).removeClass('is-invalid');
+                        $('#' + id + '-error').hide();
+                        return;
+                    }
+
                     const value = $(this).val();
                     if (!value || value.trim() === '') {
                         $(this).addClass('is-invalid');
                         if ($('#' + id + '-error').length === 0) {
-                            $(this).after('<div id="' + id + '-error" class="text-danger">This field is required</div>');
+                            $(this).after('<div id="' + id + '-error" class="text-danger">Medan ini wajib diisi</div>');
                         } else {
-                            $('#' + id + '-error').text('This field is required').show();
+                            $('#' + id + '-error').text('Medan ini wajib diisi').show();
                         }
                     } else {
                         $(this).removeClass('is-invalid');
@@ -1298,6 +1356,8 @@
         
             // State/District handlers (keep your existing code)
             $('#negeri').on('change', function() {
+                updateDistrictRequirement();
+                checkFormAndToggleButton();
                 const stateId = $(this).val();
                 $('#daerah').html('<option value="">Loading...</option>');
         
@@ -1391,12 +1451,16 @@
                 const applicantType = $('#applicant_type').val();
                 let requiredFields = [
                     'application_reference', 'pemohon', 'alamat', 'poskod',
-                    'bandar', 'negeri', 'daerah', 'emel',
+                    'bandar', 'negeri', 'emel',
                     'lot-tanah', 'keluasan', 'land_district', 'mukim', 'land_category'
                 ];
 
                 if (applicantType != '3') {
                     requiredFields.splice(2, 0, 'ssm'); 
+                }
+
+                if (isDistrictRequired()) {
+                    requiredFields.push('daerah');
                 }
         
                 requiredFields.forEach(field => {
@@ -1405,6 +1469,14 @@
                         label.append(' <b class="starr">*</b>');
                     }
                 });
+
+                if (applicantType == '3') {
+                    $('label[for="ssm"]').find('.starr').remove();
+                }
+
+                if (!isDistrictRequired()) {
+                    $('label[for="daerah"]').find('.starr').remove();
+                }
         
                 const landGrantInput = $('#land_grant');
                 if (landGrantInput.length) {
