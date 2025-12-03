@@ -167,7 +167,7 @@
                             <p class="mb-0 text-center"><strong>RESIT RASMI</strong></p>
                             <p class="text-center">
                                 <strong>
-                                        ASAL
+                                        asal
                                 </strong>
                             </p>
                             <!--<p class="text-center"><strong>ASAL</strong></p>-->

@@ -422,20 +422,115 @@
                 alert('Failed to generate PDF. Please try again.');
             });
         });
-
-        document.getElementById('printButton').addEventListener('click', function() {
-            const printButton = this;
-
-            // Disable the button
-            printButton.disabled = true;
-            printButton.style.opacity = '0.6';
-            printButton.style.cursor = 'not-allowed';
-            printButton.innerHTML = 'Printed';
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const printButton = document.getElementById('printButton');
+            const paymentUuid = '{{ $currentPayment->uuid ?? $payment->uuid }}';
+            const storageKey = `payment_printed_${paymentUuid}`;
             
-            // Trigger print dialog
-            window.print();
-
+            console.log('Payment UUID:', paymentUuid); 
+            console.log('Payment Type:', '{{ $currentPayment->payment_type ?? $payment->payment_type }}'); // Debug log
+            
+            // Check if THIS specific payment (by UUID) has been printed
+            function checkPrintStatus() {
+                const isPrinted = localStorage.getItem(storageKey);
+                
+                if (isPrinted === 'true') {
+                    disablePrintButton();
+                } else {
+                    enablePrintButton();
+                }
+            }
+            
+            // Disable the print button
+            function disablePrintButton() {
+                printButton.disabled = true;
+                printButton.style.opacity = '0.6';
+                printButton.style.cursor = 'not-allowed';
+                printButton.innerHTML = 'Printed';
+                printButton.classList.remove('btn-primary');
+                printButton.classList.add('btn-secondary');
+            }
+            
+            // Enable the print button (for new payments/reprints)
+            function enablePrintButton() {
+                printButton.disabled = false;
+                printButton.style.opacity = '1';
+                printButton.style.cursor = 'pointer';
+                printButton.innerHTML = '@lang("app.print_receipt")';
+                printButton.classList.remove('btn-secondary');
+                printButton.classList.add('btn-primary');
+            }
+            
+            // Check status on page load
+            checkPrintStatus();
+            
+            // Handle print button click
+            printButton.addEventListener('click', function() {
+                if (this.disabled) return; 
+                localStorage.setItem(storageKey, 'true');
+                localStorage.setItem(storageKey + '_timestamp', Date.now().toString());
+                localStorage.setItem(storageKey + '_date', new Date().toISOString());
+                
+                console.log('Marked payment UUID', paymentUuid, 'as printed'); // Debug log
+                
+                // Disable the button immediately
+                disablePrintButton();
+                
+                // Trigger print dialog
+                window.print();
+            });
+            
+            // Optional: Clean up very old payment records (older than 90 days)
+            function cleanupOldRecords() {
+                const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+                let cleanedCount = 0;
+                
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    
+                    if (key && key.startsWith('payment_printed_') && key.endsWith('_timestamp')) {
+                        const timestamp = parseInt(localStorage.getItem(key));
+                        if (timestamp && timestamp < ninetyDaysAgo) {
+                            const baseKey = key.replace('_timestamp', '');
+                            localStorage.removeItem(baseKey);
+                            localStorage.removeItem(key);
+                            localStorage.removeItem(baseKey + '_date');
+                            cleanedCount++;
+                        }
+                    }
+                }
+                
+                if (cleanedCount > 0) {
+                    console.log(`Cleaned up ${cleanedCount} old payment records`);
+                }
+            }
+            
+            cleanupOldRecords();
         });
+
+    // Check print status of any payment by UUID
+    function checkPaymentStatus(uuid) {
+        const key = `payment_printed_${uuid}`;
+        const status = localStorage.getItem(key);
+        const timestamp = localStorage.getItem(key + '_timestamp');
+        const date = localStorage.getItem(key + '_date');
+        
+        console.log('=== Payment Print Status ===');
+        console.log('UUID:', uuid);
+        console.log('Status:', status === 'true' ? '✓ PRINTED' : '✗ NOT PRINTED');
+        if (timestamp) {
+            console.log('Printed at:', new Date(parseInt(timestamp)).toLocaleString());
+        }
+        if (date) {
+            console.log('Printed date:', new Date(date).toLocaleString());
+        }
+        console.log('========================');
+        
+        return status === 'true';
+    }
+
     </script>
      
 @endsection

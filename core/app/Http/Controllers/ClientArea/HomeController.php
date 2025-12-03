@@ -657,13 +657,12 @@ class HomeController extends Controller {
         public function userReceiptCopy($application_id)
         {
             $application = Application::with(['payment' => function($query) {
-                    // Get only original completed payment (exclude reprint payments)
                     $query->where('payment_status', 'completed')
                         ->where(function($q) {
                             $q->where('payment_type', '!=', 'reprint')
                             ->orWhereNull('payment_type');
                         })
-                        ->oldest('created_at'); // Changed to oldest to get FIRST payment
+                        ->oldest('created_at');
                 }])
                 ->select(
                     'applications.*', 
@@ -681,14 +680,13 @@ class HomeController extends Controller {
                 abort(403, 'Unauthorized access to this receipt.');
             }
             
-            // Get the original completed payment (not reprint)
             $completedPayment = $application->payment()
                 ->where('payment_status', 'completed')
                 ->where(function($q) {
                     $q->where('payment_type', '!=', 'reprint')
                     ->orWhereNull('payment_type');
                 })
-                ->oldest('created_at') // Get the FIRST original payment
+                ->oldest('created_at')
                 ->first();
             
             if ($completedPayment) {
@@ -723,7 +721,13 @@ class HomeController extends Controller {
                 }
             }
 
-            return view('clientarea.application.user-receiptcopy', compact('application'));
+            return view('clientarea.application.user-receiptcopy', [
+                'application' => $application,
+                'payment' => $completedPayment, 
+                'currentPayment' => $completedPayment,
+                'isReprint' => false, 
+                'reprintNumber' => 0
+            ]);
         }
 
 
