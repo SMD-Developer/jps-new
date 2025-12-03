@@ -77,6 +77,11 @@
         resize: vertical;
     }
 
+    label.required::after {
+        content: " *";
+        color: red;
+    }
+
     input::placeholder {
         color: #aaa;
         font-style: italic;
@@ -258,7 +263,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="pemohon">@lang('app.applicant_individual_company')</label>
+                                                <label for="pemohon" class="required">@lang('app.applicant_individual_company')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" id="pemohon" name="applicant" class="form-control"
@@ -271,7 +276,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="ssm">@lang('app.identification_card_no')</label>
+                                                <label for="ssm" class="required">@lang('app.identification_card_no')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" id="ssm" name="identities" class="form-control"
@@ -285,7 +290,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="alamat">@lang('app.applicant_address')</label>
+                                                <label for="alamat" class="required">@lang('app.applicant_address')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <textarea id="alamat" class="form-control" name="address" rows="4" placeholder="Alamat Pemohon">{{ old('address', isset($claim) ? $claim->address : ($client->registeredAddress ?? '')) }}</textarea>
@@ -296,7 +301,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="poskod">@lang('app.postal_code')</label>
+                                                <label for="poskod" class="required">@lang('app.postal_code')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" id="poskod" name="postal_code" class="form-control"
@@ -311,7 +316,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="bandar">@lang('app.city')</label>
+                                                <label for="bandar" class="required">@lang('app.city')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" id="bandar" name="city" class="form-control"
@@ -325,7 +330,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="negeri">@lang('app.state')</label>
+                                                <label for="negeri" class="required">@lang('app.state')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <select id="negeri" class="form-control form-select" name="state">
@@ -345,7 +350,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="daerah">@lang('app.district')</label>
+                                                <label for="daerah" class="required">@lang('app.district')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <select id="daerah" class="form-control form-select" name="district">
@@ -365,7 +370,7 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="emel">@lang('app.email_address')</label>
+                                                <label for="emel" class="required">@lang('app.email_address')</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="email" id="emel" name="email" class="form-control"
@@ -399,7 +404,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                            <label for="project_name">@lang('Nama dan Butiran Projek')</label>
+                                            <label for="project_name" class="required">@lang('Nama dan Butiran Projek')</label>
                                             <br>
                                             <a href="#" class="example-link" data-toggle="modal" data-target="#projectExampleModal" style="font-size:12px;">
                                                 <i class="fa fa-info-circle"></i> Lihat Contoh
@@ -421,7 +426,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                            <label for="lot-tanah">Lot Tanah/PT</label>
+                                            <label for="lot-tanah" class="required">Lot Tanah/PT</label>
                                         </div>
                                         <div class="col-md-8">
                                             <input type="text" id="lot-tanah" name="land_lot" class="form-control"
@@ -436,7 +441,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                            <label for="keluasan">@lang('app.land_area')</label>
+                                            <label for="keluasan" class="required">@lang('app.land_area')</label>
                                         </div>
                                         <div class="col-md-8">
                                             <div class="d-flex align-items-baseline flex-wrap">
@@ -475,7 +480,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                            <label for="land_district">@lang('app.district')</label>
+                                            <label for="land_district" class="required">@lang('app.district')</label>
                                         </div>
                                         <div class="col-md-8">
                                             <select id="land_district" class="form-control form-select" name="land_district">
@@ -494,7 +499,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                            <label for="mukim">@lang('Mukim')</label>
+                                            <label for="mukim" class="required">@lang('Mukim')</label>
                                         </div>
                                         <div class="col-md-8">
                                             <select id="mukim" class="form-control form-select" name="land_state">
