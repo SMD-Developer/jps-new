@@ -39,6 +39,7 @@ class UserApplicationRejectionNotification extends Notification
             'application_id' => $this->application->id,
             'applicant' => $this->application->applicant,
             'message' => 'Permohonan anda ditolak',
+            'type' => 'application_rejected'
         ];
     }
 

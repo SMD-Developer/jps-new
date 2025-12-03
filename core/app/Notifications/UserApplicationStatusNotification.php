@@ -42,6 +42,7 @@ class UserApplicationStatusNotification extends Notification
             'application_id' => $this->application->id,
             'applicant' => $this->application->applicant,
             'message' => 'Permohonan anda diluluskan',
+            'type' => 'application_approved'
         ];
     }
 

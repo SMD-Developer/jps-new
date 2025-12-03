@@ -100,29 +100,112 @@
                             <ul id="notificationList" style="list-style: none; padding: 0; margin: 0;">
                                 @if (auth('user')->check())
                                     @php
-                                        $notifications = auth('user')->user()->notifications->take(5);
+                                        $user = auth('user')->user();
+                                        $notifications = $user->notifications()->take(5)->get();
                                     @endphp
 
-                                    @foreach ($notifications as $notification)
+                                    @forelse ($notifications as $notification)
+                                        @php
+                                            $redirectUrl = '#';
+                                            if (isset($notification->data['type'])) {
+                                                switch ($notification->data['type']) {
+                                                    case 'application_approved':
+                                                    case 'application_rejected':
+                                                    case 'application_submitted':
+                                                        $redirectUrl = isset($notification->data['application_id']) 
+                                                            ? route('client_application_status')
+                                                            : route('client_application_status');
+                                                        break;
+                                                        
+                                                    case 'claim_status_update':
+                                                        $redirectUrl = isset($notification->data['claim_id']) 
+                                                          ? route('claim.contribution.list')
+                                                            : route('claim.contribution.list');
+                                                        break;
+                                                        
+                                                    default:
+                                                        $redirectUrl = isset($notification->data['application_id']) 
+                                                            ? route('client_application_status')
+                                                            : route('client_application_status');
+                                                        break;
+                                                }
+                                            } else {
+                                                $redirectUrl = isset($notification->data['application_id']) 
+                                                    ? route('client_application_status')
+                                                            : route('client_application_status');
+                                            }
+                                        @endphp
+
                                         <li class="notification {{ $notification->read_at ? 'read' : 'unread' }}"
                                             data-id="{{ $notification->id }}"
                                             style="padding: 10px; border-bottom: 1px solid #ddd; cursor: pointer;">
 
-                                            <a href="#"
+                                            <a href="{{ $redirectUrl }}"
                                                 style="text-decoration: none; color: inherit;">
                                                 <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
+                                                
                                                 <p style="font-size: 12px; margin: 5px 0;">
-                                                    {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
+                                                    @if(isset($notification->data['type']))
+                                                        @switch($notification->data['type'])
+                                                            @case('payment_success')
+                                                            @case('payment_received')
+                                                                <span style="color: #666;">Payment Status:</span> 
+                                                                <span style="color: #28a745;">Success</span>
+                                                                <br>
+                                                                <span style="color: #666;">Amount:</span> 
+                                                                RM {{ number_format($notification->data['amount'] ?? 0, 2) }}
+                                                                @break
+                                                                
+                                                            @case('application_approved')
+                                                                <span style="color: #666;">Status:</span> 
+                                                                <span style="color: #28a745;">Diluluskan</span>
+                                                                @break
+                                                                
+                                                            @case('application_rejected')
+                                                                <span style="color: #666;">Status:</span> 
+                                                                <span style="color: #dc3545;">Ditolak</span>
+                                                                @if(isset($notification->data['reason']))
+                                                                    <br>
+                                                                    <span style="color: #666;">Reason:</span> 
+                                                                    {{ Str::limit($notification->data['reason'], 50) }}
+                                                                @endif
+                                                                @break
+                                                                
+                                                            @case('claim_approved')
+                                                                <span style="color: #666;">Claim Status:</span> 
+                                                                <span style="color: #28a745;">Approved</span>
+                                                                @break
+                                                                
+                                                            @case('claim_rejected')
+                                                                <span style="color: #666;">Claim Status:</span> 
+                                                                <span style="color: #dc3545;">Rejected</span>
+                                                                @break
+                                                                
+                                                            @case('document_required')
+                                                                <span style="color: #666;">Action Required:</span> 
+                                                                <span style="color: #ffc107;">Upload Documents</span>
+                                                                @break
+                                                                
+                                                            @default
+                                                                <span style="color: #666;">Applicant:</span> 
+                                                                {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
+                                                        @endswitch
+                                                    @else
+                                                        <span style="color: #666;">Applicant:</span> 
+                                                        {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
+                                                    @endif
                                                 </p>
+                                                
                                                 <span style="font-size: 11px; color: gray;">
                                                     {{ $notification->created_at->format('d/m/Y h:i A') }}
                                                 </span>
                                             </a>
                                         </li>
-                                    @endforeach
+                                    @empty
+                                        <li class="text-center" style="padding: 10px;">No notifications available</li>
+                                    @endforelse
                                 @else
-                                    <li class="text-center" style="padding: 10px;">Please log in to see notifications
-                                    </li>
+                                    <li class="text-center" style="padding: 10px;">Please log in to see notifications</li>
                                 @endif
                             </ul>
 

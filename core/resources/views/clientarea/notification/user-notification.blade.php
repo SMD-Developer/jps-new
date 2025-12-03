@@ -118,9 +118,9 @@
                                             <tr class="{{ $notification->read_at ? '' : 'unread' }}"
                                                 data-id="{{ $notification->id }}">
                                                 <td>{{ $index + 1 }}</td>
-                                                <td>{{ $notification->data['title'] ?? 'Notification' }}</td>
+                                                <td>{{ $notification->data['title'] ?? 'Notifikasi' }}</td>
                                                 <td>
-                                                    <a href="{{ route('application_list') }}?id={{ $notification->data['application_id'] ?? '' }}"
+                                                    <a href="#"
                                                         style="text-decoration: none; color: inherit;">
                                                         {{ $notification->data['message'] ?? 'No message' }}
                                                         @if (isset($notification->data['applicant']))
