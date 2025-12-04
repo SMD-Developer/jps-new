@@ -579,7 +579,7 @@
                                                             {{ basename($filePath) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
-                                                            <i class="fa fa-times"></i> Buang
+                                                            <i class="fa fa-times"></i>
                                                         </button>
                                                     </div>
                                                 @endforeach
@@ -631,7 +631,7 @@
                                                             {{ basename($filePath) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
-                                                            <i class="fa fa-times"></i> Buang
+                                                            <i class="fa fa-times"></i> 
                                                         </button>
                                                     </div>
                                                 @endforeach
@@ -684,7 +684,7 @@
                                                             {{ basename($filePath) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
-                                                            <i class="fa fa-times"></i> Buang
+                                                            <i class="fa fa-times"></i>
                                                         </button>
                                                     </div>
                                                 @endforeach
@@ -941,7 +941,7 @@
                 removeBtn.type = 'button';
                 removeBtn.className = 'btn btn-sm btn-danger';
                 removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
-                removeBtn.innerHTML = '<i class="fa fa-times"></i> Buang';
+                removeBtn.innerHTML = '<i class="fa fa-times"></i>';
                 removeBtn.onclick = function(e) {
                     e.preventDefault();
                     removeFile(fieldName, index);

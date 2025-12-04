@@ -377,7 +377,7 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <div class="col-md-4">
-                                            <label for="daerah" >@lang('app.district')</label>
+                                            <label for="daerah" id="daerah-label"  >@lang('app.district')</label>
                                         </div>
                                         <div class="col-md-8">
                                             <select id="daerah" class="form-control form-select" name="district">
@@ -623,10 +623,26 @@
             $(document).ready(function() {
             let formIsReady = true;
 
+
+            function toggleDistrictRequired() {
+                let selectedStateCode = $('#negeri option:selected').text().trim().split('-')[0].trim();
+                let statesWithoutDistrict = ['14', '15', '16'];
+                
+                if (statesWithoutDistrict.includes(selectedStateCode)) {
+                    $('#daerah-label').removeClass('required');
+                } else {
+                    $('#daerah-label').addClass('required');
+                }
+            }
+
+            // Call on page load
+            toggleDistrictRequired();
+
             // Handle State Change for Districts
             $('#negeri').on('change', function() {
                 const stateId = $(this).val();
                 $('#daerah').html('<option value="">Loading...</option>');
+                toggleDistrictRequired();
 
                 if (stateId) {
                     formIsReady = false;
@@ -1228,7 +1244,7 @@
             removeBtn.type = 'button';
             removeBtn.className = 'btn btn-sm btn-danger';
             removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
-            removeBtn.innerHTML = '<i class="fa fa-times"></i> Buang';
+            removeBtn.innerHTML = '<i class="fa fa-times"></i>';
             removeBtn.onclick = function(e) {
                 e.preventDefault();
                 removeFile(fieldName, index);
