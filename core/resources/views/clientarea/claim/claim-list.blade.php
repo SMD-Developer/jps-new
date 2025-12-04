@@ -270,9 +270,9 @@
                                                         @break
                                                         @case('approve_paid')
                                                         <div class="status-badge">
-                                                                <span class="badge bg-info text-dark d-flex align-items-center justify-content-center">
+                                                                <span class="badge bg-success text-dark d-flex align-items-center justify-content-center">
                                                                     <i class="bi bi-hourglass-split me-2"></i>
-                                                                    {{trans('app.approve_paid')}}
+                                                                    {{trans('Lulus-Telah Dibayar')}}
                                                                 </span>
                                                             </div>
                                                         @break
@@ -437,65 +437,65 @@
         </div>
         <!-- Read More Modal -->
         <div class="modal fade" id="readMoreModal" tabindex="-1" aria-labelledby="readMoreModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="readMoreModalLabel">Maklumat Lanjut</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="readMoreModalLabel">Maklumat Lanjut</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
 
-        <div class="modal-body">
-            <p class="mb-3">
-                <strong>Sila hadir ke </strong> <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor, Tingkat 5, Podium Selatan, Bangunan Sultan Salahuddin Abdul Aziz Shah dalam masa <strong>7 hari bekerja</strong> dari tarikh 
-                <span class="text fw-bold">kelulusan permohonan tuntutan pulang balik</span>
-                bayaran pada waktu operasi kaunter seperti berikut:
-            </p>
+                <div class="modal-body">
+                    <p class="mb-3">
+                        <strong>Sila hadir ke </strong> <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor, Tingkat 5, Podium Selatan, Bangunan Sultan Salahuddin Abdul Aziz Shah dalam masa <strong>7 hari bekerja</strong> dari tarikh 
+                        <span class="text fw-bold">kelulusan permohonan tuntutan pulang balik</span>
+                        bayaran pada waktu operasi kaunter seperti berikut:
+                    </p>
 
-            <div class="ms-3">
-               <h6 class="fw-bold text-decoration-underline">KAUNTER CARUMAN PARIT</h6>
+                    <div class="ms-3">
+                    <h6 class="fw-bold text-decoration-underline">KAUNTER CARUMAN PARIT</h6>
 
-                <p class="mb-1"><strong>Hari Isnin – Khamis:</strong></p>
-                <ul class="mb-2">
-                    <li>8.30 pagi – 12.30 tengahari</li>
-                    <li>2.30 petang – 3.30 petang</li>
-                </ul>
+                        <p class="mb-1"><strong>Hari Isnin – Khamis:</strong></p>
+                        <ul class="mb-2">
+                            <li>8.30 pagi – 12.30 tengahari</li>
+                            <li>2.30 petang – 3.30 petang</li>
+                        </ul>
 
-                <p class="mb-1"><strong>Hari Jumaat:</strong></p>
-                <ul class="mb-2">
-                    <li>8.30 pagi – 12.00 tengahari</li>
-                    <li>2.45 petang – 3.30 petang</li>
-                </ul>
+                        <p class="mb-1"><strong>Hari Jumaat:</strong></p>
+                        <ul class="mb-2">
+                            <li>8.30 pagi – 12.00 tengahari</li>
+                            <li>2.45 petang – 3.30 petang</li>
+                        </ul>
 
-                <p class="mb-1"><strong>Rehat:</strong></p>
-                <ul class="mb-3">
-                    <li>12.30 tengahari – 2.30 petang (Isnin – Khamis)</li>
-                    <li>12.00 tengahari – 2.45 petang (Jumaat)</li>
-                </ul>
+                        <p class="mb-1"><strong>Rehat:</strong></p>
+                        <ul class="mb-3">
+                            <li>12.30 tengahari – 2.30 petang (Isnin – Khamis)</li>
+                            <li>12.00 tengahari – 2.45 petang (Jumaat)</li>
+                        </ul>
 
-                                        <!-- Added section -->
-                <div class="border-top pt-3">
-                    <h6 class="fw-bold text-decoration-underline text-dark">
-                         Sila bawa bersama dokumen seperti berikut:
-                    </h6>
-                    <ol class="mt-2">
-                        <li>Surat permohonan tuntutan pulang balik</li>
-                        <li>Salinan Kad Pengenalan pemohon</li>
-                        <li>Penyata bank individu / pemaju</li>
-                        <li>Resit bayaran asal / KEW38 asal</li>
-                        <li>Surat Akuan Sumpah / Majistret / Mahkamah / Pesuruhjaya (sekiranya dokumen/ resit asal hilang)</li>
-                        <li>Pendaftaran Syarikat (SSM/ROS/ROC/ROB/JMB) dan salinan Kad Pengenalan (terkini) semua "Board Of Directors"</li>
-                    </ol>
+                                                <!-- Added section -->
+                        <div class="border-top pt-3">
+                            <h6 class="fw-bold text-decoration-underline text-dark">
+                                Sila bawa bersama dokumen seperti berikut:
+                            </h6>
+                            <ol class="mt-2">
+                                <li>Surat permohonan tuntutan pulang balik</li>
+                                <li>Salinan Kad Pengenalan pemohon</li>
+                                <li>Penyata bank individu / pemaju</li>
+                                <li>Resit bayaran asal / KEW38 asal</li>
+                                <li>Surat Akuan Sumpah / Majistret / Mahkamah / Pesuruhjaya (sekiranya dokumen/ resit asal hilang)</li>
+                                <li>Pendaftaran Syarikat (SSM/ROS/ROC/ROB/JMB) dan salinan Kad Pengenalan (terkini) semua "Board Of Directors"</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
                 </div>
-
-            </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
-    </div>
-</div>
 
     </section>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

@@ -351,6 +351,10 @@
                                                         }
                                                     @endphp
 
+                                                    @if ($item->status == 'approve_paid')
+                                                        @php $statusText = 'Lulus-Telah Dibayar'; @endphp
+                                                    @endif
+
                                                     <span class="status-badge {{ $statusClass }}">
                                                         {{ $statusText }}
                                                     </span>
@@ -359,9 +363,22 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                {{ $item->payment_amount }} <br>
-                                                <small>{{ $item->verified_date ? \Carbon\Carbon::parse($item->verified_date)->format('d-m-Y') : '-' }}</small>
+                                                    {{ $item->payment_amount }} <br>
+                                                <small>
+                                                    Tarikh Pembayaran: 
+                                                    {{ $item->verified_date ? \Carbon\Carbon::parse($item->verified_date)->format('d/m/Y') : '-' }}
+                                                </small><br>
+
+                                                <small>
+                                                    No. EFT: {{ $item->eft_no ?? '-' }}
+                                                </small><br>
+
+                                                <small>
+                                                    Catatan: {{ $item->payment_remarks ?? '-' }}
+                                                </small>
                                             </td>
+
+
 
                                             <td>
                                                 @if ($financeStaff)

@@ -836,6 +836,7 @@ if(! function_exists('getMenus')){
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
                         'menu_active' => request()->is('claim-list') || request()->is('claim-list') ? 'active' : '',
+                        'badge_count' => $claimCount,
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -844,7 +845,6 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'badge_count' => $claimCount,
                                 'permission' => 'claim-contribution.view-list'
                             ],
 
@@ -1126,6 +1126,7 @@ if(! function_exists('getMenus')){
      // Admin-Approver Menu
          else if($user->HasRole('application_approver')){
              $applicationCount = getAdminApproverApplicationCount();
+             $claimCount = getClaimContributionApproverCount();
          $menus = [
             'main_menu' => [
                 'title' => trans('app.main_menu'),
@@ -1199,6 +1200,7 @@ if(! function_exists('getMenus')){
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
                         'menu_active' => request()->is('claim-list') || request()->is('claim-list') ? 'active' : '',
+                        'badge_count' => $claimCount,
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -1512,6 +1514,7 @@ if(! function_exists('getMenus')){
         // Finance Menu
          else if($user->HasRole('Finance')){
           $applicationCount = getAgencyApplicationCount();
+          $claimCount = getClaimContributionFinanceCount();
              
          $menus = [
             'main_menu' => [
@@ -1568,6 +1571,7 @@ if(! function_exists('getMenus')){
                         'active_dropdown' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
                         'menu_active' => request()->is('claim-list') || request()->is('claim-list') ? 'active' : '',
+                        'badge_count' => $claimCount,
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -2654,9 +2658,38 @@ function getAdminApproverApplicationCount() {
 
 function getClaimContributionPendingCount() {
     try {
-        return \App\Models\ClaimContribution::where('status', 'pending')->count();
+        return \App\Models\ClaimContribution::where('status', 'pending')
+            ->where(function($query) {
+                $query->whereNull('sent_to_approver')
+                      ->orWhere('sent_to_approver', 0);
+            })
+            ->count();
     } catch (\Exception $e) {
         \Log::error('Error getting claim contribution pending count: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+
+
+function getClaimContributionApproverCount() {
+    try {
+        return \App\Models\ClaimContribution::where('status', 'pending')
+            ->where('sent_to_approver', 1)
+            ->count();
+    } catch (\Exception $e) {
+        \Log::error('Error getting claim contribution approver count: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+function getClaimContributionFinanceCount() {
+    try {
+        return \App\Models\ClaimContribution::where('status', 'pending')
+            ->where('send_to_finance', 1)
+            ->count();
+    } catch (\Exception $e) {
+        \Log::error('Error getting claim contribution approver count: ' . $e->getMessage());
         return 0;
     }
 }

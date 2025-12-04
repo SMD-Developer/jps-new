@@ -268,7 +268,7 @@ class HomeController extends Controller {
                 "applicant" => "required",
                 "address" => "required",
                 "postal_code" => 'required|numeric|digits_between:4,8',
-                "phone" => "required|numeric|digits_between:10,15",
+                "phone" => "nullable|numeric|digits_between:10,15",
                 "email" => "required|email",
                 "city" => "required",
                 "land_district" => "required",
@@ -399,14 +399,73 @@ class HomeController extends Controller {
                 }
             }
 
+
+            if ($isReapply && $request->has('original_claim_id')) {
+                $originalClaimId = $request->original_claim_id;
+                
+                // Get existing claim to access current files
+                $existingClaim = DB::table('claim_contribution')
+                    ->where('id', $originalClaimId)
+                    ->where('user_id', $client->client_id)
+                    ->first();
+                
+                if ($existingClaim) {
+                    foreach ($fileFields as $field) {
+                        if ($request->has('removed_' . $field)) {
+                            $removedFiles = $request->input('removed_' . $field);
+                            $existingFiles = json_decode($existingClaim->$field ?? '[]', true);
+                            
+                            if (is_array($existingFiles) && is_array($removedFiles)) {
+                                $existingFiles = array_filter($existingFiles, function($filePath) use ($removedFiles) {
+                                    $fileName = basename($filePath);
+                                    return !in_array($fileName, $removedFiles);
+                                });
+                                
+                                // Re-index array and update
+                                $existingFiles = array_values($existingFiles);
+                            
+                                if (isset($uploadedFiles[$field])) {
+                                    $newFiles = json_decode($uploadedFiles[$field], true);
+                                    $existingFiles = array_merge($existingFiles, $newFiles);
+                                }
+                                
+                                // Store the updated file list
+                                $uploadedFiles[$field] = json_encode($existingFiles);
+                            } else {
+                                if (!isset($uploadedFiles[$field])) {
+                                    $uploadedFiles[$field] = json_encode([]);
+                                }
+                            }
+                        } else {
+                            if (!isset($uploadedFiles[$field])) {
+                                $uploadedFiles[$field] = $existingClaim->$field ?? json_encode([]);
+                            } else {
+                                $existingFiles = json_decode($existingClaim->$field ?? '[]', true);
+                                $newFiles = json_decode($uploadedFiles[$field], true);
+                                
+                                if (is_array($existingFiles) && is_array($newFiles)) {
+                                    $mergedFiles = array_merge($existingFiles, $newFiles);
+                                    $uploadedFiles[$field] = json_encode($mergedFiles);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // Handle claim_reason (Optional)
             if ($request->filled('claim_reason')) {
                 $uploadedFiles['claim_reason'] = $request->claim_reason;
             }
 
-            // Prepare data for insertion/update
+            $excludedFields = ['_token', 'is_reapply', 'original_claim_id'];
+
+            foreach ($fileFields as $field) {
+                $excludedFields[] = 'removed_' . $field;
+            }
+
             $requestData = array_merge(
-                $request->except(['_token', 'is_reapply', 'original_claim_id']), 
+                $request->except($excludedFields), 
                 $uploadedFiles, 
                 [
                     'updated_at' => now(),
@@ -417,7 +476,6 @@ class HomeController extends Controller {
             if ($isReapply && $request->has('original_claim_id')) {
                 $originalClaimId = $request->original_claim_id;
                 
-                // Verify the claim belongs to the current user
                 $existingClaim = DB::table('claim_contribution')
                     ->where('id', $originalClaimId)
                     ->where('user_id', $client->client_id)

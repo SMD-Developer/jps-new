@@ -900,7 +900,7 @@
                                             <select class="form-select" id="modal_status" name="status" required>
                                                 <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
                                                 <option value="approve_payment_in_process" style="display:none;" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
-                                                <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('app.approve_paid')</option>
+                                                <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('Lulus-Telah Dibayar')</option>
                                                 <option value="rejected" style="display:none;" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
                                             </select>
                                         </div>
@@ -963,17 +963,26 @@
                                                     name="eft_no" 
                                                     placeholder="Masukkan nombor EFT"
                                                     value="{{ old('eft_no', $claim->eft_no ?? '') }}">
-                                                <small class="text-muted">Contoh: EFT123456789</small>
                                             </div>
 
                                             <div class="mb-3">
                                                 <label for="payment_document" class="form-label">Muat Naik Dokumen: <span class="text-danger">*</span></label>
-                                                <input type="file" 
-                                                    class="form-control" 
-                                                    id="payment_document" 
-                                                    name="payment_document"
-                                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-                                                <small class="text-muted">Format yang diterima: PDF, JPG, PNG, DOC, DOCX (Max: 2MB)</small>
+                                                
+                                                <div class="custom-file-upload">
+                                                    <label for="payment_document" class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-upload"></i> Pilih Fail
+                                                    </label>
+                                                    <input type="file" 
+                                                        class="form-control d-none" 
+                                                        id="payment_document" 
+                                                        name="payment_document"
+                                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                                                        onchange="updateFileName(this)">
+                                                    <span id="file-name" class="ms-2 text-muted">Tiada fail dipilih</span>
+                                                </div>
+                                                
+                                                <small class="text-muted d-block mt-1">Format yang diterima: PDF, JPG, PNG, DOC, DOCX (Max: 2MB)</small>
+                                                
                                                 @if(isset($claim->payment_document) && $claim->payment_document)
                                                     <div class="mt-2">
                                                         <small class="text-success">
@@ -983,7 +992,6 @@
                                                     </div>
                                                 @endif
                                             </div>
-
                                             <div class="mb-3">
                                                 <label for="payment_remarks" class="form-label">Catatan Bayaran:</label>
                                                 <textarea 
@@ -1527,6 +1535,13 @@
             });
         }
     </script>
+
+    <script>
+        function updateFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : 'Tiada fail dipilih';
+            document.getElementById('file-name').textContent = fileName;
+        }
+   </script>
 
  
 @endsection

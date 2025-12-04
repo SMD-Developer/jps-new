@@ -272,6 +272,7 @@
                                         <th><strong>{{ trans('app.applicant_name') }}</strong></th>
                                         <th><strong>{{ trans('app.lot_pt') }}</strong></th>
                                         <th><strong>{{trans('app.status')}}</strong></th>
+                                        <th><strong>Catatan</strong></th>
                                         <th><strong>{{trans('app.total_payment')}} (RM)</strong></th>
                                         <th><strong>{{ trans('app.for_action') }}</strong></th>
                                     </tr>
@@ -431,6 +432,72 @@
                                                     @endif
                                                 @endif
                                             </td>
+                                             <td>
+                                                @if ($item->status == 'approve_paid')
+                                                    {{-- ✅ Show verification date, EFT number & payment remarks when approved and paid --}}
+                                                    @if(!empty($item->verified_date) || !empty($item->eft_no) || !empty($item->payment_remarks))
+                                                        <div class="mb-1">
+                                                            @if(!empty($item->verified_date))
+                                                                <small class="text-muted">
+                                                                    <strong>Tarikh Pembayaran:</strong>
+                                                                    {{ \Carbon\Carbon::parse($item->verified_date)->format('d/m/Y') }}
+                                                                </small>
+                                                            @endif
+                                                        </div>
+                                                        @if(!empty($item->eft_no))
+                                                            <div class="mb-1">
+                                                                <small class="text-muted">
+                                                                    <strong>No. EFT:</strong>
+                                                                    <strong>{{ $item->eft_no }}</strong>
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                        @if(!empty($item->payment_remarks))
+                                                            <div>
+                                                                <small class="text-muted">
+                                                                    <strong>Catatan:</strong>
+                                                                    <strong>{{ $item->payment_remarks }}</strong>
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        <small class="text-muted">Tiada maklumat pembayaran.</small>
+                                                    @endif
+                                                @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
+                                                    @if(!empty($item->visit_date) || !empty($item->process_remarks))
+                                                        {{-- ✅ Show visit date and remarks if available --}}
+                                                        <div class="mb-1">
+                                                            @if(!empty($item->visit_date))
+                                                                <small class="text-muted">
+                                                                    <strong>Tarikh Kemaskini:</strong>
+                                                                    {{ \Carbon\Carbon::parse($item->visit_date)->format('d/m/Y') }}
+                                                                </small>
+                                                            @endif
+                                                        </div>
+                                                        @if(!empty($item->process_remarks))
+                                                            <div>
+                                                                <small class="text-muted">
+                                                                    <strong>Catatan:</strong> <strong>{{ $item->process_remarks }}</strong>
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        {{-- ❌ If no visit_date or remarks, show the original finance message --}}
+                                                        @if(!empty($item->sent_to_finance_at))
+                                                            <div class="mb-1">
+                                                                <small class="text-muted">
+                                                                    Tarikh Kelulusan pada: 
+                                                                    <strong>{{ \Carbon\Carbon::parse($item->sent_to_finance_at)->format('d/m/Y') }}</strong>
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                        <small>
+                                                            Sila hadir ke <strong>Jabatan Pengairan dan Saliran Negeri Selangor, Bahagian Kewangan</strong> dalam masa 7 hari bekerja.
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal" class="text-primary">Baca Selanjutnya</a>
+                                                        </small>
+                                                    @endif
+                                                @endif
+                                            </td>
 
                                             <td>{{$item->payment_amount}}</td>
                                             <td>
@@ -533,8 +600,69 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="readMoreModal" tabindex="-1" aria-labelledby="readMoreModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="readMoreModalLabel">Maklumat Lanjut</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                <div class="modal-body">
+                    <p class="mb-3">
+                        <strong>Sila hadir ke </strong> <strong>Kaunter Pembayaran Caruman Parit, Jabatan Pengairan dan Saliran Negeri Selangor, Tingkat 5, Podium Selatan, Bangunan Sultan Salahuddin Abdul Aziz Shah dalam masa <strong>7 hari bekerja</strong> dari tarikh 
+                        <span class="text fw-bold">kelulusan permohonan tuntutan pulang balik</span>
+                        bayaran pada waktu operasi kaunter seperti berikut:
+                    </p>
+
+                    <div class="ms-3">
+                    <h6 class="fw-bold text-decoration-underline">KAUNTER CARUMAN PARIT</h6>
+
+                        <p class="mb-1"><strong>Hari Isnin – Khamis:</strong></p>
+                        <ul class="mb-2">
+                            <li>8.30 pagi – 12.30 tengahari</li>
+                            <li>2.30 petang – 3.30 petang</li>
+                        </ul>
+
+                        <p class="mb-1"><strong>Hari Jumaat:</strong></p>
+                        <ul class="mb-2">
+                            <li>8.30 pagi – 12.00 tengahari</li>
+                            <li>2.45 petang – 3.30 petang</li>
+                        </ul>
+
+                        <p class="mb-1"><strong>Rehat:</strong></p>
+                        <ul class="mb-3">
+                            <li>12.30 tengahari – 2.30 petang (Isnin – Khamis)</li>
+                            <li>12.00 tengahari – 2.45 petang (Jumaat)</li>
+                        </ul>
+
+                                                <!-- Added section -->
+                        <div class="border-top pt-3">
+                            <h6 class="fw-bold text-decoration-underline text-dark">
+                                Sila bawa bersama dokumen seperti berikut:
+                            </h6>
+                            <ol class="mt-2">
+                                <li>Surat permohonan tuntutan pulang balik</li>
+                                <li>Salinan Kad Pengenalan pemohon</li>
+                                <li>Penyata bank individu / pemaju</li>
+                                <li>Resit bayaran asal / KEW38 asal</li>
+                                <li>Surat Akuan Sumpah / Majistret / Mahkamah / Pesuruhjaya (sekiranya dokumen/ resit asal hilang)</li>
+                                <li>Pendaftaran Syarikat (SSM/ROS/ROC/ROB/JMB) dan salinan Kad Pengenalan (terkini) semua "Board Of Directors"</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {
