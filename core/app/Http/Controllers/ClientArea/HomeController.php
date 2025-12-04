@@ -271,7 +271,6 @@ class HomeController extends Controller {
                 "phone" => "required|numeric|digits_between:10,15",
                 "email" => "required|email",
                 "city" => "required",
-                "district" => "required",
                 "land_district" => "required",
                 "land_lot" => "required",
                 "land_area" => "required",
@@ -303,6 +302,11 @@ class HomeController extends Controller {
             // Only require 'identities' if account_types is NOT 3
             if ($request->input('account_types') != '3') {
                 $rules['identities'] = 'required';
+            }
+
+            $selectedState = DB::table('state')->where('idnegeri', $request->state)->first();
+            if ($selectedState && !in_array($selectedState->negeri_code, ['14', '15', '16'])) {
+                $rules['district'] = 'required';
             }
 
             $this->validate($request, $rules, [

@@ -276,7 +276,10 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="ssm" class="required">@lang('app.identification_card_no')</label>
+                                                <label for="ssm">
+                                                    @lang('app.identification_card_no')
+                                                    <span class="identities-required-asterisk" style="color: red;">*</span>
+                                                </label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" id="ssm" name="identities" class="form-control"
@@ -350,7 +353,10 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <div class="col-md-4">
-                                                <label for="daerah" class="required">@lang('app.district')</label>
+                                                <label for="daerah" class="district-label">
+                                                    @lang('app.district')
+                                                    <span class="required-asterisk" style="color: red;">*</span>
+                                                </label>
                                             </div>
                                             <div class="col-md-8">
                                                 <select id="daerah" class="form-control form-select" name="district">
@@ -856,6 +862,18 @@
             // Handle State Change for Districts
             $('#negeri').on('change', function() {
                 const stateId = $(this).val();
+                const selectedText = $(this).find('option:selected').text();
+                const stateCode = selectedText.split(' - ')[0].trim();
+                
+                // Show/hide required asterisk based on state code
+                if (['14', '15', '16'].includes(stateCode)) {
+                    $('.required-asterisk').hide();
+                    $('#daerah').prop('required', false);
+                } else {
+                    $('.required-asterisk').show();
+                    $('#daerah').prop('required', true);
+                }
+                
                 $('#daerah').html('<option value="">Loading...</option>');
 
                 if (stateId) {
@@ -882,6 +900,8 @@
                     $('#daerah').html('<option value="">Sila Pilih Daerah</option>');
                 }
             });
+
+            $('#negeri').trigger('change');
 
             // Handle District Change for Mukim
             $('#land_district').on('change', function() {
@@ -911,6 +931,19 @@
                     $('#mukim').html('<option value="">Sila Pilih</option>');
                 }
             });
+
+            
+            $('#account_types').on('change', function() {
+                const accountType = $(this).val();
+                
+                if (accountType == '3') {
+                    $('.identities-required-asterisk').hide();
+                    $('#ssm').prop('required', false);
+                } else {
+                    $('.identities-required-asterisk').show();
+                    $('#ssm').prop('required', true);
+                }
+            }).trigger('change'); 
 
             $(document).on('input change', '.is-invalid', function() {
                 $(this).removeClass('is-invalid');
@@ -1007,7 +1040,8 @@
                 if (!$('[name="city"]').val()) {
                     showError('city', "@lang('app.city_required')");
                 }
-                if (!$('[name="district"]').val()) {
+                const selectedStateCode = $('#negeri option:selected').text().split(' - ')[0].trim();
+                if (!['14', '15', '16'].includes(selectedStateCode) && !$('[name="district"]').val()) {
                     showError('district', "@lang('app.district_required')");
                 }
                 if (!$('[name="state"]').val()) {
