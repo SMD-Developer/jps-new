@@ -192,14 +192,14 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Kepada {{ $notifiable->name }},</p>
+                <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,{{ $notifiable->name }}</p>
 
-                <p>Dengan sukacitanya dimaklumkan bahawa status tuntutan caruman parit anda telah dikemas kini.</p>
+                <p>Dimaklumkan bahawa status tuntutan Caruman Parit anda telah dikemas kini. </p>
 
                 <div class="claim-details">
                     <table>
                         <tr>
-                            <td class="label">Status Baru:</td>
+                            <td class="label">Status Terbaharu :</td>
                             <td class="value">
                                 <span class="status-badge status-{{ str_replace('_', '-', $claim->status) }}">
                                     {{ $statusLabel }}
@@ -209,15 +209,18 @@
                         <tr>
                             <td class="label">Tarikh Kemas Kini:</td>
                             <td class="value">{{ $claim->updated_at->format('d/m/Y H:i') }}</td>
+                            <td>
+                                <p class="mt-1 text-muted">
+                                    Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda. 
+                                </p>
+                                <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
+                                <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my. </p>
+                            </td>
                         </tr>
                     </table>
                 </div>
 
                 <div class="divider"></div>
-
-                <p>Sekiranya tuan/puan mempunyai sebarang pertanyaan atau memerlukan bantuan lanjut
-                    sila hubungi kami melalui portal rasmi atau berinteraksi terus dengan pasukan sokogan kami.
-                </p>
             </td>
         </tr>
         <tr>
