@@ -15,28 +15,30 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Email Verification Required</h2>
+            <h2>Pengesahan Emel Diperlukan </h2>
         </div>
         
-        <p>Hello {{ $userName ?? 'User' }},</p>
+        <p>Kepada Pengguna yang Dihargai {{ $userName ?? 'User' }},</p>
         
-        <p>Thank you for registering with us. To complete your registration and verify your email address, please use the following One-Time Password (OTP):</p>
+        <p>Terima kasih kerana mendaftar dengan kami. Bagi melengkapkan proses pendaftaran dan mengesahkan alamat emel tuan/puan, sila gunakan Kod Pengesahan Sekali (OTP) berikut:</p>
         
         <div class="otp-code">{{ $otp }}</div>
         
-        <p><strong>Important:</strong></p>
+        <p><strong>Makluman Penting:</strong></p>
         <ul>
-            <li>This OTP is valid for 10 minutes only</li>
-            <li>Do not share this code with anyone</li>
-            <li>If you didn't request this verification, please ignore this email</li>
+            <li>Kod OTP ini sah untuk 10 minit sahaja</li>
+            <li>Jangan kongsikan kod ini dengan sesiapa</li>
+            <li>Jika tuan/puan tidak membuat permohonan ini, sila abaikan emel ini</li>
         </ul>
         
-        <p>If you have any questions or need assistance, please contact our support team.</p>
+        <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada kami di ecp@selangor.gov.my.</p>
         
         <div class="footer">
-            <p>This is an automated email. Please do not reply to this email address.</p>
-            <p>&copy; {{ date('Y') }} Your Company Name. All rights reserved.</p>
+            <p><strong>Nota :</strong> Emel ini dijana oleh sistem dan tidak perlu dibalas.</p>
+            <p>Yang benar,<br>
+            Portal e-CP Caruman Pari</p>
         </div>
+
     </div>
 </body>
 </html>

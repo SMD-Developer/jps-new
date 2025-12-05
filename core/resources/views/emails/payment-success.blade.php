@@ -102,69 +102,56 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>Payment Confirmation</h1>
-            <p>Your payment has been processed successfully</p>
+            <h1>Pembayaran Berjaya</h1>
         </div>
         
         <div class="success-icon">✅</div>
         
-        <p>Dear {{ $buyer_name }},</p>
+        <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,{{ $buyer_name }},</p>
+        <p>Terima kasih kerana menggunakan Portal e-CP.</p>
         
-        <p>We are pleased to confirm that your payment has been <strong>successfully processed</strong>.</p>
+        <p>Sukacita dimaklumkan bahawa pembayaran anda telah <strong>berjaya</strong>.</p>
         
         <div class="amount-highlight">
-            Amount Paid: {{ $amount }}
+            Jumlah Bayaran: {{ $amount }}
         </div>
         
         <table class="details-table">
             <tr>
-                <th colspan="2">Transaction Details</th>
+                <th colspan="2">Butiran Transaksi:</th>
             </tr>
             <tr>
-                <td><strong>Transaction ID</strong></td>
+                <td><strong>Nombor Pesanan :</strong></td>
+                <td>{{ $seller_order_no }}</td>
+            </tr>
+            <tr>
+                <td><strong>ID Transaksi :</strong></td>
                 <td>{{ $transaction_id }}</td>
             </tr>
             <tr>
-                <td><strong>Order Number</strong></td>
-                <td>{{ $seller_order_no }}</td>
-            </tr>
-            @if(!empty($application_ref))
-            <tr>
-                <td><strong>Application Reference</strong></td>
-                <td>{{ $application_ref }}</td>
-            </tr>
-            @endif
-            <tr>
-                <td><strong>Payment Method</strong></td>
+                <td><strong>Kaedah Pembayaran :</strong></td>
                 <td>{{ $payment_method }}</td>
             </tr>
             <tr>
-                <td><strong>Bank</strong></td>
+                <td><strong>Bank :</strong></td>
                 <td>{{ $bank_name }}</td>
             </tr>
             <tr>
-                <td><strong>Payment Date</strong></td>
+                <td><strong>Tarikh Pembayaran :</strong></td>
                 <td>{{ date('d M Y, H:i:s', strtotime($payment_date)) }}</td>
             </tr>
             <tr>
-                <td><strong>Currency</strong></td>
-                <td>{{ $currency }}</td>
+                <td><strong>Status :</strong></td>
+                <td>Selesai</td>
             </tr>
         </table>
         
-        @if($method === 'FPX_B2B')
-        <div class="note">
-            <strong>B2B Corporate Payment:</strong> This transaction was completed through the corporate banking authorization process.
-        </div>
-        @endif
-        
-        <p>Thank you for your payment. Your transaction has been completed successfully and you will receive your services/products as confirmed.</p>
-        
-        <p>If you have any questions about this transaction, please contact our support team with your transaction ID: <strong>{{ $transaction_id }}</strong></p>
+        <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my .</p>
+        <p>Terima kasih atas kerjasama dan perhatian tuan/puan.</p>
         
         <div class="footer">
-            <p>This is an automated email. Please do not reply to this email.</p>
-            <p>&copy; {{ date('Y') }} Your Company Name. All rights reserved.</p>
+            <p>Yang benar</p>
+            <p>Portal e-CP Caruman Parit</p>
         </div>
     </div>
 </body>

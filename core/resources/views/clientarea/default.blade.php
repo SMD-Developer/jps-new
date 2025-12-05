@@ -818,7 +818,7 @@ body {
                                     <div style="display: flex; align-items: flex-start;">
                                         <i class="fas fa-envelope" style="font-size: 18px; margin-right: 12px; color: #333; flex-shrink: 0;"></i>
                                         <div style="flex: 1; overflow-wrap: break-word;">
-                                            <span class="ag-courses-item_date" style="color: #ff6600;">support@ecp-jps.selangor.gov.my</span>
+                                            <span class="ag-courses-item_date" style="color: #ff6600;">ecp-jps.selangor.gov.my</span>
                                         </div>
                                     </div>
                                 </div>
