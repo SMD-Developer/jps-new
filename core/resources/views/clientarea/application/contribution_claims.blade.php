@@ -1481,7 +1481,7 @@
                     // Show success message
                     Swal.fire({
                         title: 'Berjaya!',
-                        text: 'Fail akan dibuang selepas anda submit borang.',
+                        text: 'Fail telah berjaya dibuang.',
                         icon: 'success',
                         timer: 2000,
                         showConfirmButton: false

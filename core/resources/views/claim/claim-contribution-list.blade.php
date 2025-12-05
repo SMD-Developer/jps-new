@@ -374,7 +374,7 @@
                                                                     Ditolak oleh: <strong>{{ $item->rejected_by }}</strong>
                                                                     @if(!empty($item->rejected_by_role))
                                                                         <span class="badge bg-secondary ms-1">
-                                                                            {{ $item->rejected_by_role == 'admin_staff' ? 'Admin Staff' : 'Pelulus' }}
+                                                                            {{ $item->rejected_by_role == 'admin_staff' ? 'Penyedia' : 'Pelulus' }}
                                                                         </span>
                                                                     @endif
                                                                 </small>
