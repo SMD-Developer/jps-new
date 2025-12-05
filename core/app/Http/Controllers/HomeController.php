@@ -388,7 +388,7 @@ class HomeController extends Controller {
         }    
 
         // Get the paginated results with activity tracking
-        $list = $query->latest()
+        $list = $query->orderBy('verified_date', 'desc')
             ->paginate($perPage)
             ->appends($request->except('page'));
 

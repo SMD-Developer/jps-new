@@ -272,7 +272,7 @@
                                     @foreach ($list as $item)
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
-                                            <td>{{ date('d/m/Y', strtotime($item->updated_at)) }}</td>
+                                            <td>{{ date('d/m/Y', strtotime($item->verified_date)) }}</td>
                                              <td>
                                                 @php
                                                     $clientType = '';
