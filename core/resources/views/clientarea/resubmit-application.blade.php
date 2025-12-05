@@ -1789,7 +1789,6 @@
 
     <script>
         $(document).ready(function() {
-            // Handle removing existing files
             $(document).on('click', '.remove-existing-file', function() {
                 const fileItem = $(this).closest('.existing-file-item');
                 const fieldName = fileItem.data('field');
@@ -1826,7 +1825,6 @@
                             }
                         });
                         
-                        // Show success message
                         Swal.fire({
                             title: 'Berjaya!',
                             text: 'Fail telah dibuang.',

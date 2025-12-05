@@ -287,7 +287,6 @@ class HomeController extends Controller {
                 "claim_reason" => "required|string|max:1000",
                 "payment_amount" => "required|numeric|min:0",
                 
-                // New file fields (all optional)
                 "refund_claim_letter" => "nullable|array",
                 "refund_claim_letter.*" => "nullable|mimes:pdf|max:15000",
                 "ic_copy"=>"nullable|array",
@@ -339,8 +338,6 @@ class HomeController extends Controller {
                 "payment_amount.required" => trans('app.claim_amount_required'),
                 "payment_amount.numeric" => trans('app.claim_amount_numeric'),
                 "payment_amount.min" => trans('app.claim_amount_positive'),
-                
-                // New file validation messages (only for format and size)
                 "refund_claim_letter.mimes" => trans('app.land_grant_mimes'),
                 "refund_claim_letter.max" => trans('app.land_grant_max'),
                 "ic_copy.mimes" => trans('app.land_grant_mimes'),
@@ -360,7 +357,6 @@ class HomeController extends Controller {
             }
 
             $request['user_id'] = $client->client_id;
-            $uploadedFiles = [];
             $uploadPath = public_path('pdf');
 
             if (!file_exists($uploadPath)) {
@@ -370,7 +366,6 @@ class HomeController extends Controller {
                 throw new \Exception("Upload path is not writable: " . $uploadPath);
             }
 
-            // Handle file uploads - Updated array with new fields
             $fileFields = [
                 'land_grant', 
                 'new_receipt', 
@@ -381,25 +376,10 @@ class HomeController extends Controller {
                 'statutory_declaration',
                 'company_registration'
             ];
+
+            // ===== HANDLE FILE REMOVALS FIRST (FOR REAPPLY) =====
+            $updatedFileArrays = [];
             
-            foreach ($fileFields as $field) {
-                if ($request->hasFile($field)) {
-
-                    $uploadedFiles[$field] = []; 
-
-                    foreach ($request->file($field) as $file) {
-                        $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                        $file->move($uploadPath, $fileName);
-
-                        $uploadedFiles[$field][] = 'pdf/' . $fileName;
-                    }
-
-                    // Store JSON array in DB
-                    $uploadedFiles[$field] = json_encode($uploadedFiles[$field]);
-                }
-            }
-
-
             if ($isReapply && $request->has('original_claim_id')) {
                 $originalClaimId = $request->original_claim_id;
                 
@@ -409,57 +389,118 @@ class HomeController extends Controller {
                     ->where('user_id', $client->client_id)
                     ->first();
                 
-                if ($existingClaim) {
-                    foreach ($fileFields as $field) {
-                        if ($request->has('removed_' . $field)) {
-                            $removedFiles = $request->input('removed_' . $field);
-                            $existingFiles = json_decode($existingClaim->$field ?? '[]', true);
-                            
-                            if (is_array($existingFiles) && is_array($removedFiles)) {
-                                $existingFiles = array_filter($existingFiles, function($filePath) use ($removedFiles) {
-                                    $fileName = basename($filePath);
-                                    return !in_array($fileName, $removedFiles);
-                                });
-                                
-                                // Re-index array and update
-                                $existingFiles = array_values($existingFiles);
-                            
-                                if (isset($uploadedFiles[$field])) {
-                                    $newFiles = json_decode($uploadedFiles[$field], true);
-                                    $existingFiles = array_merge($existingFiles, $newFiles);
-                                }
-                                
-                                // Store the updated file list
-                                $uploadedFiles[$field] = json_encode($existingFiles);
-                            } else {
-                                if (!isset($uploadedFiles[$field])) {
-                                    $uploadedFiles[$field] = json_encode([]);
-                                }
+                if (!$existingClaim) {
+                    throw new \Exception("Invalid claim for reapplication.");
+                }
+                
+                // Process each field for file removal
+                foreach ($fileFields as $field) {
+    $removedIndices = $request->input("removed_{$field}");
+    
+    // Get existing files from database
+    $existingFiles = $existingClaim->$field;
+    if ($existingFiles) {
+        if (is_string($existingFiles)) {
+            $existingFiles = json_decode($existingFiles, true);
+        }
+        
+        if (!is_array($existingFiles)) {
+            $existingFiles = [$existingFiles]; 
+        }
+    } else {
+        $existingFiles = [];
+    }
+    
+    // ✅ FIX: Handle both string and array
+    if ($removedIndices !== null && $removedIndices !== '') {
+        // Check if it's already an array or a string
+        if (is_array($removedIndices)) {
+            $indicesToRemove = $removedIndices; // Already an array
+        } else {
+            // It's a string, so explode it
+            $indicesToRemove = explode(',', $removedIndices);
+        }
+        
+        // Filter out empty values
+        $indicesToRemove = array_filter($indicesToRemove, function($value) {
+            return $value !== '' && $value !== null;
+        });
+        
+        \Log::info("Removing files from {$field}. Indices: " . json_encode($indicesToRemove));
+        
+        foreach ($indicesToRemove as $index) {
+            $index = (int)$index;
+            
+            if (isset($existingFiles[$index])) {
+                // Delete physical file
+                $filePath = public_path($existingFiles[$index]);
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                    \Log::info("Deleted file: {$filePath}");
+                }
+                // Remove from array
+                unset($existingFiles[$index]);
+            }
+        }
+        
+        // Reindex array to remove gaps
+        $existingFiles = array_values($existingFiles);
+    }
+    
+    // Store the updated file array
+    $updatedFileArrays[$field] = $existingFiles;
+}
+            }
+
+            // ===== HANDLE NEW FILE UPLOADS =====
+            foreach ($fileFields as $field) {
+                if ($request->hasFile($field)) {
+                    $newFiles = [];
+
+                    foreach ($request->file($field) as $file) {
+                        $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                        $file->move($uploadPath, $fileName);
+                        $newFiles[] = 'pdf/' . $fileName;
+                    }
+
+                    // Merge with existing files (if reapply)
+                    if ($isReapply && isset($updatedFileArrays[$field])) {
+                        $updatedFileArrays[$field] = array_merge($updatedFileArrays[$field], $newFiles);
+                    } else {
+                        $updatedFileArrays[$field] = $newFiles;
+                    }
+                } else {
+                    // If no new files uploaded, keep existing files (for reapply)
+                    if ($isReapply && !isset($updatedFileArrays[$field])) {
+                        if (isset($existingClaim) && isset($existingClaim->$field)) {
+                            $existingFiles = $existingClaim->$field;
+                            if (is_string($existingFiles)) {
+                                $existingFiles = json_decode($existingFiles, true);
                             }
-                        } else {
-                            if (!isset($uploadedFiles[$field])) {
-                                $uploadedFiles[$field] = $existingClaim->$field ?? json_encode([]);
-                            } else {
-                                $existingFiles = json_decode($existingClaim->$field ?? '[]', true);
-                                $newFiles = json_decode($uploadedFiles[$field], true);
-                                
-                                if (is_array($existingFiles) && is_array($newFiles)) {
-                                    $mergedFiles = array_merge($existingFiles, $newFiles);
-                                    $uploadedFiles[$field] = json_encode($mergedFiles);
-                                }
-                            }
+                            $updatedFileArrays[$field] = is_array($existingFiles) ? $existingFiles : [];
                         }
                     }
                 }
             }
 
-            // Handle claim_reason (Optional)
+            // Convert arrays to JSON
+            $uploadedFiles = [];
+            foreach ($fileFields as $field) {
+                if (isset($updatedFileArrays[$field]) && !empty($updatedFileArrays[$field])) {
+                    $uploadedFiles[$field] = json_encode($updatedFileArrays[$field]);
+                } elseif ($isReapply) {
+                    // Keep existing files if no changes
+                    $uploadedFiles[$field] = $existingClaim->$field ?? json_encode([]);
+                }
+            }
+
+            // Handle claim_reason
             if ($request->filled('claim_reason')) {
                 $uploadedFiles['claim_reason'] = $request->claim_reason;
             }
 
+            // Prepare excluded fields
             $excludedFields = ['_token', 'is_reapply', 'original_claim_id'];
-
             foreach ($fileFields as $field) {
                 $excludedFields[] = 'removed_' . $field;
             }
@@ -472,29 +513,15 @@ class HomeController extends Controller {
                 ]
             );
 
-            // **KEY CHANGE: Update existing record for reapplication**
+            // ===== UPDATE OR CREATE RECORD =====
             if ($isReapply && $request->has('original_claim_id')) {
                 $originalClaimId = $request->original_claim_id;
-                
-                $existingClaim = DB::table('claim_contribution')
-                    ->where('id', $originalClaimId)
-                    ->where('user_id', $client->client_id)
-                    ->first();
-                    
-                if (!$existingClaim) {
-                    throw new \Exception("Invalid claim for reapplication.");
-                }
-                
-                // **IMPORTANT: Keep old land_grant if no new file uploaded**
-                if (!$request->hasFile('land_grant')) {
-                    $requestData['land_grant'] = $existingClaim->land_grant;
-                }
                 
                 // Update the existing record
                 DB::table('claim_contribution')
                     ->where('id', $originalClaimId)
                     ->update(array_merge($requestData, [
-                        'status' => 'pending', // Reset status to pending
+                        'status' => 'pending',
                         'reapplication_count' => ($existingClaim->reapplication_count ?? 0) + 1,
                         'last_reapplied_at' => now(),
                     ]));
@@ -508,7 +535,6 @@ class HomeController extends Controller {
                     
                     if ($admins->isNotEmpty()) {
                         foreach ($admins as $admin) {
-                            // Check if notification already exists for this reapplication
                             $existingNotification = $admin->notifications()
                                 ->where('type', 'App\Notifications\AdminNewClaimNotification')
                                 ->where('data->claim_id', $applicationId)
@@ -521,10 +547,11 @@ class HomeController extends Controller {
                         }
                     }
                 } catch (\Exception $notificationError) {
+                    \Log::error('Notification error: ' . $notificationError->getMessage());
                 }
                 
             } else {
-                // Create new record for new applications
+                // Create new record
                 $requestData['status'] = 'pending';
                 $requestData['created_at'] = now();
                 
@@ -572,6 +599,7 @@ class HomeController extends Controller {
                 'errors' => $e->validator->errors()
             ], 422);
         } catch (\Exception $e) {
+            \Log::error('Claim submission error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -1257,14 +1285,6 @@ class HomeController extends Controller {
     {
         try {
             $application = Application::findOrFail($id);
-            // if ($application->user_id !== auth()->id()) {
-            //     return redirect()->back()->with('error', trans('app.unauthorized_access'));
-            // }
-
-            // if ($application->status !== 'rejected') {
-            //     return redirect()->back()->with('error', trans('app.application_not_rejected'));
-            // }
-            
             $state=DB::table('state')->where('status',1)->orderBy('negeri_code','asc')->get();
             $district=DB::table('district')->where('stat',1)->orderBy('daerah_code','asc')->get();
 	        $division=DB::table('division')->where('status',1)->orderBy('mukim_code','asc')->get();
@@ -1291,9 +1311,7 @@ class HomeController extends Controller {
                 return redirect()->back()->with('error', __('app.application_not_found'));
             }
 
-            // Get the applicant type from the application
             $applicantType = $application->applicant_type;
-
             $selectedStateId = $request->input('state');
             $isDistrictRequired = true;
 
@@ -1324,17 +1342,14 @@ class HomeController extends Controller {
                 "land_unit" => "required"
             ];
 
-
             if ($isDistrictRequired) {
                 $validationRules["district"] = "required";
             }
 
-            // Only add identities validation if applicant_type is NOT 3 (Agency)
             if ($applicantType != 3) {
                 $validationRules["identities"] = "required";
             }
 
-            // Custom validation messages
             $customMessages = [
                 'land_grant.*.max' => 'Each land grant file size cannot exceed 15MB.',
                 'permission_plan.*.max' => 'Each permission plan file size cannot exceed 15MB.',
@@ -1345,16 +1360,14 @@ class HomeController extends Controller {
                 'identities.required' => 'The identification card number is required.',
             ];
 
-            // Check if files are uploaded and add validation rules for MULTIPLE FILES
             $fileKeys = ['land_grant', 'permission_plan', 'letter_of_support'];
             foreach ($fileKeys as $key) {
                 if ($request->hasFile($key)) {
                     $validationRules[$key] = 'array';
-                    $validationRules[$key . '.*'] = 'file|mimes:pdf|max:15360'; // 15MB in KB
+                    $validationRules[$key . '.*'] = 'file|mimes:pdf|max:15360';
                 }
             }
 
-            // Validate the request
             $validator = \Validator::make($request->all(), $validationRules, $customMessages);
             
             if ($validator->fails()) {
@@ -1367,7 +1380,6 @@ class HomeController extends Controller {
 
             $uploadPath = public_path('pdf');
             
-            // Ensure upload directory exists
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
@@ -1377,9 +1389,11 @@ class HomeController extends Controller {
             $updatedFileArrays = [];
 
             foreach ($fileFields as $field) {
-                $removedKey = "removed_{$field}";
-                
+                $removedIndices = $request->input("removed_{$field}");
+
                 $existingFiles = $application->$field;
+
+    
                 if ($existingFiles) {
                     if (is_string($existingFiles)) {
                         $existingFiles = json_decode($existingFiles, true);
@@ -1392,36 +1406,39 @@ class HomeController extends Controller {
                     $existingFiles = [];
                 }
                 
-    
-                if ($request->has($removedKey) && $request->$removedKey) {
-                    $indicesToRemove = explode(',', $request->$removedKey);
+                if ($removedIndices !== null && $removedIndices !== '') {
+                    $indicesToRemove = array_filter(explode(',', $removedIndices), function($value) {
+                        return $value !== '' && $value !== null;
+                    });
                     
                     foreach ($indicesToRemove as $index) {
+                        $index = (int)$index;
+                        
                         if (isset($existingFiles[$index])) {
-                            // Delete physical file
                             $filePath = public_path($existingFiles[$index]);
+                            
                             if (file_exists($filePath)) {
-                                unlink($filePath);
+                                $deleted = @unlink($filePath);
+                            } else {
                             }
-                            // Mark for removal
+                            
                             unset($existingFiles[$index]);
+                        } else {
                         }
                     }
                     
-                    // Reindex array to remove gaps
                     $existingFiles = array_values($existingFiles);
+                } else {
                 }
                 
                 $updatedFileArrays[$field] = $existingFiles;
             }
-
 
             foreach ($fileKeys as $fileKey) {
                 if ($request->hasFile($fileKey)) {
                     $files = $request->file($fileKey);
                     
                     foreach ($files as $file) {
-                        // Check file size
                         if ($file->getSize() > 15728640) { 
                             return response()->json([
                                 'success' => false,
@@ -1481,7 +1498,6 @@ class HomeController extends Controller {
                 "updated_at" => now()
             ];
 
-            // Handle identities field conditionally
             if ($applicantType != 3) {
                 $updateData["identities"] = $request->input('identities', $application->identities);
             } else {
@@ -1494,12 +1510,10 @@ class HomeController extends Controller {
                 $updateData["district"] = $request->input('district') ?: null;
             }
 
-            // Add updated file arrays as JSON to update data
             foreach ($fileFields as $field) {
                 if (!empty($updatedFileArrays[$field])) {
                     $updateData[$field] = json_encode($updatedFileArrays[$field]);
                 } else {
-                    // If no files remain, set to null or keep existing
                     $updateData[$field] = null;
                 }
             }
@@ -1509,7 +1523,6 @@ class HomeController extends Controller {
             try {
                 DB::table('applications')->where('id', $id)->update($updateData);
                 
-
                 DB::table('application_logs')->insert([
                     'application_id' => $id,
                     'user_type' => 'applicant', 
@@ -1533,7 +1546,6 @@ class HomeController extends Controller {
                     'updated_at' => now()
                 ]);
                 
-                // Commit the transaction
                 DB::commit();
                 
                 return response()->json([
@@ -1543,12 +1555,10 @@ class HomeController extends Controller {
                 
             } catch (\Exception $e) {
                 DB::rollback();
-                \Log::error("Database transaction failed: " . $e->getMessage());
                 throw $e;
             }
             
         } catch (\Exception $e) {
-            \Log::error("Application update failed: " . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'An unexpected error occurred. Please try again.'

@@ -726,7 +726,7 @@
                     </div>
 
 
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="geran-tanah">@lang('Dokumen Sokongan') <b class="starr"></b></label>
                         <div class="offset-area">
                             @if ($claim->supporting_docs)

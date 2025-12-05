@@ -205,16 +205,16 @@
                                 <input type="text" id="bandar" class="form-control" value="{{ $application->city }}"
                                     readonly>
                             </div>
-
+                            
                             <div class="form-group">
-                                <label for="daerah">@lang('app.district')</label>
-                                <input type="text" id="daerah" class="form-control" value="{{ $district }}"
+                                <label for="negeri">@lang('app.state')</label>
+                                <input type="text" id="negeri" class="form-control" value="{{ $state }}"
                                     readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="negeri">@lang('app.state')</label>
-                                <input type="text" id="negeri" class="form-control" value="{{ $state }}"
+                                <label for="daerah">@lang('app.district')</label>
+                                <input type="text" id="daerah" class="form-control" value="{{ $district }}"
                                     readonly>
                             </div>
 

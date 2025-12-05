@@ -265,6 +265,16 @@
                                     <input type="hidden" name="is_reapply" id="is_reapply" value="0">
                                 @endif
 
+
+                                <input type="hidden" name="removed_land_grant" id="removed_land_grant" value="">
+                                <input type="hidden" name="removed_new_receipt" id="removed_new_receipt" value="">
+                                <input type="hidden" name="removed_supporting_docs" id="removed_supporting_docs" value="">
+                                <input type="hidden" name="removed_refund_claim_letter" id="removed_refund_claim_letter" value="">
+                                <input type="hidden" name="removed_ic_copy" id="removed_ic_copy" value="">
+                                <input type="hidden" name="removed_bank_statement" id="removed_bank_statement" value="">
+                                <input type="hidden" name="removed_statutory_declaration" id="removed_statutory_declaration" value="">
+                                <input type="hidden" name="removed_company_registration" id="removed_company_registration" value="">
+
                                 <div class="container">
 
                                     <!-- Application Type Selection - New Field -->
@@ -592,40 +602,49 @@
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->land_grant)
                                     @php
-                                        $landGrantFiles = json_decode($claim->land_grant, true);
+                                        // Handle both string and array
+                                        if (is_string($claim->land_grant)) {
+                                            $landGrantFiles = json_decode($claim->land_grant, true);
+                                        } else {
+                                            $landGrantFiles = $claim->land_grant;
+                                        }
                                     @endphp
                                     @if (is_array($landGrantFiles) && count($landGrantFiles) > 0)
                                         <div class="mb-2 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
                                             <small class="text-muted"><strong>Fail Sebelum:</strong></small>
-                                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;" id="existing_land_grant_container">
-                                                @foreach ($landGrantFiles as $filePath)
-                                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
+                                            <div id="existing_land_grant_files" style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                                                @foreach ($landGrantFiles as $index => $filePath)
+                                                    <div class="existing-file-item" 
+                                                        data-field="land_grant" 
+                                                        data-index="{{ $index }}"
+                                                        style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px; flex: 1;">
                                                             <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-danger" 
-                                                                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;"
-                                                                onclick="removeExistingFile(this, 'land_grant', '{{ basename($filePath) }}')">
+                                                        <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
+                                                                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
                                                             <i class="fa fa-times"></i> 
                                                         </button>
                                                     </div>
                                                 @endforeach
                                             </div>
+                                            <small id="land_grant_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($landGrantFiles) }}</span> file(s)
+                                            </small>
                                         </div>
                                     @endif
                                 @endif
+                                
                                 <label for="land_grant" class="submit-button">@lang('app.choose_file')</label>
                                 <input type="file" id="land_grant" name="land_grant[]" class="file-input"
                                     accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'land_grant')">
                                 <div id="land_grant_fileList" class="file-list mt-2"></div>
                                 <div id="land_grant_error" class="text-danger mt-1"></div>
-                                
                             </div>
                         </div>
 
-
                         <!-- New Receipt Upload - Required -->
-                        <div class="form-group">
+                         <div class="form-group">
                             <div class="col-md-4">
                                 <label for="new-receipt">@lang('Resit Bayaran kali kedua')</label>
                                 <small class="text-muted d-block">(sekiranya membuat dua kali pembayaran)</small>
@@ -633,28 +652,43 @@
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->new_receipt)
                                     @php
-                                        $newReceiptFiles = json_decode($claim->new_receipt, true);
+                                        // Handle both string and array
+                                        if (is_string($claim->new_receipt)) {
+                                            $newReceiptFiles = json_decode($claim->new_receipt, true);
+                                        } else {
+                                            $newReceiptFiles = $claim->new_receipt;
+                                        }
                                     @endphp
                                     @if (is_array($newReceiptFiles) && count($newReceiptFiles) > 0)
                                         <div class="mb-2 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
                                             <small class="text-muted"><strong>Fail Sebelum:</strong></small>
-                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
-                                                @foreach ($newReceiptFiles as $filePath)
-                                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
-                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
+                                            <!-- ✅ ADD ID HERE -->
+                                            <div id="existing_new_receipt_files" style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                <!-- ✅ ADD $index AND data ATTRIBUTES -->
+                                                @foreach ($newReceiptFiles as $index => $filePath)
+                                                <div class="existing-file-item" 
+                                                    data-field="new_receipt" 
+                                                    data-index="{{ $index }}"
+                                                    style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
+                                                    <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px; flex: 1;">
                                                         <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
                                                     </a>
-                                                    <button type="button" class="btn btn-sm btn-danger" 
-                                                            style="padding: 2px 8px; font-size: 11px; margin-left: 10px;"
-                                                            onclick="removeExistingFile(this, 'new_receipt', '{{ basename($filePath) }}')">
+                                                    <!-- ✅ CHANGE BUTTON: Remove onclick, add class -->
+                                                    <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
+                                                            style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
                                                         <i class="fa fa-times"></i>
                                                     </button>
                                                 </div>
                                                 @endforeach
                                             </div>
+                                            <!-- ✅ ADD FILE COUNT -->
+                                            <small id="new_receipt_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($newReceiptFiles) }}</span> file(s)
+                                            </small>
                                         </div>
                                     @endif
                                 @endif
+                                
                                 <label for="new_receipt" class="submit-button is-invalid">@lang('app.choose_file')</label>
                                 <input type="file" id="new_receipt" name="new_receipt[]" class="file-input"
                                     accept="application/pdf" multiple onchange="handleMultipleFiles(this, 'new_receipt')">
@@ -671,22 +705,29 @@
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->refund_claim_letter)
                                     @php
-                                        $refundLetterFiles = json_decode($claim->refund_claim_letter, true);
+                                        if (is_string($claim->refund_claim_letter)) {
+                                            $refundLetterFiles = json_decode($claim->refund_claim_letter, true);
+                                        } else {
+                                            $refundLetterFiles = $claim->refund_claim_letter;
+                                        }
                                     @endphp
                                     @if (is_array($refundLetterFiles) && count($refundLetterFiles) > 0)
                                         <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
                                             <small class="text-muted"><strong>Fail Sebelum:</strong></small>
-                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
-                                                @foreach ($refundLetterFiles as $filePath)
-                                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
+                                            <div id="existing_refund_claim_letter_files" style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($refundLetterFiles as $index => $filePath)
+                                                    <div  
+                                                    class="existing-file-item"
+                                                    data-field="refund_claim_letter" 
+                                                    data-index="{{ $index }}"
+                                                    style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
                                                             <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-danger" 
-                                                                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;"
-                                                                onclick="removeExistingFile(this, 'refund_claim_letter', '{{ basename($filePath) }}')">
-                                                            <i class="fa fa-times"></i> 
-                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
+                                                            style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -710,25 +751,35 @@
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->ic_copy)
                                     @php
-                                        $icCopyFiles = json_decode($claim->ic_copy, true);
+                                        if (is_string($claim->ic_copy)) {
+                                            $icCopyFiles = json_decode($claim->ic_copy, true);
+                                        } else {
+                                            $icCopyFiles = $claim->ic_copy;
+                                        }
                                     @endphp
                                     @if (is_array($icCopyFiles) && count($icCopyFiles) > 0)
                                         <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
                                             <small class="text-muted"><strong>Fail Sebelum:</strong></small>
-                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
-                                                @foreach ($icCopyFiles as $filePath)
-                                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
+                                            <div id="existing_ic_copy_files" style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($icCopyFiles  as $index => $filePath)
+                                                    <div 
+                                                    class="existing-file-item"
+                                                    data-field="ic_copy" 
+                                                    data-index="{{ $index }}"
+                                                    style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
                                                             <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-danger" 
-                                                                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;"
-                                                                onclick="removeExistingFile(this, 'ic_copy', '{{ basename($filePath) }}')">
-                                                            <i class="fa fa-times"></i> 
+                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
+                                                            style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
+                                                            <i class="fa fa-times"></i>
                                                         </button>
                                                     </div>
                                                 @endforeach
                                             </div>
+                                            <small id="ic_copy_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($icCopyFiles) }}</span> file(s)
+                                            </small>
                                         </div>
                                     @endif
                                 @endif
@@ -748,25 +799,35 @@
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->bank_statement)
                                     @php
-                                        $bankStatementFiles = json_decode($claim->bank_statement, true);
+                                        if (is_string($claim->bank_statement)) {
+                                            $bankStatementFiles = json_decode($claim->bank_statement, true);
+                                        } else {
+                                            $bankStatementFiles = $claim->bank_statement;
+                                        }
                                     @endphp
                                     @if (is_array($bankStatementFiles) && count($bankStatementFiles) > 0)
                                         <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
                                             <small class="text-muted"><strong>Fail Sebelum:</strong></small>
-                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
-                                                @foreach ($bankStatementFiles as $filePath)
-                                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
+                                            <div id="existing_bank_statement_files" style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                                @foreach ($bankStatementFiles as $index => $filePath)
+                                                    <div 
+                                                    class="existing-file-item"
+                                                    data-field="bank_statement" 
+                                                    data-index="{{ $index }}"
+                                                    style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
                                                             <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-danger" 
-                                                                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;"
-                                                                onclick="removeExistingFile(this, 'bank_statement', '{{ basename($filePath) }}')">
-                                                            <i class="fa fa-times"></i> Buang
-                                                        </button>
+                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
+                                                            style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
                                                     </div>
                                                 @endforeach
                                             </div>
+                                            <small id="bank_statement_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($bankStatementFiles) }}</span> file(s)
+                                            </small>
                                         </div>
                                     @endif
                                 @endif
@@ -788,25 +849,35 @@
                             <div class="col-md-8">
                                 @if(isset($claim) && $claim->statutory_declaration)
                                     @php
-                                        $statutoryFiles = json_decode($claim->statutory_declaration, true);
+                                        if (is_string($claim->statutory_declaration)) {
+                                            $statutoryFiles = json_decode($claim->statutory_declaration, true);
+                                        } else {
+                                            $statutoryFiles = $claim->statutory_declaration;
+                                        }
                                     @endphp
                                     @if (is_array($statutoryFiles) && count($statutoryFiles) > 0)
                                         <div class="mb-2 p-2" style="background-color:#f8f9fa; border-radius:5px;">
                                             <small class="text-muted"><strong>Fail Sebelum:</strong></small>
-                                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                                            <div id="existing_statutory_declaration_files" style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
                                                 @foreach ($statutoryFiles as $filePath)
-                                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
+                                                    <div
+                                                     class="existing-file-item"
+                                                     data-field="statutory_declaration" 
+                                                     data-index="{{ $index }}"
+                                                     style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
                                                             <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-danger" 
-                                                                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;"
-                                                                onclick="removeExistingFile(this, 'statutory_declaration', '{{ basename($filePath) }}')">
-                                                            <i class="fa fa-times"></i> 
-                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
+                                                            style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
                                                     </div>
                                                 @endforeach
                                             </div>
+                                            <small id="statutory_declaration_file_count" style="color: #0056b3; margin-top: 5px; display: block;">
+                                                <i class="fa fa-info-circle"></i> Total: <span class="file-count">{{ count($statutoryFiles) }}</span> file(s)
+                                            </small>
                                         </div>
                                     @endif
                                 @endif
@@ -951,13 +1022,11 @@
         $(document).ready(function() {
             let formIsReady = true;
 
-            // Handle State Change for Districts
             $('#negeri').on('change', function() {
                 const stateId = $(this).val();
                 const selectedText = $(this).find('option:selected').text();
                 const stateCode = selectedText.split(' - ')[0].trim();
-                
-                // Show/hide required asterisk based on state code
+
                 if (['14', '15', '16'].includes(stateCode)) {
                     $('.required-asterisk').hide();
                     $('#daerah').prop('required', false);
@@ -965,27 +1034,29 @@
                     $('.required-asterisk').show();
                     $('#daerah').prop('required', true);
                 }
-                
+
                 $('#daerah').html('<option value="">Loading...</option>');
 
                 if (stateId) {
-                    formIsReady = false;
                     $.ajax({
                         url: `/clientarea/districts/${stateId}`,
                         type: 'GET',
                         success: function(data) {
                             let options = '<option value="">Sila Pilih Daerah</option>';
                             data.forEach(district => {
-                                options +=
-                                    `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
+                                options += `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
                             });
+
                             $('#daerah').html(options);
-                            formIsReady = true;
+                            let selectedDistrict =
+                                "{{ old('district', isset($claim) ? $claim->district : ($client->district_id ?? '')) }}";
+
+                            if (selectedDistrict) {
+                                $('#daerah').val(selectedDistrict);
+                            }
                         },
                         error: function() {
-                            $('#daerah').html(
-                                '<option value="">Error loading districts</option>');
-                            formIsReady = true;
+                            $('#daerah').html('<option value="">Error loading districts</option>');
                         }
                     });
                 } else {
@@ -994,6 +1065,7 @@
             });
 
             $('#negeri').trigger('change');
+
 
             // Handle District Change for Mukim
             $('#land_district').on('change', function() {
@@ -1363,191 +1435,187 @@
             });
         });
     </script>
-    <script>
-        let fileStorage = {};
-
-        // Main function to handle multiple files
-        function handleMultipleFiles(input, fieldName) {
-            const fileListDiv = document.getElementById(fieldName + '_fileList');
-            const errorDiv = document.getElementById(fieldName + '_error');
+   <script>
+    $(document).ready(function() {
+        // Handle removing existing files (same as working application)
+        $(document).on('click', '.remove-existing-file', function() {
+            const fileItem = $(this).closest('.existing-file-item');
+            const fieldName = fileItem.data('field');
+            const fileIndex = fileItem.data('index');
             
-            // Initialize storage for this field if not exists
-            if (!fileStorage[fieldName]) {
-                fileStorage[fieldName] = [];
-            }
+            console.log('Removing file - Field:', fieldName, 'Index:', fileIndex); // DEBUG
             
-            // Clear previous error
-            errorDiv.textContent = '';
-            errorDiv.style.display = 'none';
-            
-            // Add new files to storage
-            const newFiles = Array.from(input.files);
-            let hasError = false;
-            
-            newFiles.forEach(file => {
-                // Validate file
-                if (file.size > 15 * 1024 * 1024) {
-                    errorDiv.textContent = '@lang('app.land_grant_max')';
-                    errorDiv.style.display = 'block';
-                    hasError = true;
-                    return;
-                }
-                if (file.type !== 'application/pdf') {
-                    errorDiv.textContent = '@lang('app.land_grant_mimes')';
-                    errorDiv.style.display = 'block';
-                    hasError = true;
-                    return;
-                }
-                
-                if (!hasError) {
-                    fileStorage[fieldName].push(file);
+            Swal.fire({
+                title: 'Adakah anda pasti?',
+                text: "Fail ini akan dibuang!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, buang!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const removedInput = $(`#removed_${fieldName}`);
+                    let removedFiles = removedInput.val() ? removedInput.val().split(',') : [];
+                    removedFiles.push(fileIndex);
+                    removedInput.val(removedFiles.join(','));
+                    
+                    console.log('Updated removed files for', fieldName, ':', removedInput.val()); // DEBUG
+                    
+                    // Remove the file item from display
+                    fileItem.fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        // Update file count
+                        const container = $(`#existing_${fieldName}_files`);
+                        const remainingCount = container.find('.existing-file-item').length;
+                        $(`#${fieldName}_file_count .file-count`).text(remainingCount);
+                        
+                        // If no files left, hide the entire section
+                        if (remainingCount === 0) {
+                            container.parent().fadeOut();
+                        }
+                    });
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Berjaya!',
+                        text: 'Fail akan dibuang selepas anda submit borang.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 }
             });
-            
-            // Display files
-            displayFileList(fieldName, fileStorage[fieldName]);
-            
-            // Update the actual input with files from storage
-            updateInputFiles(input, fieldName);
-        }
+        });
+        
+    });
+    
+    // Keep your existing file upload script
+    let fileStorage = {};
 
-        function displayFileList(fieldName, files) {
-            const fileListDiv = document.getElementById(fieldName + '_fileList');
-            
-            if (!fileListDiv) return;
-            
-            // Clear previous content
-            fileListDiv.innerHTML = '';
-            
-            if (files.length === 0) {
+    function handleMultipleFiles(input, fieldName) {
+        const fileListDiv = document.getElementById(fieldName + '_fileList');
+        const errorDiv = document.getElementById(fieldName + '_error');
+        
+        if (!fileStorage[fieldName]) {
+            fileStorage[fieldName] = [];
+        }
+        
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+        
+        const newFiles = Array.from(input.files);
+        let hasError = false;
+        
+        newFiles.forEach(file => {
+            if (file.size > 15 * 1024 * 1024) {
+                errorDiv.textContent = '@lang('app.land_grant_max')';
+                errorDiv.style.display = 'block';
+                hasError = true;
+                return;
+            }
+            if (file.type !== 'application/pdf') {
+                errorDiv.textContent = '@lang('app.land_grant_mimes')';
+                errorDiv.style.display = 'block';
+                hasError = true;
                 return;
             }
             
-            // Create container for file list
-            const container = document.createElement('div');
-            container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+            if (!hasError) {
+                fileStorage[fieldName].push(file);
+            }
+        });
+        
+        displayFileList(fieldName, fileStorage[fieldName]);
+        updateInputFiles(input, fieldName);
+    }
+
+    function displayFileList(fieldName, files) {
+        const fileListDiv = document.getElementById(fieldName + '_fileList');
+        
+        if (!fileListDiv) return;
+        
+        fileListDiv.innerHTML = '';
+        
+        if (files.length === 0) {
+            return;
+        }
+        
+        const container = document.createElement('div');
+        container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+        
+        files.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
             
-            // Add each file
-            files.forEach((file, index) => {
-                const fileItem = document.createElement('div');
-                fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
-                
-                // File info
-                const fileInfo = document.createElement('span');
-                fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
-                fileInfo.innerHTML = `<i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
-                
-                // Remove button
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'btn btn-sm btn-danger';
-                removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
-                removeBtn.innerHTML = '<i class="fa fa-times"></i>';
-                removeBtn.onclick = function(e) {
-                    e.preventDefault();
-                    removeFile(fieldName, index);
-                };
-                
-                fileItem.appendChild(fileInfo);
-                fileItem.appendChild(removeBtn);
-                container.appendChild(fileItem);
+            const fileInfo = document.createElement('span');
+            fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
+            fileInfo.innerHTML = `<i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-danger';
+            removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
+            removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+            removeBtn.onclick = function(e) {
+                e.preventDefault();
+                removeFile(fieldName, index);
+            };
+            
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(removeBtn);
+            container.appendChild(fileItem);
+        });
+        
+        const summary = document.createElement('div');
+        summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
+        summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
+        container.appendChild(summary);
+        
+        fileListDiv.appendChild(container);
+    }
+
+    function removeFile(fieldName, index) {
+        if (fileStorage[fieldName]) {
+            fileStorage[fieldName].splice(index, 1);
+            
+            const input = document.getElementById(fieldName);
+            updateInputFiles(input, fieldName);
+            
+            displayFileList(fieldName, fileStorage[fieldName]);
+            
+            if (fileStorage[fieldName].length === 0) {
+                const errorDiv = document.getElementById(fieldName + '_error');
+                if (errorDiv) {
+                    errorDiv.textContent = '';
+                    errorDiv.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function updateInputFiles(input, fieldName) {
+        const dataTransfer = new DataTransfer();
+        
+        if (fileStorage[fieldName]) {
+            fileStorage[fieldName].forEach(file => {
+                dataTransfer.items.add(file);
             });
-            
-            // Add count summary
-            const summary = document.createElement('div');
-            summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
-            summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
-            container.appendChild(summary);
-            
-            fileListDiv.appendChild(container);
         }
+        
+        input.files = dataTransfer.files;
+    }
 
-        function removeFile(fieldName, index) {
-            if (fileStorage[fieldName]) {
-                fileStorage[fieldName].splice(index, 1);
-                
-                // Update the file input
-                const input = document.getElementById(fieldName);
-                updateInputFiles(input, fieldName);
-                
-                // Update display
-                displayFileList(fieldName, fileStorage[fieldName]);
-                
-                // If no files left, clear validation error if exists
-                if (fileStorage[fieldName].length === 0) {
-                    const errorDiv = document.getElementById(fieldName + '_error');
-                    if (errorDiv) {
-                        errorDiv.textContent = '';
-                        errorDiv.style.display = 'none';
-                    }
-                }
-            }
-        }
-
-        function updateInputFiles(input, fieldName) {
-            // Create a new DataTransfer object
-            const dataTransfer = new DataTransfer();
-            
-            // Add all files from storage to DataTransfer
-            if (fileStorage[fieldName]) {
-                fileStorage[fieldName].forEach(file => {
-                    dataTransfer.items.add(file);
-                });
-            }
-            
-            // Update input files
-            input.files = dataTransfer.files;
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function validateFileSize(input) {
-            const fieldName = input.id;
-            return handleMultipleFiles(input, fieldName);
-        }
-
-        // Function to remove existing files (for reapply scenario)
-        function removeExistingFile(button, fieldName, fileName) {
-            // Find the file container
-            const fileContainer = button.closest('div[style*="display: flex"]');
-            
-            if (!fileContainer) return;
-            
-            // Create hidden input to track removed files
-            let hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = `removed_${fieldName}[]`;
-            hiddenInput.value = fileName;
-            document.getElementById('registrationForm').appendChild(hiddenInput);
-            
-            // Remove the file display with animation
-            fileContainer.style.transition = 'opacity 0.3s';
-            fileContainer.style.opacity = '0';
-            
-            setTimeout(function() {
-                fileContainer.remove();
-                
-                // Check if parent container is empty
-                const parentContainer = document.querySelector(`#${fieldName}`).closest('.col-md-8').querySelector('.mb-2');
-                if (parentContainer) {
-                    const remainingFiles = parentContainer.querySelectorAll('div[style*="display: flex"]').length;
-                    if (remainingFiles === 0) {
-                        // Add message that all files removed
-                        const noFileMsg = document.createElement('small');
-                        noFileMsg.className = 'text-muted';
-                        noFileMsg.textContent = 'Semua fail telah dibuang';
-                        parentContainer.appendChild(noFileMsg);
-                    }
-                }
-            }, 300);
-        }
-    </script>
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+</script>
     
     <script>
         function isNumberKey(evt) {
