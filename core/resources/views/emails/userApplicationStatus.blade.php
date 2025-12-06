@@ -84,7 +84,7 @@
         <tr>
             <td class="content">
                 <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai, {{ $application->applicant }},</p>
-                <h3 style="color: blue;">Tahniah Permohonan anda telah diluluskan.</h3>
+                <h3 style="color: blue;">Tahniah. Permohonan anda telah diluluskan.</h3>
                 <p>Sila log masuk ke Portal Caruman Parit (e-CP) bagi melaksanakan tindakan seterusnya serta melengkapkan semua proses yang diperlukan.</p>
                 <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
                 <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
