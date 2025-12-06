@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Kepada Approver,</p>
+                <p>Kepada Approver</p>
                 <p><strong>Permohonan baharu telah diterima untuk disemak!</strong></p>
             </td>
         </tr>
