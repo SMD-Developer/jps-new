@@ -58,7 +58,7 @@
 </style>
 
 <div class="col-md-12 content-header">
-    <h5><i class="fa fa-list-alt"></i> {{ trans('app.list_of_approved_applications') }}</h5>
+    <h5><i class="fa fa-list-alt"></i>Permohonan Yang Diluluskan</h5>
 </div>
 
 <section class="content">

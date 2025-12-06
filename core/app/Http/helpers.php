@@ -102,7 +102,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'line-chart',
-                                'text' => trans('app.list_of_applications'),
+                                'text' => 'Permohonan Baru',
                                 'route' =>  url('application-status'),
                                 'menu_active' => request()->is('application-status') ? 'active' : ''
                             ],
@@ -142,7 +142,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.approved_claim_contribution'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
