@@ -594,9 +594,7 @@
                             <div class="col-md-4">
                                 <label for="geran-tanah">
                                     Resit Bayaran Asal 
-                                    @if(!isset($claim))
                                         <b class="starr">*</b>
-                                    @endif
                                 </label>
                             </div>
                             <div class="col-md-8">
@@ -1017,10 +1015,44 @@
             </div>
         </section>
 
-
     <script>
         $(document).ready(function() {
             let formIsReady = true;
+
+
+            let removedLandGrantFiles = [];
+
+            function updateLandGrantRequirement() {
+                const asteriskElement = $('label[for="land_grant"] .starr');
+                if (asteriskElement.length === 0) {
+                    $('label[for="land_grant"]').append(' <b class="starr">*</b>');
+                }
+            }
+
+
+            $(document).on('click', '#existing_land_grant_files .remove-existing-file', function() {
+                const fileItem = $(this).closest('.existing-file-item');
+                const fileIndex = fileItem.data('index');
+                
+                removedLandGrantFiles.push(fileIndex);
+                
+                fileItem.remove();
+
+                const remainingFiles = $('#existing_land_grant_files .existing-file-item').length;
+                $('#land_grant_file_count .file-count').text(remainingFiles);
+                
+                if (remainingFiles === 0) {
+                    $('#existing_land_grant_files').closest('.mb-2').hide();
+                }
+            });
+
+            // Initialize on page load for reapply forms
+            const isReapply = $('#is_reapply').length > 0 && $('#is_reapply').val() === '1';
+            if (isReapply) {
+                updateLandGrantRequirement();
+            }
+
+            
 
             $('#negeri').on('change', function() {
                 const stateId = $(this).val();
@@ -1225,35 +1257,21 @@
 
                  // Validate land_grant file - MULTIPLE FILES
                 const landGrantFiles = $('#land_grant')[0].files;
-                if (!isReapply) {
-                    if (landGrantFiles.length === 0) {
-                        showError('land_grant', "@lang('Fail wajib dimuatnaik')");
-                        $('#land_grant_error').text("@lang('Fail wajib dimuatnaik')").show();
-                    } else {
-                        // Validate each file
-                        Array.from(landGrantFiles).forEach((file, index) => {
-                            if (file.size > 15 * 1024 * 1024) {
-                                showError('land_grant', "@lang('app.land_grant_max')");
-                                $('#land_grant_error').text("@lang('app.land_grant_max')").show();
-                            } else if (file.type !== 'application/pdf') {
-                                showError('land_grant', "@lang('app.land_grant_mimes')");
-                                $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
-                            }
-                        });
-                    }
-                } else {
-                    // If reapply and files are provided, validate their format and size only
-                    if (landGrantFiles.length > 0) {
-                        Array.from(landGrantFiles).forEach((file, index) => {
-                            if (file.size > 15 * 1024 * 1024) {
-                                showError('land_grant', "@lang('app.land_grant_max')");
-                                $('#land_grant_error').text("@lang('app.land_grant_max')").show();
-                            } else if (file.type !== 'application/pdf') {
-                                showError('land_grant', "@lang('app.land_grant_mimes')");
-                                $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
-                            }
-                        });
-                    }
+                const remainingLandGrantFiles = $('#existing_land_grant_files .existing-file-item').length;
+
+                if (remainingLandGrantFiles === 0 && landGrantFiles.length === 0) {
+                    showError('land_grant', "@lang('Fail wajib dimuatnaik')");
+                    $('#land_grant_error').text("@lang('Fail wajib dimuatnaik')").show();
+                } else if (landGrantFiles.length > 0) {
+                    Array.from(landGrantFiles).forEach((file) => {
+                        if (file.size > 15 * 1024 * 1024) {
+                            showError('land_grant', "@lang('app.land_grant_max')");
+                            $('#land_grant_error').text("@lang('app.land_grant_max')").show();
+                        } else if (file.type !== 'application/pdf') {
+                            showError('land_grant', "@lang('app.land_grant_mimes')");
+                            $('#land_grant_error').text("@lang('app.land_grant_mimes')").show();
+                        }
+                    });
                 }
 
                 // Validate new_receipt file - NOW OPTIONAL (no required validation)
@@ -1381,6 +1399,10 @@
 
                         var formData = new FormData(this);
 
+                        if (removedLandGrantFiles.length > 0) {
+                            formData.append('removed_land_grant', JSON.stringify(removedLandGrantFiles));
+                        }
+
                         $.ajax({
                             url: "{{ route('client_claim_submit') }}",
                             type: "POST",
@@ -1435,187 +1457,186 @@
             });
         });
     </script>
-   <script>
-    $(document).ready(function() {
-        // Handle removing existing files (same as working application)
-        $(document).on('click', '.remove-existing-file', function() {
-            const fileItem = $(this).closest('.existing-file-item');
-            const fieldName = fileItem.data('field');
-            const fileIndex = fileItem.data('index');
-            
-            console.log('Removing file - Field:', fieldName, 'Index:', fileIndex); // DEBUG
-            
-            Swal.fire({
-                title: 'Adakah anda pasti?',
-                text: "Fail ini akan dibuang!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, buang!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const removedInput = $(`#removed_${fieldName}`);
-                    let removedFiles = removedInput.val() ? removedInput.val().split(',') : [];
-                    removedFiles.push(fileIndex);
-                    removedInput.val(removedFiles.join(','));
-                    
-                    console.log('Updated removed files for', fieldName, ':', removedInput.val()); // DEBUG
-                    
-                    // Remove the file item from display
-                    fileItem.fadeOut(300, function() {
-                        $(this).remove();
+    <script>
+        $(document).ready(function() {
+            // Handle removing existing files (same as working application)
+            $(document).on('click', '.remove-existing-file', function() {
+                const fileItem = $(this).closest('.existing-file-item');
+                const fieldName = fileItem.data('field');
+                const fileIndex = fileItem.data('index');
+                
+                console.log('Removing file - Field:', fieldName, 'Index:', fileIndex); // DEBUG
+                
+                Swal.fire({
+                    title: 'Adakah anda pasti?',
+                    text: "Fail ini akan dibuang!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, buang!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const removedInput = $(`#removed_${fieldName}`);
+                        let removedFiles = removedInput.val() ? removedInput.val().split(',') : [];
+                        removedFiles.push(fileIndex);
+                        removedInput.val(removedFiles.join(','));
                         
-                        // Update file count
-                        const container = $(`#existing_${fieldName}_files`);
-                        const remainingCount = container.find('.existing-file-item').length;
-                        $(`#${fieldName}_file_count .file-count`).text(remainingCount);
+                        console.log('Updated removed files for', fieldName, ':', removedInput.val()); // DEBUG
                         
-                        // If no files left, hide the entire section
-                        if (remainingCount === 0) {
-                            container.parent().fadeOut();
-                        }
-                    });
-                    
-                    // Show success message
-                    Swal.fire({
-                        title: 'Berjaya!',
-                        text: 'Fail telah berjaya dibuang.',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
+                        // Remove the file item from display
+                        fileItem.fadeOut(300, function() {
+                            $(this).remove();
+                            
+                            // Update file count
+                            const container = $(`#existing_${fieldName}_files`);
+                            const remainingCount = container.find('.existing-file-item').length;
+                            $(`#${fieldName}_file_count .file-count`).text(remainingCount);
+                            
+                            // If no files left, hide the entire section
+                            if (remainingCount === 0) {
+                                container.parent().fadeOut();
+                            }
+                        });
+                        
+                        // Show success message
+                        Swal.fire({
+                            title: 'Berjaya!',
+                            text: 'Fail telah berjaya dibuang.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
+            
+        });
+    
+        let fileStorage = {};
+
+        function handleMultipleFiles(input, fieldName) {
+            const fileListDiv = document.getElementById(fieldName + '_fileList');
+            const errorDiv = document.getElementById(fieldName + '_error');
+            
+            if (!fileStorage[fieldName]) {
+                fileStorage[fieldName] = [];
+            }
+            
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+            
+            const newFiles = Array.from(input.files);
+            let hasError = false;
+            
+            newFiles.forEach(file => {
+                if (file.size > 15 * 1024 * 1024) {
+                    errorDiv.textContent = '@lang('app.land_grant_max')';
+                    errorDiv.style.display = 'block';
+                    hasError = true;
+                    return;
+                }
+                if (file.type !== 'application/pdf') {
+                    errorDiv.textContent = '@lang('app.land_grant_mimes')';
+                    errorDiv.style.display = 'block';
+                    hasError = true;
+                    return;
+                }
+                
+                if (!hasError) {
+                    fileStorage[fieldName].push(file);
                 }
             });
-        });
-        
-    });
-    
-    // Keep your existing file upload script
-    let fileStorage = {};
-
-    function handleMultipleFiles(input, fieldName) {
-        const fileListDiv = document.getElementById(fieldName + '_fileList');
-        const errorDiv = document.getElementById(fieldName + '_error');
-        
-        if (!fileStorage[fieldName]) {
-            fileStorage[fieldName] = [];
-        }
-        
-        errorDiv.textContent = '';
-        errorDiv.style.display = 'none';
-        
-        const newFiles = Array.from(input.files);
-        let hasError = false;
-        
-        newFiles.forEach(file => {
-            if (file.size > 15 * 1024 * 1024) {
-                errorDiv.textContent = '@lang('app.land_grant_max')';
-                errorDiv.style.display = 'block';
-                hasError = true;
-                return;
-            }
-            if (file.type !== 'application/pdf') {
-                errorDiv.textContent = '@lang('app.land_grant_mimes')';
-                errorDiv.style.display = 'block';
-                hasError = true;
-                return;
-            }
-            
-            if (!hasError) {
-                fileStorage[fieldName].push(file);
-            }
-        });
-        
-        displayFileList(fieldName, fileStorage[fieldName]);
-        updateInputFiles(input, fieldName);
-    }
-
-    function displayFileList(fieldName, files) {
-        const fileListDiv = document.getElementById(fieldName + '_fileList');
-        
-        if (!fileListDiv) return;
-        
-        fileListDiv.innerHTML = '';
-        
-        if (files.length === 0) {
-            return;
-        }
-        
-        const container = document.createElement('div');
-        container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
-        
-        files.forEach((file, index) => {
-            const fileItem = document.createElement('div');
-            fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
-            
-            const fileInfo = document.createElement('span');
-            fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
-            fileInfo.innerHTML = `<i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
-            
-            const removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.className = 'btn btn-sm btn-danger';
-            removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
-            removeBtn.innerHTML = '<i class="fa fa-times"></i>';
-            removeBtn.onclick = function(e) {
-                e.preventDefault();
-                removeFile(fieldName, index);
-            };
-            
-            fileItem.appendChild(fileInfo);
-            fileItem.appendChild(removeBtn);
-            container.appendChild(fileItem);
-        });
-        
-        const summary = document.createElement('div');
-        summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
-        summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
-        container.appendChild(summary);
-        
-        fileListDiv.appendChild(container);
-    }
-
-    function removeFile(fieldName, index) {
-        if (fileStorage[fieldName]) {
-            fileStorage[fieldName].splice(index, 1);
-            
-            const input = document.getElementById(fieldName);
-            updateInputFiles(input, fieldName);
             
             displayFileList(fieldName, fileStorage[fieldName]);
+            updateInputFiles(input, fieldName);
+        }
+
+        function displayFileList(fieldName, files) {
+            const fileListDiv = document.getElementById(fieldName + '_fileList');
             
-            if (fileStorage[fieldName].length === 0) {
-                const errorDiv = document.getElementById(fieldName + '_error');
-                if (errorDiv) {
-                    errorDiv.textContent = '';
-                    errorDiv.style.display = 'none';
+            if (!fileListDiv) return;
+            
+            fileListDiv.innerHTML = '';
+            
+            if (files.length === 0) {
+                return;
+            }
+            
+            const container = document.createElement('div');
+            container.style.cssText = 'border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-top: 10px;';
+            
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;';
+                
+                const fileInfo = document.createElement('span');
+                fileInfo.style.cssText = 'flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333;';
+                fileInfo.innerHTML = `<i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>${file.name} <small style="color: #666;">(${formatFileSize(file.size)})</small>`;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-sm btn-danger';
+                removeBtn.style.cssText = 'margin-left: 10px; padding: 2px 8px; font-size: 12px;';
+                removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+                removeBtn.onclick = function(e) {
+                    e.preventDefault();
+                    removeFile(fieldName, index);
+                };
+                
+                fileItem.appendChild(fileInfo);
+                fileItem.appendChild(removeBtn);
+                container.appendChild(fileItem);
+            });
+            
+            const summary = document.createElement('div');
+            summary.style.cssText = 'margin-top: 8px; font-weight: bold; color: #007bff; font-size: 14px;';
+            summary.innerHTML = `<i class="fa fa-check-circle"></i> Jumlah fail dipilih: ${files.length}`;
+            container.appendChild(summary);
+            
+            fileListDiv.appendChild(container);
+        }
+
+        function removeFile(fieldName, index) {
+            if (fileStorage[fieldName]) {
+                fileStorage[fieldName].splice(index, 1);
+                
+                const input = document.getElementById(fieldName);
+                updateInputFiles(input, fieldName);
+                
+                displayFileList(fieldName, fileStorage[fieldName]);
+                
+                if (fileStorage[fieldName].length === 0) {
+                    const errorDiv = document.getElementById(fieldName + '_error');
+                    if (errorDiv) {
+                        errorDiv.textContent = '';
+                        errorDiv.style.display = 'none';
+                    }
                 }
             }
         }
-    }
 
-    function updateInputFiles(input, fieldName) {
-        const dataTransfer = new DataTransfer();
-        
-        if (fileStorage[fieldName]) {
-            fileStorage[fieldName].forEach(file => {
-                dataTransfer.items.add(file);
-            });
+        function updateInputFiles(input, fieldName) {
+            const dataTransfer = new DataTransfer();
+            
+            if (fileStorage[fieldName]) {
+                fileStorage[fieldName].forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+            }
+            
+            input.files = dataTransfer.files;
         }
-        
-        input.files = dataTransfer.files;
-    }
 
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-</script>
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
     
     <script>
         function isNumberKey(evt) {
