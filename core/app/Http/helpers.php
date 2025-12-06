@@ -1184,7 +1184,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.approved_application'),
+                                'text' => trans('approved_application'),
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
