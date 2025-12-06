@@ -114,7 +114,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.approved_application'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
@@ -819,7 +819,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.approved_application'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
@@ -850,7 +850,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.approved_claim_contribution'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1184,7 +1184,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('approved_application'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
@@ -1214,7 +1214,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.approved_claim_contribution'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1547,7 +1547,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.approved_application'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
@@ -1585,7 +1585,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.approved_claim_contribution'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -1897,7 +1897,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.approved_application'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'applications.view-list' 
@@ -1926,7 +1926,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.approved_claim_contribution'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
