@@ -676,7 +676,7 @@ input#captcha {
                                 <div class="ag-courses-item_date-box">
                                     <div style="margin-bottom: 15px;">
                                         <span style="color: #0d6efd; font-weight: 600; font-size: 16px;">
-                                            Jabatan Pengairan dan Saliran negeri Selangor
+                                            Jabatan Pengairan dan Saliran Negeri Selangor
                                         </span>
                                     </div>
                                     <div>
