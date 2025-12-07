@@ -309,6 +309,7 @@ $(document).ready(function() {
 
     function loadBankList() {
         const paymentMode = $('#paymentModeSelect').val(); 
+        console.log('Payment Mode:', paymentMode);
         
         fetch('{{ route("pay.bank.details") }}', {
             method: 'GET',
@@ -317,12 +318,17 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         })
-        .then(response => response.json())
+        .then(response => 
+        console.log('Response Status:', response.status)
+        response.json())
         .then(data => {
+            console.log('API Response:', data); 
+            console.log('Banks:', data.banks);
             let bankOptions = '<option value="">Select Bank</option>';
             
             if (data.success && data.banks) {
                 const banksArray = Array.isArray(data.banks) ? data.banks : Object.entries(data.banks).map(([code, name]) => ({bank_code: code, bank_name: name}));
+                console.log('Banks Array:', banksArray);
                 
                 const filteredBanks = banksArray.filter(bank => {
                     if (paymentMode === 'b2c') {
@@ -332,6 +338,9 @@ $(document).ready(function() {
                     }
                     return false;
                 });
+
+                console.log('Filtered Banks:', filteredBanks);
+                console.log('Filtered Count:', filteredBanks.length);
                 
                 filteredBanks.sort((a, b) => {
                     const nameA = (a.display_name || a.bank_name || a.name || '').toUpperCase();
