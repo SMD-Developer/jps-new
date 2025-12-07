@@ -1018,45 +1018,75 @@ class PayController extends Controller
         return $b2cMessages[$code] ?? "Transaction error (Code: {$code})";
     }
 	
-	public function verifySign_fpx($sign,$toSign) 
+
+
+    public function verifySign_fpx($sign, $toSign) 
     {
         $path = '/var/www/html/core/public/';
-
-    	$d_ate = date("Y");
-    	$fpxcert = array($path."fpxprod_smi_20241219.cer");
-    	$certs = $this->checkCertExpiry($fpxcert);
-    	$signdata = $this->hextobin($sign);
-    	
-        if(count($certs) == 1)
-        {
-            $pkeyid = openssl_pkey_get_public($certs[0]);
-            $ret = openssl_verify($toSign, $signdata, $pkeyid);	// 0
-            if($ret != 1) 
-            {
-                $ErrorCode = "09";
-                return $ErrorCode;	  
-            }
-        }elseif(count($certs) == 2){
-            $pkeyid =openssl_pkey_get_public($certs[0]);
-            $ret = openssl_verify($toSign, $signdata, $pkeyid);	
-            if($ret!=1)
-            {
-        	    $pkeyid =openssl_pkey_get_public($certs[1]);
-           	    $ret = openssl_verify($toSign, $signdata, $pkeyid);	
-                if($ret!=1) 
-                {
-                    $ErrorCode = "09";
-                    return $ErrorCode;	  
-                }
-            }
-    	}
-    	
-        if($ret == 1)
-        {
-            $ErrorCode = "00";
-            return $ErrorCode;	  
+        $cert_file = $path . "fpxprod_smi_20241219.cer";
+        
+        // Check if certificate file exists
+        if (!file_exists($cert_file)) {
+            \Log::error('FPX Certificate file not found: ' . $cert_file);
+            return "06"; // Certificate missing
         }
-    	return $ErrorCode;
+        
+        // Read certificate
+        $cert_content = file_get_contents($cert_file);
+        
+        if (!$cert_content) {
+            \Log::error('Failed to read FPX certificate');
+            return "06";
+        }
+        
+        // Parse certificate and check expiry
+        $certinfo = openssl_x509_parse($cert_content);
+        
+        if (!$certinfo) {
+            \Log::error('Failed to parse FPX certificate');
+            return "08";
+        }
+        
+        $expiry_timestamp = $certinfo['validTo_time_t'];
+        $expiry_date = date("Ymd", $expiry_timestamp - 86400);
+        $current_date = date("Ymd", time());
+        
+        if ($expiry_date < $current_date) {
+            \Log::error('FPX Certificate has expired', [
+                'expiry_date' => $expiry_date,
+                'current_date' => $current_date
+            ]);
+            return "08"; // Certificate expired
+        }
+        
+        // Get public key from certificate
+        $pkeyid = openssl_pkey_get_public($cert_content);
+        
+        if (!$pkeyid) {
+            \Log::error('Failed to extract public key from certificate');
+            return "09";
+        }
+        
+        // Convert hex signature to binary
+        $signdata = $this->hextobin($sign);
+        
+        // Verify signature
+        $ret = openssl_verify($toSign, $signdata, $pkeyid, OPENSSL_ALGO_SHA1);
+        
+        openssl_free_key($pkeyid);
+        
+        if ($ret == 1) {
+            \Log::info('FPX Signature verification successful');
+            return "00"; // Success
+        }
+        elseif ($ret == 0) {
+            \Log::warning('FPX Signature verification failed - invalid signature');
+            return "09"; // Verification failed
+        }
+        else {
+            \Log::error('FPX Signature verification error', ['openssl_error' => openssl_error_string()]);
+            return "09"; // Verification error
+        }
     }
     
     public function checkCertExpiry($path)
