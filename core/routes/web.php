@@ -35,29 +35,6 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
   Route::post('search-applications', 'ClientArea\HomeController@searchApplications')->name('applications.search');
   Route::get('search-appplication-results', 'ClientArea\HomeController@searchResult')->name('search.results');
 
-  // Add this temporary route in web.php or api.php
-Route::get('/test-fpx', function() {
-    $url = 'https://www.mepsfpx.com.my/FPXMain/RetrieveBankList';
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    
-    $result = curl_exec($ch);
-    $error = curl_error($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    return response()->json([
-        'http_code' => $http_code,
-        'error' => $error,
-        'response_length' => strlen($result),
-        'response_preview' => substr($result, 0, 200)
-    ]);
-});
-
   Route::get('/guest/receipt/{application_id}', 'ThirdPartyController@guestReceipt')
     ->name('guest.receipt')
     ->middleware('signed');
