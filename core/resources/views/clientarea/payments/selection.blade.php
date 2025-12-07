@@ -318,9 +318,7 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         })
-        .then(response => 
-        console.log('Response Status:', response.status)
-        response.json())
+        .then(response =>response.json())
         .then(data => {
             console.log('API Response:', data); 
             console.log('Banks:', data.banks);
