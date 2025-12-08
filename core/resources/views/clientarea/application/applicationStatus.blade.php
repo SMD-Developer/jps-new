@@ -319,7 +319,7 @@
                                                     <div class="status-badge">
                                                         <a href="{{ route('show_approval_letter', ['application_id' => $application->id]) }}"
                                                             class="badge bg-success text-white d-flex align-items-center text-decoration-none"
-                                                            title="{{ trans('app.click_to_view_bill') }}"
+                                                            title="{{ trans('Klik untuk lihat bil') }}"
                                                             data-bs-toggle="tooltip">
                                                             <i class="bi bi-check-circle me-2"></i>
                                                             {{ trans('app.approved') }}
@@ -327,7 +327,7 @@
                                                         </a>
                                                     </div>
                                                     <small class="text-muted d-block mt-1">
-                                                        <i class="bi bi-info-circle"></i> {{ trans('app.click_to_view_bill') }}
+                                                        <i class="bi bi-info-circle"></i> {{ trans('Klik untuk lihat bil') }}
                                                     </small>
                                                 @elseif ($application->status == 'in_process')
                                                     <div class="status-badge">

@@ -233,7 +233,7 @@
 
                         <!-- Personal Information Section -->
                         <div class="section">
-                            <h4>@lang('app.claim_contribution')</h4>
+                            <h4>@lang('Pulang Balik (Refund) Caruman Parit')</h4>
                             
                             <!-- Show reapplication notice if it's a reapply -->
                             @if(isset($claim))
@@ -464,7 +464,7 @@
 
                          <!-- Project Information Section -->
                         <div class="section">
-                            <h4>@lang('app.project_information')</h4>
+                            <h4>@lang('Maklumat Projek')</h4>
                             
                             <div class="container">
                                 <div class="row">
