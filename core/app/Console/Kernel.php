@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel {
 		'App\Console\Commands\Inspire',
         'App\Console\Commands\SendRecurringInvoicesCommand',
 		'App\Console\Commands\CheckFPXPaymentStatus',
+		'App\Console\Commands\DeleteExpiredApplications', 
         //\Torann\Currency\Console\Update::class
 
 	];
