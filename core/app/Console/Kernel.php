@@ -32,5 +32,7 @@ class Kernel extends ConsoleKernel {
              ->everyFiveMinutes()
              ->withoutOverlapping()
              ->runInBackground();
+
+	    $schedule->command('applications:delete-expired')->dailyAt('02:00');
 	}
 }
