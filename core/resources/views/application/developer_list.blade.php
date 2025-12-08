@@ -502,14 +502,14 @@
                 var clientName = $(this).data('client-name');
 
                 Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You are about to delete " + clientName + ". This action cannot be undone!",
+                    title: 'Adkah Anda Pasti?',
+                    text: "Anda ingin memadam jabatan Hartanah Negara",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel'
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Show loading indicator
@@ -533,8 +533,8 @@
                                 if (response.success) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Success!',
-                                        text: response.message || 'Client deleted successfully',
+                                        title: 'Berjaya',
+                                        text: response.message || 'Nama pemohon berjaya dipadam',
                                         timer: 2000,
                                         showConfirmButton: false
                                     }).then(() => {

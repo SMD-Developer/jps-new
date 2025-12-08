@@ -337,7 +337,7 @@
                    </a>
                 </div>
                 <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <a href="#" class="info-box-link" style="text-decoration: none; color: inherit;">
+                    <a href="{{route('application_status')}}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box" style="background: #4df1782e;">
                             <i class="fa fa-list bg-aqua"></i>
                             <div class="info-box-content">
@@ -348,7 +348,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <a href="{{route('approver-application_list')}}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                    <a href="{{route('application_status')}}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box" style="background: #FBFFE0;">
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">
