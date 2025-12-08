@@ -833,7 +833,7 @@
                                         @endphp
                                         <tr class="{{ $application->status == 'pending' || $application->status == 'returned_to_staff' ? 'pending-row' : '' }}">
                                             <td>{{ $applications->firstItem() + $loop->index }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($application->created_at)->format('d/m/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($application->updated_at)->format('d/m/Y') }}</td>
                                             <td style="word-break: break-all;">
                                                 {{ $application->refference_no ?? '-' }}
                                             </td>

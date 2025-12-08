@@ -318,7 +318,7 @@ body {
     margin: 0;
     height: 100vh;
     width: 100vw; /* Ensures the width is full screen */
-    overflow: hidden; /* Prevents scrolling if unnecessary */
+    overflow: hidden !important; /* Prevents scrolling if unnecessary */
 }
 
 @media (max-width: 768px) {
