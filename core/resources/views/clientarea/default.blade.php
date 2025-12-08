@@ -772,7 +772,7 @@ body {
 
                     <div class="ag-courses_box d-flex flex-wrap justify-content-center">
                         <!-- Address Section -->
-                        <div class="ag-courses_item">
+                        <div class="ag-courses_item"  style="min-width: 469px;">
                             <a href="#" class="ag-courses-item_link">
                                 <div class="ag-courses-item_bg"></div>
                                 <div class="ag-courses-item_title mb-3">
@@ -795,7 +795,7 @@ body {
                         </div>
 
                         <!-- Phone Section -->
-                        <div class="ag-courses_item" style="min-width: 400px; flex: 1 1 400px;">
+                        <div class="ag-courses_item" style="min-width: 469px; flex: 1 1 400px;">
                             <a href="#" class="ag-courses-item_link">
                                 <div class="ag-courses-item_bg"></div>
                                 <div class="ag-courses-item_title mb-3">

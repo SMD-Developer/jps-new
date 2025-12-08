@@ -661,12 +661,12 @@ input#captcha {
             <div class="modal-body">
 
                 <!-- Custom Styling Container -->
-                <div class="ag-format-container">
+                <div class="ag-format-container" style="width: 85%; margin: 0 auto;">
                     <h2 class="text-center">@lang('Hubungi Kami')</h2>
 
                     <div class="ag-courses_box d-flex flex-wrap justify-content-center">
                         <!-- Address Section -->
-                        <div class="ag-courses_item">
+                        <div class="ag-courses_item" style="min-width: 469px;">
                             <a href="#" class="ag-courses-item_link">
                                 <div class="ag-courses-item_bg"></div>
                                 <div class="ag-courses-item_title mb-3">
@@ -689,7 +689,7 @@ input#captcha {
                         </div>
 
                         <!-- Phone Section -->
-                        <div class="ag-courses_item" style="min-width: 400px; flex: 1 1 400px;">
+                        <div class="ag-courses_item" style="min-width: 469px; flex: 1 1 400px;">
                             <a href="#" class="ag-courses-item_link">
                                 <div class="ag-courses-item_bg"></div>
                                 <div class="ag-courses-item_title mb-3">
