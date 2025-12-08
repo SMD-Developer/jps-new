@@ -1477,7 +1477,7 @@ class HomeController extends Controller {
 
             // Prepare update data
             $updateData = [
-                "uploade_date" => $request->input('uploade_date', $application->uploade_date),
+                "created_at" => now(),
                 "applicant" => $request->input('applicant', $application->applicant),
                 "address" => $request->input('address', $application->address),
                 "postal_code" => $request->input('postal_code', $application->postal_code),
