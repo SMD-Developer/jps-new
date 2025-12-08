@@ -355,7 +355,7 @@
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                             <td>
-                                                {{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d M Y') : 'N/A' }}
+                                                {{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d/m/Y') : 'N/A' }}
                                             </td>
 
                                             <td>{{ $application->refference_no ?? '-' }}</td>

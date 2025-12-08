@@ -261,7 +261,7 @@
                                         @endphp
                                         <tr>
                                             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
                                             <td>{{ $item->refference_no }}</td>
                                             <td>{{ strtoupper($item->applicant) }}</td>
                                             
