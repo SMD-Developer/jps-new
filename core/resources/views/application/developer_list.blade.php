@@ -502,7 +502,7 @@
                 var clientName = $(this).data('client-name');
 
                 Swal.fire({
-                    title: 'Adkah Anda Pasti?',
+                    title: 'Adakah Anda Pasti?',
                     text: "Anda ingin memadam jabatan Hartanah Negara",
                     icon: 'warning',
                     showCancelButton: true,

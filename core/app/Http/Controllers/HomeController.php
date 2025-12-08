@@ -334,7 +334,6 @@ class HomeController extends Controller {
         $statuses = [
             'all' => 'Semua',
             'pending' => 'Belum Selesai',
-            'approve_payment_in_process' => 'Lulus-Dalam Proses Pembayaran',
             'approve_paid' => 'Lulus-Sudah Bayar',
             'rejected' => 'Ditolak'
         ];
@@ -402,7 +401,6 @@ class HomeController extends Controller {
         $statuses = [
             'all' => 'Semua',
             'pending' => 'Belum Selesai',
-            'approve_payment_in_process' => 'Lulus-Dalam Proses Pembayaran',
             'approve_paid' => 'Lulus-Sudah Bayar',
             'rejected' => 'Ditolak'
         ];
@@ -1871,6 +1869,21 @@ class HomeController extends Controller {
         // Apply status filter if exists
         if ($statusFilter && $statusFilter !== 'all') {
             $query->where('status', $statusFilter);
+        }
+
+
+        if ($request->filled('district')) {
+            $query->where('land_district', $request->get('district'));
+        }
+        
+        // Division filter  
+        if ($request->filled('division')) {
+            $query->where('land_state', $request->get('division'));
+        }
+        
+        // Lot/PT filter
+        if ($request->filled('lot')) {
+            $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
         }
         
         // Apply Admin Staff status filter - filter by LATEST log only

@@ -437,10 +437,62 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <!-- Create a flex container for filters and search -->
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <!-- Left side: Filters -->
-                            <div class="btn-group" role="group">
-                                <label class="form-label fw-bold me-3">@lang('app.filter') :</label>
+                        <div class="row search-row align-items-end mt-3 mx-1">
+                        <!-- Search Input -->
+                        <div class="col-md-3 col-sm-6 colsm36">
+                            <label for="search" class="form-label">{{ trans('app.search') }}:&nbsp;</label>
+                            <input type="text" id="search" class="form-control form-control-sm"
+                                placeholder="{{ trans('app.search') }}">
+                        </div>
+
+                        <!-- District Dropdown -->
+                        <div class="col-md-3 col-sm-6" id="aside">
+                            <label for="district" class="form-label">{{ trans('app.district') }}:</label>&nbsp;&nbsp;
+                            <select id="district" class="form-select form-select-sm form-control form-control-sm">
+                                <option value="" selected disabled>{{ trans('app.select_district') }}</option>
+                                @foreach ($district as $value)
+                                    <option value="{{ $value->iddaerah }}"
+                                        {{ request('district') == $value->iddaerah ? 'selected' : '' }}>
+                                        {{ $value->daerah_code }} - {{ $value->daerah }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Mukim Dropdown -->
+                        <div class="col-md-3 col-sm-6" id="aside">
+                            <label for="division" class="form-label">{{ trans('app.division') }}:</label>&nbsp;&nbsp;
+                            <select id="division" class="form-select form-select-sm form-control form-control-sm">
+                                <option value="" selected disabled>{{ trans('app.select_division') }}</option>
+                                <!-- Divisions are dynamically populated -->
+                            </select>
+                        </div>
+
+                        <!-- Lot/PT Input -->
+                        <div class="col-md-3 col-sm-6" id="aside">
+                            <label for="lot" class="form-label me-2">{{ trans('app.lot_pt') }}:</label>&nbsp;&nbsp;
+                            <input type="text" id="lot" class="form-control form-control-sm"
+                                placeholder="{{ trans('app.enter_lot_pt') }}" value="{{ request('lot') }}">
+                        </div>
+
+                        <!-- Buttons + Show Per Page (Right Aligned) -->
+                       <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <!-- Show Per Page (LEFT) -->
+                            <div class="d-flex align-items-baseline">
+                                <label for="perPageSelect" class="me-2">@lang('app.show') : </label>
+                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
+                                    style="width: auto">
+                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
+                                </select>
+                            </div>
+
+                            <div class="btn-group" role="group" style="margin-right: auto;">
+                                <label class="form-label fw-bold me-3">@lang('Status') :</label>
                                     <div class="d-flex align-items-center me-3">
                                         <select id="defaultStatusFilter" class="form-select form-select-sm"
                                             onchange="window.location.href = this.value"
@@ -456,109 +508,26 @@
                                                 @lang('app.in_process')
                                             </option>
                                             <option
-                                                value="{{ request()->fullUrlWithQuery(['status' => 'approved', 'page' => 1, 'per_page' => $perPage]) }}"
-                                                {{ request('status') == 'approved' ? 'selected' : '' }}>
-                                                @lang('app.passed')
+                                                value="{{ request()->fullUrlWithQuery(['status' => 'rejected', 'page' => 1, 'per_page' => $perPage]) }}"
+                                                {{ request('status') == 'rejected' ? 'selected' : '' }}>
+                                                Ditolak
                                             </option>
                                         </select>
                                     </div>
-                                @if ($isStaffAdmin)
-                                    <div class="d-flex align-items-center me-3">
-                                        <label for="adminStaffStatusFilter" class="me-2">
-                                            <!--Admin Staff Status: -->
-                                        </label>
-                                        <select id="adminStaffStatusFilter" class="form-select form-select-sm"
-                                            onchange="window.location.href = this.value"
-                                            style="width: auto; min-width: 150px;">
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['admin_staff_status' => 'all', 'page' => 1]) }}"
-                                                {{ empty($adminStaffStatus) || $adminStaffStatus == 'all' ? 'selected' : '' }}>
-                                                @lang('app.all')
-                                            </option>
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['admin_staff_status' => 'pending', 'page' => 1]) }}"
-                                                {{ $adminStaffStatus == 'pending' ? 'selected' : '' }}>
-                                                @lang('app.in_process')
-                                            </option>
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['admin_staff_status' => 'approved', 'page' => 1]) }}"
-                                                {{ $adminStaffStatus == 'approved' ? 'selected' : '' }}>
-                                                @lang('app.passed')
-                                            </option>
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['admin_staff_status' => 'rejected', 'page' => 1]) }}"
-                                                {{ $adminStaffStatus == 'rejected' ? 'selected' : '' }}>
-                                                @lang('app.reject')
-                                            </option>
-                                        </select>
-                                    </div>
-                                @endif
-                                @if ($isApproverAdmin)
-                                    <div class="d-flex align-items-center">
-                                        <label for="approverStatusFilter" class="me-2">
-                                            <!--Approver Status: -->
-                                        </label>
-                                        <select id="approverStatusFilter" class="form-select form-select-sm"
-                                            onchange="window.location.href = this.value"
-                                            style="width: auto; min-width: 150px;">
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['approver_status' => 'all', 'page' => 1, 'per_page' => $perPage]) }}"
-                                                {{ empty($approverStatus) || $approverStatus == 'all' ? 'selected' : '' }}>
-                                                @lang('app.all')
-                                            </option>
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['approver_status' => 'pending', 'page' => 1, 'per_page' => $perPage]) }}"
-                                                {{ $approverStatus == 'pending' ? 'selected' : '' }}>
-                                                @lang('app.in_process')
-                                            </option>
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['approver_status' => 'approved', 'page' => 1, 'per_page' => $perPage]) }}"
-                                                {{ $approverStatus == 'approved' ? 'selected' : '' }}>
-                                                @lang('app.passed')
-                                            </option>
-                                            <option
-                                                value="{{ request()->fullUrlWithQuery(['approver_status' => 'rejected', 'page' => 1, 'per_page' => $perPage]) }}"
-                                                {{ $approverStatus == 'rejected' ? 'selected' : '' }}>
-                                                @lang('app.reject')
-                                            </option>
-                                        </select>
-                                    </div>
-                                @endif
                             </div>
 
-                            <!-- Right side: Search -->
-                            <div class="search-container">
-                                <form action="{{ route('application_status') }}" method="GET" class="form-inline">
-                                    <div class="input-group">
-                                        <input type="text" name="search" class="form-control form-control-sm"
-                                            placeholder="@lang('app.search')..." value="{{ request('search') }}">
-                                        <button class="btn btn-primary btn-sm" type="submit">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                        @if (request('search'))
-                                            <a href="{{ route('application_status') }}" class="btn btn-danger btn-sm"
-                                                title="@lang('app.clear')">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        @endif
-                                    </div>
-                                </form>
+                            <!-- Buttons (RIGHT) -->
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-primary btn-sm search-btn"
+                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
+                                    <strong>{{ trans('app.search_b') }}</strong>
+                                </a>
+                                <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                                    <strong>{{ trans('app.reset') }}</strong>
+                                </a>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-baseline mb-3 mx-3">
-                            <div class="d-flex align-items-baseline">
-                                <label for="perPageSelect" class="me-2">@lang('app.show') : </label>
-                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
-                                    style="width: auto">
-                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
-                                </select>
-                            </div>
-                        </div>
+                    </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
                                 <thead>
@@ -1369,7 +1338,7 @@
             }
         </script>
         <script>
-             $(document).ready(function() {
+            $(document).ready(function() {
                 // Track view clicks
                 $(document).on('click', '.view-application', function(e) {
                     const applicationId = $(this).data('id');
@@ -1435,4 +1404,126 @@
             });
         });
         </script>
+        <script>
+            $(document).ready(function() {
+            // Search button click handler
+                $('.search-btn').on('click', function(e) {
+                    e.preventDefault();
+                    
+                    var searchTerm = $('#search').val();
+                    var district = $('#district').val();
+                    var division = $('#division').val();
+                    var lot = $('#lot').val();
+                    
+                    var queryParams = [];
+                    
+                    if (searchTerm) queryParams.push('search=' + encodeURIComponent(searchTerm));
+                    if (district) queryParams.push('district=' + district);
+                    if (division) queryParams.push('division=' + division);
+                    if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
+                    
+                    // Redirect with all filters
+                    window.location.href = window.location.pathname + '?' + queryParams.join('&');
+                });
+
+                // Status filter
+                $('#status').on('change', function() {
+                    var status = $(this).val();
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('status', status);
+                    window.location.href = url.toString();
+                });
+                
+            });
+        </script>
+        <script>
+                $(document).ready(function() {
+
+                        // District change handler for loading divisions
+                        $('#district').on('change', function() {
+                            const distId = $(this).val();
+                            $('#division').html('<option value="">Loading...</option>');
+
+                            if (distId) {
+                                $.ajax({
+                                    url: `/division/${distId}`,
+                                    type: 'GET',
+                                    success: function(data) {
+                                        let options = '<option value="">Sila Pilih</option>';
+                                        data.forEach(mukin => {
+                                            options +=
+                                                `<option value="${mukin.idmukim}">${ mukin.mukim_code +' - '+mukin.mukim}</option>`;
+                                        });
+                                        $('#division').html(options);
+                                    },
+                                    error: function() {
+                                        $('#division').html(
+                                            '<option value="">Error loading mukin</option>');
+                                    }
+                                });
+                            } else {
+                                $('#division').html('<option value="">Sila Pilih</option>');
+                            }
+                        });
+
+                        // Auto-filter for status dropdown
+                        $('#status').on('change', function() {
+                            var status = $(this).val();
+                            var queryParams = [];
+
+                            if (status) queryParams.push('status=' + status);
+
+                            // Redirect with status filter
+                            window.location.href = window.location.pathname + '?' + queryParams.join('&');
+                        });
+
+                });
+        </script>
+    <script>
+        $(document).ready(function() {
+            $('#search').on('input', function() {
+                var searchTerm = $(this).val();
+                if (searchTerm === '') {
+                    $('tbody tr').show();
+                    return;
+                }
+                
+                // Filter table rows based on search term
+                $('tbody tr').each(function() {
+                    var row = $(this);
+                    var found = false;
+                    
+                    // Search in specific columns (reference no, applicant name, account type)
+                    var refNo = row.find('td:nth-child(3)').text().toLowerCase();
+                    var applicantName = row.find('td:nth-child(6)').text().toLowerCase();
+                    var accountType = row.find('td:nth-child(4)').text().toLowerCase();
+                    
+                    searchTerm = searchTerm.toLowerCase();
+                    
+                    // Check if search term matches any of the columns
+                    if (refNo.includes(searchTerm) || 
+                        applicantName.includes(searchTerm) || 
+                        accountType.includes(searchTerm)) {
+                        found = true;
+                    }
+                    
+                    // Show/hide row based on search result
+                    if (found) {
+                        row.show();
+                    } else {
+                        row.hide();
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('perPageSelect').addEventListener('change', function() {
+            const perPage = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('perPage', perPage);
+            url.searchParams.set('page', '1'); 
+            window.location.href = url.toString();
+        });
+    </script>
     @endsection
