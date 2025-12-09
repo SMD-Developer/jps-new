@@ -242,8 +242,9 @@
                                                                 padding: 6px 16px;
                                                                 font-weight: 600;
                                                                 font-size: 13px;
+                                                                white-space: nowrap;
                                                                 border: none;">
-                                                            <i class="fa fa-credit-card"></i> Bayar & Cetak
+                                                            <i class=""></i>Cetak Resit
                                                         </a>
                                                     @endif
                                                 @endif
@@ -258,9 +259,25 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+
+                        <!-- NOTE -->
+                        <p class="text-muted mb-0" style="font-size: 14px; font-weight: 500;">
+                            <strong>Nota:</strong> Cetakan <strong>SALINAN</strong> resit akan dikenakan <strong>RM 10.00</strong>.
+                        </p>
+
+                        <!-- BACK BUTTON -->
+                        <a href="{{ url()->previous() }}" 
+                        class="btn btn-secondary" 
+                        style="border-radius: 20px; padding: 8px 20px; font-size: 14px; font-weight: 600;">
+                            Kembali
+                        </a>
+
+                    </div>
                     
                     <!-- Pagination -->
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-end mt-2">
                         {{ $applications->withQueryString()->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
@@ -357,10 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html: `
                     <div class="text-center">
                         <p><strong>Bayaran: RM 10.00</strong></p>
-                        <p>Selepas pembayaran berjaya, sila hantar permohonan untuk mendapatkan resit.</p>
-                        <p class="text-muted" style="font-size: 12px;">
-                            <em>Nota: Permohonan akan diproses oleh pentadbir dalam masa 1-3 hari bekerja.</em>
-                        </p>
+                        <p>Selepas pembayaran berjaya, permohonan anda untuk salinan resit akan diproses oleh bahagian kewangan dalam tempoh 7-14 hari bekerja.</p>
                     </div>
                 `,
                 icon: 'info',
@@ -457,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html: `
                     <div class="text-center">
                         <p><strong>Bayaran: RM 10.00</strong></p>
-                        <p>Selepas pembayaran berjaya, anda boleh mencetak resit dengan serta-merta.</p>
+                        <p>Selepas pembayaran berjaya, salinan resit boleh dicetak serta-merta.</p>
                     </div>
                 `,
                 icon: 'info',

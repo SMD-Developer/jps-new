@@ -28,6 +28,18 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
+
+        .filter-small ::placeholder {
+        font-size: 12px !important;   /* change size as needed */
+        color: #999 !important;       /* optional: softer color */
+    }
+
+    /* Also reduce input & label font size */
+    .filter-small .form-control,
+    .filter-small .form-select,
+    .filter-small .form-label {
+        font-size: 13px !important;
+    }
 </style>
 
 <title>Sejarah Pembayaran | JPS</title>
@@ -40,7 +52,7 @@
                 <!-- Header -->
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">
-                        <i class="fa fa-credit-card"></i> Sejarah Pembayaran Saya
+                        <i class="fa fa-credit-card"></i> Sejarah Pembayaran
                     </h3>
                 </div>
 
@@ -48,7 +60,7 @@
                     <!-- Filter Section -->
                     <div class="filter-section">
                         <form method="GET" action="{{ route('third.party.my.payments') }}" id="filterForm">
-                            <div class="row g-3">
+                            <div class="row align-items-end g-2 filter-small">
                                 <!-- Search -->
                                 <div class="col-md-4">
                                     <label class="form-label">Carian</label>
@@ -59,7 +71,7 @@
 
                                 <!-- Method Filter -->
                                 <div class="col-md-2">
-                                    <label class="form-label">Kaedah</label>
+                                    <label class="form-label">Cara Bayaran</label>
                                     <select name="method_filter" class="form-select">
                                         <option value="all" {{ request('method_filter') == 'all' ? 'selected' : '' }}>Semua</option>
                                         <option value="B2B" {{ request('method_filter') == 'B2B' ? 'selected' : '' }}>FPX B2B</option>
@@ -115,11 +127,9 @@
                             <thead class="table-header">
                                 <tr>
                                     <th>Bil</th>
-                                    <th>No Rujukan</th>
                                     <th>Nama Pemohon</th>
-                                    <th>Lot/PT</th>
-                                    <th>Daerah</th>
-                                    <th>Mukim</th>
+                                    <th>No Kad Pengenalan/No SSM</th>
+                                    <th>Alamat</th>
                                     <th>Amaun (RM)</th>
                                     <th>Kaedah</th>
                                     <th>Tarikh</th>
@@ -130,11 +140,9 @@
                                 @forelse($payments as $index => $payment)
                                     <tr>
                                         <td>{{ $payments->firstItem() + $index }}</td>
-                                        <td>{{ $payment->application->refference_no ?? 'N/A' }}</td>
-                                        <td>{{ $payment->application->applicant ?? 'N/A' }}</td>
-                                        <td>{{ $payment->application->land_lot ?? 'N/A' }}</td>
-                                        <td>{{ $payment->application->landDistrict->daerah ?? 'N/A' }}</td>
-                                        <td>{{ $payment->application->landDivision->mukim ?? 'N/A' }}</td>
+                                        <td>{{ $payment->thirdParty->name ?? 'N/A' }}</td>
+                                        <td>{{ $payment->thirdParty->id_card_number ?? 'N/A' }}</td>
+                                        <td>{{$payment->thirdParty->address}}</td>
                                         <td class="text-end">{{ number_format($payment->amount, 2) }}</td>
                                         <td>
                                             @if($payment->method == 'FPX_B2B')

@@ -1539,13 +1539,13 @@ class ThirdPartyController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Login successful!',
-                    'redirect' => route('third.party.dashboard')
+                    'redirect' => route('third.party.search')
                 ]);
             }
             
             // Regular form submission - redirect directly
-            return redirect()->route('third.party.dashboard')
-                ->with('success', 'Login successful!');
+            return redirect()->route('third.party.search');
+                
         }
 
         // Check if it's an AJAX request
@@ -1888,7 +1888,8 @@ class ThirdPartyController extends Controller
         $query = Payment::with([
                 'application.state', 
                 'application.landDistrict', 
-                'application.landDivision'
+                'application.landDivision',
+                'thirdParty'
             ])
             ->where('third_party_id', auth('third_party')->id())
             ->where('payment_type', 'third_party')

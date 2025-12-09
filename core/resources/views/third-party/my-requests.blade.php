@@ -39,7 +39,7 @@
     }
 </style>
 
-<title>Permohonan Resit Saya | JPS</title>
+<title>Permohonan Resit Salinan | JPS</title>
 
 @section('content')
 <div class="container-fluid mt-4">
@@ -49,7 +49,7 @@
                 <!-- Header -->
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">
-                        <i class="fa fa-file-text"></i> Senarai Permohonan Resit Saya
+                        <i class="fa fa-file-text"></i> Senarai Permohonan Resit Salinan
                     </h3>
                 </div>
 
@@ -120,13 +120,13 @@
                                         <td>
                                             @if($request->status === 'approved')
                                                 <a href="{{ route('third.party.download.receipt', $request->id) }}"
-                                                    class="btn btn-sm btn-success">
+                                                    class="btn btn-sm btn-success" style="white-space: nowrap;">
                                                     <i class="fa fa-download"></i> Muat Turun
                                                 </a>
 
                                             @elseif($request->status === 'pending')
                                                 <span class="text-muted" style="font-size: 12px;">
-                                                    <i class="fa fa-hourglass-half"></i> Menunggu Kelulusan
+                                                    <i class="fa fa-hourglass-half" style="white-space: nowrap;"></i> Menunggu Kelulusan
                                                 </span>
                                             @else
                                                 <span class="text-danger" style="font-size: 12px;">

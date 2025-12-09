@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\UuidModel;
+use App\Models\ThirdPartyUser;
 
 class Payment extends Model
 {
@@ -85,5 +86,10 @@ class Payment extends Model
     public function paymentLogs()
     {
         return $this->hasMany(PaymentLog::class, 'payment_uuid', 'uuid');
+    }
+
+    public function thirdParty()
+    {
+        return $this->belongsTo(ThirdPartyUser::class, 'third_party_id');
     }
 }

@@ -123,12 +123,12 @@ i.right.fa.fa-angle-right.mt-2 {
     <section class="sidebar scrollable-content">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="{{ route('third.party.dashboard') }}" class="nav-link {{ request()->routeIs('third.party.dashboard') ? 'active' : '' }}">
                         <i class="fa fa-tachometer-alt nav-icon"></i>
                         <p>Dashboard</p>
                     </a>
-                </li>
+                </li> -->
 
                 <li class="nav-item">
                     <a href="{{ route('third.party.search')}}" class="nav-link">

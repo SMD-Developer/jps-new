@@ -124,8 +124,8 @@
                                                     <i class="fa fa-edit"></i>
                                                 </button>
                                             @else
-                                                <button class="btn btn-sm btn-secondary" disabled>
-                                                    <i class="fa fa-check"></i> Already Approved
+                                                <button class="btn btn-sm btn-success" style="white-space:nowrap;" >
+                                                    <i class="fa fa-check"></i> Selesai
                                                 </button>
                                             @endif
                                         </td>
@@ -202,10 +202,21 @@
                         <small class="text-muted d-block mt-1">Format: PDF, JPG, PNG</small>
                     </div>
 
+                    <!-- ADMIN NOTES (for approved) -->
+                    <div class="mb-3" id="adminNotesDiv">
+                        <label>Nota Admin</label>
+                        <textarea name="admin_notes" 
+                                  id="adminNotes"
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Masukkan nota atau komen..."></textarea>
+                        <small class="text-muted d-block mt-1">Nota ini akan dipaparkan kepada pengguna</small>
+                    </div>
+
                     <!-- REJECT REASON -->
                     <div class="mb-3" id="reasonDiv" style="display:none;">
                         <label>Reason</label>
-                        <textarea name="admin_notes" class="form-control"></textarea>
+                        <textarea name="rejected_notes" class="form-control"></textarea>
                     </div>
                 </div>
 
@@ -259,6 +270,7 @@
 
     function toggleFields(status) {
         document.getElementById('uploadDiv').style.display = (status === "approved") ? "block" : "none";
+        document.getElementById('adminNotesDiv').style.display = (status === "approved") ? "block" : "none";
         document.getElementById('reasonDiv').style.display = (status === "rejected") ? "block" : "none";
     }
 

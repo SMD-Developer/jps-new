@@ -278,38 +278,6 @@
                                 </td>
                             </tr>
                         </table>
-
-                        <!--<div class="receipt-footer">-->
-                        <!--    <p><strong>Ringgit Malaysia:</strong> <span-->
-                        <!--            style="margin-left: 10px;">{{ \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount) }}-->
-                        <!--            Sahaja</span></p>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 90px;"><strong>Jabatan:</strong></div>-->
-                        <!--        <div>JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 90px;"><strong>PTJ:</strong></div>-->
-                        <!--        <div>PENGARAH PENGAIRAN & SALIRAN</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
-                        <!--<div class="receipt-footer">-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">Ringgit Malaysia:</div>-->
-                        <!--        <div class="value">-->
-                        <!--            {{ \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount) }} Sahaja-->
-                        <!--        </div>-->
-                        <!--    </div>-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">Jabatan:</div>-->
-                        <!--        <div class="value">JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>-->
-                        <!--    </div>-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">PTJ:</div>-->
-                        <!--        <div class="value">PENGARAH PENGAIRAN & SALIRAN</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
                          <div class="receipt-footer">
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
@@ -360,7 +328,7 @@
             <div class="row justify-content-end">
                 <div class="col-auto text-end">
                     <p style="font-size: 14px; color: #555; font-style: italic; margin-top: 5px;">
-                        <strong>Nota:</strong> Sila pastikan Resit <u>SALINAN PIHAK KETIGA</u> dicetak untuk rekod.
+                        <strong>Nota:</strong> Sila pastikan Resit <u>ASAL PIHAK KETIGA</u> dicetak untuk rekod.
                     </p>
                 </div>
             </div>
@@ -405,4 +373,5 @@
             window.print();
         });
     </script>
+
 @endsection

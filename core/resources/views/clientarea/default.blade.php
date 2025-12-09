@@ -642,6 +642,20 @@ body {
     .login-page {
         z-index: 1 !important;
     }
+
+    .password-wrapper {
+    position: relative;
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
 </style>
 </head>
 <body class="login-page">
@@ -1270,7 +1284,7 @@ body {
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="tp_id_card" class="col-form-label">
-                                No. Kad Pengenalan/ No. Daftar Perniagaan:<span class="text-danger"></span>
+                                No Kad Pengenalan/<wbr>No SSM:<span class="text-danger"></span>
                             </label>
                         </div>    
                         <div class="col-md-9">
@@ -1321,9 +1335,9 @@ body {
                                     placeholder="" 
                                     minlength="8"
                                     required>
-                                <i class="fa fa-eye-slash toggle-password" 
+                                <i class="bi bi-eye-slash toggle-password mb-2" 
                                 data-target="tp_password" 
-                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; cursor: pointer; z-index: 10;"></i>
                             </div>
                             <small class="form-text text-muted">Minimum 8 aksara</small>
                             <div class="invalid-feedback">Password must be at least 8 characters.</div>
@@ -1346,9 +1360,9 @@ body {
                                     placeholder="Re-enter password" 
                                     minlength="8"
                                     required>
-                                <i class="fa fa-eye-slash toggle-password" 
+                                <i class="bi bi-eye-slash toggle-password" 
                                 data-target="tp_confirm_password" 
-                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; cursor: pointer; z-index: 10;"></i>
                             </div>
                             <div class="invalid-feedback">Passwords do not match.</div>
                         </div>
@@ -1359,14 +1373,10 @@ body {
                         <button type="submit" class="btn btn-primary" id="tp_submit_btn">
                             <i class="fa fa-user-plus"></i> Daftar
                         </button>
-                        <button type="reset" class="btn btn-secondary">
+                        <button type="reset" class="btn btn-secondary" id="tp_reset_btn">
                             <i class="fa fa-refresh"></i> lsi Semula
                         </button>
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                            Batal
-                        </button>
                     </div>
-
                    
                     <!-- Already have account link -->
                     <div class="text-center mt-3">
@@ -1812,6 +1822,20 @@ $(document).ready(function() {
         .finally(() => {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
+        });
+    });
+</script>
+<script>
+    document.getElementById('tp_reset_btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('thirdPartyRegisterForm').reset();
+        document.getElementById('thirdPartyRegisterMessage').innerHTML = '';
+    
+        document.querySelectorAll('#thirdPartyRegisterForm .is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+        document.querySelectorAll('#thirdPartyRegisterForm .is-valid').forEach(el => {
+            el.classList.remove('is-valid');
         });
     });
 </script>

@@ -3991,7 +3991,6 @@ public function updateUserDetails(Request $request, $id)
                 // Save path in database (exactly like your code)
                 $receipt->receipt_file_path = 'pdf/' . $newFileName;
             }
-
             $receipt->approved_at = now();
         }
 
