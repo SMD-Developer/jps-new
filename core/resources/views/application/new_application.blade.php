@@ -234,7 +234,7 @@
 
                      <!-- Project Information Section -->
                     <div class="section">
-                        <h4>@lang('app.project_information')</h4>
+                        <h4>@lang('Maklumat Projek')</h4>
                         <form>
                             <div class="form-group">
                                 <label for="project_name">@lang('Nama Projek')</label>
