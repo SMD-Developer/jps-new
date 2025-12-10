@@ -441,6 +441,7 @@ body {
     }
     .form-control{
         font-size:13px;
+        border-radius: 25px !important;
     }
     input#captcha {
         margin: 0px 5px 0px 0px;
@@ -662,7 +663,7 @@ body {
     </div>
 </nav>
 
-<div class="container-fluid ps-0 mt-5">
+    <div class="container-fluid ps-0 mt-5">
         <div class="row ">
             <div class="col-md-2 col-5 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
@@ -684,10 +685,10 @@ body {
         </div>
         <div class="row fill">
                 <div class="col-md-2 "></div>
-                @if (session('error'))
-                    <div class="alert alert-danger">{!! session('error') !!}</div>
-                @endif
-                   <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
+                    @if (session('error'))
+                        <div class="alert alert-danger">{!! session('error') !!}</div>
+                    @endif
+                    <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
     
                         {{-- Display Errors --}}
                         @if ($errors->any())
@@ -708,24 +709,63 @@ body {
                         @endif
 
                         {{-- Login Form --}}
-                            <form method="POST" action="{{ route('third.party.login.submit') }}">
-                                @csrf
-                                <div class="mb-3">
-                                    <label style="font-size:18px;">Emel</label>
-                                    <input type="email" name="email" class="form-control" required>
-                                </div>
+                        <form method="POST" action="{{ route('third.party.login.submit') }}">
+                            @csrf
+                            <div class="mb-3">
+                                <input type="email" name="email" class="form-control"
+                                placeholder="Emel"
+                                style="border-radius:25px !important; padding: 12px 20px;"
+                                required>
+                            </div>
 
                             <div class="mb-3 position-relative">
-                                    <label style="font-size:18px;">Kata Laluan</label>
-                                    <input type="password" name="password" id="password" class="form-control" required>
-                                    <i class="bi bi-eye-slash toggle-password position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer" 
-                                    data-target="password" 
-                                    style="cursor: pointer; margin-top: 12px;"></i>
+                                <input type="password" 
+                                    name="password" 
+                                    id="password"
+                                    class="form-control"
+                                    placeholder="Kata Laluan"
+                                    style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
+                                    required>
+                                <i class="bi bi-eye-slash toggle-password position-absolute" 
+                                data-target="password" 
+                                style="cursor: pointer; right: 15px; top: calc(27% - 2px); transform: translateY(-50%);"></i>
+                            </div>
+                            
+                            <div class="row text-center mt-3">
+                                <div class="col-6 pe-2 mb-3">
+                                    <button type="submit"
+                                        class="btn"
+                                        style="
+                                            width:85%;
+                                            background:#3949e7;
+                                            color:white;
+                                            border-radius:15px;
+                                            border:2px solid #bfc9ff;
+                                            padding:5px 0;
+                                            font-size: small;
+                                        ">
+                                        Log masuk
+                                    </button>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary mb-3">Log Masuk</button>
-                            </form>
-
+                                <div class="col-6 ps-2 mb-3">
+                                    <button type="button"
+                                        onclick="this.form.reset();"
+                                        class="btn"
+                                        style="
+                                            width:85%;
+                                            background:#3949e7;
+                                            color:white;
+                                            border-radius:15px;
+                                            border:2px solid #bfc9ff;
+                                            padding:5px 0;
+                                            font-size: small;
+                                        ">
+                                        Isi Semula
+                                    </button>
+                                </div>
+                            </div>    
+                        </form>
                     </div>
                     <footer>
                             <div class="row">
@@ -740,11 +780,9 @@ body {
                             </p>
                     </footer>       
 
-</div>
+                </div>
 
-
-
-
+        </div>
 
     </div>
 {!! Html::script(asset('assets/js/jquery.min.js')) !!}
