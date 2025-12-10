@@ -127,12 +127,12 @@
                             <thead class="table-header">
                                 <tr>
                                     <th>Bil</th>
+                                    <th>Tarikh</th>
                                     <th>Nama Pemohon</th>
                                     <th>No Kad Pengenalan/No SSM</th>
                                     <th>Alamat</th>
                                     <th>Amaun (RM)</th>
-                                    <th>Kaedah</th>
-                                    <th>Tarikh</th>
+                                    <th>Cara Bayaran</th>
                                     <th>Tindakan</th> {{-- Add this --}}
                                 </tr>
                             </thead>
@@ -140,6 +140,7 @@
                                 @forelse($payments as $index => $payment)
                                     <tr>
                                         <td>{{ $payments->firstItem() + $index }}</td>
+                                        <td>{{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d/m/Y H:i') : 'N/A' }}</td>
                                         <td>{{ $payment->thirdParty->name ?? 'N/A' }}</td>
                                         <td>{{ $payment->thirdParty->id_card_number ?? 'N/A' }}</td>
                                         <td>{{$payment->thirdParty->address}}</td>
@@ -153,7 +154,6 @@
                                                 {{ $payment->method }}
                                             @endif
                                         </td>
-                                        <td>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('d/m/Y H:i') : 'N/A' }}</td>
                                         <td>
                                             {{-- Add View Receipt Button --}}
                                             <a href="{{ route('third.party.view.receipt', ['application_id' => $payment->application_id, 'payment_uuid' => $payment->uuid]) }}" 

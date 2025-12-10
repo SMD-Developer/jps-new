@@ -514,9 +514,9 @@
                                             <th>KOD HASIL</th>
                                             <th>Amaun (RM)</th>
                                             <th>MOD TERIMAAN</th>
-                                            <th>JENIS KAD</th>
+                                            <!-- <th>JENIS KAD</th> -->
                                             <th>KATEGORI TRANSAKSI PERBANKAN</th>
-                                            <th>JUMLAH CAJ KOMISYEN (RM)</th>
+                                            <!-- <th>JUMLAH CAJ KOMISYEN (RM)</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -589,9 +589,9 @@
                                                         EFT
                                                     @endif
                                                 </td>
-                                                <td rowspan="{{ $rowspan }}">N/A</td>
+                                                <!-- <td rowspan="{{ $rowspan }}">N/A</td> -->
                                                 <td rowspan="{{ $rowspan }}">{{ $transactionCategory }}</td>
-                                                <td rowspan="{{ $rowspan }}">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td>
+                                                <!-- <td rowspan="{{ $rowspan }}">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td> -->
                                             </tr>
                                             
                                             @if (!$isReprint)
@@ -608,8 +608,7 @@
                                         <tr style="background-color: #f0f0f0; font-weight: bold;">
                                             <td colspan="9" style="text-align: right;">JUMLAH :</td>
                                             <td>{{ number_format($grandTotal, 2) }}</td>
-                                            <td colspan="3" style="text-align: right;">JUMLAH :</td>
-                                            <td>{{ number_format($totalCharges, 2) }}</td>
+                                            <td colspan="3" style="text-align: right;"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -722,18 +721,6 @@
                             <td>CEK/BANK DRAF</td>
                             <td>{{ $chequeCount + $bankDraftCount }}</td>
                             <td>{{ number_format($chequeAmount + $bankDraftAmount, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>KAD KREDIT</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>KAD DEBIT</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
