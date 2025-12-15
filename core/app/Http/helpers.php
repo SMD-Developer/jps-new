@@ -482,13 +482,13 @@ if(! function_exists('getMenus')){
                         'menu_active' => '',
                         'is_dropdown' => true,
                         'submenus' => [
-                            // [
-                            //     'icon' => 'line-chart',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('application-status'),
-                            //     'menu_active' => request()->is('application-status') ? 'active' : '',
-                            //     'permission' => 'application-status.view-list',
-                            // ],
+                            [
+                                'icon' => 'line-chart',
+                                'text' => trans('app.list_of_application'),
+                                'route' =>  url('application-status'),
+                                'menu_active' => request()->is('application-status') ? 'active' : '',
+                                'permission' => 'permohonan.senarai.list' 
+                            ],
                             // [
                             //     'icon' => 'list',
                             //     'text' => trans('app.list_of_application'),
@@ -501,7 +501,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.approved_application'),
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
+                                'permission' => 'permohonan.yang.list' 
                             ],
                         ]
                     ],
