@@ -135,27 +135,27 @@ class RolesController extends CrudController {
             $title = 'Peranan';
             
             $users = User::with('role')->get();
-                 
+                
             $roles = Role::with('department')->get()->map(function($role) use ($users) {
                 $roleUsers = $users->where('role_id', $role->uuid);
                 $role->users = $roleUsers;
                 return $role;
             })->filter(fn($role) => !empty($role->users) && $role->users->count() > 0);
-                 
+                
             $departments = Department::where('status', 1)->get();
             $permissionGroups = DB::table('permission_group')->where('group_status', 1)->get();
-                 
+                
             $groupedPermissions = [];
             foreach ($permissionGroups as $group) {
                 $permissions = Permission::where('permission_group', $group->id)
                     ->where('status', 1)
                     ->get();
-                             
+                            
                 if ($permissions->count() > 0) {
                     $groupedPermissions[$group->group_display_name] = $permissions;
                 }
             }
-                 
+            
             return view('roles_and_permissions.add-roles', compact(
                 'roles', 
                 'departments', 

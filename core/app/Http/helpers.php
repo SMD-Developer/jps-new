@@ -779,6 +779,7 @@ if(! function_exists('getMenus')){
                         'route' => url('#'),
                         'active_dropdown' => request()->is('developer-list')  ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('developer-list')  ? 'block' : 'none',
+                        'permission' => 'pemohon.list',
                         'menu_active' => '',
                         'is_dropdown' => true,
                         'submenus' => [
@@ -787,7 +788,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.applicant_list'),
                                 'route' => url('developer-list'),
                                 'menu_active' => request()->is('developer-list') ? 'active' : '',
-                                'permission' => 'customers.view-list'
+                                'permission' => 'pemohon.list'
                             ],
                         ]
                     ],
@@ -801,6 +802,7 @@ if(! function_exists('getMenus')){
                         'menu_active' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list')? 'active' : '',
                         'badge_count' => $applicationCount, // Add badge count here
                         'badge_class' => 'badge bg-danger text-secondary',
+                        'permission' => 'applications.view-list',
                         'is_dropdown' => true,
                         'submenus' => [
                             [

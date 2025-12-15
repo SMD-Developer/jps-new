@@ -1714,8 +1714,10 @@ class HomeController extends Controller {
     public function developer_list(Request $request)
     {
         $perPage = $request->input('per_page', 10);
-        $canAdminStaffViewCustomerDetails = auth('admin')->user()->hasPermission('customers.view-details');
-        $canAdminStaffEditCustomerDetails = auth('admin')->user()->hasPermission('customers.edit');
+        $canAdminStaffViewCustomerDetails = auth('admin')->user()->hasPermission('pemohon.view');
+        $canAdminStaffEditCustomerDetails = auth('admin')->user()->hasPermission('pemohon.edit');
+        $canAdminStaffDeleteCustomer = auth('admin')->user()->hasPermission('pemohon.delete');
+
         $isAuthenticated = auth('admin')->check();
         $isAdminOrStaff = false;
             
@@ -1785,7 +1787,8 @@ class HomeController extends Controller {
             'perPage',
             'isAdminOrStaff',
             'canAdminStaffViewCustomerDetails',
-            'canAdminStaffEditCustomerDetails'
+            'canAdminStaffEditCustomerDetails',
+            'canAdminStaffDeleteCustomer'
         ));
     }
 

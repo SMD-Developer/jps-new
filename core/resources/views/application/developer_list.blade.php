@@ -195,12 +195,13 @@
                                                             class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
                                                     @endif
                                                      <!-- Add this delete button -->
-                                                    
+                                                    @if($canAdminStaffDeleteCustomer)
                                                         <button class="btn btn-danger btn-sm deleteClientBtn" 
                                                             data-client-id="{{ $value->id }}"
                                                             data-client-name="{{ $value->userName }}">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
