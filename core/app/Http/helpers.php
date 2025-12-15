@@ -802,7 +802,6 @@ if(! function_exists('getMenus')){
                         'menu_active' => request()->is('application-list') || request()->is('application-status') || request()->is('approved-application-list')? 'active' : '',
                         'badge_count' => $applicationCount, // Add badge count here
                         'badge_class' => 'badge bg-danger text-secondary',
-                        'permission' => 'permohonan.senarai.list',
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -1175,7 +1174,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.list_of_application'),
                                 'route' =>  url('application-status'),
                                 'menu_active' => request()->is('application-status') ? 'active' : '',
-                                'permission' => 'application-status.view-list'
+                                'permission' => 'permohonan.senarai.list'
                             ],
                             // [
                             //     'icon' => 'list',
@@ -1189,7 +1188,7 @@ if(! function_exists('getMenus')){
                                 'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
+                                'permission' => 'permohonan.yang.list' 
                             ],
                             
                         ]
@@ -1552,7 +1551,7 @@ if(! function_exists('getMenus')){
                                 'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
+                                'permission' => 'permohonan.yang.list' 
                             ],
                             // [
                             //     'icon' => 'line-chart',
@@ -1888,7 +1887,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.list_of_application'),
                                 'route' =>  url('application-status'),
                                 'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
-                                'permission' => 'application-status.view-list',
+                                'permission' => 'permohonan.senarai.list',
                             ],
                             // [
                             //     'icon' => 'list',
@@ -1902,7 +1901,7 @@ if(! function_exists('getMenus')){
                                 'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
+                                'permission' => 'permohonan.yang.list' 
                             ],
                         ]
                     ],
