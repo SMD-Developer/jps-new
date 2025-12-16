@@ -522,7 +522,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.baru.list'
                             ],
 
                             [
@@ -531,7 +531,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.yang.list'
                             ],
                         ]
                     ],
@@ -846,7 +846,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.baru.list'
                             ],
 
                             [
@@ -855,7 +855,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.yang.list'
                             ],
                         ]
                     ],
@@ -1210,7 +1210,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.baru.list'
                             ],
 
                             [
@@ -1219,7 +1219,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.yang.list'
                             ],
                         ]
                     ],
@@ -1581,7 +1581,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.baru.list'
                             ],
 
                             [
@@ -1590,7 +1590,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.yang.list'
                             ],
                         ]
                     ],
@@ -1922,7 +1922,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.baru.list'
                             ],
 
                             [
@@ -1931,7 +1931,7 @@ if(! function_exists('getMenus')){
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
+                                'permission' => 'permohonan pulang balik.yang.list'
                             ],
                         ]
                     ],
