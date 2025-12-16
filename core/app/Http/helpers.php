@@ -544,7 +544,6 @@ if(! function_exists('getMenus')){
                         'active_dropdown' => request()->is('view-receipt') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('view-receipt') ? 'block' : 'none',
                         'menu_active' => '',
-                        'permission' => 'payments.view-list',
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -552,7 +551,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
-                                'permission' => 'payments.view-details',
+                                 'permission' => 'pembayaran.belum.selesai.list',
                             ],
 
                             [
@@ -560,7 +559,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.payment.list'
                             ],
                         ]
                     ],
@@ -874,7 +873,8 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Belum Selesai'),
                                 'route' => url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.belum.selesai.list'
+                                
                             ],
 
                             [
@@ -882,7 +882,8 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.payment.list'
+                                
                             ],
                         ]
                     ],
@@ -1238,7 +1239,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.belum.selesai.list'
                             ],
 
                             [
@@ -1246,7 +1247,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.payment.list'
                             ],
                         ]
                     ],
@@ -1952,14 +1953,14 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt')  ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.belum.selesai.list'
                             ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.payment.list'
                             ],
                         ]
                     ],
