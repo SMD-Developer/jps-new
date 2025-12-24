@@ -36,7 +36,7 @@
         <div class="footer">
             <p><strong>Nota :</strong> Emel ini dijana oleh sistem dan tidak perlu dibalas.</p>
             <p>Yang benar,<br>
-            Portal e-CP Caruman Pari</p>
+            Portal e-CP Caruman Parit</p>
         </div>
 
     </div>

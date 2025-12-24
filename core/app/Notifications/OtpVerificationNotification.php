@@ -28,7 +28,7 @@ class OtpVerificationNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Email Verification - OTP Code')
+            ->subject('Pengesahan Emel - Kod OTP')
             ->view('emails.otp', [
                 'otp' => $this->otp,
                 'userName' => $this->userName,
