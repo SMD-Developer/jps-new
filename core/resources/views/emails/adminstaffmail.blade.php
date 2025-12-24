@@ -34,7 +34,7 @@
 
         .title {
             text-align: left;
-            color: #ff6600;
+            color: #000;
             font-size: 18px;
             font-weight: bold;
             padding: 10px 20px;
@@ -50,7 +50,7 @@
             text-align: left;
             padding: 20px;
             font-size: 12px;
-            color: #777;
+            color: #000;
         }
 
         .footer-container {
@@ -89,19 +89,8 @@
         </tr>
         <tr>
             <td class="footer">
+                <p>Yang benar,</p>
                 <p>Portal e-CP Caruman Parit</p>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer-container">
-                <h3>JOM BERHUBUNG                </h3>
-                <p>Jika anda mempunyai sebarang soalan, lawati tapak sokongan kami di <a href="https://www.jps.com">https://www.jps.com</a>,<br>
-                    hubungi kami di <a href="mailto:support@jps.com">support@jps.com</a>
-                </p>
-                <p>E-mel ini adalah sulit. Ia juga mungkin mendapat keistimewaan dari segi undang-undang. Jika anda bukan penerima, anda tidak boleh menyalin, memajukan, mendedahkan atau menggunakan mana-mana bahagian daripadanya. Jika anda tersilap menerima mesej ini, sila padamkannya dan maklumkan kepada penghantar dengan segera melalui e-mel balasan. Komunikasi Internet tidak boleh dijamin tepat pada masanya, selamat, bebas ralat atau bebas virus. Pengirim tidak menerima liabiliti untuk sebarang kesilapan atau ketinggalan.
-                </p>
-                <p>"JIMAT KERTAS - FIKIRKAN SEBELUM ANDA CETAK"</p>
-                <p>© Hak Cipta 2025. Hak Cipta Terpelihara</p>
             </td>
         </tr>
     </table>
