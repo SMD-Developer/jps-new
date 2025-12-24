@@ -34,7 +34,7 @@
 
         .title {
             text-align: left;
-            color: #ff6600;
+            color: #000;
             font-size: 18px;
             font-weight: bold;
             padding: 10px 20px;
@@ -84,8 +84,8 @@
         <tr>
             <td class="content">
                 <p>Assalamualaikum / Salam Sejahtera, {{ $userName }},</p>
-                <h3 style="color: blue;">Tahniah! Pendaftaran anda telah berjaya.</h3>
-               <p>Anda kini boleh log masuk ke laman web Caruman Parit untuk mengakses akaun anda dan memulakan urusan seterusnya.</p>
+                <h3>Tahniah! Pendaftaran anda telah berjaya.</h3>
+                <p>Anda kini boleh log masuk ke laman web Caruman Parit untuk mengakses akaun anda dan memulakan urusan seterusnya.</p>
                 <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
                 <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila hubungi kami di support@e-cp.jps.com.my atau telefon 03-7333 4545.</p>
                 <p>Terima kasih atas kerjasama anda.</p>
