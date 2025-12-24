@@ -34,7 +34,7 @@
 
         .title {
             text-align: left;
-            color: #ff6600;
+            color: #000;
             font-size: 18px;
             font-weight: bold;
             padding: 10px 20px;
