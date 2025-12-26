@@ -208,16 +208,16 @@
                         <tr>
                             <td class="label">Tarikh Kemas Kini:</td>
                             <td class="value">{{ $claim->updated_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <p class="mt-1 text-muted">
-                                    Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda. 
-                                </p>
-                                <p>Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda.</p>
-                                <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
-                                <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
-                            </td>
                         </tr>
                     </table>
+                </div>
+                <div>
+                    <p class="mt-1 text-muted">
+                        Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda. 
+                    </p>
+                    <p>Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda.</p>
+                    <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
+                    <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
                 </div>
 
                 <div class="divider"></div>
