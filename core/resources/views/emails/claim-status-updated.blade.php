@@ -36,7 +36,7 @@
 
         .title {
             text-align: left;
-            color: #ff6600;
+            color: #000;
             font-size: 18px;
             font-weight: bold;
             padding: 15px 20px;
@@ -193,8 +193,7 @@
         <tr>
             <td class="content">
                 <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,{{ $notifiable->name }}</p>
-
-                <p>Dimaklumkan bahawa status tuntutan Caruman Parit anda telah dikemas kini. </p>
+                <p>Dimaklumkan bahawa status tuntutan Caruman Parit anda telah dikemas kini.</p>
 
                 <div class="claim-details">
                     <table>
@@ -213,8 +212,9 @@
                                 <p class="mt-1 text-muted">
                                     Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda. 
                                 </p>
+                                <p>Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda.</p>
                                 <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
-                                <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my. </p>
+                                <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
                             </td>
                         </tr>
                     </table>
@@ -225,7 +225,7 @@
         </tr>
         <tr>
             <td class="footer">
-                <p>Yang Benar,</p>
+                <p>Terima kasih</p>
                 <p><strong>Portal e-CP Caruman Parit</strong></p>
             </td>
         </tr>

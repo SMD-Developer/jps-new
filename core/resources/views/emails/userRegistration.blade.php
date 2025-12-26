@@ -34,7 +34,7 @@
 
         .title {
             text-align: left;
-            color: #ff6600;
+            color: #000;
             font-size: 18px;
             font-weight: bold;
             padding: 10px 20px;
@@ -83,33 +83,15 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Assalamualaikum / Salam Sejahtera, {{ $application->applicant }},</p>
-                <h3 style="color: blue;">Kami ingin memaklumkan bahawa permohonan anda telah ditolak kerana dokumen sokongan yang dikemukakan tidak lengkap.</h3>
-                <p>Untuk membolehkan kami memproses semula permohonan anda, sila pastikan semua dokumen yang diperlukan dilampirkan dan dikemukakan dengan lengkap.</p>
-                <p>Sila log masuk ke laman web Caruman Parit dan kemas kini permohonan anda.</p>
+                <p>Assalamualaikum / Salam Sejahtera Pengguna yang Diharga, {{ $application->applicant }},</p>
+                <p>Dimaklumkan bahawa permohonan anda tidak dapat diluluskan kerana dokumen sokongan yang dikemukakan adalah tidak lengkap.</p>
+                <p>Bagi membolehkan kami memproses semula permohonan anda, sila pastikan semua dokumen yang diperlukan dilampirkan dan dikemukakan dengan lengkap.</p>
+                <p>Sila log masuk ke Portal Caruman Parit (e-CP) untuk mengemas kini permohonan anda.</p>
                 <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
-                <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila hubungi kami di support@e-cp.jps.com.my atau telefon 03-7333 4545.</p>
+                <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
                 <p>Terima kasih atas kerjasama anda.</p>
                 <p>Yang benar,</p>
                 <p>Portal e-CP Caruman Parit</p>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer-container">
-                <h3>JOM BERHUBUNG </h3>
-                <p>Jika anda mempunyai sebarang soalan, lawati tapak sokongan kami di <a
-                        href="https://www.jps.com">https://www.jps.com</a>,<br>
-                    hubungi kami di <a href="mailto:support@jps.com">support@jps.com</a>
-                </p>
-                <p>E-mel ini adalah sulit. Ia juga mungkin mendapat keistimewaan dari segi undang-undang. Jika anda
-                    bukan penerima, anda tidak boleh menyalin, memajukan, mendedahkan atau menggunakan mana-mana
-                    bahagian daripadanya. Jika anda tersilap menerima mesej ini, sila padamkannya dan maklumkan kepada
-                    penghantar dengan segera melalui e-mel balasan. Komunikasi Internet tidak boleh dijamin tepat pada
-                    masanya, selamat, bebas ralat atau bebas virus. Pengirim tidak menerima liabiliti untuk sebarang
-                    kesilapan atau ketinggalan.
-                </p>
-                <p>"JIMAT KERTAS - FIKIRKAN SEBELUM ANDA CETAK"</p>
-                <p>© Hak Cipta 2025. Hak Cipta Terpelihara</p>
             </td>
         </tr>
     </table>
