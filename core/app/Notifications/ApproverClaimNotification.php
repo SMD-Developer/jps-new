@@ -45,14 +45,20 @@ class ApproverClaimNotification extends Notification
     public function toMail($notifiable)
     {
         $subject = $this->isResent ? 'Tuntutan Dihantar Semula' : 'Tuntutan Baru Untuk Kelulusan';
-        $line1 = $this->isResent 
+        $mainMessage = $this->isResent 
             ? 'Tuntutan yang ditolak telah dihantar semula untuk kelulusan.' 
             : 'Tuntutan baru telah dihantar untuk kelulusan.';
 
         return (new MailMessage)
             ->subject($subject)
-            ->line($line1)
-            ->line('Dihantar oleh: ' . $this->senderUsername)
-            ->line('Terima kasih!');
+            ->view('emails.claim-approver-email', [
+                'claim' => $this->claim,
+                'senderUsername' => $this->senderUsername,
+                'subject' => $subject,
+                'mainMessage' => $mainMessage,
+                'notifiable' => $notifiable,
+                'sentAt' => now()->format('d/m/Y H:i'),
+                'loginUrl' => url('/clientarea/login'),
+            ]);
     }
 }
