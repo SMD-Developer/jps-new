@@ -34,7 +34,7 @@
 
         .title {
             text-align: left;
-            color: #ff6600;
+            color: #000;
             font-size: 18px;
             font-weight: bold;
             padding: 10px 20px;
@@ -78,19 +78,21 @@
         </tr>
         <tr>
             <td class="title">
-                Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan
+               <strong> Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan</strong>
             </td>
         </tr>
         <tr>
             <td class="content">
                 <p>Kepada Adminastaff,</p>
-                <p><strong>Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan</strong></p>
+                <p>Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan.</p>
+                <p>Dimaklumkan bahawa satu permohonan baharu telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
+                <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
             </td>
         </tr>
         <tr>
             <td class="footer">
                 <p>Yang Benar,</p>
-                <p>Portal e-CP Caruman Parit</p>
+                <p><strong>Portal e-CP Caruman Parit</strong></p>
             </td>
         </tr>
     </table>
