@@ -78,6 +78,14 @@
         vertical-align: middle;
         text-align: center;
     }
+
+    .dropdown-btn * {
+        pointer-events: none; 
+    }
+
+.dropdown-btn {
+    pointer-events: auto; 
+}
     
 </style>
 
@@ -135,10 +143,8 @@
                                 <div class="form-group">
                                     <label>Nama Pemohon</label>
                                     <div class="dropdown-container">
-                                        <button type="button" class="dropdown-btn" data-target="applicantDropdown"
-                                            onclick="toggleDropdown('applicantDropdown')">
+                                        <button type="button" class="dropdown-btn form-control text-left applicant-dropdown-trigger" data-target="applicantDropdown">
                                             <span id="selectedApplicantText">{{ __('app.select_applicant_list') }}</span>
-                                            <span>▼</span>
                                         </button>
 
                                         <div id="applicantDropdown" class="dropdown-content">
@@ -174,10 +180,8 @@
                                     <label>{{ __('app.lot_pt') }}</label>
                                     <div class="dropdown-container">
                                         <!-- Button to open dropdown -->
-                                        <button type="button" class="dropdown-btn" data-target="lotPtDropdown"
-                                            onclick="toggleDropdown('lotPtDropdown')">
+                                        <button type="button" class="dropdown-btn form-control text-left lot-dropdown-trigger" data-target="lotPtDropdown">
                                             <span id="selectedLotPtText">{{ __('app.select_lot_pt') }}</span>
-                                            <span>▼</span>
                                         </button>
 
                                         <!-- Lot/PT Dropdown -->
@@ -288,7 +292,7 @@
                                 @else
                                     @if (isset($request) && $request->isMethod('post'))
                                         <tr>
-                                            <td colspan="7" class="text-center">{{ __('app.no_results_found') }}</td>
+                                            <td colspan="7" class="text-center">{{ __('Tida Pemohonan Ditemui') }}</td>
                                         </tr>
                                     @else
                                         <tr>
@@ -505,6 +509,32 @@
             }
         });
 
+        // Better event handling using addEventListener
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle all dropdown buttons
+    document.querySelectorAll('.dropdown-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropdownId = this.getAttribute('data-target');
+            toggleDropdown(dropdownId);
+        });
+    });
+});
 
+function toggleDropdown(dropdownId) {
+    // Close all other dropdowns
+    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+        if (dropdown.id !== dropdownId) {
+            dropdown.classList.remove('show');
+        }
+    });
+    
+    // Toggle the current dropdown
+    const dropdown = document.getElementById(dropdownId);
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
     </script>
 @endsection
