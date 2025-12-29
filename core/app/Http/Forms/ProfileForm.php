@@ -56,11 +56,15 @@ class ProfileForm extends Form
         );
         
         $this->add('photo', 'file', [
-            'label' => 'No file added',
-            'label_attr'=>['class'=>'custom-file-label'],
-            'attr'=>['class'=>'custom-file-input','accept'=>"image/*",'onchange'=>"$(this).parents('.custom-file').find('.custom-file-label').html($(this).val());"],
-            'wrapper' => ['class' => 'custom-file col-sm-12 mb-3'],
-        ]);
+    'label' => 'Tiada Fail Dipilih',
+    'label_attr'=>['class'=>'custom-file-label pilih-button'],
+    'attr'=>[
+        'class'=>'custom-file-input',
+        'accept'=>"image/*",
+        'onchange'=>"$(this).siblings('.custom-file-label').html($(this).val().split('\\\\').pop() || 'Tiada Fail Dipilih');"
+    ],
+    'wrapper' => ['class' => 'custom-file col-sm-12 mb-3'],
+]);
         
         $this->add('buttons', 'static', [
             'template' => 'crud.form_button'
