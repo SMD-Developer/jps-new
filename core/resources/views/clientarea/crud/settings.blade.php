@@ -617,7 +617,7 @@
                         if (field === 'new_password' || field === 'new_password_confirmation') {
                             Swal.fire({
                                 icon: 'warning',
-                                title: '@lang("app.invalid_password")',
+                                title: 'Ralat',
                                 html: messageText,
                             });
                             alertShown = true;

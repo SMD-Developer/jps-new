@@ -761,12 +761,12 @@ body {
 <footer>
         <div class="row">
             <div class="col-md-12 text-center text-light pt-3 stick-bottom">
-                <p>@lang('Hak Cipta Terpelihara @ 2025 , Jabatan Pengairan Dan Saliran Negeri Selangor <br>
+                <p>@lang('Hak Cipta Terpelihara @ 2026 , Jabatan Pengairan Dan Saliran Negeri Selangor <br>
                 Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768')</p>
             </div>
 
         </div>
-         <p class="footerForMobile">Hak Cipta Terpelihara @ 2025 , Jabatan Pengairan Dan Saliran Negeri Selangor
+         <p class="footerForMobile">Hak Cipta Terpelihara @ 2026 , Jabatan Pengairan Dan Saliran Negeri Selangor
              Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768
         </p>
 </footer>       

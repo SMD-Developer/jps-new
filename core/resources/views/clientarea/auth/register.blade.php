@@ -1390,7 +1390,7 @@ $(document).ready(function () {
         isSubmitting = true;
         const submitButton = $('#submitButton');
         const originalText = submitButton.text();
-        submitButton.prop('disabled', true).text('Registering...');
+        submitButton.prop('disabled', true).text('Daftar...');
 
         let formData = $(this).serialize();
 
