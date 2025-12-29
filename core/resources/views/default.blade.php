@@ -615,14 +615,8 @@ input#captcha {
                     {!! Form::password('password', ['class'=>"form-control", 'required'=>'required' , 'placeholder'=>'Kata Laluan' ]) !!}
                     <i class="bi bi-eye-slash toggle-password translate-middle-y me-3 pe-4 text-muted cursor-pointer" data-target="password"></i>
                 </div>
-                   
-                    <div class="forgot float-right mt-2">
-                        <!--<a class="mb-3" href="{{ url('password/reset') }}" style="text-decoration: none; float: right;">@lang('app.lost_password')</a>-->
-                        <a class="mb-3" href="{{ url('password/reset') }}" style="text-decoration: none; float: right;">@lang('Lupa kata laluan') ?</a>
-                        <!--<a href="{{ url('password/reset') }}">@lang('app.lost_password')</a>-->
-                    </div>
                
-                     <div class="input-box login mt-5">
+                     <div class="input-box login mb-2">
                         <!--<input type="" id="email-input" placeholder="Log Masuk" style="background: #2c2cb7; text-align: center;">-->
                         <!--{!! Form::button('login',['type'=>'submit','class'=>"btn btn-primary login-button btn-sm btn-block"]) !!}-->
                         {!! Form::button('Log Masuk',['type'=>'submit','class'=>"btn btn-primary login-button btn-sm btn-block"]) !!}&nbsp;&nbsp;&nbsp;
@@ -633,16 +627,11 @@ input#captcha {
                            Isi Semula
                         </a>                   
                     </div>
-                    <div class="register">
-                        <p style="color: white;">Belum mempunyai akaun ? <a href="{{ url('clientarea/register') }}">@lang('Daftar di sini')</a></p>
-                    </div>
                 </div>
-
-        
     </div>
     <footer>
         <div class="row">
-            <div class="col-md-12  text-center text-light pt-3 mt-5">
+            <div class="col-md-12  text-center text-light pt-3" style="margin-top:125px";>
                 <p>Hak Cipta Terpelihara @ 2026 , Jabatan Pengairan Dan Saliran Negeri Selangor <br>
                 Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768</p>
             </div>

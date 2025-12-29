@@ -1,4 +1,9 @@
 @extends('app')
+<style>
+.custom-file-label.pilih-button::after {
+    content: "Pilih" !important;
+}
+</style>
 @section('content')
 <div class="col-md-12 content-header" >
     <h6 class="text-uppercase"><i class="fa fa-{{ $headingIcon ?? null }}"></i> {{ $heading ?? null }}</h6>
@@ -33,4 +38,14 @@
     </div>
 </div>
 </section>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.custom-file-label').attr('data-browse', 'Pilih');
+            $('.custom-file-input').on('change', function() {
+                let fileName = $(this).val().split('\\').pop() || 'Tiada Fail Dipilih';
+                $(this).siblings('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
 @endsection

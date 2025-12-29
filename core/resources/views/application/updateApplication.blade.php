@@ -506,7 +506,7 @@
                                                     <div style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                     </div>
                                                 @endforeach
@@ -547,7 +547,7 @@
                                                     <div style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                     </div>
                                                 @endforeach
@@ -588,7 +588,7 @@
                                                     <div style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                     </div>
                                                 @endforeach

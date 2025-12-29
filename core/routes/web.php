@@ -308,7 +308,6 @@ Route::group(['middleware' => 'install'], function(){
         Route::post('add-Security-Question', 'HomeController@addSecurityQuestion')->name('addSecurityQuestion');
         Route::post('security-questions/{id}', 'HomeController@updateSecurityQuestion')->name('updateSecurityQuestion');
         
-        
         Route::get('application-status','HomeController@applicationStatus')->name('application_status');
         Route::get('view-application/{id}','HomeController@newApplication')->name('newApplication');
         Route::post('track-application-action', 'HomeController@trackAction')->name('track.application.action');
