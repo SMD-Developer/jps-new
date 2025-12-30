@@ -498,7 +498,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'list',
-                                'text' => trans('app.approved_application'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'permohonan.yang.list' 
@@ -527,7 +527,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('app.approved_claim_contribution'),
+                                'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
@@ -602,7 +602,6 @@ if(! function_exists('getMenus')){
                         request()->is('payment-summary-report-search') ||
                         request()->is('report-collection-method-search')||
                         request()->is('claim-contribution-report-search') ? 'active' : '',
-                        'permission' => 'reports.view-list',
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -951,6 +950,7 @@ if(! function_exists('getMenus')){
                                     'text' => 'Laporan Status Pembayaran Caruman Parit',
                                     'route' =>  url('report-collection-method-search'),
                                     'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                    'permission' => 'payment.status.report.list'
                                    
                                 ],
                                 [
@@ -1001,7 +1001,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
-                                'permission'  => 'payment.summary.report.view-list'
+                                'permission' => 'payment.summary.list'
 
                             ],
                             // [
@@ -1154,7 +1154,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.applicant_list'),
                                 'route' =>  url('developer-list'),
                                 'menu_active' => request()->is('developer-list') ? 'active' : '',
-                                'permission' => 'customers.view-list'
+                                'permission' => 'pemohon.list',
                             ],
                         ]
                     ],
@@ -1312,7 +1312,6 @@ if(! function_exists('getMenus')){
                             'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'menu-is-opening menu-open' : '',
                             'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') ? 'block' : 'none',
                             'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') ? 'active' : '',
-                            'permission' => 'reports.view-list',
                             'is_dropdown' => true,
                             'submenus' => [
                                 
@@ -1321,7 +1320,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.report_list_application_ditch_contribution'),
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.view-list'
+                                'permission' => 'report.account.view-list',
                                 ],
                                 [
                                 'icon' => 'money',
@@ -1335,6 +1334,7 @@ if(! function_exists('getMenus')){
                                     'text' => 'Laporan Status Pembayaran Caruman Parit',
                                     'route' =>  url('report-collection-method-search'),
                                     'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                    'permission' => 'payment.status.report.list'
                                    
                                 ],
                                 [
@@ -1380,20 +1380,13 @@ if(! function_exists('getMenus')){
                                 'permission' => 'daily-payment-receipt.view-list',
                             ],
 
-                            [
-                                'icon' => 'money',
-                                'text' => 'Laporan Status Pembayaran Caruman Parit',
-                                'route' =>  url('report-collection-method-search'),
-                                'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
-                                'permission' => 'report.district'
-                            ],
                             
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
-                                'permission'  => 'payment.summary.report.view-list'
+                                'permission' => 'payment.summary.list'
 
                             ],
                             // [
@@ -1611,7 +1604,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Belum Selesai'),
                                 'route' =>  url('view-receipt'),
                                 'menu_active' => request()->is('view-receipt') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.belum.selesai.list'
                             ],
 
                             [
@@ -1619,7 +1612,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
-                                'permission' => 'payments.view-list'
+                                'permission' => 'pembayaran.payment.list'
                             ],
 
                             [
@@ -1639,7 +1632,6 @@ if(! function_exists('getMenus')){
                             'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'menu-is-opening menu-open' : '',
                             'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'block' : 'none',
                             'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'active' : '',
-                            'permission' => 'reports.view-list',
                             'is_dropdown' => true,
                             'submenus' => [
                                 
@@ -1648,7 +1640,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.report_list_application_ditch_contribution'),
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.view-list'
+                                'permission' => 'report.account.view-list',
                                 ],
                                 [
                                 'icon' => 'money',
@@ -1662,6 +1654,7 @@ if(! function_exists('getMenus')){
                                 'text' => 'Laporan Status Pembayaran Caruman Parit',
                                 'route' =>  url('report-collection-method-search'),
                                 'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                'permission' => 'payment.status.report.list'
                                 ],
                                 [
                                 'icon' => 'money',
@@ -1711,7 +1704,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('payment-summary-report-search' ,'payment-summary-report-search') ? 'active' : '',
-                                'permission'  => 'payment.summary.report.view-list'
+                                'permission' => 'payment.summary.list'
 
                             ],
                             // [
