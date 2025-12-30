@@ -1623,6 +1623,24 @@ if(! function_exists('getMenus')){
                             ],
                         ]
                     ],
+
+                    [
+                        'icon' => 'money',
+                        'text' => trans('Permohonan Salinan Resit'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('third-party-request')? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('third-party-request') ? 'block' : 'none',
+                        'menu_active' => request()->is('third-party-request')  ? 'active' : '',
+                        'is_dropdown' => true,
+                        'submenus' => [
+                            [
+                                'icon' => 'money',
+                                'text' => trans('Permohonan Salinan Resit'),
+                                'route' =>  url('third-party-request'),
+                                'menu_active' => request()->is('third-party-request') ? 'active' : '',
+                            ],
+                        ]
+                    ],
                   
                     
                     [
