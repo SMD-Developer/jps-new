@@ -225,9 +225,6 @@
                     <button type="button" class="btn btn-secondary mr-2" onclick="window.print()">
                         <i class="bi bi-printer"></i> @lang('app.print')
                     </button>
-                    <!--<button type="button" class="btn btn-primary" id="successButton">-->
-                    <!--    @lang('app.adminstaff_send_to_approver')-->
-                    <!--</button>-->
                     <button type="button" class="btn btn-primary" id="successButton"
                         @if($application->status === 'approved') disabled style="background-color: #ccc; border-color: #ccc; color: #666;" @endif>
                         @lang('app.adminstaff_send_to_approver')
