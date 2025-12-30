@@ -341,7 +341,7 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #EEF6FF;">
                         <i class="fa fa-list-alt bg-yellow"></i>
                         <div class="info-box-content pr-0" rowspan="2" >
-                                <span class="info-box-text text3 text-left text2">@lang('app.payment_contribution_as_today')</span>
+                                <span class="info-box-text text3 text-left text2">@lang('Kutipan Caruman Parit Hari lni')</span>
                                 <span class="info-box-number">RM {{$totalTodayContribution}}</span>
                         </div>
                     </div>
@@ -352,7 +352,7 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #FFEFEF;">
                         <i class="fa fa-puzzle-piece bg-red"></i>
                         <div class="info-box-content pr-0" rowspan="2" >
-                            <span class="info-box-text text3 text-left text2">@lang('app.payment_contribution_month')</span>
+                            <span class="info-box-text text3 text-left text2">@lang('Kutipan Caruman Parit Bulan lni')</span>
                             <span class="info-box-number">RM {{$totalMonthContribution}}</span>
                         </div>
                     </div>

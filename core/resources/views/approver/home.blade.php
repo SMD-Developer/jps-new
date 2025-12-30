@@ -332,7 +332,7 @@
                         <div class="info-box" style="background: #EEF6FF;">
                             <i class="fa fa-list-alt bg-yellow"></i>
                             <div class="info-box-content pr-0" rowspan="2">
-                                <span class="info-box-text text3 text-left text2">@lang('app.payment_contribution_as_today')</span>
+                                <span class="info-box-text text3 text-left text2">@lang('Kutipan Caruman Parit Hari ini')</span>
                                 <span class="info-box-number">RM {{$totalTodayContribution}}</span>
                             </div>
                         </div>
