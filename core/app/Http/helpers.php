@@ -657,7 +657,7 @@ if(! function_exists('getMenus')){
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('payment-summary-report-search') ? 'active' : '',
-                                'permission'  => 'payment.summary.report.view-list'
+                                'permission' => 'payment.summary.list'
                             ],
                             [
                                 'icon' => 'money',
@@ -1617,7 +1617,7 @@ if(! function_exists('getMenus')){
 
                             [
                                 'icon' => 'money',
-                                'text' => trans('Third Party Request'),
+                                'text' => trans('Permohonan Salinan Resit'),
                                 'route' =>  url('third-party-request'),
                                 'menu_active' => request()->is('third-party-request') ? 'active' : '',
                             ],
