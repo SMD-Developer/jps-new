@@ -461,7 +461,7 @@
                                                 </span>
                                             </td>
                                              <td>
-                                                @if ($canApproverViewReciept && $payment && $payment->payment_status === 'completed')
+                                                @if ($payment && $payment->payment_status === 'completed')
                                                     <a href="{{ route('user_original_receipts', ['application_id' => $application->id, 'payment_uuid' => $payment->uuid]) }}" 
                                                         class="btn btn-view-receipt btn-sm"
                                                         style="border-radius: 19px; font-size: 11px; padding: 3px 8px; white-space: nowrap;">

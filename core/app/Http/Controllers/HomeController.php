@@ -2319,14 +2319,13 @@ class HomeController extends Controller {
         $statusFilter = $request->input('status_filter', 'all');
         $methodFilter = $request->input('method_filter', 'all');
         
-        $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');
+        // $canApproverViewReciept = auth('admin')->user()->hasPermission('payments.view-details');
 
         return view('application.payments-list', compact(
             'list', 
             'perPage', 
             'statusFilter',
             'methodFilter',
-            'canApproverViewReciept'
         ));
     }
     
