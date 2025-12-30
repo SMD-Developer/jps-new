@@ -692,7 +692,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'user',
-                                'text' => trans('app.security_settings'),
+                                'text' => trans('Tukar kata Laluan'),
                                 'route' => url('change-password/' . auth('admin')->user()->uuid),
                                 'menu_active' => ''
                            ],
@@ -1083,7 +1083,7 @@ if(! function_exists('getMenus')){
                 // ],
                  [
                     'icon' => 'user',
-                    'text' => trans('app.security_settings'),
+                    'text' => trans('Tukar kata Laluan'),
                     'route' => url('change-password/' . auth('admin')->user()->uuid),
                     'menu_active' => ''
                 ],
@@ -1459,7 +1459,7 @@ if(! function_exists('getMenus')){
                         // ],
                          [
                             'icon' => 'user',
-                            'text' => trans('app.security_settings'),
+                            'text' => trans('Tukar kata Laluan'),
                             'route' => url('change-password/' . auth('admin')->user()->uuid),
                             'menu_active' => ''
                         ],
@@ -1771,7 +1771,7 @@ if(! function_exists('getMenus')){
                             // ],
                              [
                                 'icon' => 'user',
-                                'text' => trans('app.security_settings'),
+                                'text' => trans('Tukar kata Laluan'),
                                 'route' => url('change-password/' . auth('admin')->user()->uuid),
                                 'menu_active' => ''
                           ],
@@ -2088,7 +2088,7 @@ if(! function_exists('getMenus')){
                             // ],
                             [
                                 'icon' => 'user',
-                                'text' => trans('app.security_settings'),
+                                'text' => trans('Tukar kata Laluan'),
                                 'route' => url('change-password/' . auth('admin')->user()->uuid),
                                 'menu_active' => ''
                            ],
