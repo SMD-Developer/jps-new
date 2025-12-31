@@ -1147,7 +1147,7 @@ class HomeController extends Controller {
             }
 
             $selectedStateId = $request->input('state');
-            $isDistrictRequired = true;
+            // $isDistrictRequired = true;
 
             if ($selectedStateId) {
                 $state = DB::table('state')->where('idnegeri', $selectedStateId)->first();
@@ -1168,12 +1168,12 @@ class HomeController extends Controller {
                 // "postal_code" => "required|numeric|digits:6",
                 "phone" => "numeric|digits_between:10,15",
                 "email" => "required|email",
-                "state" => "required",
+                "state" => "nullable",
                 "city" => "required",
                 "land_lot" => "required",
                 "land_area" => "required",
-                "land_district" => "required",
-                "land_state" => "required",
+                "land_district" => "nullable",
+                "land_state" => "nullable",
                 "land_category" => "nullable",
                 "hectare" => "nullable|numeric",
                 "base_amount" => "nullable|numeric",
@@ -1188,9 +1188,9 @@ class HomeController extends Controller {
 
             $applicantType = $application->applicant_type ?? $request->input('applicant_type');
 
-            if ($isDistrictRequired) {
-                $validationRules["district"] = "required";
-            }
+            // if ($isDistrictRequired) {
+            //     $validationRules["district"] = "required";
+            // }
 
             if ($applicantType != 3) {
                 $validationRules['identities'] = 'required';
