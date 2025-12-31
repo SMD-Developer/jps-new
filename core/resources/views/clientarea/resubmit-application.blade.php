@@ -576,7 +576,7 @@
                                                     <div class="existing-file-item" data-field="land_grant" data-index="{{ $index }}" style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px; flex-shrink: 0;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                            {{ basename($filePath) }}
+                                                           {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
                                                             <i class="fa fa-times"></i>
@@ -628,7 +628,7 @@
                                                     <div class="existing-file-item" data-field="permission_plan" data-index="{{ $index }}" style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px; flex-shrink: 0;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
                                                             <i class="fa fa-times"></i> 
@@ -681,7 +681,7 @@
                                                     <div class="existing-file-item" data-field="letter_of_support" data-index="{{ $index }}" style="display: flex; align-items: center; padding: 6px 10px; background-color: #e7f3ff; border-radius: 4px; border: 1px solid #b3d9ff;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px; flex-shrink: 0;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #0056b3; text-decoration: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">
                                                             <i class="fa fa-times"></i>
