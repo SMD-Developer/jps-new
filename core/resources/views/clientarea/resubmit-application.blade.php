@@ -511,9 +511,9 @@
 
                         <div class="form-group">
                             <label for="land_district">@lang('app.district')</label>
-                            <select id="land_district" class="form-control form-select " name="land_district">
+                            <select id="land_district" class="form-control form-select" name="land_district">
                                 <option value="" selected disabled>@lang('app.select_district')</option>
-                                @foreach ($district as $value)
+                                @foreach ($district->where('idnegeri', 1) as $value)
                                     <option value="{{ $value->iddaerah }}"
                                         {{ $application->land_district == $value->iddaerah ? 'selected' : '' }}>
                                         {{ $value->daerah_code }} - {{ $value->daerah }}
@@ -1554,46 +1554,46 @@
                 checkFormAndToggleButton();
             });
 
-            // Update district requirement when state changes
-            $('#negeri').on('change', function() {
-                const stateId = $(this).val();
-                $('#daerah').html('<option value="">Loading...</option>');
-
-                // Update district requirement based on new state
-                updateDistrictRequirement();
-
+            // Handle State Change for Districts
+           $('#negeri').on('change', function() {
+                
                 if (stateId) {
                     $.ajax({
-                        url: `/districts/${stateId}`,
+                        url: `/clientarea/districts/${stateId}`,
                         type: 'GET',
                         success: function(data) {
-                            let options = '<option value="">Sila Pilih Daerah</option>';
+                            $('#daerah').empty();
+                            $('#daerah').append('<option value="">Sila Pilih Daerah</option>');
+                            
                             data.forEach(district => {
-                                options +=
-                                    `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`;
+                                $('#daerah').append(
+                                    `<option value="${district.iddaerah}">${district.daerah_code} - ${district.daerah}</option>`
+                                );
                             });
-                            $('#daerah').html(options);
-                            checkFormAndToggleButton();
+                            
+                            // Trigger change event to refresh UI
+                            $('#daerah').trigger('change');
+                            
                         },
-                        error: function() {
-                            $('#daerah').html(
-                                '<option value="">Error loading districts</option>');
-                            checkFormAndToggleButton();
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', error);
+                            $('#daerah').html('<option value="">Error loading districts</option>');
                         }
                     });
                 } else {
                     $('#daerah').html('<option value="">Sila Pilih Daerah</option>');
-                    checkFormAndToggleButton();
                 }
             });
 
+            // Handle District Change for Mukim
             $('#land_district').on('change', function() {
-                const districtId = $(this).val();
+                const distId = $(this).val();
                 $('#mukim').html('<option value="">Loading...</option>');
 
-                if (districtId) {
+                if (distId) {
+                    formIsReady = false;
                     $.ajax({
-                        url: `/division/${districtId}`,
+                        url: `/clientarea/division/${distId}`,
                         type: 'GET',
                         success: function(data) {
                             let options = '<option value="">Sila Pilih</option>';
@@ -1602,16 +1602,15 @@
                                     `<option value="${mukin.idmukim}">${mukin.mukim_code} - ${mukin.mukim}</option>`;
                             });
                             $('#mukim').html(options);
-                            checkFormAndToggleButton();
+                            formIsReady = true;
                         },
                         error: function() {
-                            $('#mukim').html('<option value="">Error loading mukim</option>');
-                            checkFormAndToggleButton();
+                            $('#mukim').html('<option value="">Error loading mukin</option>');
+                            formIsReady = true;
                         }
                     });
                 } else {
                     $('#mukim').html('<option value="">Sila Pilih</option>');
-                    checkFormAndToggleButton();
                 }
             });
 

@@ -324,7 +324,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="negeri">@lang('app.state')</label>
-                                <select id="negeri" class="form-control form-select" name="state">
+                                <select id="negeri" class="form-control form-select" name="state" disabled>
                                     <option value="" disabled>@lang('app.please_select_state')</option>
                                     @foreach ($state as $value)
                                         <option value="{{ $value->idnegeri }}" 
@@ -340,7 +340,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="daerah">@lang('app.district')</label>
-                                <select id="daerah" class="form-control form-select" name="district">
+                                <select id="daerah" class="form-control form-select" name="district" disabled>
                                     <option value="">@lang('app.select_district')</option>
                                     @foreach ($district as $value)
                                         <option value="{{ $value->iddaerah }}"
@@ -448,7 +448,7 @@
 
                         <div class="form-group">
                             <label for="land_district">@lang('app.district')</label>
-                            <select id="land_district" class="form-control form-select " name="land_district">
+                            <select id="land_district" class="form-control form-select " name="land_district" disabled>
                                 <option value="" selected disabled>@lang('app.select_district')</option>
                                 @foreach ($district as $value)
                                     <option value="{{ $value->iddaerah }}"
@@ -464,7 +464,7 @@
 
                         <div class="form-group">
                             <label for="mukim">@lang('Mukim')</label>
-                            <select id="mukim" class="form-control form-select" name="land_state">
+                            <select id="mukim" class="form-control form-select" name="land_state" disabled>
                                 <option value="" disabled>@lang('app.select_division')</option>
                                 @foreach ($division as $value)
                                     <option value="{{ $value->idmukim }}"

@@ -324,7 +324,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="negeri">@lang('app.state')</label>
-                                <select id="negeri" class="form-control form-select" name="state">
+                                <select id="negeri" class="form-control form-select" name="state" disabled>
                                     <option value="" disabled>@lang('app.please_select_state')</option>
                                     @foreach ($state as $value)
                                         <option value="{{ $value->idnegeri }}"
@@ -339,7 +339,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="daerah">@lang('app.district')</label>
-                                <select id="daerah" class="form-control form-select" name="district">
+                                <select id="daerah" class="form-control form-select" name="district" disabled>
                                     <option value="" disabled>@lang('app.select_district')</option>
                                     @foreach ($district as $value)
                                         <option value="{{ $value->iddaerah }}"
@@ -445,7 +445,7 @@
 
                         <div class="form-group">
                             <label for="land_district">@lang('app.district')</label>
-                            <select id="land_district" class="form-control form-select " name="land_district">
+                            <select id="land_district" class="form-control form-select " name="land_district" disabled>
                                 <option value="" selected disabled>@lang('app.select_district')</option>
                                 @foreach ($district as $value)
                                     <option value="{{ $value->iddaerah }}"
@@ -461,7 +461,7 @@
 
                         <div class="form-group">
                             <label for="mukim">@lang('Mukim')</label>
-                            <select id="mukim" class="form-control form-select" name="land_state">
+                            <select id="mukim" class="form-control form-select" name="land_state" disabled>
                                 <option value="" disabled>@lang('app.select_division')</option>
                                 @foreach ($division as $value)
                                     <option value="{{ $value->idmukim }}"
@@ -495,7 +495,7 @@
                                                     <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <span style="color: #666; font-size: 12px; margin-left: 10px;">
                                                             ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
@@ -530,7 +530,7 @@
                                                     <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <span style="color: #666; font-size: 12px; margin-left: 10px;">
                                                             ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
@@ -565,7 +565,7 @@
                                                     <div style="display: flex; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
                                                         <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 10px; font-size: 18px;"></i>
                                                         <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none; font-weight: 500;">
-                                                            {{ basename($filePath) }}
+                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <span style="color: #666; font-size: 12px; margin-left: 10px;">
                                                             ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
