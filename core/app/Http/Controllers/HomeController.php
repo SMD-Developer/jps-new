@@ -1147,7 +1147,7 @@ class HomeController extends Controller {
             }
 
             $selectedStateId = $request->input('state');
-            // $isDistrictRequired = true;
+            $isDistrictRequired = true;
 
             if ($selectedStateId) {
                 $state = DB::table('state')->where('idnegeri', $selectedStateId)->first();
@@ -1188,9 +1188,9 @@ class HomeController extends Controller {
 
             $applicantType = $application->applicant_type ?? $request->input('applicant_type');
 
-            // if ($isDistrictRequired) {
-            //     $validationRules["district"] = "required";
-            // }
+            if ($isDistrictRequired) {
+                $validationRules["district"] = "nullable";
+            }
 
             if ($applicantType != 3) {
                 $validationRules['identities'] = 'required';
