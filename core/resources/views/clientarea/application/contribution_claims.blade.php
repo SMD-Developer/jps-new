@@ -617,7 +617,7 @@
                                                         data-index="{{ $index }}"
                                                         style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px; flex: 1;">
-                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
                                                                 style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
@@ -669,7 +669,7 @@
                                                     data-index="{{ $index }}"
                                                     style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                     <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px; flex: 1;">
-                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                        <i class="fa fa-file-pdf-o text-danger"></i> {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                     </a>
                                                     <!-- ✅ CHANGE BUTTON: Remove onclick, add class -->
                                                     <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
@@ -720,7 +720,7 @@
                                                     data-index="{{ $index }}"
                                                     style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
-                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
                                                             style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
@@ -766,7 +766,7 @@
                                                     data-index="{{ $index }}"
                                                     style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
-                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                          <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
                                                             style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
@@ -814,7 +814,7 @@
                                                     data-index="{{ $index }}"
                                                     style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
-                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                          <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
                                                             style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
@@ -864,7 +864,7 @@
                                                      data-index="{{ $index }}"
                                                      style="display: flex; align-items: center; justify-content: space-between; padding: 5px; background-color: white; border-radius: 3px; border: 1px solid #e0e0e0;">
                                                         <a href="{{ url($filePath) }}" target="_blank" class="text-primary" style="font-size: 12px;">
-                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ basename($filePath) }}
+                                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
                                                         </a>
                                                         <button type="button" class="btn btn-sm btn-danger remove-existing-file" 
                                                             style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">
