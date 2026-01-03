@@ -987,7 +987,8 @@
             let discountAmount = adjustmentType === "percentage" ?
                 baseAmount * (discountValue / 100) : discountValue;
             let finalAmount = Math.max(0, baseAmount + marginAmount - discountAmount);
-            let halfAmount = finalAmount / 2;
+            let secondHalf = Math.floor(finalAmount * 100 / 2) / 100;
+            let firstHalf = finalAmount - secondHalf;
         
             // Get the actual calculated hectare value from the conversion
             let displayHectare = hectare;
@@ -1016,7 +1017,7 @@
                     <td>${baseAmount.toFixed(2)}</td>
                     <td>L453</td>
                     <td>H0161304</td>
-                    <td>${halfAmount.toFixed(2)}</td>
+                    <td>${firstHalf.toFixed(2)}</td>
                 `;
             }
         
@@ -1028,7 +1029,7 @@
                     <td></td>
                     <td>G001</td>
                     <td>H0161304</td>
-                    <td>${halfAmount.toFixed(2)}</td>
+                    <td>${secondHalf.toFixed(2)}</td>
                 `;
             }
         

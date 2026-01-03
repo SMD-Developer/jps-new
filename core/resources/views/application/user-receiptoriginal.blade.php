@@ -269,8 +269,8 @@
                                     {{ number_format($application->payment_amount, 2) }}
                                 @else
                                     @php
-                                        $firstHalf = floor($application->payment_amount * 100 / 2) / 100;
-                                        $secondHalf = $application->payment_amount - $firstHalf;
+                                        $secondHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                        $firstHalf = $application->payment_amount - $secondHalf;
                                     @endphp
                                     {{ number_format($firstHalf, 2) }}<br>
                                     {{ number_format($secondHalf, 2) }}

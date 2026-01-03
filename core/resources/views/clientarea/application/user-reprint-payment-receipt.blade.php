@@ -200,8 +200,8 @@
                                     {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
-                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A' )}}, DAERAH
-                                    {{ strtoupper($application->daerah ?? 'N/A') }}<br>
+                                    {{ strtoupper($application->landDivision->mukim ?? '')}}, DAERAH
+                                    {{ strtoupper($application->landDistrict->daerah ?? '') }}<br>
                                     ({{ $application->refference_no ?? 'N/A'}})
                                 </div>
                             </div>
