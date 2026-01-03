@@ -319,7 +319,7 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #E2FFED;">
                         <i class="fa fa-users bg-aqua"></i>
                         <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text1 mb-0">@lang('app.applications_for_government_agencies')</span>
+                            <span class="info-box-text text3 text-left text1 mb-0">@lang('Permohonan Pulang Balik (Refund)')</span>
                             <span class="info-box-number">{{$totalAgencyApplication}}</span>
                         </div>
                     </div>
@@ -330,7 +330,7 @@ margin-bottom: 22px;
                     <div class="info-box" style="background: #FBFFE0;">
                         <i class="fa fa-file-pdf-o bg-green"></i>
                         <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text2 mb-0">@lang('app.payment_in_review')</span>
+                            <span class="info-box-text text3 text-left text2 mb-0">@lang('Permohonan Salinan Resit')</span>
                             <span class="info-box-number">{{$totalInReviewPayments}}</span>
                         </div>
                     </div>

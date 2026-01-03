@@ -1510,6 +1510,7 @@ if(! function_exists('getMenus')){
          else if($user->HasRole('Finance')){
           $applicationCount = getAgencyApplicationCount();
           $claimCount = getClaimContributionFinanceCount();
+          $thirdPartyRequestCount = getThirdPartyRequestCount();
              
          $menus = [
             'main_menu' => [
@@ -1596,7 +1597,7 @@ if(! function_exists('getMenus')){
                         'active_dropdown' => request()->is('view-receipt') || request()->is('admin/payments') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('view-receipt') || request()->is('admin/payments') ? 'block' : 'none',
                         'menu_active' => request()->is('view-receipt') || request()->is('admin/payments') ? 'active' : '',
-                        'badge_count' => $applicationCount,
+                        // 'badge_count' => $applicationCount,
                         'is_dropdown' => true,
                         'submenus' => [
                             [
@@ -1614,13 +1615,6 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
                                 'permission' => 'pembayaran.payment.list'
                             ],
-
-                            [
-                                'icon' => 'money',
-                                'text' => trans('Permohonan Salinan Resit'),
-                                'route' =>  url('third-party-request'),
-                                'menu_active' => request()->is('third-party-request') ? 'active' : '',
-                            ],
                         ]
                     ],
 
@@ -1631,6 +1625,7 @@ if(! function_exists('getMenus')){
                         'text' => trans('Permohonan Salinan Resit'),
                         'route' =>  url('third-party-request'),
                         'menu_active' => request()->is('third-party-request') ? 'active' : '',
+                        'badge_count' => $thirdPartyRequestCount
                     ],
                         
                     
@@ -2693,6 +2688,17 @@ function getClaimContributionFinanceCount() {
     try {
         return \App\Models\ClaimContribution::where('status', 'pending')
             ->where('send_to_finance', 1)
+            ->count();
+    } catch (\Exception $e) {
+        \Log::error('Error getting claim contribution approver count: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+
+function getThirdPartyRequestCount() {
+    try {
+        return \App\Models\ReceiptRequest::where('status', 'pending')
             ->count();
     } catch (\Exception $e) {
         \Log::error('Error getting claim contribution approver count: ' . $e->getMessage());
