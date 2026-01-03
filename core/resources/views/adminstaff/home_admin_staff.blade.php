@@ -322,7 +322,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4 col-sm-6 col-xs-12">
-                   <a href="{{ route('application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                   <a href="{{ route('application_status') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box clickable-box" style="background: #4df1782e; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
                             <i class="fa fa-list bg-aqua"></i>
                             <div class="info-box-content">
@@ -333,7 +333,7 @@
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <a href="{{ route('application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                    <a href="{{ route('application_status') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box clickable-box" style="background: #FBFFE0; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">
@@ -344,13 +344,15 @@
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="info-box" style="background: #EEF6FF;">
-                        <i class="fa fa-list-alt bg-yellow"></i>
-                        <div class="info-box-content pr-0" rowspan="2">
-                            <span class="info-box-text text3 text-left text2 mb-0">@lang('app.number_of_applications_this')</span>
-                            <span class="info-box-number">{{ $monthapplication }}</span>
+                    <a href="{{ route('application_status') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                        <div class="info-box" style="background: #EEF6FF;">
+                            <i class="fa fa-list-alt bg-yellow"></i>
+                            <div class="info-box-content pr-0" rowspan="2">
+                                <span class="info-box-text text3 text-left text2 mb-0">@lang('app.number_of_applications_this')</span>
+                                <span class="info-box-number">{{ $monthapplication }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <a href="{{ route('approved_application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
@@ -364,7 +366,7 @@
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <a href="{{ route('application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                    <a href="{{ route('application_status') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box" style="background: #FFEFEF;">
                             <i class="fa fa-close bg-red"></i>
                             <div class="info-box-content pr-0">
