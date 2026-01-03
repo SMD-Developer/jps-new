@@ -504,7 +504,7 @@
 
                 Swal.fire({
                     title: 'Adakah Anda Pasti?',
-                    text: "Anda ingin memadam jabatan Hartanah Negara",
+                    text: "",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
