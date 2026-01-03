@@ -2780,9 +2780,6 @@ class HomeController extends Controller {
     if (!$ClientRegister) {
         return redirect()->back()->with('error', 'User not found.');
     }
-    // Debug: Check stored securityQuestion keys
-    \Log::info('Stored securityQuestion1:', ['key' => $ClientRegister->securityQuestion1]);
-    \Log::info('Stored securityQuestion2:', ['key' => $ClientRegister->securityQuestions2]);
 
     // Fetch security questions
     $securityQuestion1 = DB::table('security_questions')
@@ -2793,17 +2790,12 @@ class HomeController extends Controller {
         ->where('question_key', $ClientRegister->securityQuestions2)
         ->value('question');
 
-    // Debug: Check if Laravel fetched the question correctly
-    \Log::info('Fetched securityQuestion1:', ['text' => $securityQuestion1]);
-    \Log::info('Fetched securityQuestion2:', ['text' => $securityQuestion2]);
-    // Pass the variables to the view
     return view('admin.user-details-update', compact('title', 'ClientRegister', 'states', 'districts', 'securityQuestion1', 'securityQuestion2'));
 }
 
 public function updateUserDetails(Request $request, $id)
 {
     try {
-        \Log::info("Update request data:", $request->all()); // Log the request data
 
         // Validate the request
         $this->validate($request, [
