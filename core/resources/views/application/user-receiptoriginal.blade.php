@@ -202,8 +202,8 @@
                                     {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
-                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A') }}, DAERAH
-                                    {{ strtoupper($application->daerah ?? 'N/A') }}<br>
+                                    {{ strtoupper($application->landDivision->mukim ?? 'N/A') }}, DAERAH
+                                    {{ strtoupper($application->landDistrict->daerah ?? 'N/A') }}<br>
                                     ({{ $application->refference_no ?? 'N/A'}})
                                 </div>
                             </div>
@@ -265,13 +265,17 @@
                                     @endif
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
-                                    @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
-                                        {{ number_format($application->payment_amount, 2) }}
-                                    @else
-                                        {{ number_format($application->payment_amount / 2, 2) }}<br>
-                                        {{ number_format($application->payment_amount / 2, 2) }}
-                                    @endif
-                                </td>
+                                @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
+                                    {{ number_format($application->payment_amount, 2) }}
+                                @else
+                                    @php
+                                        $firstHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                        $secondHalf = $application->payment_amount - $firstHalf;
+                                    @endphp
+                                    {{ number_format($firstHalf, 2) }}<br>
+                                    {{ number_format($secondHalf, 2) }}
+                                @endif
+                            </td>
                             </tr>
                             <tr>
                                 <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; font-size:14px;" class="custome-text">

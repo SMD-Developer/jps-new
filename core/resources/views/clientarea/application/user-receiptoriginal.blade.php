@@ -167,7 +167,7 @@
                             <p class="mb-0 text-center"><strong>RESIT RASMI</strong></p>
                             <p class="text-center">
                                 <strong>
-                                        asal
+                                        ASAL
                                 </strong>
                             </p>
                             <!--<p class="text-center"><strong>ASAL</strong></p>-->
@@ -214,8 +214,8 @@
                                     {{ strtoupper($application->land_lot) }},
                                     {{ $application->hectare }} HEKTAR
                                     ({{ number_format($application->hectare * 2.47105, 2) }} EKAR)
-                                    MUKIM {{ strtoupper($application->negeri ?? 'N/A' )}}, DAERAH
-                                    {{ strtoupper($application->daerah ?? 'N/A') }}<br>
+                                    {{ strtoupper($application->landDivision->mukim ?? '')}}, DAERAH
+                                    {{ strtoupper($application->landDistrict->daerah ?? '') }}<br>
                                     ({{ $application->refference_no ?? 'N/A'}})
                                 </div>
                             </div>
@@ -267,8 +267,12 @@
                                     H0161304<br>H0161304
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
-                                    {{ number_format($application->payment_amount  / 2, 2) }}<br>
-                                    {{ number_format($application->payment_amount  / 2, 2) }}
+                                       @php
+                                            $firstHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                            $secondHalf = $application->payment_amount - $firstHalf;
+                                        @endphp
+                                        {{ number_format($firstHalf, 2) }}<br>
+                                        {{ number_format($secondHalf, 2) }}
                                 </td>
                             </tr>
                             <tr>

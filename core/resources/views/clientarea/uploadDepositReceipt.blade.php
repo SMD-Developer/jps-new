@@ -279,7 +279,7 @@
                                     class="form-control @error('receipt') is-invalid @enderror"
                                     accept=".pdf,.jpg,.jpeg,.png" required style="display: none;">
                                 <label for="receipt" class="custom-file-button">Pilih Fail</label>
-                                <span class="file-name-display">No file chosen</span>
+                                <span class="file-name-display">Tiada Fail Dipilih</span>
                                 @error('receipt')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
