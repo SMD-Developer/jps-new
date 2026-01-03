@@ -460,8 +460,8 @@ if(! function_exists('getMenus')){
     }
         //Finance-Approver Menu
          else if($user->HasRole('approver')){
-    
-   
+        $claimCount =  getClaimContributionPendingCount();
+        $agencyApplicationCount = getAgencyApplicationCount();
         $menus = [
             'main_menu' => [
                 'title' => trans('app.main_menu'),
@@ -515,6 +515,7 @@ if(! function_exists('getMenus')){
                         'active_dropdown_menu' => request()->is('claim-list') || request()->is('approved-claim-list') ? 'block' : 'none',
                         'menu_active' => request()->is('claim-list') || request()->is('claim-list') ? 'active' : '',
                         'is_dropdown' => true,
+                        'badge_count' => $claimCount,
                         'submenus' => [
                             [
                                 'icon' => 'money',
@@ -544,6 +545,7 @@ if(! function_exists('getMenus')){
                         'active_dropdown' => request()->is('view-receipt') ? 'menu-is-opening menu-open' : '',
                         'active_dropdown_menu' => request()->is('view-receipt') ? 'block' : 'none',
                         'menu_active' => '',
+                        'badge_count' => $agencyApplicationCount,
                         'is_dropdown' => true,
                         'submenus' => [
                             [

@@ -315,23 +315,23 @@ margin-bottom: 22px;
         <div class="container-fl">
             <div class="row">
                 <div class="col-lg-3 col-sm-6 col-xs-12">
-                    <a href="{{route('view.receipt')}}" style="color:#212529;">
+                    <a href="{{route('claim.list')}}" style="color:#212529;">
                     <div class="info-box" style="background: #E2FFED;">
                         <i class="fa fa-users bg-aqua"></i>
                         <div class="info-box-content">
                             <span class="info-box-text text3 text-left text1 mb-0">@lang('Permohonan Pulang Balik (Refund)')</span>
-                            <span class="info-box-number">{{$totalAgencyApplication}}</span>
+                            <span class="info-box-number">{{$totalClaimAppliction}}</span>
                         </div>
                     </div>
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                <a href="{{route('view.receipt')}}" style="color:#212529;">
+                <a href="{{route('finance.reques')}}" style="color:#212529;">
                     <div class="info-box" style="background: #FBFFE0;">
                         <i class="fa fa-file-pdf-o bg-green"></i>
                         <div class="info-box-content">
                             <span class="info-box-text text3 text-left text2 mb-0">@lang('Permohonan Salinan Resit')</span>
-                            <span class="info-box-number">{{$totalInReviewPayments}}</span>
+                            <span class="info-box-number">{{$totalRequest}}</span>
                         </div>
                     </div>
                     </a>

@@ -46,6 +46,8 @@ class financeController extends Controller {
                 ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
                 ->where('client_register.accountType', '=', 3)
                 ->count();
+                $totalRequest = DB::table('receipt_requests')->where('status', 'pending')->count();
+                $totalClaimAppliction = DB::table('claim_contribution')->where('status', 'pending')->count();
                 $totalInReviewPayments = DB::table('payments')
                 ->where('payment_status', 'in_review')
                 ->count();
@@ -105,6 +107,8 @@ class financeController extends Controller {
                 'totalInReviewPayments',
                 'totalTodayContribution',
                 'totalMonthContribution',
+                'totalClaimAppliction',
+                'totalRequest',
                 'districts'));
           }
     	public function getDistricts($state_id)
@@ -1100,6 +1104,7 @@ class financeController extends Controller {
             ->whereHas('client', function ($query) {
                 $query->where('accountType', 3);
             })
+            ->latest()
             ->paginate($perPage);
         
         return view('application.government-agency-application', compact('applications', 'perPage'));

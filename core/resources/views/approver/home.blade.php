@@ -311,7 +311,7 @@
                         onclick="window.location.href='{{ route('finance.view.government-application') }}'">
                         <i class="fa fa-users bg-aqua"></i>
                         <div class="info-box-content">
-                            <span class="info-box-text text3 text-left text1 mb-0">@lang('app.applications_for_government_agencies')</span>
+                            <span class="info-box-text text3 text-left text1 ">@lang('app.applications_for_government_agencies')</span>
                             <span class="info-box-number">{{ $totalAgencyApplication }}</span>
                         </div>
                     </div>
