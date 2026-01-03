@@ -2755,10 +2755,6 @@ class HomeController extends Controller {
         $securityQuestion2 = DB::table('security_questions')
             ->where('question_key', $ClientRegister->securityQuestions2)
             ->value('question');
-
-        // Debug: Check if Laravel fetched the question correctly
-        \Log::info('Fetched securityQuestion1:', ['text' => $securityQuestion1]);
-        \Log::info('Fetched securityQuestion2:', ['text' => $securityQuestion2]);
        return view('admin.user-details', compact('title', 'ClientRegister', 'states', 'districts', 'accountTypes', 'securityQuestion1', 'securityQuestion2'));
    }
    

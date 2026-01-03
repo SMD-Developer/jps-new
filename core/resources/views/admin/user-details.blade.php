@@ -72,24 +72,6 @@
                                             <label class="form-label">@lang('app.telephone_no') (P)</label>
                                             <input type="text" class="form-control" value="{{ $ClientRegister->landline }}" readonly>
                                         </div>
-                                        
-                                        <h5 class="mt-4">@lang('app.security_questions')</h5>
-                                        <div class="mb-3">
-                                            <label class="form-label">@lang('app.security_questions') 1</label>
-                                            <input type="text" class="form-control" value="{{ $securityQuestion1 ?? 'Error: Question not found' }}" readonly>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">@lang('app.security_answers') 1</label>
-                                            <input type="text" class="form-control" value="{{ $ClientRegister->securityAnswers1 }}" readonly>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">@lang('app.security_questions') 2</label>
-                                            <input type="text" class="form-control" value="{{ $securityQuestion2 }}" readonly>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">@lang('app.security_answers') 2</label>
-                                            <input type="text" class="form-control" value="{{ $ClientRegister->securityAnswers2 }}" readonly>
-                                        </div>
                                         <div class="mt-4 text-right">
                                             <button type="button" class="btn btn-secondary" onclick="window.history.back()">@lang('app.back')</button>
                                         </div>
