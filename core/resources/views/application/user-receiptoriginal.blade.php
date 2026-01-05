@@ -153,11 +153,17 @@
                         <div class="receipt-header">
                             <div class="info-row">
                                 <div class="label">DITERIMA DARIPADA</div>
-                                <div class="value"> {{ strtoupper($application->applicant) }}</div>
+                                <div class="value">
+                                    @if($application->payment_type === 'third_party')
+                                        {{ strtoupper($application->buyer_name ?? $application->applicant) }}
+                                    @else
+                                        {{ strtoupper($application->applicant) }}
+                                    @endif
+                                </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">NO. KAD PENGENALAN /</div>
-                                <div class="value">{{ $application->identities }}</div>
+                                <div class="value">{{ $application->payment_type === 'third_party' ? ($application->third_party_id_card ?? '-') : $application->identities }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">NO. DAFTAR PERNIAGAAN</div>
@@ -166,10 +172,14 @@
                             <div class="info-row">
                                 <div class="label">ALAMAT</div>
                                 <div class="value">
-                                    {{ strtoupper($application->address) }}<br>
-                                    {{ strtoupper($application->city) }}<br>
-                                    {{ strtoupper($application->postal_code) }}<br>
-                                    {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
+                                    @if($application->payment_type === 'third_party')
+                                        {{ strtoupper($application->third_party_address ?? '-') }}
+                                    @else
+                                        {{ strtoupper($application->address) }}<br>
+                                        {{ strtoupper($application->city) }}<br>
+                                        {{ strtoupper($application->postal_code) }}<br>
+                                        {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
+                                    @endif
                                 </div>
                             </div>
                             <div class="info-row">

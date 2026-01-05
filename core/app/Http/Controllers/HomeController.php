@@ -2364,6 +2364,16 @@ class HomeController extends Controller {
             $application->receipt_number = $completedPayment->receipt_number;
             $application->payment_date = $completedPayment->created_at;
             $application->gateway_response = $completedPayment->gateway_response;
+            $application->buyer_name = $completedPayment->buyer_name;
+            $application->buyer_email = $completedPayment->buyer_email;
+
+
+            if ($completedPayment->thirdParty) {
+                $application->third_party_id_card = $completedPayment->thirdParty->id_card_number;
+                $application->third_party_name = $completedPayment->thirdParty->name;
+                $application->third_party_email = $completedPayment->thirdParty->email;
+                $application->third_party_address = $completedPayment->thirdParty->address;
+            }
             
             if ($completedPayment->gateway_response) {
                 $gatewayResponse = is_array($completedPayment->gateway_response) 

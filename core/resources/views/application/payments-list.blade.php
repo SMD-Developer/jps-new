@@ -358,7 +358,13 @@
                                                 {{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d/m/Y') : 'N/A' }}
                                             </td>
 
-                                            <td>{{ $application->refference_no ?? '-' }}</td>
+                                            <td>
+                                                @if($payment && $payment->payment_type === 'third_party')
+                                                    -
+                                                @else
+                                                    {{ $application->refference_no ?? '-' }}
+                                                @endif
+                                            </td>
                                             <!-- <td>
                                                 @php
                                                     $clientType = '';
@@ -421,9 +427,19 @@
                                                     Caruman Parit
                                                 @endif
                                             </td>
-                                            <td>{{ strtoupper($application->applicant ?? '-') }}</td>
                                             <td>
-                                                {{ $application->land_lot ?? '' }}{{ $application->land_lot && $application->land_area ? ', ' : '' }}{{ $application->land_area ?? '' }}{{ ($application->land_lot || $application->land_area) && $application->landDivision ? ', ' : '' }}{{ $application->landDivision->mukim ?? '' }}{{ $application->landDivision && $application->landDistrict ? ', Daerah ' : '' }}{{ $application->landDistrict->daerah ?? '' }}
+                                                @if($payment && $payment->payment_type === 'third_party')
+                                                    {{ strtoupper($payment->buyer_name ?? $application->applicant ?? '-') }}
+                                                @else
+                                                    {{ strtoupper($application->applicant ?? '-') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($payment && $payment->payment_type === 'third_party')
+                                                    -
+                                                @else
+                                                    {{ $application->land_lot ?? '' }}{{ $application->land_lot && $application->land_area ? ', ' : '' }}{{ $application->land_area ?? '' }}{{ ($application->land_lot || $application->land_area) && $application->landDivision ? ', ' : '' }}{{ $application->landDivision->mukim ?? '' }}{{ $application->landDivision && $application->landDistrict ? ', Daerah ' : '' }}{{ $application->landDistrict->daerah ?? '' }}
+                                                @endif
                                             </td>
                                             <td>{{ number_format($payment->amount ?? 0, 2) }}</td>
                                              <td>
