@@ -1,4 +1,4 @@
-@extends('layouts.third-party') {{-- Change this to match your third-party layout --}}
+@extends('third-party.layouts.app')
 
 <style>
     /* General Styles */
