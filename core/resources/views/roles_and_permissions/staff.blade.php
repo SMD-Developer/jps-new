@@ -108,9 +108,7 @@
                             
                         <!--</div>-->
                         <div class="col-lg-12 col-md-12 g-2 mb-3 d-flex justify-content-end">
-                            @if($canAdminStaffAddStaff)
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal"><i class="fa fa-plus"></i> @lang('app.add_staff')</button>
-                            @endif
                         </div>
                     </div>
 
