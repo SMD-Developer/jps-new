@@ -147,9 +147,9 @@
                                         <td class="text-end">{{ number_format($payment->amount, 2) }}</td>
                                         <td>
                                             @if($payment->method == 'FPX_B2B')
-                                                <span class="badge bg-primary">FPX B2B</span>
+                                                <span class="badge bg-primary">B2B</span>
                                             @elseif($payment->method == 'FPX_B2C')
-                                                <span class="badge bg-info">FPX B2C</span>
+                                                <span class="badge bg-info">B2C</span>
                                             @else
                                                 {{ $payment->method }}
                                             @endif
