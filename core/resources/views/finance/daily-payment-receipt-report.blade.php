@@ -530,7 +530,14 @@
                                                 $isReprint = strtolower(trim($application->payment_type ?? '')) === 'reprint';
                                                 
                                                 // For reprint, use full amount; otherwise split
-                                                $amount = $isReprint ? $application->payment_amount : ($application->payment_amount / 2);
+                                                  if ($isReprint) {
+                                                        $amount = $application->payment_amount;
+                                                    } else {
+                                                        // Use the accurate calculation method
+                                                        $secondHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                                        $firstHalf = $application->payment_amount - $secondHalf;
+                                                        $amount = $firstHalf; // For the first row
+                                                    }
                                                 
                                                 $method = $application->methods ?? '';
                                                 if (stripos($method, 'FPX_B2B') !== false) {
@@ -599,7 +606,7 @@
                                                 <tr>
                                                     <td>L453</td>
                                                     <td>{{ $kodHasil }}</td>
-                                                    <td>{{ number_format($amount, 2) }}</td>
+                                                     <td>{{ number_format($secondHalf, 2) }}</td>
                                                 </tr>
                                             @endif
                                         @endforeach

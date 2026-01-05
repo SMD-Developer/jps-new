@@ -725,7 +725,7 @@
                                                     <div style="max-width: 500px; width: 100%;">
                                                         <label style="margin: 0; font-weight: bold; margin-bottom: 5px; display: block;">@lang('Surat Kelulusan')</label>
                                                         <p style="color: #999; font-style: italic; margin: 0; padding: 10px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
-                                                            No appeal letter uploaded yet
+                                                            Belum ada surat rayuan dimuat naik
                                                         </p>
                                                     </div>
                                                 </div>
