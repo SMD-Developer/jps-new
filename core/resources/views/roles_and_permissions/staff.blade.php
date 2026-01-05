@@ -192,7 +192,6 @@
 
                                         </td>
                                         <td>
-                                             @if ($canAdminStaffEditStaff)
                                                     <div class="btn-group">
                                                         @php
                                                             // Split username into first and last name
@@ -219,7 +218,6 @@
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </div>
-                                                @endif
                                         </td>
                                     </tr>
                                 @endforeach
