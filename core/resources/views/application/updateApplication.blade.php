@@ -237,6 +237,31 @@
         text-align: center;
     }
 
+
+       .custom-file-input {
+        display: none;
+    }
+    
+    .custom-file-button {
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .custom-file-button:hover {
+        background-color: #e9ecef;
+    }
+    
+    .file-name-display {
+        margin-left: 10px;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
 </style>
 <title>@lang('app.update_application') | JPS</title>
 @section('content')
@@ -725,19 +750,23 @@
                                     <tr class="appeal-letter-row" id="appeal_letter_row" style="display: none;">
                                         <td colspan="5">
                                             <div class="d-flex align-items-center justify-content-end" style="gap: 10px;">
-                                                <label for="appeal_letter" style="margin: 0; font-weight: bold;">@lang('Appeal Letter')</label>
-                                                <input type="file" 
-                                                    id="appeal_letter" 
-                                                    name="appeal_letter" 
-                                                    class="form-control" 
-                                                    accept=".pdf,.jpg,.jpeg,.png" 
-                                                    style="width: 250px;">
+                                                <label style="margin: 0; font-weight: bold;">@lang('Surat Kelulusan')</label>
+                                                
+                                                <div class="d-flex align-items-center" style="width: 250px;">
+                                                    <label for="appeal_letter" class="custom-file-button">Pilih Fail</label>
+                                                    <input type="file" 
+                                                        id="appeal_letter" 
+                                                        name="appeal_letter" 
+                                                        class="custom-file-input" 
+                                                        accept=".pdf,.jpg,.jpeg,.png">
+                                                    <span class="file-name-display" id="file-name-display">Tiada Fail Dipilih</span>
+                                                </div>
                                             </div>
                                             @if(isset($application->appeal_letter_path) && $application->appeal_letter_path)
                                                 <div class="text-right mt-2">
                                                     <small class="text-info">
                                                         <a href="{{ url($application->appeal_letter_path) }}" target="_blank">
-                                                            <i class="fa fa-file-pdf-o"></i> View Current Letter
+                                                            <i class="fa fa-file-pdf-o"></i> Lihat Surat Semasa
                                                         </a>
                                                     </small>
                                                 </div>
@@ -2201,5 +2230,11 @@
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
+</script>
+<script>
+    document.getElementById('appeal_letter').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'Tiada Fail Dipilih';
+        document.getElementById('file-name-display').textContent = fileName;
+    });
 </script>
 @endsection
