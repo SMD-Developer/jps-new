@@ -290,7 +290,7 @@
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
-                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->final_amount)) }} SAHAJA
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->payment_amount)) }} SAHAJA
                                 </div>
                             </div>
                             <div class="info-row">
