@@ -168,11 +168,15 @@
                         <div class="receipt-header">
                             <div class="info-row">
                                 <div class="label">DITERIMA DARIPADA</div>
-                                <div class="value">{{ strtoupper($application->applicant) }}</div>
+                                <div class="value">
+                                    @if($application->payment_type === 'third_party')
+                                        {{ strtoupper($application->buyer_name ?? $application->applicant) }}
+                                    @endif
+                                </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">NO. KAD PENGENALAN /</div>
-                                <div class="value">{{ $application->identities }}</div>
+                                <div class="value">{{ $application->payment_type === 'third_party' ? ($application->third_party_id_card ?? '-') : $application->identities }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">NO. DAFTAR PERNIAGAAN</div>
@@ -181,10 +185,14 @@
                             <div class="info-row">
                                 <div class="label">ALAMAT</div>
                                 <div class="value">
-                                    {{ strtoupper($application->address) }}<br>
-                                    {{ strtoupper($application->city) }}<br>
-                                    {{ strtoupper($application->postal_code) }}<br>
-                                    {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
+                                    @if($application->payment_type === 'third_party')
+                                        {{ strtoupper($application->third_party_address ?? '-') }}
+                                    @else
+                                        {{ strtoupper($application->address) }}<br>
+                                        {{ strtoupper($application->city) }}<br>
+                                        {{ strtoupper($application->postal_code) }}<br>
+                                        {{ strtoupper($application->negeri ?? 'N/A') }} DARUL EHSAN
+                                    @endif
                                 </div>
                             </div>
                             <div class="info-row">
@@ -265,8 +273,12 @@
                                     @endif
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
-                                    {{ number_format($application->payment_amount  / 2, 2) }}<br>
-                                    {{ number_format($application->payment_amount  / 2, 2) }}
+                                    @php
+                                        $secondHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                        $firstHalf = $application->payment_amount - $secondHalf;
+                                    @endphp
+                                    {{ number_format($firstHalf, 2) }}<br>
+                                    {{ number_format($secondHalf, 2) }}
                                 </td>
                             </tr>
                             <tr>
@@ -282,7 +294,7 @@
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
-                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->final_amount)) }} SAHAJA
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->payment_amount)) }} SAHAJA
                                 </div>
                             </div>
                             <div class="info-row">

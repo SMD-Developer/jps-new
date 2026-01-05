@@ -586,7 +586,7 @@
                                                 <td rowspan="{{ $rowspan }}">{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>G001</td>
                                                 <td>{{ $kodHasil }}</td>
-                                                <td>{{ number_format($amount, 2) }}</td>
+                                                <td>{{ number_format($secondHalf, 2) }}</td>
                                                 <td rowspan="{{ $rowspan }}">
                                                     @if (stripos($method, 'cheque') !== false)
                                                         CEK
@@ -606,7 +606,7 @@
                                                 <tr>
                                                     <td>L453</td>
                                                     <td>{{ $kodHasil }}</td>
-                                                     <td>{{ number_format($secondHalf, 2) }}</td>
+                                                     <td>{{ number_format($amount, 2) }}</td>
                                                 </tr>
                                             @endif
                                         @endforeach
@@ -638,29 +638,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>H0161304</td>
-                            <td>G001</td>
-                            <td>{{ number_format(($grandTotal - $totalReprintAmount) / 2, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>L453</td>
-                            <td>{{ number_format(($grandTotal - $totalReprintAmount) / 2, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>H0272499</td>
-                            <td>G001</td>
-                            <td>{{ number_format($totalReprintAmount, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" style="text-align:end;"><strong>JUMLAH :</strong></td>
-                            <td><strong>{{ number_format($grandTotal , 2) }}</strong></td>
-                        </tr>
-                    </tbody>
+                    @php
+                        // Calculate the accurate split for non-reprint amount
+                        $nonReprintAmount = $grandTotal - $totalReprintAmount;
+                        $firstHalf = floor($nonReprintAmount * 100 / 2) / 100;
+                        $secondHalf = $nonReprintAmount - $firstHalf;
+                    @endphp
+                    
+                    <tr>
+                        <td>1</td>
+                        <td>H0161304</td>
+                        <td>G001</td>
+                        <td>{{ number_format($firstHalf, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>L453</td>
+                        <td>{{ number_format($secondHalf, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>H0272499</td>
+                        <td>G001</td>
+                        <td>{{ number_format($totalReprintAmount, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                        <td><strong>{{ number_format($grandTotal, 2) }}</strong></td>
+                    </tr>
+                </tbody>
                 </table>
             </div>
 
