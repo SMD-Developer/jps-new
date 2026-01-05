@@ -934,7 +934,7 @@ class ThirdPartyController extends Controller
         $path = '/var/www/html/core/public/';
 
     	$d_ate = date("Y");
-    	$fpxcert = array($path."fpxprod_smi_20241219.cer");
+    	$fpxcert = array($path."fpxprod_smi_20251124.cer");
     	$certs = $this->checkCertExpiry($fpxcert);
     	$signdata = $this->hextobin($sign);
     	
