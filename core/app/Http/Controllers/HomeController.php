@@ -3998,7 +3998,7 @@ public function updateUserDetails(Request $request, $id)
             $thirdPartyUser->notify(new ReceiptStatusUpdated($receipt));
         }
 
-        return back()->with('success', 'Receipt request updated successfully.');
+        return back()->with('success', 'Permohonan Salinan Resit berjaya dikemaskini.');
     }
 
 

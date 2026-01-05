@@ -169,7 +169,7 @@
                 <input type="hidden" name="id" id="receiptRequestId">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Proses Receipt Request</h5>
+                    <h5 class="modal-title">Permohonan Salinan Resit</h5>
                    <button type="button" class="btn-close" onclick="closeFinanceModal()" aria-label="Close"></button>
                 </div>
 
@@ -199,7 +199,7 @@
                                 onclick="document.getElementById('receiptFile').click()">
                             <i class="fa fa-upload"></i> <span id="fileName">Pilih Fail</span>
                         </button>
-                        <small class="text-muted d-block mt-1">Format: PDF, JPG, PNG</small>
+                        <small class="text-muted d-block mt-1">Format: PDF</small>
                     </div>
 
                     <!-- ADMIN NOTES (for approved) -->
