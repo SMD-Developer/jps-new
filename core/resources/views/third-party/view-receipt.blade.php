@@ -336,14 +336,6 @@
                     <button type="button" id="printButton" class="btn btn-primary">@lang('app.print_receipt')</button>
                 </div>
             </div>
-
-            <div class="row justify-content-end">
-                <div class="col-auto text-end">
-                    <p style="font-size: 14px; color: #555; font-style: italic; margin-top: 5px;">
-                        <strong>Nota:</strong> Sila pastikan Resit <u>ASAL PIHAK KETIGA</u> dicetak untuk rekod.
-                    </p>
-                </div>
-            </div>
         </div>
     </section>
     
