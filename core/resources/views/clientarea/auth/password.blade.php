@@ -304,7 +304,7 @@
         }
 
         body {
-            background-image: url("https://jpsonline.smddeveloper.com/assets/images/JPS logo.jpg");
+            background-image: url("https://ecp-jps.selangor.gov.my/assets/images/JPS logo.jpg");
             background-size: cover;
             /* Ensures the image covers the entire screen */
             background-position: center;

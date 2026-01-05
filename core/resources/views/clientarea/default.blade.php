@@ -429,7 +429,7 @@ body {
         font-size: 13px;
     }
     button.btn.btn-primary {
-        background: #5B90E1;
+        background: #1858b9;
         border: 1px solid #5B90E1;
     }
     button.btn.btn-warning {
