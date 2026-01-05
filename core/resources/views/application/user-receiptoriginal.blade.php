@@ -196,7 +196,7 @@
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
                                 <div class="value">
-                                     @if($application->payment_type === 'reprint')
+                                    @if($application->payment_type === 'reprint' || $application->payment_type === 'third_party')
                                         PERMOHONAN SALINAN RESIT CARUMAN PARIT DI ATAS <br>
                                     @endif
                                     {{ strtoupper($application->land_lot) }},
