@@ -528,15 +528,15 @@
                                             @php
                                                 $grandTotal += $application->payment_amount;
                                                 $isReprint = strtolower(trim($application->payment_type ?? '')) === 'reprint';
+                                                $isThirdParty = strtolower(trim($application->payment_type ?? '')) === 'third_party';
                                                 
                                                 // For reprint, use full amount; otherwise split
-                                                  if ($isReprint) {
+                                                 if ($isReprint || $isThirdParty) {
                                                         $amount = $application->payment_amount;
                                                     } else {
-                                                        // Use the accurate calculation method
-                                                        $secondHalf = floor($application->payment_amount * 100 / 2) / 100;
-                                                        $firstHalf = $application->payment_amount - $secondHalf;
-                                                        $amount = $firstHalf; // For the first row
+                                                        $firstHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                                        $secondHalf = $application->payment_amount - $firstHalf;
+                                                        $amount = $firstHalf; 
                                                     }
                                                 
                                                 $method = $application->methods ?? '';
@@ -566,10 +566,10 @@
                                                 $totalCharges += $charge;
                                                 
                                                 // Determine KOD HASIL based on payment type
-                                                $kodHasil = $isReprint ? 'H0272499' : 'H0161304';
+                                                 $kodHasil = ($isReprint || $isThirdParty) ? 'H0272499' : 'H0161304';
                                                 
                                                 // Determine rowspan based on payment type
-                                                $rowspan = $isReprint ? '1' : '2';
+                                                $rowspan = ($isReprint || $isThirdParty) ? '1' : '2';
                                             @endphp
                                             
                                             <tr>
@@ -586,7 +586,7 @@
                                                 <td rowspan="{{ $rowspan }}">{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>G001</td>
                                                 <td>{{ $kodHasil }}</td>
-                                                <td>{{ number_format($secondHalf, 2) }}</td>
+                                                <td>{{ ($isReprint || $isThirdParty) ? number_format($amount, 2) : number_format($firstHalf, 2) }}</td>
                                                 <td rowspan="{{ $rowspan }}">
                                                     @if (stripos($method, 'cheque') !== false)
                                                         CEK
@@ -601,12 +601,12 @@
                                                 <!-- <td rowspan="{{ $rowspan }}">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td> -->
                                             </tr>
                                             
-                                            @if (!$isReprint)
-                                                {{-- Only show second row if NOT reprint --}}
+                                            @if (!$isReprint && !$isThirdParty)
+                                                {{-- Only show second row if NOT reprint AND NOT third_party --}}
                                                 <tr>
                                                     <td>L453</td>
                                                     <td>{{ $kodHasil }}</td>
-                                                     <td>{{ number_format($amount, 2) }}</td>
+                                                    <td>{{ number_format($secondHalf, 2) }}</td>
                                                 </tr>
                                             @endif
                                         @endforeach

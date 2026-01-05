@@ -567,7 +567,7 @@ class financeController extends Controller {
         $currentDateTime = \Carbon\Carbon::now();
         $currentDate = $currentDateTime->format('d/m/Y');
         $currentTime = $currentDateTime->format('h:i:s A');
-        $reprintQuery = (clone $query)->where('payments.payment_type', 'reprint');
+        $reprintQuery = (clone $query)->whereIn('payments.payment_type', ['reprint', 'third_party']);
         $reprintCount = $reprintQuery->count();
         $totalReprintAmount = $reprintQuery->sum('payments.amount');
         
