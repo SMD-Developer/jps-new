@@ -206,7 +206,16 @@
                             </div>
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
-                                <div class="value">{{ $application->fpx_payment_time ?? $application->payment_date }}</div>
+                                <div class="value">
+                                    @if($application->fpx_payment_time)
+                                        {{ \Carbon\Carbon::parse($application->fpx_payment_time)->format('d/m/Y H:i') }}
+                                    @elseif($application->payment_date)
+                                        {{ \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y H:i') }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </div>
+
                             </div>
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
