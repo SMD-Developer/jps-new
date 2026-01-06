@@ -16,7 +16,8 @@ class ReceiptRequest extends Model
         'admin_uuid',  
         'admin_notes',
         'receipt_file_path',
-        'approved_at'
+        'approved_at',
+        'downloaded_at'
     ];
 
     protected $casts = [

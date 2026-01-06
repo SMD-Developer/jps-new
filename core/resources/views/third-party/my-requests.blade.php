@@ -119,10 +119,20 @@
                                         </td>
                                         <td>
                                             @if($request->status === 'approved')
-                                                <a href="{{ route('third.party.download.receipt', $request->id) }}"
-                                                    class="btn btn-sm btn-success" style="white-space: nowrap;">
-                                                    <i class="fa fa-download"></i> Muat Turun
-                                                </a>
+                                                 @if($request->downloaded_at)
+        {{-- Already downloaded --}}
+        <button class="btn btn-sm btn-secondary" disabled style="white-space: nowrap;">
+            <i class="fa fa-check"></i> Telah Dimuat Turun
+        </button>
+    @else
+        {{-- Not downloaded yet --}}
+        <a href="{{ route('third.party.download.receipt', $request->id) }}"
+           class="btn btn-sm btn-success"
+           style="white-space: nowrap;"
+           onclick="disableDownloadButton(this)">
+            <i class="fa fa-download"></i> Muat Turun
+        </a>
+    @endif
 
                                             @elseif($request->status === 'pending')
                                                 <span class="text-muted" style="font-size: 12px;">
@@ -170,4 +180,13 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function disableDownloadButton(button) {
+    button.classList.remove('btn-success');
+    button.classList.add('btn-secondary');
+    button.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Memuat...';
+    button.style.pointerEvents = 'none';
+}
+</script>
 @endsection

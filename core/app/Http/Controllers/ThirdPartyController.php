@@ -1862,12 +1862,21 @@ class ThirdPartyController extends Controller
 
     public function downloadReceipt($request_id)
     {
-        // Find the receipt request
-        $receipt = \App\Models\ReceiptRequest::findOrFail($request_id);
+        // Find the receipt request (security check recommended)
+        $receipt = \App\Models\ReceiptRequest::where('id', $request_id)
+            ->where('third_party_id', auth('third_party')->id()) 
+            ->where('status', 'approved')                         
+            ->firstOrFail();
 
         // Check if receipt file exists
         if (!$receipt->receipt_file_path || !file_exists(public_path($receipt->receipt_file_path))) {
             return back()->with('error', 'Receipt file not found.');
+        }
+
+        // ✅ MARK AS DOWNLOADED (only once)
+        if (is_null($receipt->downloaded_at)) {
+            $receipt->downloaded_at = now();
+            $receipt->save();
         }
 
         $filePath = public_path($receipt->receipt_file_path);
@@ -1875,6 +1884,7 @@ class ThirdPartyController extends Controller
         // Download the file
         return response()->download($filePath, basename($filePath));
     }
+
 
 
     public function myPayments(Request $request)
