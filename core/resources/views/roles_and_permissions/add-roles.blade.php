@@ -335,7 +335,7 @@
                                         <div class="card border-0 shadow-sm mb-4">
                                             <div class="card-body">
                                                 <h6 class="card-title text-primary mb-3">
-                                                    <i class="bi bi-info-circle me-2"></i>Basic Information
+                                                    <i class="bi bi-info-circle me-2"></i>Butiran
                                                 </h6>
                                                 <div class="row g-3">
                                                     <div class="col-md-6">
@@ -391,23 +391,23 @@
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-list-ul d-block mb-1"></i>
-                                                                    <span>List</span>
+                                                                    <span>SENARAI</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-plus-circle d-block mb-1"></i>
-                                                                    <span>Create</span>
+                                                                    <span>TAMBAH</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-pencil-square d-block mb-1"></i>
-                                                                    <span>Edit</span>
+                                                                    <span>SUNTING</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-trash d-block mb-1"></i>
-                                                                    <span>Delete</span>
+                                                                    <span>PADAM</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-eye d-block mb-1"></i>
-                                                                    <span>View</span>
+                                                                    <span>LIHAT</span>
                                                                 </th>
                                                             </tr>
                                                         </thead>
@@ -673,7 +673,7 @@
                                         <div class="card border-0 shadow-sm mb-4">
                                             <div class="card-body">
                                                 <h6 class="card-title text-primary mb-3">
-                                                    <i class="bi bi-info-circle me-2"></i>Basic Information
+                                                    <i class="bi bi-info-circle me-2"></i>Butiran
                                                 </h6>
                                                 <div class="row g-3">
                                                     <div class="col-md-6">
@@ -727,23 +727,23 @@
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-list-ul d-block mb-1"></i>
-                                                                    <span>List</span>
+                                                                    <span>SENARAI</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-plus-circle d-block mb-1"></i>
-                                                                    <span>Create</span>
+                                                                    <span>TAMBAH</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-pencil-square d-block mb-1"></i>
-                                                                    <span>Edit</span>
+                                                                    <span>SUNTING</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-trash d-block mb-1"></i>
-                                                                    <span>Delete</span>
+                                                                    <span>PADAM</span>
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-eye d-block mb-1"></i>
-                                                                    <span>View</span>
+                                                                    <span>LIHAT</span>
                                                                 </th>
                                                             </tr>
                                                         </thead>
