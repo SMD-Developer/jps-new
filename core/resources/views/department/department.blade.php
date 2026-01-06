@@ -36,9 +36,7 @@
                 <div class="card-body">
                     <div class="row search-row align-items-center g-2 mb-3">
                         <div class="col-lg-12 col-md-12 g-2 mb-3 d-flex justify-content-end">
-                            @if($canAdminStaffAddDepartment)
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDepartmentModal"><i class="fa fa-plus"></i> @lang('app.add_department')</button>
-                            @endif
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDepartmentModal"><i class="fa fa-plus"></i> @lang('app.add_department')</button>
                         </div>
                     </div>
 
@@ -54,19 +52,18 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-12 d-flex justify-content-start align-items-baseline">
-                            <label for="show" class="form-label me-2">{{ trans('app.show') }} : &nbsp;&nbsp;&nbsp;</label>
-                            <select type="select"  class="form-control form-control-sm w-auto form-select">
-                                <option selected>10</option>
-                                <option >20</option>
-                                <option >50</option>
-                                <option >100</option>
-                                <option >500</option>
+                            <label for="perPageSelect" class="form-label me-2">{{ trans('app.show') }} : &nbsp;&nbsp;&nbsp;</label>
+                            <select id="perPageSelect" class="form-control form-control-sm w-auto form-select" onchange="changePerPage()">
+                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
                             </select>&nbsp;&nbsp;    
-                                <p><strong>{{ trans('app.entries') }}</strong></p>
+                            <p class="mb-0"><strong>{{ trans('app.entries') }}</strong></p>
                         </div>
                     </div>
-                    <!-- Table Section -->
-                    <p><strong>{{ trans('app.Showing') }} 1 {{ trans('app.to') }} 5 of {{ trans('app.entries') }}</strong></p>
+                
                     <div class="table-responsive mt-3">
                         <table class="table  ">
                             <thead>
@@ -81,7 +78,7 @@
                             <tbody>
                                 @foreach($departments as $key => $department)
                                 <tr>
-                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ ($departments->currentPage() - 1) * $departments->perPage() + $key + 1 }}</td>
                                     <td>{{ $department->name }}</td>
                                     <td>{{ $department->display_name }}</td>
                                     <td>
@@ -90,7 +87,6 @@
                                         </span>
                                     </td>                                    
                                     <td>
-                                        @if($canAdminStaffEditDepartment)
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-warning btn-sm editDepartmentBtn" 
                                                 data-id="{{ $department->id }}" 
@@ -102,7 +98,6 @@
                                                 <i class="fa fa-edit"></i>
                                             </button>
                                         </div>
-                                        @endif
                                     </td>                                    
                                 </tr>
                                 @endforeach
@@ -110,7 +105,65 @@
                             
                         </table>
                     </div> 
-                    <!-- End Table Responsive -->
+                    <!-- Pagination Section -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <span class="me-2">
+                                Page <strong>{{ $departments->currentPage() }}</strong> of
+                                <strong>{{ $departments->lastPage() }}</strong>
+                            </span>
+                        </div>
+
+                        <nav>
+                            <ul class="pagination">
+                                @if ($departments->currentPage() > 1)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $departments->url(1) }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">« First</a>
+                                    </li>
+                                @endif
+
+                                @if ($departments->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">‹ Previous</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $departments->previousPageUrl() }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">‹ Previous</a>
+                                    </li>
+                                @endif
+
+                                @foreach ($departments->links()->elements as $element)
+                                    @if (is_string($element))
+                                        <li class="page-item disabled"><span class="page-link">{{ $element }}</span></li>
+                                    @endif
+                                    @if (is_array($element))
+                                        @foreach ($element as $page => $url)
+                                            <li class="page-item {{ $page == $departments->currentPage() ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ $url }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">{{ $page }}</a>
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                @endforeach
+
+                                @if ($departments->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $departments->nextPageUrl() }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">Next ›</a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Next ›</span>
+                                    </li>
+                                @endif
+
+                                @if ($departments->currentPage() < $departments->lastPage())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $departments->url($departments->lastPage()) }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">Last »</a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    </div>
+                    
                 </div>
                 
 
@@ -289,5 +342,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+</script>
+<script>
+function changePerPage() {
+    let perPage = document.getElementById('perPageSelect').value;
+    let search = '{{ $search ?? '' }}';
+    let url = new URL(window.location.href);
+    url.searchParams.set('page', 1);
+    url.searchParams.set('per_page', perPage);
+    if(search) {
+        url.searchParams.set('search', search);
+    }
+    window.location.href = url.toString();
+}
 </script>
 @endsection

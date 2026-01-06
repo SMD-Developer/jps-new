@@ -16,13 +16,31 @@ use Illuminate\Support\Facades\Log;
 class DepartmentController extends Controller
 {
     // Display the department list
-    public function index()
+    public function index(Request $request)
     {
         $title = __('app.department');
         $canAdminStaffEditDepartment = auth('admin')->user()->hasPermission('department.edit');
         $canAdminStaffAddDepartment = auth('admin')->user()->hasPermission('department.add');
-        $departments = Department::all(); 
-        return view('department.department', compact('title', 'departments', 'canAdminStaffEditDepartment', 'canAdminStaffAddDepartment'));
+        
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search');
+        
+        $departments = Department::query()
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate($perPage);
+        
+        return view('department.department', compact(
+            'title', 
+            'departments', 
+            'canAdminStaffEditDepartment', 
+            'canAdminStaffAddDepartment',
+            'perPage',
+            'search'
+        ));
     }
 
     // Store a new department
