@@ -238,6 +238,13 @@ Route::group(['middleware' => 'install'], function(){
         Route::put('/department/update/{id}', [DepartmentController::class, 'update'])->name('departments.update');
         Route::get('staff','UsersController@staff')->name('staff');
         Route::delete('staff/{uuid}', 'UsersController@destroy')->name('staff.destroy');
+
+        Route::get('/manage-faq', [DepartmentController::class, 'manageFaq'])->name('faq-list');
+        Route::post('/faq', [DepartmentController::class, 'storeFaq'])->name('faq.store');
+        Route::post('/faq/{id}', [DepartmentController::class, 'updateFaq'])->name('faq.update');
+        
+
+
         // Route::post('staff-add', [CrudController::class, 'storeStaff'])->name('crud.storeStaff');
         Route::match(['PUT', 'POST'], '/staff/update/{uuid}', 'RolesController@updateStaff')->name('staff.update');
         Route::get('/role', [RolesController::class, 'addRole'])->name('role');

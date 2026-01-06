@@ -411,6 +411,12 @@ if(! function_exists('getMenus')){
                     'menu_active' => request()->is('profile') || request()->is('profile/*') ? 'active' : ''
                 ],
                 [
+                    'icon' => 'cogs',
+                    'text' => trans('FAQ'),
+                    'route' => url('manage-faq'),
+                    'menu_active' => FormFacade::menu_active('settings')
+                ],
+                [
                         'icon' => 'credit-card',
                         'text' => trans('app.helpdesk'),
                         'route' => url('#'),

@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
-
+use DB;
 
 class DepartmentController extends Controller
 {
@@ -96,6 +96,65 @@ class DepartmentController extends Controller
         Log::info('Updated Department:', $department->toArray());
 
         return redirect()->back()->with('success', __('app.department_updated_successfully'));
+    }
+
+
+    public function manageFaq(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search');
+        
+        $faqs = DB::table('faqs')
+            ->when($search, function($query, $search) {
+                return $query->where('question', 'like', "%{$search}%")
+                            ->orWhere('answer', 'like', "%{$search}%");
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($perPage);
+        
+        $title = 'FAQ ';
+        
+        return view('department.faqList', compact('faqs', 'perPage', 'title'));
+    }
+
+    public function storeFaq(Request $request)
+    {
+        $request->validate([
+            'question' => 'required|string|max:500',
+            'answer' => 'required|string',
+            'status' => 'required|in:0,1'
+        ]);
+
+        DB::table('faqs')->insert([
+            'question' => $request->question,
+            'answer' => $request->answer,
+            'status' => $request->status,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'FAQ added successfully']);
+    }
+
+
+    public function updateFaq(Request $request, $id)
+    {
+        $request->validate([
+            'question' => 'required|string|max:500',
+            'answer' => 'required|string',
+            'status' => 'required|in:0,1'
+        ]);
+
+        DB::table('faqs')
+            ->where('id', $id)
+            ->update([
+                'question' => $request->question,
+                'answer' => $request->answer,
+                'status' => $request->status,
+                'updated_at' => now()
+            ]);
+
+        return response()->json(['success' => true, 'message' => 'FAQ updated successfully']);
     }
 
 }
