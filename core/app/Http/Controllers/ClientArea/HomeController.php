@@ -1012,7 +1012,8 @@ class HomeController extends Controller {
          
          
         public function faq(){
-            return view('clientarea.faq');
+            $faqs = DB::table('faqs')->where('status', 1)->orderBy('id', 'asc')->get();
+            return view('clientarea.faq', compact('faqs'));
         }
         
         
