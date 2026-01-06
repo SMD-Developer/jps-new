@@ -164,14 +164,13 @@
     </div>
     
     <div class="mt-4">
-       @php
-            // Get the application_id and payment_uuid from the payments table using fpx_sellerOrderNo
+        @php
+            // Get the application_id from the payments table using fpx_sellerOrderNo
             $paymentRecord = DB::table('payments')
                               ->where('seller_order_no', $fpx_sellerOrderNo)
                               ->first();
             
             $application_id = $paymentRecord->application_id ?? null;
-            $payment_uuid = $paymentRecord->uuid ?? null;
             
             // Get the application to check if it's legacy
             $application = null;
@@ -197,7 +196,7 @@
                     <i class="fa fa-paper-plane"></i> Hantar Permohonan Resit
                 </button>
                 
-                <a href="{{ route('hird.party.my.requests') }}" 
+                <a href="{{ route('third.party.my.requests') }}" 
                   class="btn btn-secondary me-2"
                   style="border-radius: 50px; padding: 10px 25px;">
                     <i class="fa fa-home"></i> Dashboard
