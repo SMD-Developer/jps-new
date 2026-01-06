@@ -250,7 +250,7 @@ Route::group(['middleware' => 'install'], function(){
         Route::get('/role', [RolesController::class, 'addRole'])->name('role');
         Route::get('/roles/{id}/permissions', [RolesController::class, 'getRolePermissions'])->name('roles.permissions');
         Route::post('/staff-add', 'RolesController@storeStaff')->name('storeStaff');
-        Route::post('/role/store', [RolesController::class, 'storeRole'])->name('roles.store');
+        Route::post('/role/store', 'RolesController@storeRole')->name('roles.store');
         // Route::match(['PUT', 'POST'], '/role/update', [RolesController::class, 'updateStoreRole'])->name('roles.update');
          Route::match(['PUT', 'POST'], '/role/update', [RolesController::class, 'updateStoreRole'])->name('roles.update');
          Route::post('update-permission-group-status', 'RolesController@updateGroupStatus')
