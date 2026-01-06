@@ -232,6 +232,14 @@ if(! function_exists('getMenus')){
                                 'route' => route('landCategories'),
                                 'menu_active' => Request::is('products/list') ? 'active' : null
                             ],
+
+                            [
+                            'icon' => 'cogs',
+                            'text' => trans('Logo'),
+                            'route' => url('settings/logo'),
+                            'menu_active' => FormFacade::menu_active('settings')
+                            ],
+        
                             //  [
                             //     'icon' => 'question',
                             //     'text' => trans('app.question_management'),
@@ -367,14 +375,7 @@ if(! function_exists('getMenus')){
                 ]
             ]
         ];
-        if(hasPermission('setting.view')){
-            $menus['main_menu']['menus'][] = [
-                'icon' => 'cogs',
-                'text' => trans('app.settings'),
-                'route' => url('settings/logo'),
-                'menu_active' => FormFacade::menu_active('settings')
-            ];
-        }
+        
         
         $menus['account_menu'] = [
             'title' => trans('app.account_menu'),

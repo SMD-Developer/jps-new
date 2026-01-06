@@ -132,17 +132,17 @@
                             </form>
                         </div>
                     </div>
-                    <div class="row">
+                   <div class="row">
                         <div class="col-lg-12 d-flex justify-content-start align-items-baseline">
-                            <label for="show" class="form-label me-2">{{ trans('app.show') }} : &nbsp;&nbsp;&nbsp;</label>
-                            <select type="select"  class="form-control form-control-sm w-auto form-select">
-                                <option selected>10</option>
-                                <option >20</option>
-                                <option >50</option>
-                                <option >100</option>
-                                <option >500</option>
+                            <label for="perPageSelect" class="form-label me-2">{{ trans('app.show') }} : &nbsp;&nbsp;&nbsp;</label>
+                            <select id="perPageSelect" class="form-control form-control-sm w-auto form-select" onchange="changePerPage()">
+                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
                             </select>&nbsp;&nbsp;    
-                                <p><strong>{{ trans('app.entries') }}</strong></p>
+                            <p class="mb-0"><strong>{{ trans('app.entries') }}</strong></p>
                         </div>
                     </div>
                     <!-- Table Section -->
@@ -164,7 +164,7 @@
                             <tbody>
                                 @foreach($staffUsers as $index => $user)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ ($staffUsers->currentPage() - 1) * $staffUsers->perPage() + $index + 1 }}</td>
                                         <td>
                                             <img src="{{ $user->photo ? asset('uploads/user_photos/' . $user->photo) : asset('assets/images/icon/user-default.png') }}" class="profile-img">
                                         </td>
@@ -221,7 +221,65 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </div> <!-- End Table Responsive -->
+                    </div>
+                    <!-- Pagination Section -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <span class="me-2">
+                                Page <strong>{{ $staffUsers->currentPage() }}</strong> of
+                                <strong>{{ $staffUsers->lastPage() }}</strong>
+                            </span>
+                        </div>
+
+                        <nav>
+                            <ul class="pagination">
+                                @if ($staffUsers->currentPage() > 1)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $staffUsers->url(1) }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">« First</a>
+                                    </li>
+                                @endif
+
+                                @if ($staffUsers->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">‹ Previous</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $staffUsers->previousPageUrl() }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">‹ Previous</a>
+                                    </li>
+                                @endif
+
+                                @foreach ($staffUsers->links()->elements as $element)
+                                    @if (is_string($element))
+                                        <li class="page-item disabled"><span class="page-link">{{ $element }}</span></li>
+                                    @endif
+                                    @if (is_array($element))
+                                        @foreach ($element as $page => $url)
+                                            <li class="page-item {{ $page == $staffUsers->currentPage() ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ $url }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">{{ $page }}</a>
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                @endforeach
+
+                                @if ($staffUsers->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $staffUsers->nextPageUrl() }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">Next ›</a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Next ›</span>
+                                    </li>
+                                @endif
+
+                                @if ($staffUsers->currentPage() < $staffUsers->lastPage())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $staffUsers->url($staffUsers->lastPage()) }}&per_page={{ $perPage }}&search={{ $search ?? '' }}">Last »</a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
                 
 
@@ -696,6 +754,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+
+function changePerPage() {
+    let perPage = document.getElementById('perPageSelect').value;
+    let search = '{{ $search ?? '' }}';
+    let url = new URL(window.location.href);
+    url.searchParams.set('page', 1);
+    url.searchParams.set('per_page', perPage);
+    if(search) {
+        url.searchParams.set('search', search);
+    }
+    window.location.href = url.toString();
+}
 
 
 

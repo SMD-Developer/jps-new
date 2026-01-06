@@ -74,20 +74,6 @@ class UsersController extends CrudController {
     {
         $this->afterStore($request, $entity);
     }
-
-    // public function staff()
-    // {
-    //     $title = __('app.staff');
-    //     $canAdminStaffEditStaff = auth('admin')->user()->hasPermission('staff.edit');
-    //     $canAdminStaffAddStaff = auth('admin')->user()->hasPermission('staff.add');
-    //     $roles = Role::all();
-    //     $roleIds = Role::pluck('uuid'); 
-    //     $staffUsers = User::with(['staffRole', 'staffRole.department'])
-    //     ->whereNotNull('role_id') 
-    //     ->latest()
-    //     ->get();
-    //     return view('roles_and_permissions.staff', compact('title', 'staffUsers' , 'roles', 'canAdminStaffEditStaff', 'canAdminStaffAddStaff'));
-    // }
     
     public function staff(Request $request)
     {
@@ -97,8 +83,8 @@ class UsersController extends CrudController {
         $roles = Role::all();
         $roleIds = Role::pluck('uuid'); 
         
-        // Add search parameter - ONLY NEW LINE
         $search = $request->get('search');
+        $perPage = $request->get('per_page', 10);
         
         $staffUsersQuery = DB::table('users')
             ->leftJoin(DB::raw('(
@@ -119,28 +105,23 @@ class UsersController extends CrudController {
             )
             ->whereNotNull('users.role_id');
         
-        // Add search condition - ONLY NEW BLOCK
         if (!empty($search)) {
             $staffUsersQuery->where(function($q) use ($search) {
                 $q->where('users.username', 'LIKE', '%' . $search . '%')
-                ->orWhere('users.email', 'LIKE', '%' . $search . '%');
+                ->orWhere('users.email', 'LIKE', '%' . $search . '%')
+                ->orWhere('roles.display_name', 'LIKE', '%' . $search . '%');
             });
         }
         
         $staffUsers = $staffUsersQuery
             ->orderBy('users.created_at', 'desc')
-            ->get()
-            ->map(function($user) {
-                $user->is_blocked = !empty($user->is_blocked) && $user->is_blocked == 1;
-                return $user;
-            })
-            ->groupBy('uuid')
-            ->map(function($group) {
-                // If any record shows blocked, use that one, otherwise use the first
-                $blockedUser = $group->firstWhere('is_blocked', true);
-                return $blockedUser ?: $group->first();
-            })
-            ->values();
+            ->paginate($perPage);
+        
+        // Transform the paginated collection
+        $staffUsers->getCollection()->transform(function($user) {
+            $user->is_blocked = !empty($user->is_blocked) && $user->is_blocked == 1;
+            return $user;
+        });
         
         return view('roles_and_permissions.staff', compact(
             'title', 
@@ -148,7 +129,8 @@ class UsersController extends CrudController {
             'roles', 
             'canAdminStaffEditStaff', 
             'canAdminStaffAddStaff',
-            'search' // Add search to compact - ONLY CHANGE HERE
+            'search',
+            'perPage'
         ));
     }
 
