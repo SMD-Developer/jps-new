@@ -180,7 +180,7 @@ use Illuminate\Support\Str;
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addFaqModalLabel">
-                    <i class="fa fa-plus"></i> Add New FAQ
+                    <i class="fa fa-plus"></i> Tambah FAQ
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -191,7 +191,7 @@ use Illuminate\Support\Str;
                     
                     <div class="form-group row mb-3">
                         <label for="question" class="col-sm-3 col-form-label">
-                            Question <span class="text-danger">*</span>
+                            Solan<span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-9">
                             <textarea class="form-control" id="question" name="question" rows="2" required></textarea>
@@ -200,7 +200,7 @@ use Illuminate\Support\Str;
 
                     <div class="form-group row mb-3">
                         <label for="answer" class="col-sm-3 col-form-label">
-                            Answer <span class="text-danger">*</span>
+                            Jawapan <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-9">
                             <textarea class="form-control" id="answer" name="answer" rows="4" required></textarea>
@@ -213,18 +213,18 @@ use Illuminate\Support\Str;
                         </label>
                         <div class="col-sm-9">
                             <select class="form-control" id="status" name="status" required>
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
+                                <option value="1">Aktif</option>
+                                <option value="0">Tidak Aktif</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times"></i> Cancel
+                        <i class="fa fa-times"></i> Batal
                     </button>
                     <button type="submit" class="btn btn-success">
-                        <i class="fa fa-save"></i> Create
+                        <i class="fa fa-save"></i> Tambah
                     </button>
                 </div>
             </form>
@@ -238,7 +238,7 @@ use Illuminate\Support\Str;
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editFaqModalLabel">
-                    <i class="fa fa-edit"></i> Edit FAQ
+                    <i class="fa fa-edit"></i> Kemaskini FAQ
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -250,7 +250,7 @@ use Illuminate\Support\Str;
                     
                     <div class="form-group row mb-3">
                         <label for="edit_question" class="col-sm-3 col-form-label">
-                            Question <span class="text-danger">*</span>
+                            Soalan <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-9">
                             <textarea class="form-control" id="edit_question" name="question" rows="2" required></textarea>
@@ -259,7 +259,7 @@ use Illuminate\Support\Str;
 
                     <div class="form-group row mb-3">
                         <label for="edit_answer" class="col-sm-3 col-form-label">
-                            Answer <span class="text-danger">*</span>
+                            Jawapan <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-9">
                             <textarea class="form-control" id="edit_answer" name="answer" rows="4" required></textarea>
@@ -272,18 +272,18 @@ use Illuminate\Support\Str;
                         </label>
                         <div class="col-sm-9">
                             <select class="form-control" id="edit_status" name="status" required>
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
+                                <option value="1">Aktif</option>
+                                <option value="0">Tidak Aktif</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times"></i> Cancel
+                        <i class="fa fa-times"></i> Batal
                     </button>
                     <button type="submit" class="btn btn-warning">
-                        <i class="fa fa-save"></i> Update
+                        <i class="fa fa-save"></i> Kemaskini
                     </button>
                 </div>
             </form>
