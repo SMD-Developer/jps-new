@@ -317,79 +317,337 @@
                         </div> <!-- End Table Responsive -->
                     </div>
 
-                    <!-- Add role Button -->
-
                     <!-- Add role Modal -->
-                    <div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="addRoleModalLabel">@lang('app.add_role')</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                    <div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content shadow-lg border-0">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="addRoleModalLabel">
+                                        <i class="bi bi-shield-plus me-2"></i>@lang('app.add_role')
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <!-- Add an ID for AJAX -->
+                                <div class="modal-body bg-light">
                                     <form id="addRoleForm" action="{{ route('roles.store') }}" method="POST">
                                         @csrf
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.role')</label>
-                                            <input type="text" class="form-control" name="name"
-                                                placeholder="@lang('app.role')" required>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.display_name')</label>
-                                            <input type="text" class="form-control" name="display_name"
-                                                placeholder="@lang('app.display_name')" required>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.department')</label>
-                                            <select class="form-control form-select" name="department_id" required>
-                                                <option value="" disabled selected>@lang('app.select_department')</option>
-                                                @foreach ($departments as $department)
-                                                    @if ($department->status == 1)
-                                                        <!-- Only show active departments -->
-                                                        <option value="{{ $department->id }}">{{ $department->name }}
-                                                        </option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label fw-bold">@lang('app.description')</label>
-                                            <textarea class="form-control" name="description" placeholder="@lang('app.description')"></textarea>
-                                        </div>
-                                         <div class="row g-1">
-                                            <label class="form-label fw-bold">@lang('app.permission')</label>
-                                            @foreach ($groupedPermissions as $groupDisplayName => $permissions)
-                                                <div class="col-md-6 mt-3">
-                                                    <div class="card p-3">
-                                                        <h5 class="card-title mb-0" style="font-size: 15px;">
-                                                            {{ $groupDisplayName }}
-                                                        </h5>
-                                                        <hr>
-                                                        <div class="row">
-                                                            @foreach ($permissions as $permission)
-                                                                <div class="col-6" style="font-size: 13px;">
-                                                                    <input type="checkbox" name="permissions[]"
-                                                                        value="{{ $permission->uuid }}"
-                                                                        id="add_perm_{{ $permission->uuid }}">
-                                                                    {{ $permission->display_name ?? $permission->name }}
-                                                                </div>
+                                        
+                                        <!-- Basic Information Card -->
+                                        <div class="card border-0 shadow-sm mb-4">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary mb-3">
+                                                    <i class="bi bi-info-circle me-2"></i>Basic Information
+                                                </h6>
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-tag me-1"></i>@lang('app.role')
+                                                        </label>
+                                                        <input type="text" class="form-control" name="name" placeholder="@lang('app.role')" required>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-card-text me-1"></i>@lang('app.display_name')
+                                                        </label>
+                                                        <input type="text" class="form-control" name="display_name" placeholder="@lang('app.display_name')" required>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-building me-1"></i>@lang('app.department')
+                                                        </label>
+                                                        <select class="form-control form-select" name="department_id" required>
+                                                            <option value="" disabled selected>@lang('app.select_department')</option>
+                                                            @foreach ($departments as $department)
+                                                                @if ($department->status == 1)
+                                                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                                                @endif
                                                             @endforeach
-                                                        </div>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-file-text me-1"></i>@lang('app.description')
+                                                        </label>
+                                                        <textarea class="form-control" name="description" placeholder="@lang('app.description')" rows="1"></textarea>
                                                     </div>
                                                 </div>
-                                            @endforeach
+                                            </div>
                                         </div>
-                                        <div class="modal-footer mt-4">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">@lang('app.close')</button>
-                                            <button type="submit" class="btn btn-primary"
-                                                id="submitBtn">@lang('app.submit')</button>
+
+                                        <!-- Permissions Card -->
+                                        <div class="card border-0 shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary mb-3">
+                                                    <i class="bi bi-shield-check me-2"></i>@lang('app.permission')
+                                                </h6>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover permission-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="module-header">
+                                                                    <i class="bi bi-grid-3x3-gap me-2"></i>MODUL
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-list-ul d-block mb-1"></i>
+                                                                    <span>List</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-plus-circle d-block mb-1"></i>
+                                                                    <span>Create</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-pencil-square d-block mb-1"></i>
+                                                                    <span>Edit</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-trash d-block mb-1"></i>
+                                                                    <span>Delete</span>
+                                                                </th>
+                                                                <th class="text-center action-header">
+                                                                    <i class="bi bi-eye d-block mb-1"></i>
+                                                                    <span>View</span>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($groupedPermissions as $groupDisplayName => $permissions)
+                                                                @php
+                                                                    $permissionsByDisplayName = [];
+                                                                    foreach ($permissions as $permission) {
+                                                                        $displayName = $permission->display_name ?? $permission->name;
+                                                                        if (!isset($permissionsByDisplayName[$displayName])) {
+                                                                            $permissionsByDisplayName[$displayName] = [];
+                                                                        }
+                                                                        $permissionsByDisplayName[$displayName][] = $permission;
+                                                                    }
+                                                                    $subGroupCount = count($permissionsByDisplayName);
+                                                                @endphp
+                                                                
+                                                                @if ($subGroupCount > 1)
+                                                                    <!-- Main Group Header -->
+                                                                    <tr class="table-primary">
+                                                                        <td colspan="6" class="fw-bold">
+                                                                            <i class="bi bi-folder2-open me-2"></i>{{ $groupDisplayName }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    
+                                                                    <!-- Sub-groups -->
+                                                                    @foreach ($permissionsByDisplayName as $displayName => $subPermissions)
+                                                                        @php
+                                                                            $permissionsByAction = [
+                                                                                'list' => null,
+                                                                                'create' => null,
+                                                                                'edit' => null,
+                                                                                'delete' => null,
+                                                                                'view' => null
+                                                                            ];
+                                                                            
+                                                                            foreach ($subPermissions as $permission) {
+                                                                                $permName = strtolower($permission->name);
+                                                                                if (str_contains($permName, 'list') || str_contains($permName, 'index')) {
+                                                                                    $permissionsByAction['list'] = $permission;
+                                                                                } elseif (str_contains($permName, 'create') || str_contains($permName, 'add') || str_contains($permName, 'store')) {
+                                                                                    $permissionsByAction['create'] = $permission;
+                                                                                } elseif (str_contains($permName, 'edit') || str_contains($permName, 'update')) {
+                                                                                    $permissionsByAction['edit'] = $permission;
+                                                                                } elseif (str_contains($permName, 'delete') || str_contains($permName, 'destroy')) {
+                                                                                    $permissionsByAction['delete'] = $permission;
+                                                                                } elseif (str_contains($permName, 'view') || str_contains($permName, 'show')) {
+                                                                                    $permissionsByAction['view'] = $permission;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        
+                                                                        <tr class="permission-row">
+                                                                            <td class="module-name ps-4">
+                                                                                <i class="bi bi-chevron-right me-2 text-primary"></i>
+                                                                                <span class="fw-semibold">{{ $displayName }}</span>
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['list'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['list']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['list']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['create'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['create']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['create']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['edit'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['edit']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['edit']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['delete'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['delete']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['delete']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['view'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['view']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['view']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @else
+                                                                    <!-- Single sub-group -->
+                                                                    @foreach ($permissionsByDisplayName as $displayName => $subPermissions)
+                                                                        @php
+                                                                            $permissionsByAction = [
+                                                                                'list' => null,
+                                                                                'create' => null,
+                                                                                'edit' => null,
+                                                                                'delete' => null,
+                                                                                'view' => null
+                                                                            ];
+                                                                            
+                                                                            foreach ($subPermissions as $permission) {
+                                                                                $permName = strtolower($permission->name);
+                                                                                if (str_contains($permName, 'list') || str_contains($permName, 'index')) {
+                                                                                    $permissionsByAction['list'] = $permission;
+                                                                                } elseif (str_contains($permName, 'create') || str_contains($permName, 'add') || str_contains($permName, 'store')) {
+                                                                                    $permissionsByAction['create'] = $permission;
+                                                                                } elseif (str_contains($permName, 'edit') || str_contains($permName, 'update')) {
+                                                                                    $permissionsByAction['edit'] = $permission;
+                                                                                } elseif (str_contains($permName, 'delete') || str_contains($permName, 'destroy')) {
+                                                                                    $permissionsByAction['delete'] = $permission;
+                                                                                } elseif (str_contains($permName, 'view') || str_contains($permName, 'show')) {
+                                                                                    $permissionsByAction['view'] = $permission;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        
+                                                                        <tr class="permission-row">
+                                                                            <td class="module-name">
+                                                                                <i class="bi bi-folder2-open me-2 text-primary"></i>
+                                                                                <span class="fw-semibold">{{ $displayName }}</span>
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['list'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['list']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['list']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['create'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['create']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['create']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['edit'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['edit']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['edit']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['delete'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['delete']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['delete']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            
+                                                                            <td class="text-center">
+                                                                                @if($permissionsByAction['view'])
+                                                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                                                        <input type="checkbox" class="form-check-input custom-switch" name="permissions[]" 
+                                                                                            value="{{ $permissionsByAction['view']->uuid }}" 
+                                                                                            id="add_perm_{{ $permissionsByAction['view']->uuid }}"
+                                                                                            role="switch">
+                                                                                    </div>
+                                                                                @else
+                                                                                    <span class="text-muted">—</span>
+                                                                                @endif
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @endif
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </form>
+                                </div>
+                                <div class="modal-footer bg-light border-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="bi bi-x-circle me-1"></i>@lang('app.close')
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn" form="addRoleForm">
+                                        <i class="bi bi-check-circle me-1"></i>@lang('app.submit')
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -465,7 +723,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th class="module-header">
-                                                                    <i class="bi bi-grid-3x3-gap me-2"></i>Module
+                                                                    <i class="bi bi-grid-3x3-gap me-2"></i>MODUL
                                                                 </th>
                                                                 <th class="text-center action-header">
                                                                     <i class="bi bi-list-ul d-block mb-1"></i>
