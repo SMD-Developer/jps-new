@@ -156,11 +156,23 @@
                                         </td>
                                         <td>
                                             {{-- Add View Receipt Button --}}
-                                            <a href="{{ route('third.party.view.receipt', ['application_id' => $payment->application_id, 'payment_uuid' => $payment->uuid]) }}" 
-                                                class="btn btn-sm btn-primary"
-                                                style="border-radius: 15px; padding: 4px 12px; font-weight: 600; font-size: 12px; white-space: nowrap;">
-                                                    <i class="fa fa-eye"></i> Lihat Resit
-                                            </a>
+                                            @if($payment->receipt_viewed_at)
+                                                <button class="btn btn-sm btn-secondary" style="white-space: nowrap;" disabled>
+                                                    <i class="fa fa-check"></i> Telah Dicetak
+                                                </button>
+                                            @else
+                                               <a href="{{ route('third.party.view.receipt', [
+                                                        'application_id' => $payment->application_id,
+                                                        'payment_uuid' => $payment->uuid
+                                                    ]) }}"
+                                                class="btn btn-sm btn-primary view-receipt-btn"
+                                                data-payment-id="{{ $payment->id }}"
+                                                onclick="disableReceiptButton(this)"
+                                                style="white-space: nowrap;">
+                                                    <i class="fa fa-eye"></i> Cetak Resit
+                                                </a>
+                                            @endif
+
                                         </td>
                                     </tr>
                                 @empty
@@ -190,4 +202,14 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function disableReceiptButton(button) {
+    button.classList.remove('btn-primary');
+    button.classList.add('btn-secondary');
+    button.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Memuat...';
+    button.style.pointerEvents = 'none';
+}
+</script>
+
 @endsection

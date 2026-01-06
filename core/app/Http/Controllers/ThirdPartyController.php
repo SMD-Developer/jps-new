@@ -1981,6 +1981,11 @@ class ThirdPartyController extends Controller
             ->where('payment_type', 'third_party')
             ->where('payment_status', 'completed')
             ->firstOrFail();
+
+        if (is_null($completedPayment->receipt_viewed_at)) {
+            $completedPayment->receipt_viewed_at = now();
+            $completedPayment->save();
+        }
         
         if ($completedPayment) {
             $application->payment_status = $completedPayment->payment_status;

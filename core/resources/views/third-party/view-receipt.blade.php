@@ -327,7 +327,9 @@
         <div class="container pb-5">
             <div class="row mb-5 justify-content-end">
                 <div class="col-auto">
-                    <button class="btn btn-success" id="backButton" onClick="window.history.back()">Kembali</button>
+                    <a href="{{ url()->previous() }}" class="btn btn-success">
+                        Kembali
+                    </a>
                 </div>
                 <div class="col-auto" style="display:none;">
                     <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
@@ -376,6 +378,8 @@
         document.getElementById('printButton').addEventListener('click', function() {
             window.print();
         });
+
+        
     </script>
 
 @endsection

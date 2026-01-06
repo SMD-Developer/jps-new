@@ -50,7 +50,8 @@ class Payment extends Model
         'fpx_checksum',
         'status_message',
         'user_id',
-        'voucher_number'
+        'voucher_number',
+        'receipt_viewed_at'
     ];
     
     
