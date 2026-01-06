@@ -3226,11 +3226,16 @@ public function updateUserDetails(Request $request, $id)
     
     public function manageState(){
         $perPage = request('per_page', 10);
+        $search = request('search');
         
-         $states = DB::table('state')
-        ->select('idnegeri', 'negeri', 'negeri_code', 'status')
-       ->orderBy('idnegeri', 'desc')
-        ->paginate($perPage);
+        $states = DB::table('state')
+            ->select('idnegeri', 'negeri', 'negeri_code', 'status')
+            ->when($search, function($query, $search) {
+                return $query->where('negeri', 'like', "%{$search}%")
+                            ->orWhere('negeri_code', 'like', "%{$search}%");
+            })
+            ->orderBy('idnegeri', 'desc')
+            ->paginate($perPage);
         
         return view('settings.state-list', compact(
             'states', 
@@ -3479,10 +3484,16 @@ public function updateUserDetails(Request $request, $id)
     public function manageDistrict()
     {
         $perPage = request('per_page', 10);
+        $search = request('search');
 
         $districts = DB::table('district')
             ->select('district.iddaerah', 'district.idnegeri', 'district.daerah', 'district.daerah_code', 'district.stat', 'state.negeri')
             ->join('state', 'district.idnegeri', '=', 'state.idnegeri')
+            ->when($search, function($query, $search) {
+                return $query->where('district.daerah', 'like', "%{$search}%")
+                            ->orWhere('district.daerah_code', 'like', "%{$search}%")
+                            ->orWhere('state.negeri', 'like', "%{$search}%");
+            })
             ->orderBy('district.iddaerah', 'desc')
             ->paginate($perPage);
 
@@ -3560,6 +3571,7 @@ public function updateUserDetails(Request $request, $id)
     {
         try {
             $perPage = $request->get('per_page', 10);
+            $search = $request->get('search');
 
             $divisions = DB::table('division as div')
                 ->leftJoin('district as d', 'div.daerah_id', '=', 'd.iddaerah')
@@ -3571,6 +3583,11 @@ public function updateUserDetails(Request $request, $id)
                     'div.status',
                     'd.daerah as district_name'
                 )
+                ->when($search, function($query, $search) {
+                    return $query->where('div.mukim', 'like', "%{$search}%")
+                                ->orWhere('div.mukim_code', 'like', "%{$search}%")
+                                ->orWhere('d.daerah', 'like', "%{$search}%");
+                })
                 ->orderBy('div.idmukim', 'desc')
                 ->paginate($perPage);
 

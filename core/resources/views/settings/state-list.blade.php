@@ -88,19 +88,34 @@
                         </div>
 
                         <!-- Records Per Page Selection -->
-                        <div class="d-flex align-items-baseline mb-3 mx-3">
-                            <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
-                            <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
-                                style="width: auto">
-                                <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                                <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
-                            </select>
+                        <div class="d-flex align-items-baseline justify-content-between mb-3 mx-3">
+                            <!-- Left side: Records Per Page -->
+                            <div class="d-flex align-items-baseline">
+                                <label for="perPageSelect" class="me-2">@lang('app.show') :&nbsp; </label>
+                                <select id="perPageSelect" class="form-select form-select-sm" onchange="changePerPage()"
+                                    style="width: auto">
+                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                    <option value="500" {{ $perPage == 500 ? 'selected' : '' }}>500</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Right side: Search Box -->
+                            <div class="d-flex align-items-baseline">
+                                <label for="searchInput" class="me-2">@lang('app.search') :&nbsp; </label>
+                                <input type="text" 
+                                    id="searchInput" 
+                                    class="form-control form-control-sm" 
+                                    placeholder="Search by state name or code..." 
+                                    value="{{ request('search') }}"
+                                    style="width: 300px">
+                            </div>
                         </div>
 
+    
                         <!-- Table Section -->
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
@@ -406,6 +421,34 @@
             $('#editStateForm').attr('action', '/states/' + id);
             $('#editStateModal').modal('show');
         }
+
+
+        function searchStates() {
+        let searchValue = document.getElementById('searchInput').value;
+        let perPage = document.getElementById('perPageSelect').value;
+        let url = new URL(window.location.href);
+        url.searchParams.set('page', 1);
+        url.searchParams.set('per_page', perPage);
+    
+            if(searchValue) {
+                url.searchParams.set('search', searchValue);
+            } else {
+                url.searchParams.delete('search');
+            }
+            
+            window.location.href = url.toString();
+        }
+
+        // Add event listener for search input
+        $(document).ready(function() {
+            $('#searchInput').on('keyup', function(e) {
+                clearTimeout(window.searchTimeout);
+                window.searchTimeout = setTimeout(function() {
+                    searchStates();
+                }, 500); 
+            });
+            
+        });
 
         $(document).ready(function() {
             // Handle Add State Form Submission

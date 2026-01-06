@@ -117,7 +117,6 @@ if(! function_exists('getMenus')){
                                 'text' => 'Permohonan Yang Diluluskan',
                                 'route' => url('approved-application-list'),
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
-                                'permission' => 'applications.view-list' 
                             ],
                         ]
                     ],
@@ -137,7 +136,6 @@ if(! function_exists('getMenus')){
                                 'route' => url('claim-list'),
                                 'menu_active' => request()->is('claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
                             ],
 
                             [
@@ -146,7 +144,6 @@ if(! function_exists('getMenus')){
                                 'route' => url('approved-claim-list'),
                                 'menu_active' => request()->is('approved-claim-list') ? 'active' : '',
                                 'badge_class' => 'badge bg-danger text-secondary',
-                                'permission' => 'claim-contribution.view-list'
                             ],
                         ]
                     ],
@@ -171,7 +168,6 @@ if(! function_exists('getMenus')){
                                 'text' => trans('Selesai'),
                                 'route' =>  url('admin/payments'),
                                 'menu_active' => request()->is('admin/payments') ? 'active' : '',
-                                'permission' => 'payments.view-list'
                             ],
                         ]
                     ],
@@ -318,7 +314,6 @@ if(! function_exists('getMenus')){
                                 'active_dropdown' => request()->is('new-assignment-reviewer') ? 'menu-is-opening menu-open' : '',
                                 'active_dropdown_menu' => request()->is('new-assignment-reviewer') ? 'block' : 'none',
                                 'menu_active' => request()->is('new-assignment-reviewer') ? 'active' : '',
-                                'permission' => 'collection-payment.view-list',
                                 'is_dropdown' => true,
                                 'submenus' => [
                                     [
@@ -335,7 +330,6 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-list-all-application-contribution-ditch-search'),
                                 'menu_active' => request()->is('report-list-all-application-contribution-ditch-search') || 
                                                 request()->is('report-list-all-application-contribution-ditch') ? 'active' : '',
-                                'permission'=> 'report.account.type'
                             ],
                             [
                                 'icon' => 'money',
@@ -343,28 +337,24 @@ if(! function_exists('getMenus')){
                                 'route' =>  url('report-collection-contribution-ditch-by-district-search'),
                                 'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search') ||
                                                 request()->is('report-collection-contribution-ditch-by-district') ? 'active' : '',
-                                'permission' => 'report.district'
                             ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
                                 'route' =>  url('daily-receipt-report-type-finance'),
                                 'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
-                                'permission' => 'daily-payment-receipt.view-list',
                             ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('app.summary_of_overall_receipt_report'),
                                 'route' =>  url('payment-summary-report-search'),
                                 'menu_active' => request()->is('payment-summary-report-search') ? 'active' : '',
-                                'permission'  => 'payment.summary.report'
                             ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
                                 'route' =>  url('claim-contribution-report-search'),
                                 'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
-                                'permission' => 'contribution-payment.view-list',
                             ],
                         ]
                     ],
