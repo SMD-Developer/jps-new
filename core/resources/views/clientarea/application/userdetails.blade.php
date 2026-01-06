@@ -276,36 +276,59 @@
                             <div class="form-group">
                                 <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
                                 @if ($application->land_grant)
+                                    @php
+                                        $fileName = preg_replace(
+                                            '/^\d+_[a-f0-9]+_/',
+                                            '',
+                                            basename($application->land_grant)
+                                        );
+                                    @endphp
                                     <a href="{{ url('pdf/' . basename($application->land_grant)) }}"
                                         target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                        {{ basename($application->land_grant) }}
+                                        {{ $fileName }}
                                     </a>
                                 @else
-                                    <p>No file uploaded</p>
+                                    <p>Tiada Fail Dipilih</p>
                                 @endif
                             </div>
 
                             <div class="form-group">
                                 <label for="pelan">@lang('app.planning_permission_plan')</label>
                                 @if ($application->permission_plan)
+                                    @php
+                                        $fileName = preg_replace(
+                                            '/^\d+_[a-f0-9]+_/',
+                                            '',
+                                            basename($application->permission_plan)
+                                        );
+                                    @endphp
                                     <a href="{{ url('pdf/' . basename($application->permission_plan)) }}"
                                         target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                        {{ basename($application->permission_plan) }}
+                                        {{ $fileName }}
                                     </a>
                                 @else
-                                    <p>No file uploaded</p>
+                                    <p>Tiada Fail Dipilih</p>
                                 @endif
                             </div>
 
                             <div class="form-group">
                                 <label for="sokongan">@lang('app.letter_of_support')</label>
                                 @if ($application->letter_of_support)
+                                     @php
+                                        $fileName = preg_replace(
+                                            '/^\d+_[a-f0-9]+_/',
+                                            '',
+                                            basename($application->letter_of_support)
+                                        );
+                                    @endphp
                                     <a href="{{ url('pdf/' . basename($application->letter_of_support)) }}"
-                                        target="_blank"><i class="fa fa-file-pdf-o"></i>
-                                        {{ basename($application->letter_of_support) }}
+                                        target="_blank"
+                                        style="color: #007bff; text-decoration: none; font-weight: 500;">
+                                            <i class="fa fa-file-pdf-o"></i>
+                                            {{ $fileName }}
                                     </a>
                                 @else
-                                    <p>No file uploaded</p>
+                                    <p>Tiada Fail Dipilih</p>
                                 @endif
                             </div>
 
