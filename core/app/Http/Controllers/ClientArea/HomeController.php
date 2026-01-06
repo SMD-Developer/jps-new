@@ -1174,13 +1174,11 @@ class HomeController extends Controller {
                 'deposit_date' => 'required|date|before_or_equal:today',
                 'transaction' => [
                     'required',
-                    'regex:/^[A-Za-z0-9\-]+$/',
                     'max:50',
                     'unique:applications,transaction,' . $request->application_id,
                 ],
                 'voucher_number' => [  
                     'required',
-                    'regex:/^[A-Za-z0-9\-]+$/',
                     'max:50',
                 ],
                 'receipt' => 'required|file|mimes:pdf|max:15360',
