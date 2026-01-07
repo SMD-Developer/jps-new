@@ -38,7 +38,6 @@
         padding: 10px;
     }
 
-    /* Add this CSS rule to show dropdown when 'show' class is added */
     .dropdown-content.show {
         display: block;
     }
@@ -99,7 +98,6 @@
 
                         <div class="card-body">
                             <form action="{{ route('third.party.search-results') }}" method="GET" id="searchForm">
-                                @csrf
                                 <!-- District Dropdown -->
                                 <div class="form-group">
                                     <label>Daerah</label>
@@ -145,12 +143,10 @@
                                         </button>
 
                                         <div id="applicantDropdown" class="dropdown-content">
-                                            <!-- Search Input -->
                                             <input type="text" class="dropdown-search"
                                                 placeholder="{{ __('app.search_applicant') }}" id="applicantSearchInput"
                                                 onkeyup="filterApplicants()">
 
-                                            <!-- List of Applicants -->
                                             <div id="applicantsList">
                                                 @foreach ($applicants as $applicant)
                                                     <a href="#"
@@ -161,7 +157,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Hidden Input to Store Selected Applicant -->
                                     <input type="hidden" id="applicant_id" name="applicant_id"
                                         value="{{ old('applicant_id') }}">
                                 </div>
@@ -172,30 +167,25 @@
                                         value="{{ old('application_date') }}">
                                 </div>
 
-                                <!-- Lot/PT Dropdown -->
+                                <!-- ✅ FIXED: Lot/PT Dropdown -->
                                 <div class="form-group">
                                     <label>{{ __('app.lot_pt') }}</label>
                                     <div class="dropdown-container">
-                                        <!-- Button to open dropdown -->
                                         <button type="button" class="dropdown-btn" data-target="lotPtDropdown"
-                                            onclick="toggleDropdown('lotPtDropdown')">
+                                            onclick="toggleDropdown('lotPtDropdown', event)">
                                             <span id="selectedLotPtText">{{ __('app.select_lot_pt') }}</span>
                                             <span>▼</span>
                                         </button>
 
-                                        <!-- Lot/PT Dropdown -->
                                         <div id="lotPtDropdown" class="dropdown-content">
-                                            <!-- Search Input -->
                                             <input type="text" class="dropdown-search"
                                                 placeholder="{{ __('app.search_lot_pt') }}" id="lotPtSearchInput"
                                                 onkeyup="filterLotPt()">
 
-                                            <!-- List of Lot/PT options -->
                                             <div id="lotPtList">
                                                 @foreach ($lotPts ?? [] as $lotPt)
-                                                    <a href="#"
-                                                        onclick="selectLotPt('{{ $lotPt->lot_number ?? $lotPt->name }}', '{{ $lotPt->id }}')">
-                                                        {{ $lotPt->lot_number ?? $lotPt->name }}
+                                                    <a href="#" onclick="selectLotPt('{{ $lotPt->lot_number }}')">
+                                                        {{ $lotPt->lot_number }}
                                                     </a>
                                                 @endforeach
                                             </div>
@@ -214,37 +204,103 @@
                                 <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">{{ __('app.reset') }}</button>
                             </form>
                         </div>
+                        {{-- ✅ Show results table only if search was performed --}}
+                        @if($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_id', 'reference_number', 'application_date']))
+                        <div class="card-body mt-4">
+                            <h5 class="mb-3">Hasil Carian</h5>
+                            
+                            <p class="mb-3"><strong>{{ $results->total() }}</strong> Permohonan Dijumpai</p>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th>Bil</th>
+                                            <th>Nama Pemohon</th>
+                                            <th>Lot/PT</th>
+                                            <th>Tarikh Permohonan</th>
+                                            <th>{{ __('app.reference_number') }}</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($results->count() > 0)
+                                            @foreach ($results as $key => $result)
+                                                <tr>
+                                                    <td>{{ $results->firstItem() + $key }}</td>
+                                                    <td>{{ $result->applicant ?? 'N/A' }}</td>
+                                                    <td>{{ $result->land_lot ?? 'N/A' }}, {{ $result->landDivision->mukim ?? 'N/A' }}, DAERAH {{ $result->landDistrict->daerah ?? 'N/A' }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
+                                                    <td>
+                                                        <a href="#">{{ $result->refference_no }}</a>
+                                                    </td>
+                                                    <td>
+                                                        @switch($result->status)
+                                                            @case('approved')
+                                                                <span class="badge bg-success">Diluluskan</span>
+                                                                @break
+                                                            @case('rejected')
+                                                                <span class="badge bg-danger">Tolak</span>
+                                                                @break
+                                                            @case('pending')
+                                                                <span class="badge bg-warning">Belum selesai</span>
+                                                                @break
+                                                            @default
+                                                                <span class="badge bg-secondary">N/A</span>
+                                                        @endswitch
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted py-4">
+                                                    Tiada Permohonan Ditemui
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @if($results->count() > 0)
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <p class="text-muted mb-0">
+                                            Menunjukkan {{ $results->firstItem() }} hingga {{ $results->lastItem() }} daripada {{ $results->total() }} rekod
+                                        </p>
+                                    </div>
+                                    <div>
+                                        {{ $results->links('pagination::bootstrap-5') }}
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-        </div>
     </section>
 
     <script>
-        // Store all divisions data for client-side filtering
         const allDivisions = @json($divisions ?? []);
 
         document.addEventListener('DOMContentLoaded', function() {
             const applicantLinks = document.querySelectorAll('#applicantsList a');
             applicantLinks.forEach(link => {
                 const userName = link.textContent.trim();
-                const clientId = link.getAttribute('onclick').match(/selectApplicant\('([^']+)',\s*(\d+)/);
+                const clientId = link.getAttribute('onclick').match(/selectApplicant\('([^']+)',\s*'?(\d+)'?/);
                 if (clientId && clientId.length >= 3) {
                     link.setAttribute('data-name', clientId[1]);
                     link.setAttribute('data-id', clientId[2]);
                 }
             });
 
-            // Same for lot_pt links if they exist
+            // ✅ FIXED: Simplified lot_pt links
             const lotPtLinks = document.querySelectorAll('#lotPtList a');
             lotPtLinks.forEach(link => {
                 const lotName = link.textContent.trim();
-                const lotId = link.getAttribute('onclick').match(/selectLotPt\('([^']+)',\s*'([^']+)'/);
-                if (lotId && lotId.length >= 3) {
-                    link.setAttribute('data-name', lotId[1]);
-                    link.setAttribute('data-id', lotId[2]);
-                }
+                link.setAttribute('data-name', lotName);
             });
         });
 
@@ -253,16 +309,13 @@
             const divisionSelect = document.getElementById('division');
             const selectedDistrictId = districtSelect.value;
 
-            // Clear current division options
             divisionSelect.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
 
             if (selectedDistrictId) {
-                // Filter divisions based on selected district
                 const filteredDivisions = allDivisions.filter(division => {
                     return division.daerah_id == selectedDistrictId;
                 });
 
-                // Add filtered divisions to the division dropdown
                 filteredDivisions.forEach(division => {
                     const option = document.createElement('option');
                     option.value = division.idmukim || '';
@@ -272,10 +325,9 @@
             }
         }
 
-        
-
         function toggleDropdown(dropdownId, event) {
             if (event) {
+                event.preventDefault();
                 event.stopPropagation();
             }
             
@@ -289,26 +341,7 @@
             const dropdown = document.getElementById(dropdownId);
             if (dropdown) {
                 dropdown.classList.toggle("show");
-            } else {
-                console.error("Dropdown element not found:", dropdownId);
             }
-        }
-
-        function filterDropdown(dropdownId) {
-            const input = document.querySelector(`#${dropdownId} .dropdown-search`);
-            if (!input) return;
-
-            const filter = input.value.toUpperCase();
-            const links = document.querySelectorAll(`#${dropdownId} a`);
-
-            links.forEach(link => {
-                const txtValue = link.textContent || link.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    link.style.display = "";
-                } else {
-                    link.style.display = "none";
-                }
-            });
         }
 
         function filterApplicants() {
@@ -355,7 +388,8 @@
             if (dropdown) dropdown.classList.remove("show");
         }
 
-        function selectLotPt(name, id) {
+        // ✅ FIXED: Simplified selectLotPt function
+        function selectLotPt(name) {
             const textElement = document.getElementById("selectedLotPtText");
             const idField = document.getElementById("lot_pt_grant");
             const dropdown = document.getElementById("lotPtDropdown");
@@ -365,51 +399,40 @@
             if (dropdown) dropdown.classList.remove("show");
         }
 
-
         function resetSearchForm() {
-            // Reset dropdown text displays
             const lotPtText = document.getElementById("selectedLotPtText");
             if (lotPtText) lotPtText.innerText = "{{ __('app.select_lot_pt') }}";
 
             const applicantText = document.getElementById("selectedApplicantText");
             if (applicantText) applicantText.innerText = "{{ __('app.select_applicant_list') }}";
 
-            // Reset hidden fields
             const lotPtField = document.getElementById("lot_pt_grant");
             if (lotPtField) lotPtField.value = "";
 
             const applicantIdField = document.getElementById("applicant_id");
             if (applicantIdField) applicantIdField.value = "";
 
-            // Reset date and text inputs
             const dateField = document.getElementById("application_date");
             if (dateField) dateField.value = "";
 
             const refField = document.getElementById("reference_number");
             if (refField) refField.value = "";
 
-            // Reset district dropdown
             const districtField = document.getElementById("district");
             if (districtField) districtField.selectedIndex = 0;
 
-            // Reset division dropdown
             const divisionField = document.getElementById("division");
             if (divisionField) {
                 divisionField.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
             }
 
-            // Close any open dropdowns
             const dropdowns = document.getElementsByClassName("dropdown-content");
             for (let i = 0; i < dropdowns.length; i++) {
                 dropdowns[i].classList.remove('show');
             }
 
-            // Redirect to fresh page to clear search results
-            window.location.href = "{{ route('search-filter') }}";
+            window.location.href = "{{ route('third.party.search') }}";
         }
-
-
-        
 
         document.addEventListener('click', function(event) {
             if (!event.target.matches('.dropdown-btn') &&
@@ -424,7 +447,5 @@
                 }
             }
         });
-
-
     </script>
 @endsection

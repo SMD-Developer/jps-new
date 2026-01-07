@@ -2690,16 +2690,16 @@ class HomeController extends Controller {
         
         // ✅ FIX: Remove duplicate lot numbers efficiently
         $lotPts = Application::select('land_lot')
-    ->whereNotNull('land_lot')
-    ->where('land_lot', '!=', '')
-    ->groupBy('land_lot')
-    ->orderBy('land_lot', 'asc')
-    ->get()
-    ->map(function($item) {
-        return (object)[
-            'lot_number' => $item->land_lot
-        ];
-    });
+            ->whereNotNull('land_lot')
+            ->where('land_lot', '!=', '')
+            ->groupBy('land_lot')
+            ->orderBy('land_lot', 'asc')
+            ->get()
+            ->map(function($item) {
+                return (object)[
+                    'lot_number' => $item->land_lot
+                ];
+            });
             
         $results = collect();  
         

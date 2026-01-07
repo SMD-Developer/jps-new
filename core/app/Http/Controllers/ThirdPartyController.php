@@ -1610,24 +1610,62 @@ class ThirdPartyController extends Controller
             
         $applicants = ClientRegisterModel::select('client_id', 'userName')->get();
         
-        $lotPts = Application::select('id', 'land_lot as lot_number')
+        $lotPts = Application::select('land_lot')
             ->whereNotNull('land_lot')
-            ->distinct('land_lot')
+            ->where('land_lot', '!=', '')
+            ->groupBy('land_lot')
             ->orderBy('land_lot', 'asc')
-            ->get();
+            ->get()
+            ->map(function($item) {
+                return (object)[
+                    'lot_number' => $item->land_lot
+                ];
+            });
+        
+        // Initialize empty paginated collection
+        $results = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 50);
             
-        // If it's a POST request, redirect to results page with search parameters
-        if ($request->isMethod('post')) {
-            return redirect()->route('search-results')->withInput();
+        // Check if ANY search parameter is filled
+        if ($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_id', 'reference_number', 'application_date'])) {
+            $query = Application::query();
+
+            if ($request->filled('lot_pt_grant')) {
+                $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
+            }
+            
+            if ($request->filled('division')) {
+                $query->where('land_state', $request->division);
+            }
+            
+            if ($request->filled('district')) {
+                $query->where('land_district', $request->district);
+            }
+            
+            if ($request->filled('applicant_id')) {
+                $query->where('user_id', $request->applicant_id);
+            }
+            
+            if ($request->filled('reference_number')) {
+                $query->where('refference_no', 'like', '%' . $request->reference_number . '%');
+            }
+            
+            if ($request->filled('application_date')) {
+                $query->whereDate('created_at', $request->application_date);
+            }
+            
+            $results = $query->with(['applicant', 'landDivision', 'landDistrict', 'payment'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(50)
+                ->appends($request->except('page'));
         }
         
-        // For GET request, show the search form
         return view('third-party.search-filter', [
             'title' => $title,
             'divisions' => $divisions,
             'districts' => $districts,
             'applicants' => $applicants,
             'lotPts' => $lotPts,
+            'results' => $results,
             'request' => $request
         ]);
     }
