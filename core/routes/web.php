@@ -61,7 +61,7 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
             Route::get('/my-requests', 'ThirdPartyController@myRequests')->name('my.requests');
             Route::get('/my-payments', 'ThirdPartyController@myPayments')->name('my.payments');
             Route::post('/submit-request', 'ThirdPartyController@submitRequest')->name('submit.request');
-            Route::get('/download-receipt/{request_id}', 'ThirdPartyController@downloadReceipt')->name('download.receipt');
+            Route::post('/download-receipt/{request_id}', 'ThirdPartyController@downloadReceipt')->name('download.receipt');
             Route::get('/application/search', 'ThirdPartyController@searchFilter' )->name('search');
             Route::get('/search-results', 'ThirdPartyController@searchResults')->name('search-results');
             Route::post('/store', 'ThirdPartyController@storeThirdPartyInfo')->name('store');
