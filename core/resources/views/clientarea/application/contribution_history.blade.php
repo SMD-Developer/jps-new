@@ -245,7 +245,7 @@
                                                        <button class="btn btn-primary btn-sm" 
                                                                 disabled
                                                                 style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
-                                                            <strong>{{ __('Telah Dicetak') }}</strong>
+                                                            <strong>{{ __('Resit Bayaran Dicetak') }}</strong>
                                                         </button>
                                                     @else
                                                         <a href="{{ route('reprint.payment.receipt', $application->id) }}"

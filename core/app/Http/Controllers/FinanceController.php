@@ -533,6 +533,7 @@ class financeController extends Controller {
                 'payments.amount as payment_amount',
                 'payments.payment_date',
                 'payments.method as methods',
+                'payments.buyer_name',
                 'payments.created_at as payment_created_at',
                 'payments.application_id', 
                 'payments.payment_type'
@@ -709,7 +710,6 @@ class financeController extends Controller {
         $endDate = $request->input('end_date');
         $printType = $request->input('print_type');
         
-        // Get payment method display name
         $selectedPaymentMethodName = 'Semua';
         if ($paymentMethod && $paymentMethod != '') {
             $paymentMethods = [
@@ -725,7 +725,6 @@ class financeController extends Controller {
             $selectedPaymentMethodName = $paymentMethods[$paymentMethod] ?? $paymentMethod;
         }
         
-        // Get payment status display name
         $selectedPaymentStatusName = 'Semua';
         if ($paymentStatus && $paymentStatus != '') {
             $paymentStatuses = [
@@ -736,34 +735,40 @@ class financeController extends Controller {
             $selectedPaymentStatusName = $paymentStatuses[$paymentStatus] ?? ucfirst($paymentStatus);
         }
         
-        $query = DB::table('applications')
+        $query = DB::table('payments')
+            ->join('applications', 'payments.application_id', '=', 'applications.id')
             ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
             ->join('district', 'applications.district', '=', 'district.iddaerah')
             ->join('division', 'applications.land_state', '=', 'division.idmukim')
             ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
-            ->join('payments', 'payments.application_id', '=', 'applications.id')
             ->select(
-                'applications.*',
+                'applications.id as application_id',
+                'applications.refference_no',
+                'applications.applicant',
+                'applications.land_lot',
+                'applications.district',
+                'applications.land_state',
                 'client_register.userName as client_name',
                 'client_register.accountType as applicant_type',
                 'district.daerah as district_name',
                 'division.mukim as division_name',
                 'account_types.name as account_type_name',
+                'payments.uuid as payment_id',
                 'payments.payment_status',
                 'payments.method as payment_method',
                 'payments.amount as payment_amount',
                 'payments.transaction_id',
                 'payments.receipt_number',
                 'payments.seller_order_no',
+                'payments.payment_type',
                 'payments.created_at as payment_created_at'
             );
         
         // Filter by payment method if selected
         if ($paymentMethod && $paymentMethod != '') {
-            // If EFT is selected, include EFT, FPX_B2B, and FPX_B2C (but NOT government vouchers)
+            // If EFT is selected, include EFT, FPX_B2B, and FPX_B2C (including government vouchers)
             if ($paymentMethod === 'EFT') {
-                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C'])
-                    ->where('client_register.accountType', '!=', '3'); // Exclude government agencies
+                $query->whereIn('payments.method', ['EFT', 'FPX_B2B', 'FPX_B2C']);
             } 
             // If Baucar Bayaran Agensi Kerajaan is selected
             elseif ($paymentMethod === 'baucar_kerajaan') {
@@ -780,7 +785,6 @@ class financeController extends Controller {
             $query->where('payments.payment_status', $paymentStatus);
         }
         
-        // Date range filter
         if ($startDate && $endDate) {
             try {
                 $startDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay()->toDateTimeString();
@@ -793,13 +797,12 @@ class financeController extends Controller {
         }
         
         $applications = $query->orderBy('payments.created_at', 'desc')->get();
-
         
         $currentDateTime = \Carbon\Carbon::now();
         $currentDate = $currentDateTime->format('d/m/Y');
         $currentTime = $currentDateTime->format('h:i:s A');
         
-        // Format dates for display
+
         $formattedStartDate = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
         $formattedEndDate = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
         
@@ -807,7 +810,7 @@ class financeController extends Controller {
         $totalAmount = $applications->sum('payment_amount');
         $totalRecords = $applications->count();
         
-        // Group by payment method for summary
+
         $paymentMethodSummary = $applications->groupBy('payment_method')->map(function ($group) {
             return [
                 'count' => $group->count(),
@@ -815,7 +818,6 @@ class financeController extends Controller {
             ];
         });
         
-        // Group by payment status for summary
         $paymentStatusSummary = $applications->groupBy('payment_status')->map(function ($group) {
             return [
                 'count' => $group->count(),

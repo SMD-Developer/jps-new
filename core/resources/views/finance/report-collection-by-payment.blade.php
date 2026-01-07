@@ -592,19 +592,20 @@
                                                     @endif
                                                 </td>
 
-                                                <td>
-                                                    @if($application->applicant_type == 3)
-                                                        BAUCAR BAYARAN
-                                                    @else
-                                                        @php
-                                                            $method = strtolower($application->payment_method ?? '');
-                                                        @endphp
+                                               <td>
+                                                    @php
+                                                        $method = strtolower($application->payment_method ?? '');
+                                                        $accountType = $application->applicant_type;
+                                                    @endphp
 
-                                                        @if(in_array($method, ['cheque', 'bank_draf', 'bank_draft']))
-                                                            MANUAL
-                                                        @else
-                                                            {{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}
-                                                        @endif
+                                                    @if($accountType == 3 && $method === 'eft')
+                                                        BAUCAR BAYARAN
+                                                    @elseif(in_array($method, ['cheque', 'bank_draf', 'bank_draft']))
+                                                        MANUAL
+                                                    @elseif(in_array($method, ['fpx_b2c', 'fpx_b2b', 'eft']))
+                                                        {{ str_replace('FPX_', '', strtoupper($application->payment_method ?? 'N/A')) }}
+                                                    @else
+                                                        {{ strtoupper($application->payment_method ?? 'N/A') }}
                                                     @endif
                                                 </td>
 

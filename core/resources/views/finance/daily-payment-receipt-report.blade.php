@@ -582,7 +582,13 @@
                                                     {{ strtoupper($application->division_name) }},
                                                     DAERAH {{ strtoupper($application->district_name) }}, SELANGOR
                                                 </td>
-                                                <td rowspan="{{ $rowspan }}">{{ strtoupper($application->applicant ?? 'N/A') }}</td>
+                                                <td rowspan="{{ $rowspan }}">
+                                                    @if($isThirdParty && !empty($application->buyer_name))
+                                                        {{ strtoupper($application->buyer_name) }}
+                                                    @else
+                                                        {{ strtoupper($application->applicant ?? 'N/A') }}
+                                                    @endif
+                                                </td>
                                                 <td rowspan="{{ $rowspan }}">{{ strtoupper($application->account_type_name) }}</td>
                                                 <td>G001</td>
                                                 <td>{{ $kodHasil }}</td>

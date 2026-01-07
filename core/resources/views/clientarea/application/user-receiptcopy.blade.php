@@ -452,7 +452,7 @@
                 printButton.disabled = true;
                 printButton.style.opacity = '0.6';
                 printButton.style.cursor = 'not-allowed';
-                printButton.innerHTML = 'Printed';
+                printButton.innerHTML = 'Telah Dicetak';
                 printButton.classList.remove('btn-primary');
                 printButton.classList.add('btn-secondary');
             }
@@ -525,7 +525,8 @@
         console.log('UUID:', uuid);
         console.log('Status:', status === 'true' ? '✓ PRINTED' : '✗ NOT PRINTED');
         if (timestamp) {
-            console.log('Printed at:', new Date(parseInt(timestamp)).toLocaleString());
+            console.log('Printed at:', new Date(parseInt(t
+            imestamp)).toLocaleString());
         }
         if (date) {
             console.log('Printed date:', new Date(date).toLocaleString());
