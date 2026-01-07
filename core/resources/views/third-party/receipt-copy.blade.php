@@ -367,8 +367,66 @@
             });
         });
 
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if receipt was already printed
+            const receiptId = '{{ $application->id }}';
+            const printedKey = 'receipt_printed_' + receiptId;
+            
+            if (localStorage.getItem(printedKey) === 'true') {
+                const printBtn = document.getElementById('printButton');
+                printBtn.disabled = true;
+                printBtn.classList.remove('btn-primary');
+                printBtn.classList.add('btn-secondary');
+                printBtn.innerHTML = '<i class="fa fa-check"></i> Telah Dicetak';
+            }
+        });
+
         document.getElementById('printButton').addEventListener('click', function() {
+            const receiptId = '{{ $application->id }}';
+            const printedKey = 'receipt_printed_' + receiptId;
+            
+            // Print the page
             window.print();
+            
+            // Mark as printed in localStorage
+            localStorage.setItem(printedKey, 'true');
+            
+            // Disable button
+            this.disabled = true;
+            this.classList.remove('btn-primary');
+            this.classList.add('btn-secondary');
+            this.innerHTML = '<i class="fa fa-check"></i> Telah Dicetak';
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            html2canvas(document.getElementById('receipt-content'), {
+                scale: 2, 
+                useCORS: true,
+                allowTaint: true,
+                width: document.getElementById('receipt-content').offsetWidth,
+                height: document.getElementById('receipt-content').offsetHeight
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgProps = doc.getImageProperties(imgData);
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                doc.save('Receipt_ThirdParty_' + '{{ $application->refference_no }}' + '.pdf');
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate PDF. Please try again.');
+            });
         });
     </script>
 @endsection
