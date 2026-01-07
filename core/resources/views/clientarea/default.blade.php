@@ -676,8 +676,18 @@ body {
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i> @lang('app.search_c')</a>
                 </li> -->
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa fa-book"></i> @lang('app.users_manual')</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="manualDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-book"></i> @lang('app.users_manual')
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ url('INDIVIDU.pdf') }}" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PENDAFTARAN PENGGUNA -INDIVIDU
+                        </a>
+                        <a class="dropdown-item" href="{{ url('AGENSI.pdf') }}" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PENDAFTARAN PENGGUNA-PEMAJU DAN AGENSI
+                        </a>
+                    </div>
                 </li>
                 <li class="nav-item" data-bs-toggle="modal" data-bs-target="#faqModal">
                     <a class="nav-link" href="#"><i class="fa fa-question-circle"></i> @lang('app.frequently_asked_questions_(faq)')</a>
