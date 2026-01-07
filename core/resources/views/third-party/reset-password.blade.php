@@ -111,6 +111,7 @@ p{
             background-color: #497EB9;
             border-radius: 12px;
             border: 2px solid #7E8389;
+            margin-left: 371px;
         }
 
         .stick-bottom {
@@ -932,6 +933,41 @@ $bg = get_setting_value('login_bg') != '' ? image_url(get_setting_value('login_b
             form.reset(); // clears inputs
         }
     }
+</script>
+<script>
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', function() {
+        const target = document.getElementById(this.dataset.target);
+        if (target.type === 'password') {
+            target.type = 'text';
+            this.classList.remove('bi-eye-slash');
+            this.classList.add('bi-eye');
+        } else {
+            target.type = 'password';
+            this.classList.remove('bi-eye');
+            this.classList.add('bi-eye-slash');
+        }
+    });
+});
+</script>
+</script>
+<script>
+    $(document).ready(function() {
+        $('.toggle-password').on('click', function() {
+            const targetId = $(this).data('target');
+            const input = $('#' + targetId);
+            const type = input.attr('type') === 'password' ? 'text' : 'password';
+        input.attr('type', type);
+        $(this).toggleClass('bi-eye-slash bi-eye');
+    });
+});
+
+function resetLoginForm(el) {
+    let form = el.closest('.col-lg-4').querySelector('form');
+    if(form){
+        form.reset(); 
+    }
+}
 </script>
 <script>
 document.querySelectorAll('.toggle-password').forEach(icon => {
