@@ -50,6 +50,18 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
         Route::get('/login', 'ThirdPartyController@showLoginForm')->name('login');
         Route::post('/login', 'ThirdPartyController@login')->name('login.submit');
         Route::post('/logout', 'ThirdPartyController@logout')->name('logout');
+
+        Route::get('/forgot-password', 'ThirdPartyController@showForgotPasswordForm')
+            ->name('password.request');
+            
+        Route::post('/forgot-password', 'ThirdPartyController@sendResetLinkEmail')
+            ->name('password.email');
+            
+        Route::get('/reset-password/{token}', 'ThirdPartyController@showResetPasswordForm')
+            ->name('password.reset');
+            
+        Route::post('/reset-password', 'ThirdPartyController@updatePassword')
+            ->name('password.update');
        
         
         // ===== EXISTING Routes - Now Protected with Middleware =====

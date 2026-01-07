@@ -707,69 +707,58 @@ body {
                                 {{ session('success') }}
                             </div>
                         @endif
-
-                        {{-- Login Form --}}
-                        <form method="POST" action="{{ route('third.party.login.submit') }}">
-                            @csrf
-                            <div class="mb-3">
-                                <input type="email" name="email" class="form-control"
-                                placeholder="Emel"
+                        {{-- Forgot Password Form --}}
+                    <form method="POST" action="{{ route('third.party.password.email') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Emel</label>
+                            <input type="email" 
+                                name="email" 
+                                id="email"
+                                class="form-control"
+                                placeholder="Masukkan alamat emel anda"
                                 style="border-radius:25px !important; padding: 12px 20px;"
+                                value="{{ old('email') }}"
                                 required>
+                            <small class="text-muted">Kami akan menghantar pautan set semula kata laluan ke emel anda.</small>
+                        </div>
+                        
+                        <div class="row text-center mt-4">
+                            <div class="col-6 pe-2 mb-3">
+                                <button type="submit"
+                                    class="btn"
+                                    style="
+                                        width:85%;
+                                        background:#3949e7;
+                                        color:white;
+                                        border-radius:15px;
+                                        border:2px solid #bfc9ff;
+                                        padding:5px 0;
+                                        font-size: small;
+                                    ">
+                                    Hantar Pautan
+                                </button>
                             </div>
 
-                            <div class="mb-3 position-relative">
-                                <input type="password" 
-                                    name="password" 
-                                    id="password"
-                                    class="form-control"
-                                    placeholder="Kata Laluan"
-                                    style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
-                                    required>
-                                <i class="bi bi-eye-slash toggle-password position-absolute" 
-                                data-target="password" 
-                                style="cursor: pointer; right: 15px; top: calc(27% - 2px); transform: translateY(-50%);"></i>
+                            <div class="col-6 ps-2 mb-3">
+                                <a href="{{ route('third.party.login') }}"
+                                    class="btn"
+                                    style="
+                                        width:85%;
+                                        background:#6c757d;
+                                        color:white;
+                                        border-radius:15px;
+                                        border:2px solid #9ca3aa;
+                                        padding:5px 0;
+                                        font-size: small;
+                                        display: inline-block;
+                                        text-decoration: none;
+                                    ">
+                                    Kembali
+                                </a>
                             </div>
-
-                            <div class="forgot float-right mt-2">
-                                <a class="mb-0" href="{{ url('third-party/forgot-password') }}" style="text-decoration: none; float: right;">@lang('app.lost_password') ?</a>
-                            </div>
-                            
-                            <div class="row text-center mt-3">
-                                <div class="col-6 pe-2 mb-3">
-                                    <button type="submit"
-                                        class="btn"
-                                        style="
-                                            width:85%;
-                                            background:#3949e7;
-                                            color:white;
-                                            border-radius:15px;
-                                            border:2px solid #bfc9ff;
-                                            padding:5px 0;
-                                            font-size: small;
-                                        ">
-                                        Log masuk
-                                    </button>
-                                </div>
-
-                                <div class="col-6 ps-2 mb-3">
-                                    <button type="button"
-                                        onclick="this.form.reset();"
-                                        class="btn"
-                                        style="
-                                            width:85%;
-                                            background:#3949e7;
-                                            color:white;
-                                            border-radius:15px;
-                                            border:2px solid #bfc9ff;
-                                            padding:5px 0;
-                                            font-size: small;
-                                        ">
-                                        Isi Semula
-                                    </button>
-                                </div>
-                            </div>    
-                        </form>
+                        </div>    
+                    </form>
                     </div>
                     <footer>
                             <div class="row">

@@ -27,6 +27,7 @@ use App\Notifications\NewReceiptRequestSubmitted;
 
 
 
+
 class ThirdPartyController extends Controller
 {
     public function storeThirdPartyInfo(Request $request)
@@ -1451,17 +1452,17 @@ class ThirdPartyController extends Controller
                 'confirm_password' => 'required|same:password',
                 'terms'            => '',
             ], [
-                'name.required'             => 'Name is required.',
-                'email.required'            => 'Email is required.',
-                'email.email'               => 'Please enter a valid email address.',
+                'name.required'             => 'Nama diperlukan.',
+                'email.required'            => 'E-mel diperlukan.',
+                'email.email'               => 'Sila masukkan alamat e-mel yang sah.',
                 'id_card_number.required'   => 'ID card number is required.',
-                'address.required'          => 'Address is required.',
-                'password.required'         => 'Password is required.',
-                'password.min'              => 'Password must be at least 8 characters.',
-                'confirm_password.required' => 'Please confirm your password.',
-                'confirm_password.same'     => 'Passwords do not match.',
-                'terms.required'            => 'You must accept the terms and conditions.',
-                'terms.accepted'            => 'You must accept the terms and conditions.',
+                'address.required'          => 'Nombor kad pengenalan diperlukan.',
+                'password.required'         => 'Kata laluan diperlukan.',
+                'password.min'              => 'Kata laluan mestilah sekurang-kurangnya 8 aksara.',
+                'confirm_password.required' => 'Sila sahkan kata laluan anda.',
+                'confirm_password.same'     => 'Kata laluan tidak sepadan.',
+                'terms.required'            => 'Anda mesti menerima terma dan syarat.',
+                'terms.accepted'            => 'Anda mesti menerima terma dan syarat.',
             ]);
 
             // If validation fails
@@ -2078,6 +2079,56 @@ class ThirdPartyController extends Controller
         
         return view('third-party.view-receipt', compact('application'));
     }
+
+
+    public function showForgotPasswordForm()
+    {
+        return view('third-party.password');
+    }
+
+
+        public function sendResetLinkEmail(Request $request)
+        {
+            $request->validate([
+                'email' => 'required|email'
+            ]);
+
+
+            $user = DB::table('third_party_users')
+                ->where('email', $request->email)
+                ->first();
+
+            if (!$user) {
+                return back()->withErrors(['email' => 'Emel tidak dijumpai dalam sistem.']);
+            }
+
+            // Generate token
+            $token = Str::random(64);
+
+            // Delete old tokens for this email
+            DB::table('third_party_password_resets')
+                ->where('email', $request->email)
+                ->delete();
+
+            // Insert new token
+            DB::table('third_party_password_resets')->insert([
+                'email' => $request->email,
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
+
+            // Send email
+            try {
+                Mail::send('emails.third-party-reset-password', ['token' => $token, 'email' => $request->email], function($message) use($request){
+                    $message->to($request->email);
+                    $message->subject('Set Semula Kata Laluan - Portal e-CP');
+                });
+
+                return back()->with('success', 'Pautan set semula kata laluan telah dihantar ke emel anda.');
+            } catch (\Exception $e) {
+                return back()->withErrors(['email' => 'Gagal menghantar emel. Sila cuba lagi.']);
+            }
+        }
 
 
 
