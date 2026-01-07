@@ -2131,6 +2131,74 @@ class ThirdPartyController extends Controller
         }
 
 
+    public function showResetPasswordForm($token)
+    {
+        $resetData = DB::table('third_party_password_resets')
+            ->where('token', $token)
+            ->first();
+
+        if (!$resetData) {
+            return redirect()->route('third.party.login')
+                ->withErrors(['token' => 'Pautan set semula kata laluan tidak sah.']);
+        }
+
+        $createdAt = Carbon::parse($resetData->created_at);
+        if ($createdAt->addHours(24)->isPast()) {
+            return redirect()->route('third.party.login')
+                ->withErrors(['token' => 'Pautan set semula kata laluan telah tamat tempoh.']);
+        }
+
+        return view('third-party.reset-password', [
+            'token' => $token,
+            'email' => $resetData->email
+        ]);
+    }
+
+
+    
+    // Update password
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed'
+        ]);
+
+        // Verify token
+        $resetData = DB::table('third_party_password_resets')
+            ->where('email', $request->email)
+            ->where('token', $request->token)
+            ->first();
+
+        if (!$resetData) {
+            return back()->withErrors(['token' => 'Token tidak sah.']);
+        }
+
+        // Check if token is expired
+        $createdAt = Carbon::parse($resetData->created_at);
+        if ($createdAt->addHours(24)->isPast()) {
+            return back()->withErrors(['token' => 'Token telah tamat tempoh.']);
+        }
+
+        // Update password
+        DB::table('third_party_users')
+            ->where('email', $request->email)
+            ->update([
+                'password' => Hash::make($request->password),
+                'updated_at' => Carbon::now()
+            ]);
+
+        // Delete used token
+        DB::table('third_party_password_resets')
+            ->where('email', $request->email)
+            ->delete();
+
+        return redirect()->route('third.party.login')
+            ->with('success', 'Kata laluan berjaya ditetapkan. Sila log masuk.');
+    }
+
+
 
 
 }
