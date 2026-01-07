@@ -576,6 +576,11 @@ body {
         padding: 20px;
     }
 
+    .icon-text2 {
+        background: transparent !important;
+    }
+
+
     @media only screen and (max-width: 600px) {
         .heading1{
             font-size: 13px;
