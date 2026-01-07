@@ -647,6 +647,10 @@ body {
         z-index: 10;
         cursor: pointer;
     }
+    ::placeholder {
+        font-size: 16px;
+    }
+
 </style>
 </head>
 <body class="login-page">
@@ -683,7 +687,7 @@ body {
                 <h3>JPS NEGERI SELANGOR</h3>
             </div>
         </div>
-        <div class="row fill">
+       <div class="row fill">
                 <div class="col-md-2 "></div>
                     @if (session('error'))
                         <div class="alert alert-danger">{!! session('error') !!}</div>
@@ -711,53 +715,51 @@ body {
                     <form method="POST" action="{{ route('third.party.password.email') }}">
                         @csrf
                         <div class="mb-3">
-                            <label for="email" class="form-label">Emel</label>
                             <input type="email" 
                                 name="email" 
                                 id="email"
                                 class="form-control"
-                                placeholder="Masukkan alamat emel anda"
+                                placeholder="E-mel"
                                 style="border-radius:25px !important; padding: 12px 20px;"
                                 value="{{ old('email') }}"
                                 required>
-                            <small class="text-muted">Kami akan menghantar pautan set semula kata laluan ke emel anda.</small>
                         </div>
                         
                         <div class="row text-center mt-4">
-                            <div class="col-6 pe-2 mb-3">
+                            <div class="col-12">
                                 <button type="submit"
                                     class="btn"
                                     style="
-                                        width:85%;
+                                        width:60%;
                                         background:#3949e7;
                                         color:white;
                                         border-radius:15px;
                                         border:2px solid #bfc9ff;
-                                        padding:5px 0;
+                                        padding:11px 0;
                                         font-size: small;
+                                        margin-bottom:20px;
+                                        font-size:14px;
+                                        white-space: nowrap;
                                     ">
-                                    Hantar Pautan
+                                    Tetapkan Semula Kata Laluan
                                 </button>
                             </div>
-
-                            <div class="col-6 ps-2 mb-3">
-                                <a href="{{ route('third.party.login') }}"
-                                    class="btn"
-                                    style="
-                                        width:85%;
-                                        background:#6c757d;
-                                        color:white;
-                                        border-radius:15px;
-                                        border:2px solid #9ca3aa;
-                                        padding:5px 0;
-                                        font-size: small;
-                                        display: inline-block;
-                                        text-decoration: none;
-                                    ">
-                                    Kembali
+                        </div>
+                        
+                        <div class="row text-center">
+                            <div class="col-12">
+                                <a href="{{ route('third.party.login') }}" 
+                                   style="
+                                       color:#fff;
+                                       text-decoration:none;
+                                       font-size:14px;
+                                       margin-bottom:60px;
+                                       display:inline-block;
+                                   ">
+                                    Login Masuk
                                 </a>
                             </div>
-                        </div>    
+                        </div>
                     </form>
                     </div>
                     <footer>
@@ -774,7 +776,6 @@ body {
                     </footer>       
 
                 </div>
-
         </div>
 
     </div>

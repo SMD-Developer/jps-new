@@ -440,7 +440,7 @@ body {
         font-size:13px;
     }
     .form-control{
-        font-size:13px;
+        font-size:16px;
         border-radius: 25px !important;
     }
     input#captcha {
@@ -709,67 +709,78 @@ body {
                         @endif
 
                         {{-- Login Form --}}
-                        <form method="POST" action="{{ route('third.party.login.submit') }}">
-                            @csrf
-                            <div class="mb-3">
-                                <input type="email" name="email" class="form-control"
+                         <form method="POST" action="{{ route('third.party.login.submit') }}">
+                        @csrf
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <input type="email"
+                                name="email"
+                                class="form-control"
                                 placeholder="Emel"
-                                style="border-radius:25px !important; padding: 12px 20px;"
+                                style="border-radius:25px; padding:12px 20px;"
                                 required>
-                            </div>
+                        </div>
 
-                            <div class="mb-3 position-relative">
-                                <input type="password" 
-                                    name="password" 
-                                    id="password"
-                                    class="form-control"
-                                    placeholder="Kata Laluan"
-                                    style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
-                                    required>
-                                <i class="bi bi-eye-slash toggle-password position-absolute" 
-                                data-target="password" 
-                                style="cursor: pointer; right: 15px; top: calc(27% - 2px); transform: translateY(-50%);"></i>
-                            </div>
+                        <!-- Password -->
+                        <div class="mb-2 position-relative">
+                            <input type="password"
+                                name="password"
+                                id="password"
+                                class="form-control"
+                                placeholder="Kata Laluan"
+                                style="border-radius:25px; padding:12px 45px 12px 20px;"
+                                required>
 
-                            <div class="forgot float-right mt-2">
-                                <a class="mb-0" href="{{ url('third-party/forgot-password') }}" style="text-decoration: none; float: right;">@lang('app.lost_password') ?</a>
-                            </div>
-                            
-                            <div class="row text-center mt-3">
-                                <div class="col-6 pe-2 mb-3">
-                                    <button type="submit"
-                                        class="btn"
+                            <i class="bi bi-eye-slash toggle-password position-absolute"
+                            data-target="password"
+                            style="cursor:pointer; right:18px; top:50%; transform:translateY(-50%);">
+                            </i>
+                        </div>
+
+                        <!-- Forgot password -->
+                        <div class="text-end mb-3">
+                            <a href="{{ url('third-party/forgot-password') }}"
+                             style="text-decoration:none; font-size:16px; color:white !important;"> 
+                                Lupa Kata Laluan ?
+                            </a>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="row justify-content-center text-center">
+                            <div class="col-6 mb-2">
+                                <button type="submit"
+                                        class="btn w-100"
                                         style="
-                                            width:85%;
                                             background:#3949e7;
                                             color:white;
                                             border-radius:15px;
                                             border:2px solid #bfc9ff;
-                                            padding:5px 0;
-                                            font-size: small;
+                                            padding:6px 0;
+                                            font-size:14px;
                                         ">
-                                        Log masuk
-                                    </button>
-                                </div>
+                                    Log masuk
+                                </button>
+                            </div>
 
-                                <div class="col-6 ps-2 mb-3">
-                                    <button type="button"
+                            <div class="col-6 mb-2">
+                                <button type="button"
                                         onclick="this.form.reset();"
-                                        class="btn"
+                                        class="btn w-100"
                                         style="
-                                            width:85%;
                                             background:#3949e7;
                                             color:white;
                                             border-radius:15px;
                                             border:2px solid #bfc9ff;
-                                            padding:5px 0;
-                                            font-size: small;
+                                            padding:6px 0;
+                                            font-size:14px;
                                         ">
-                                        Isi Semula
-                                    </button>
-                                </div>
-                            </div>    
-                        </form>
+                                    Isi Semula
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
                     </div>
                     <footer>
                             <div class="row">

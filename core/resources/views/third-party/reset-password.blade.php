@@ -111,6 +111,7 @@ p{
             background-color: #497EB9;
             border-radius: 12px;
             border: 2px solid #7E8389;
+            position: relative;
         }
 
         .stick-bottom {
@@ -163,10 +164,9 @@ p{
         body {
             background-repeat: no-repeat;
             background-size: cover;
-            /* min-height: 100vh; */
+            min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             position: relative;
         }
 
@@ -357,7 +357,7 @@ body {
     margin: 0;
     height: 100vh;
     width: 100vw; /* Ensures the width is full screen */
-    overflow: hidden; /* Prevents scrolling if unnecessary */
+    overflow-x: hidden;
 }
 
     @media (max-width: 768px) {
@@ -422,6 +422,7 @@ body {
     label:not(.form-check-label):not(.custom-file-label) {
         font-weight: 400;
         font-size: 13px;
+        color: white;
     }
     button.btn.btn-primary {
         background: #5B90E1;
@@ -567,6 +568,14 @@ body {
         margin-top: 48px
     }
 
+    .content-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 150px);
+        padding: 20px;
+    }
+
     @media only screen and (max-width: 600px) {
         .heading1{
             font-size: 13px;
@@ -610,13 +619,13 @@ body {
     }
 
    .alert.alert-danger {
-        position: absolute;
-        top: -50px;
-        left: 0px;
-        right: 0px;
-        z-index: 11; /* Above form content */
-        margin: 0;
-        padding: 0 10px;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 11;
+        margin: 0 0 15px 0;
+        padding: 10px 15px;
         font-size: 14px;
         background-color: rgba(220, 53, 69, 0.9);
         color: white;
@@ -663,7 +672,7 @@ body {
     </div>
 </nav>
 
-    <div class="container-fluid ps-0 mt-5">
+    <div class="container-fluid ps-0 mt-2">
         <div class="row ">
             <div class="col-md-2 col-5 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
@@ -679,87 +688,101 @@ body {
                 </a>    
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
-                <h2 class="">PORTAL e-CP (CARUMAN PARIT)</h2>
-                <h3>JPS NEGERI SELANGOR</h3>
+                <h2 class="heading1">PORTAL e-CP (CARUMAN PARIT)</h2>
+                <h3 class="heading2">JPS NEGERI SELANGOR</h3>
             </div>
         </div>
-        <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
 
-            {{-- Display Errors --}}
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0" style="list-style: none; padding: 0;">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        <div class="content-wrapper">
+            <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-4" style="z-index: 99999;">
 
-            @if (session('error'))
-                <div class="alert alert-danger">{!! session('error') !!}</div>
-            @endif
-
-            <h4 class="text-center mb-4">Tetapkan Kata Laluan Baharu</h4>
-
-            {{-- Reset Password Form --}}
-            <form method="POST" action="{{ route('third.party.password.update') }}">
-                @csrf
-                <input type="hidden" name="token" value="{{ $token }}">
-                <input type="hidden" name="email" value="{{ $email }}">
-
-                <div class="mb-3">
-                    <label for="password" class="form-label">Kata Laluan Baharu</label>
-                    <div class="position-relative">
-                        <input type="password" 
-                            name="password" 
-                            id="password"
-                            class="form-control"
-                            placeholder="Masukkan kata laluan baharu"
-                            style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
-                            required>
-                        <i class="bi bi-eye-slash toggle-password position-absolute" 
-                            data-target="password" 
-                            style="cursor: pointer; right: 15px; top: 50%; transform: translateY(-50%);"></i>
+                {{-- Display Errors --}}
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0" style="list-style: none; padding: 0;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
-                </div>
+                @endif
 
-                <div class="mb-3">
-                    <label for="password_confirmation" class="form-label">Sahkan Kata Laluan</label>
-                    <div class="position-relative">
-                        <input type="password" 
-                            name="password_confirmation" 
-                            id="password_confirmation"
-                            class="form-control"
-                            placeholder="Masukkan semula kata laluan"
-                            style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
-                            required>
-                        <i class="bi bi-eye-slash toggle-password position-absolute" 
-                            data-target="password_confirmation" 
-                            style="cursor: pointer; right: 15px; top: 50%; transform: translateY(-50%);"></i>
+                @if (session('error'))
+                    <div class="alert alert-danger">{!! session('error') !!}</div>
+                @endif
+
+                <h4 class="text-center mb-4 text-white">Tetapkan Kata Laluan Baharu</h4>
+
+                {{-- Reset Password Form --}}
+                <form method="POST" action="{{ route('third.party.password.update') }}">
+                    @csrf
+                    <input type="hidden" name="token" value="{{ $token }}">
+                    <input type="hidden" name="email" value="{{ $email }}">
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Kata Laluan Baharu</label>
+                        <div class="position-relative">
+                            <input type="password" 
+                                name="password" 
+                                id="password"
+                                class="form-control"
+                                placeholder="Masukkan kata laluan baharu"
+                                style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
+                                required>
+                            <i class="bi bi-eye-slash toggle-password position-absolute" 
+                                data-target="password" 
+                                style="cursor: pointer; right: 15px; top: 50%; transform: translateY(-50%); color: #6c757d;"></i>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="row text-center mt-4">
-                    <div class="col-12 mb-3">
-                        <button type="submit"
-                            class="btn"
-                            style="
-                                width:85%;
-                                background:#3949e7;
-                                color:white;
-                                border-radius:15px;
-                                border:2px solid #bfc9ff;
-                                padding:5px 0;
-                                font-size: small;
-                            ">
-                            Tetapkan Kata Laluan
-                        </button>
+
+                    <div class="mb-4">
+                        <label for="password_confirmation" class="form-label">Sahkan Kata Laluan</label>
+                        <div class="position-relative">
+                            <input type="password" 
+                                name="password_confirmation" 
+                                id="password_confirmation"
+                                class="form-control"
+                                placeholder="Masukkan semula kata laluan"
+                                style="border-radius:25px !important; padding: 12px 45px 12px 20px;"
+                                required>
+                            <i class="bi bi-eye-slash toggle-password position-absolute" 
+                                data-target="password_confirmation" 
+                                style="cursor: pointer; right: 15px; top: 50%; transform: translateY(-50%); color: #6c757d;"></i>
+                        </div>
                     </div>
-                </div>    
-            </form>
+                    
+                    <div class="row text-center mt-4">
+                        <div class="col-12 mb-3">
+                            <button type="submit"
+                                class="btn"
+                                style="
+                                    width:85%;
+                                    background:#3949e7;
+                                    color:white;
+                                    border-radius:15px;
+                                    border:2px solid #bfc9ff;
+                                    padding:11px 0;
+                                    font-size: 14px;
+                                ">
+                                Tetapkan Kata Laluan
+                            </button>
+                        </div>
+                    </div>    
+                </form>
+            </div>
         </div>
 
+        <footer>
+            <div class="row">
+                <div class="col-md-12 text-center text-light pt-3 stick-bottom">
+                    <p>@lang('Hak Cipta Terpelihara @ 2025 , Jabatan Pengairan Dan Saliran Negeri Selangor <br>
+                    Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768')</p>
+                </div>
+            </div>
+            <p class="footerForMobile">Hak Cipta Terpelihara @ 2025 , Jabatan Pengairan Dan Saliran Negeri Selangor
+                Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768
+            </p>
+        </footer>
     </div>
 {!! Html::script(asset('assets/js/jquery.min.js')) !!}
 {!! Html::script(asset('assets/js/bootstrap.min.js')) !!}
