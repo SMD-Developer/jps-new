@@ -235,18 +235,28 @@
                                                 @php
                                                     // Check if there's any reprint payment for this application
                                                     $reprintPayment = $application->payments()->where('payment_type', 'reprint')->first();
+                                                    $isReprintReceiptPrinted = $reprintPayment && $reprintPayment->receipt_viewed_at !== null;
                                                 @endphp
                                                 
                                                 @if($application->print_status_count > 0 && $reprintPayment)
-                                                    <br>
-                                                    <div class="sbtn">
+                                                <br>
+                                                <div class="sbtn">
+                                                    @if($isReprintReceiptPrinted)
+                                                       <button class="btn btn-primary btn-sm" 
+                                                                disabled
+                                                                style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
+                                                            <strong>{{ __('Telah Dicetak') }}</strong>
+                                                        </button>
+                                                    @else
                                                         <a href="{{ route('reprint.payment.receipt', $application->id) }}"
-                                                            class="btn btn-primary btn-sm"
+                                                            class="btn btn-primary btn-sm print-reprint-receipt"
+                                                            data-application-id="{{ $application->id }}"
                                                             style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
                                                             <strong>{{ __('Cetak Resit Bayaran') }}</strong>
                                                         </a>
-                                                    </div>
-                                                @endif
+                                                    @endif
+                                                </div>
+                                            @endif
                                             </td>
                                         </tr>
                                     @empty
@@ -379,7 +389,6 @@
                 button.querySelector('strong').textContent = '@lang("app.reprint_receipt")';
                 sessionStorage.setItem(`printed_${applicationId}`, 'true');
 
-                // Update print status
                 fetch('{{ route('update.print.status', '__ID__') }}'.replace('__ID__', applicationId), {
                         method: 'POST',
                         headers: {
@@ -398,7 +407,6 @@
                             button.querySelector('strong').textContent = '@lang("app.print_receipt")';
                             sessionStorage.removeItem(`printed_${applicationId}`);
                         }
-                        // Redirect to original receipt route
                         window.location.href = '{{ route('original_receipts', '__ID__') }}'
                             .replace('__ID__', applicationId);
                     })
@@ -422,4 +430,33 @@
         window.location.href = url.toString();
     });
     </script>
+    <script>
+    $(document).on('click', '.print-reprint-receipt', function(e) {
+        e.preventDefault();
+        
+        var button = $(this);
+        var applicationId = button.data('application-id');
+        var url = button.attr('href');
+        button.prop('disabled', true).css('opacity', '0.6');
+        $.ajax({
+            url: '/clientarea/applications/' + applicationId + '/mark-reprint-receipt-viewed',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                window.open(url, '_blank');
+                button.replaceWith(
+                    '<button class="btn btn-primary btn-sm" disabled ' +
+                    'style="background:#6c757d !important; border:solid 1px #6c757d; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">' +
+                    '<strong>{{ __("Telah Dicetak") }}</strong></button>'
+                );
+            },
+            error: function(xhr) {
+                alert('{{ __("Ralat berlaku. Sila cuba lagi.") }}');
+                button.prop('disabled', false).css('opacity', '1');
+            }
+        });
+    });
+</script>
 @endsection

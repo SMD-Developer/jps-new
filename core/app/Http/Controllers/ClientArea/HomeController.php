@@ -921,6 +921,36 @@ class HomeController extends Controller {
             
             return view('clientarea.application.contribution_history', compact('applications', 'perPage'));
         }
+
+
+        // In your ApplicationController or relevant controller
+        public function markReprintReceiptViewed($id)
+        {
+            try {
+                $application = Application::findOrFail($id);
+                
+                $reprintPayment = $application->payments()
+                    ->where('payment_type', 'reprint')
+                    ->first();
+                
+                if ($reprintPayment && $reprintPayment->receipt_viewed_at === null) {
+                    $reprintPayment->update([
+                        'receipt_viewed_at' => now()
+                    ]);
+                }
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Receipt marked as viewed'
+                ]);
+                
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating receipt status'
+                ], 500);
+            }
+        }
         
         public function contributionClaim(){
             $clientId = auth('user')->id(); 

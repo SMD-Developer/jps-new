@@ -326,48 +326,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <script>
-        document.getElementById('downloadButton').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            html2canvas(document.getElementById('receipt-content'), {
-                scale: 2, 
-                useCORS: true,
-                allowTaint: true,
-                width: document.getElementById('receipt-content').offsetWidth,
-                height: document.getElementById('receipt-content').offsetHeight
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const imgProps = doc.getImageProperties(imgData);
-                const pdfWidth = doc.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-                doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                doc.save('Reprint_Payment_Receipt_' + '{{ $application->refference_no }}' + '.pdf');
-            }).catch(error => {
-                console.error('Error generating PDF:', error);
-                alert('Failed to generate PDF. Please try again.');
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if receipt was already printed
+            const receiptId = '{{ $application->id }}';
+            const printedKey = 'receipt_printed_original_' + receiptId;
+            
+            if (localStorage.getItem(printedKey) === 'true') {
+                const printBtn = document.getElementById('printButton');
+                printBtn.disabled = true;
+                printBtn.classList.remove('btn-primary');
+                printBtn.classList.add('btn-secondary');
+                printBtn.innerHTML = '<i class="fa fa-check"></i> Telah Dicetak';
+                printBtn.style.cursor = 'not-allowed';
+            }
         });
 
         document.getElementById('printButton').addEventListener('click', function() {
-            const printButton = this;
-            
-            // Disable the button immediately
-            printButton.disabled = true;
-            printButton.style.opacity = '0.6';
-            printButton.style.cursor = 'not-allowed';
-            printButton.innerHTML = 'Telah Dicetak';
-            
-            // Trigger print dialog
-            window.print();
-            
+            const receiptId = '{{ $application->id }}';
+            const printedKey = 'receipt_printed_original_' + receiptId;
         
+            window.print();
+            localStorage.setItem(printedKey, 'true');
+            this.disabled = true;
+            this.classList.remove('btn-primary');
+            this.classList.add('btn-secondary');
+            this.innerHTML = '<i class="fa fa-check"></i> Telah Dicetak';
+            this.style.cursor = 'not-allowed';
         });
     </script>
     
