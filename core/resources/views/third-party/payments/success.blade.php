@@ -271,62 +271,117 @@
         const submitBtn = document.querySelector('.submit-request-after-payment');
         
         if (submitBtn) {
+            const applicationId = submitBtn.getAttribute('data-application-id');
+            
+            // ✅ AUTOMATICALLY SUBMIT REQUEST FOR LEGACY APPLICATIONS
+            autoSubmitRequest(applicationId);
+            
+            // Also keep manual button click handler as backup
             submitBtn.addEventListener('click', function() {
-                const applicationId = this.getAttribute('data-application-id');
-                
-                Swal.fire({
-                    title: 'Hantar Permohonan',
-                    html: `
-                        <div class="text-center">
-                            <p>Permohonan anda akan dihantar kepada pentadbir untuk kelulusan.</p>
-                            <p><strong>Tempoh pemprosesan: 1-3 hari bekerja</strong></p>
-                        </div>
-                    `,
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonColor: '#17a2b8',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Hantar',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Submit request
-                        fetch('{{ route("third.party.submit.request") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                application_id: applicationId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    title: 'Berjaya!',
-                                    html: `
-                                        <p>Permohonan anda telah dihantar.</p>
-                                        <p>Anda akan dimaklumkan melalui email apabila resit sudah sedia.</p>
-                                    `,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    window.location.href = '{{ route("third.party.dashboard") }}';
-                                });
-                            } else {
-                                Swal.fire('Ralat!', data.message, 'error');
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire('Ralat!', 'Sila cuba lagi.', 'error');
-                        });
-                    }
-                });
+                submitManualRequest(applicationId);
             });
         }
     });
+    
+    // Auto-submit function (runs automatically on page load)
+    function autoSubmitRequest(applicationId) {
+        fetch('{{ route("third.party.submit.request") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                application_id: applicationId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success notification
+                Swal.fire({
+                    title: 'Permohonan Dihantar!',
+                    html: `
+                        <p>Permohonan resit anda telah dihantar secara automatik.</p>
+                        <p>Anda akan dimaklumkan melalui email apabila resit sudah sedia.</p>
+                        <p><strong>Tempoh pemprosesan: 1-3 hari bekerja</strong></p>
+                    `,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 5000
+                });
+                
+                // Hide the submit button since request is already sent
+                const submitBtn = document.querySelector('.submit-request-after-payment');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fa fa-check"></i> Permohonan Telah Dihantar';
+                    submitBtn.classList.remove('btn-primary');
+                    submitBtn.classList.add('btn-success');
+                }
+            } else {
+                console.error('Auto-submit failed:', data.message);
+                // Keep button enabled for manual retry
+            }
+        })
+        .catch(error => {
+            console.error('Auto-submit error:', error);
+            // Keep button enabled for manual retry
+        });
+    }
+    
+    // Manual submit function (if user clicks button before auto-submit completes)
+    function submitManualRequest(applicationId) {
+        Swal.fire({
+            title: 'Hantar Permohonan',
+            html: `
+                <div class="text-center">
+                    <p>Permohonan anda akan dihantar kepada pentadbir untuk kelulusan.</p>
+                    <p><strong>Tempoh pemprosesan: 1-3 hari bekerja</strong></p>
+                </div>
+            `,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#17a2b8',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Hantar',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('{{ route("third.party.submit.request") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        application_id: applicationId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Berjaya!',
+                            html: `
+                                <p>Permohonan anda telah dihantar.</p>
+                                <p>Anda akan dimaklumkan melalui email apabila resit sudah sedia.</p>
+                            `,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '{{ route("third.party.dashboard") }}';
+                        });
+                    } else {
+                        Swal.fire('Ralat!', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('Ralat!', 'Sila cuba lagi.', 'error');
+                });
+            }
+        });
+    }
 </script>
 </body>
 </html>

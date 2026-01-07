@@ -1787,7 +1787,6 @@ class ThirdPartyController extends Controller
 
         $application = Application::findOrFail($request->application_id);
         
-        // Verify it's a legacy application
         if ($application->created_at >= '2025-11-16') {
             return response()->json([
                 'success' => false,
@@ -1795,7 +1794,6 @@ class ThirdPartyController extends Controller
             ]);
         }
 
-        // Verify third party has paid
         $payment = Payment::where('application_id', $request->application_id)
             ->where('third_party_id', auth('third_party')->id())
             ->where('payment_type', 'third_party')
@@ -1816,13 +1814,14 @@ class ThirdPartyController extends Controller
 
         if ($existingRequest) {
             return response()->json([
-                'success' => false,
-                'message' => 'Permohonan sudah dihantar sebelum ini.'
+                'success' => true,  
+                'message' => 'Permohonan sudah dihantar sebelum ini.',
+                'already_exists' => true  
             ]);
         }
 
         // Create receipt request
-        ReceiptRequest::create([
+        $receiptRequest = ReceiptRequest::create([  // ✅ Store in variable
             'application_id' => $request->application_id,
             'third_party_id' => auth('third_party')->id(),
             'status' => 'pending'
@@ -1836,7 +1835,7 @@ class ThirdPartyController extends Controller
             Log::warning('No Finance Admin found', ['role_id' => $financeRoleId]);
         } else {
             foreach ($financeAdmins as $admin) {
-                $admin->notify(new NewReceiptRequestSubmitted($receiptRequest));
+                $admin->notify(new NewReceiptRequestSubmitted($receiptRequest));  // ✅ Now defined
             }
         }
 
