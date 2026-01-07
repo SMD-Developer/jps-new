@@ -2688,17 +2688,24 @@ class HomeController extends Controller {
             
         $applicants = ClientRegisterModel::select('client_id', 'userName')->get();
         
-        $lotPts = Application::select('id', 'land_lot as lot_number')
-            ->whereNotNull('land_lot')
-            ->distinct('land_lot')
-            ->orderBy('land_lot', 'asc')
-            ->get();
+        // ✅ FIX: Remove duplicate lot numbers efficiently
+        $lotPts = Application::select('land_lot')
+    ->whereNotNull('land_lot')
+    ->where('land_lot', '!=', '')
+    ->groupBy('land_lot')
+    ->orderBy('land_lot', 'asc')
+    ->get()
+    ->map(function($item) {
+        return (object)[
+            'lot_number' => $item->land_lot
+        ];
+    });
             
-        $results = [];
+        $results = collect();  
         
         if ($request->isMethod('post')) {
             $query = Application::query();
-    
+
             if ($request->filled('lot_pt_grant')) {
                 $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
             }
@@ -2706,7 +2713,6 @@ class HomeController extends Controller {
             if ($request->filled('division')) {
                 $query->where('land_state', $request->division);
             }
-            
             
             if ($request->filled('district')) {
                 $query->where('land_district', $request->district);
@@ -2724,8 +2730,10 @@ class HomeController extends Controller {
                 $query->whereDate('created_at', $request->application_date);
             }
             
-            // Eager load both relationships
-            $results = $query->with(['applicant', 'division', 'districts', 'payment'])->get();
+            // ✅ FIX: Add pagination to prevent memory exhaustion
+            $results = $query->with(['applicant', 'division', 'districts', 'payment'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(50);  // Show 50 results per page
             
         }
         
@@ -2739,6 +2747,8 @@ class HomeController extends Controller {
             'request' => $request
         ]);
     }
+
+
    public function userDetails($id)
    {
        $title = __("app.user_details");

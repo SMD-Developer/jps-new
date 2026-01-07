@@ -174,8 +174,7 @@
                                     <input type="date" class="form-control" name="application_date" id="application_date"
                                         value="{{ old('application_date') }}">
                                 </div>
-
-                                <!-- Lot/PT Dropdown -->
+                                 <!-- Lot/PT Dropdown -->
                                 <div class="form-group">
                                     <label>{{ __('app.lot_pt') }}</label>
                                     <div class="dropdown-container">
@@ -194,9 +193,8 @@
                                             <!-- List of Lot/PT options -->
                                             <div id="lotPtList">
                                                 @foreach ($lotPts ?? [] as $lotPt)
-                                                    <a href="#"
-                                                        onclick="selectLotPt('{{ $lotPt->lot_number ?? $lotPt->name }}', '{{ $lotPt->id }}')">
-                                                        {{ $lotPt->lot_number ?? $lotPt->name }}
+                                                    <a href="#" onclick="selectLotPt('{{ $lotPt->lot_number }}')">
+                                                        {{ $lotPt->lot_number }}
                                                     </a>
                                                 @endforeach
                                             </div>
@@ -231,19 +229,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (isset($results) && count($results) > 0)
+                                @if (isset($results) && $results->count() > 0)
                                     @foreach ($results as $key => $result)
                                         <tr>
-                                            <td>{{ $key + 1 }}</td>
+                                            {{-- ✅ FIX: Use pagination first item index --}}
+                                            <td>{{ $results->firstItem() + $key }}</td>
                                             <td>{{ $result->applicant ?? 'N/A' }}</td>
-                                            <td>{{ $result->land_lot ?? 'N/A' }},{{ $result->division->mukim ?? 'N/A' }}, DAERAH {{$result->districts->daerah ?? 'N/A'}}</td>
-                                           <td>{{ $result->districts->daerah ?? 'N/A' }}</td>
+                                            <td>{{ $result->land_lot ?? 'N/A' }}, {{ $result->division->mukim ?? 'N/A' }}, DAERAH {{ $result->districts->daerah ?? 'N/A' }}</td>
+                                            <td>{{ $result->districts->daerah ?? 'N/A' }}</td>
                                             <td>{{ $result->division->mukim ?? 'N/A' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
                                             <td>
                                                 <a href="{{ route('apporver_view_letter', $result->id) }}">{{ $result->refference_no }}</a>
                                             </td>
-                                           <td>
+                                            <td>
                                                 @switch($result->status)
                                                     @case('approved')
                                                         Diluluskan
@@ -262,7 +261,7 @@
                                                 @endswitch
                                             </td>
 
-                                             <td>
+                                            <td>
                                                 @if($result->payment && $result->payment->payment_status === 'completed')
                                                     <a href="{{ route('user_original_receipts', ['application_id' => $result->id, 'payment_uuid' => $result->payment->uuid]) }}" 
                                                         class="btn btn-sm"
@@ -286,22 +285,35 @@
                                                     </a>
                                                 @endif
                                             </td>
-
                                         </tr>
                                     @endforeach
                                 @else
                                     @if (isset($request) && $request->isMethod('post'))
                                         <tr>
-                                            <td colspan="7" class="text-center">{{ __('Tida Pemohonan Ditemui') }}</td>
+                                            <td colspan="9" class="text-center">{{ __('Tiada Permohonan Ditemui') }}</td>
                                         </tr>
                                     @else
                                         <tr>
-                                            <!--<td colspan="7" class="text-center">{{ __('app.use_form_to_search') }}</td>-->
+                                            <td colspan="9" class="text-center text-muted">{{ __('Sila gunakan borang carian di atas') }}</td>
                                         </tr>
                                     @endif
                                 @endif
                             </tbody>
                         </table>
+
+                        {{-- ✅ ADD PAGINATION LINKS --}}
+                        @if(isset($results) && $results->count() > 0)
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <p class="text-muted mb-0">
+                                        Menunjukkan {{ $results->firstItem() }} hingga {{ $results->lastItem() }} daripada {{ $results->total() }} rekod
+                                    </p>
+                                </div>
+                                <div>
+                                    {{ $results->appends(request()->except('page'))->links('pagination::bootstrap-5') }}
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -310,7 +322,6 @@
     </section>
 
     <script>
-        // Store all divisions data for client-side filtering
         const allDivisions = @json($divisions ?? []);
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -323,16 +334,10 @@
                     link.setAttribute('data-id', clientId[2]);
                 }
             });
-
-            // Same for lot_pt links if they exist
             const lotPtLinks = document.querySelectorAll('#lotPtList a');
             lotPtLinks.forEach(link => {
                 const lotName = link.textContent.trim();
-                const lotId = link.getAttribute('onclick').match(/selectLotPt\('([^']+)',\s*'([^']+)'/);
-                if (lotId && lotId.length >= 3) {
-                    link.setAttribute('data-name', lotId[1]);
-                    link.setAttribute('data-id', lotId[2]);
-                }
+                link.setAttribute('data-name', lotName);
             });
         });
 
@@ -345,7 +350,6 @@
             divisionSelect.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
 
             if (selectedDistrictId) {
-                // Filter divisions based on selected district
                 const filteredDivisions = allDivisions.filter(division => {
                     return division.daerah_id == selectedDistrictId;
                 });
@@ -439,7 +443,7 @@
             if (dropdown) dropdown.classList.remove("show");
         }
 
-        function selectLotPt(name, id) {
+        function selectLotPt(name) {
             const textElement = document.getElementById("selectedLotPtText");
             const idField = document.getElementById("lot_pt_grant");
             const dropdown = document.getElementById("lotPtDropdown");
@@ -451,7 +455,6 @@
 
 
         function resetSearchForm() {
-            // Reset dropdown text displays
             const lotPtText = document.getElementById("selectedLotPtText");
             if (lotPtText) lotPtText.innerText = "{{ __('app.select_lot_pt') }}";
 
@@ -472,23 +475,19 @@
             const refField = document.getElementById("reference_number");
             if (refField) refField.value = "";
 
-            // Reset district dropdown
             const districtField = document.getElementById("district");
             if (districtField) districtField.selectedIndex = 0;
 
-            // Reset division dropdown
             const divisionField = document.getElementById("division");
             if (divisionField) {
                 divisionField.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
             }
 
-            // Close any open dropdowns
             const dropdowns = document.getElementsByClassName("dropdown-content");
             for (let i = 0; i < dropdowns.length; i++) {
                 dropdowns[i].classList.remove('show');
             }
 
-            // Redirect to fresh page to clear search results
             window.location.href = "{{ route('search-filter') }}";
         }
 
@@ -510,31 +509,28 @@
         });
 
         // Better event handling using addEventListener
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle all dropdown buttons
-    document.querySelectorAll('.dropdown-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const dropdownId = this.getAttribute('data-target');
-            toggleDropdown(dropdownId);
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.dropdown-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const dropdownId = this.getAttribute('data-target');
+                    toggleDropdown(dropdownId);
+                });
+            });
         });
-    });
-});
 
-function toggleDropdown(dropdownId) {
-    // Close all other dropdowns
-    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-        if (dropdown.id !== dropdownId) {
-            dropdown.classList.remove('show');
+        function toggleDropdown(dropdownId) {
+            document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                if (dropdown.id !== dropdownId) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            const dropdown = document.getElementById(dropdownId);
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
         }
-    });
-    
-    // Toggle the current dropdown
-    const dropdown = document.getElementById(dropdownId);
-    if (dropdown) {
-        dropdown.classList.toggle('show');
-    }
-}
     </script>
 @endsection
