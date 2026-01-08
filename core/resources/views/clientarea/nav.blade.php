@@ -297,11 +297,32 @@
                         <span>{{trans('app.faq')}}</span>
                     </a>
                 </li>
-                <li class="nav-item has-treeview {{ request()->is('clientarea/user-manual') ? 'menu-open' : '' }}">
-                    <a href="{{route('user_manual')}}" class="nav-link {{ request()->is('clientarea/user-manual') ? 'active' : '' }}">
-                        <i class="fa fa-book "></i>
+                <li class="nav-item has-treeview {{ request()->is('clientarea/user-manual*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('clientarea/user-manual*') ? 'active' : '' }}">
+                        <i class="fa fa-book"></i>
                         <span>{{trans('app.user_manual')}}</span>
+                        <i class="fas fa-angle-right right mt-2"></i>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ asset('Manual1.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/guide') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manual Pembayaran Bil Caruman</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ asset('Manual2.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/installation') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manual Permohonan Bil Caruman Bagi Pihak Lain</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ asset('Manual3.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/troubleshooting') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manual Permohonan Bil Caruman</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 
                 <li class="nav-item has-treeview {{ Form::menu_active('clientarea/logout') }}">
