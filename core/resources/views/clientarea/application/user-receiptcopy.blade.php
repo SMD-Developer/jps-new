@@ -434,9 +434,8 @@
             const storageKey = `payment_printed_${paymentUuid}`;
             
             console.log('Payment UUID:', paymentUuid); 
-            console.log('Payment Type:', '{{ $currentPayment->payment_type ?? $payment->payment_type }}'); // Debug log
+            console.log('Payment Type:', '{{ $currentPayment->payment_type ?? $payment->payment_type }}');
             
-            // Check if THIS specific payment (by UUID) has been printed
             function checkPrintStatus() {
                 const isPrinted = localStorage.getItem(storageKey);
                 
@@ -471,19 +470,30 @@
             checkPrintStatus();
             
             // Handle print button click
-            printButton.addEventListener('click', function() {
-                if (this.disabled) return; 
+            printButton.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent any default behavior
+                
+                if (this.disabled) {
+                    console.log('Button is disabled, cannot print');
+                    return;
+                }
+                
+                console.log('Print button clicked');
+                
+                // Save print status
                 localStorage.setItem(storageKey, 'true');
                 localStorage.setItem(storageKey + '_timestamp', Date.now().toString());
                 localStorage.setItem(storageKey + '_date', new Date().toISOString());
                 
-                console.log('Marked payment UUID', paymentUuid, 'as printed'); // Debug log
+                console.log('Marked payment UUID', paymentUuid, 'as printed');
                 
-                // Disable the button immediately
-                disablePrintButton();
-                
-                // Trigger print dialog
+                // Trigger print dialog FIRST, then disable button
                 window.print();
+                
+                // Disable button after print dialog opens
+                setTimeout(function() {
+                    disablePrintButton();
+                }, 500);
             });
             
             // Optional: Clean up very old payment records (older than 90 days)
@@ -513,29 +523,25 @@
             
             cleanupOldRecords();
         });
-
-    // Check print status of any payment by UUID
-    function checkPaymentStatus(uuid) {
-        const key = `payment_printed_${uuid}`;
-        const status = localStorage.getItem(key);
-        const timestamp = localStorage.getItem(key + '_timestamp');
-        const date = localStorage.getItem(key + '_date');
-        
-        console.log('=== Payment Print Status ===');
-        console.log('UUID:', uuid);
-        console.log('Status:', status === 'true' ? '✓ PRINTED' : '✗ NOT PRINTED');
-        if (timestamp) {
-            console.log('Printed at:', new Date(parseInt(t
-            imestamp)).toLocaleString());
+        function checkPaymentStatus(uuid) {
+            const key = `payment_printed_${uuid}`;
+            const status = localStorage.getItem(key);
+            const timestamp = localStorage.getItem(key + '_timestamp');
+            const date = localStorage.getItem(key + '_date');
+            
+            console.log('=== Payment Print Status ===');
+            console.log('UUID:', uuid);
+            console.log('Status:', status === 'true' ? '✓ PRINTED' : '✗ NOT PRINTED');
+            if (timestamp) {
+                console.log('Printed at:', new Date(parseInt(timestamp)).toLocaleString()); // Fixed syntax error
+            }
+            if (date) {
+                console.log('Printed date:', new Date(date).toLocaleString());
+            }
+            console.log('========================');
+            
+            return status === 'true';
         }
-        if (date) {
-            console.log('Printed date:', new Date(date).toLocaleString());
-        }
-        console.log('========================');
-        
-        return status === 'true';
-    }
-
     </script>
      
 @endsection
