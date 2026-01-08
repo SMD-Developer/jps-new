@@ -1721,6 +1721,7 @@ class ThirdPartyController extends Controller
             'division' => $request->division,
             'applicant_name' => $request->applicant_id ? ClientRegisterModel::find($request->applicant_id)->userName ?? '' : '',
             'lot_number' => $request->lot_pt_grant,
+            'applicant_name' => $request->applicant_name,
             'reference_number' => $request->reference_number,
             'application_date' => $request->application_date
         ];

@@ -159,6 +159,7 @@
                                     </div>
                                     <input type="hidden" id="applicant_id" name="applicant_id"
                                         value="{{ old('applicant_id') }}">
+                                    <input type="hidden" id="applicant_name" name="applicant_name" value="{{ old('applicant_name') }}">
                                 </div>
 
                                 <div class="form-group">
@@ -381,10 +382,12 @@
         function selectApplicant(name, id) {
             const textElement = document.getElementById("selectedApplicantText");
             const idField = document.getElementById("applicant_id");
+            const nameField = document.getElementById("applicant_name");
             const dropdown = document.getElementById("applicantDropdown");
 
             if (textElement) textElement.innerText = name;
             if (idField) idField.value = id;
+            if (nameField) nameField.value = name;
             if (dropdown) dropdown.classList.remove("show");
         }
 
@@ -411,6 +414,9 @@
 
             const applicantIdField = document.getElementById("applicant_id");
             if (applicantIdField) applicantIdField.value = "";
+
+            const applicantNameField = document.getElementById("applicant_name");  
+            if (applicantNameField) applicantNameField.value = "";
 
             const dateField = document.getElementById("application_date");
             if (dateField) dateField.value = "";
