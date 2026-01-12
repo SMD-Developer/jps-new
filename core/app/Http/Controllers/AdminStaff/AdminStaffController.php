@@ -33,8 +33,12 @@ class AdminStaffController extends Controller
 
     public function index()
     {
-        $totalapplication = DB::table('applications')->count(); 
-        $totalclient = DB::table('client_register')->count();
+        $totalapplication = DB::table('applications')
+        ->whereYear('created_at', 2026)
+        ->count(); 
+        $totalclient = DB::table('client_register')
+        ->whereYear('created_at', 2026)
+        ->count();
 
         $newapplication = DB::table('applications')
                     ->where('status', 'pending')
@@ -42,21 +46,23 @@ class AdminStaffController extends Controller
                     ->count();
         
         $monthapplication = DB::table('applications')
-            ->whereMonth('created_at', date('m'))
-            ->count();
+        ->whereYear('created_at', 2026)
+        ->whereMonth('created_at', date('m'))
+        ->count();
 
-        $approvedapplication = DB::table('applications')->where('status', 'approved')->count();
+        $approvedapplication = DB::table('applications')->where('status', 'approved')
+        ->whereYear('created_at', 2026)
+        ->count();
 
         $passed = DB::table('applications')->where('status', 'approved')->count();
         $rejected = DB::table('applications')->where('status', 'rejected')->count();
 
-        // Changed from 'district' to 'land_district'
         $applicationsByDistrict = DB::table('applications')
             ->select('land_district', DB::raw('count(*) as total'))
             ->groupBy('land_district')
             ->get();
 
-        // Updated to use 'land_district' instead of 'district'
+    
         $districtCounts = DB::table('applications')
             ->select('land_district', DB::raw('count(*) as count'))
             ->groupBy('land_district')
@@ -65,7 +71,7 @@ class AdminStaffController extends Controller
         $districts = [];
         foreach ($districtCounts as $item) {
             $districtInfo = DB::table('district')
-                ->where('iddaerah', $item->land_district) // Using land_district now
+                ->where('iddaerah', $item->land_district) 
                 ->first();
 
             if ($districtInfo) {
