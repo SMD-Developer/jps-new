@@ -1528,6 +1528,11 @@ class ThirdPartyController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8'
+        ], [
+            'email.required' => 'E-mel diperlukan',
+            'email.email' => 'Sila masukkan e-mel yang sah',
+            'password.required' => 'Kata laluan diperlukan',
+            'password.min' => 'Kata laluan mestilah sekurang-kurangnya 8 aksara'
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -1546,20 +1551,20 @@ class ThirdPartyController extends Controller
             
             // Regular form submission - redirect directly
             return redirect()->route('third.party.search');
-                
         }
 
         // Check if it's an AJAX request
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid credentials. Please try again.'
+                'message' => 'Bukti kelayakan tidak sah. Sila cuba lagi.'
             ], 401);
         }
 
+        // Flash error to session and redirect back
         return redirect()->back()
             ->withInput($request->only('email'))
-            ->with('error', 'Invalid credentials. Please try again.');
+            ->withErrors(['email' => 'Bukti kelayakan tidak sah. Sila cuba lagi.']);
     }
 
 

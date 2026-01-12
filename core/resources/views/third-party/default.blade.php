@@ -331,6 +331,10 @@ p{
     color: #dc3545;
 }
 
+.alert-dismissible .btn-close{
+    top: -16px !important;
+}
+
 form.loginFrm.needs-validation {
     padding: 0 20px;
 }
@@ -690,21 +694,31 @@ body {
                     @endif
                     <div class="col-lg-4 col-md-6 col-sm-8 col-xs-12 icon-text2 pt-4 pb-0 mb-0 mt-3" style="z-index: 99999;">
     
-                        {{-- Display Errors --}}
+                            {{-- Display Validation Errors --}}
                         @if ($errors->any())
-                            <div class="alert alert-danger">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <ul class="mb-0" style="list-style: none; padding: 0;">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
 
-                        {{-- Session Messages --}}
+                        {{-- Session Error Messages --}}
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {!! session('error') !!}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        {{-- Session Success Messages --}}
                         @if (session('success'))
-                            <div class="alert alert-success">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
 
