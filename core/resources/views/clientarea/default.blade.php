@@ -1217,7 +1217,7 @@ body {
                                     required>
                                 <i class="bi bi-eye-slash toggle-password mb-2" 
                                 data-target="tp_password" 
-                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; cursor: pointer; z-index: 10;"></i>
+                                style="position: absolute; right: 15px; top: 25%; transform: translateY(-50%); cursor: pointer; cursor: pointer; z-index: 10;"></i>
                             </div>
                             <small class="form-text text-muted">Minimum 8 aksara</small>
                             <div class="invalid-feedback">Password must be at least 8 characters.</div>
@@ -1242,7 +1242,7 @@ body {
                                     required>
                                 <i class="bi bi-eye-slash toggle-password" 
                                 data-target="tp_confirm_password" 
-                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; cursor: pointer; z-index: 10;"></i>
+                                style="position: absolute; right: 15px; top: 25%; transform: translateY(-50%); cursor: pointer; cursor: pointer; z-index: 10;"></i>
                             </div>
                             <div class="invalid-feedback">Passwords do not match.</div>
                         </div>

@@ -734,7 +734,7 @@ body {
 
                             <i class="bi bi-eye-slash toggle-password position-absolute"
                             data-target="password"
-                            style="cursor:pointer; right:18px; top:50%; transform:translateY(-50%);">
+                            style="cursor:pointer; right:18px; top:25%; transform:translateY(-50%);">
                             </i>
                         </div>
 
