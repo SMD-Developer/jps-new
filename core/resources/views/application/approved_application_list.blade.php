@@ -55,6 +55,257 @@
         align-items: center;
     }
 
+
+      .status-column {
+        min-width: 120px;
+    }
+
+    .status-pending {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .status-approved {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+       #aside {
+        display: flex;
+        align-items: baseline;
+    }
+
+    table.table.table-bordered.table-striped {
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .status-column .badge {
+        margin-bottom: 8px;
+    }
+
+    .status-column .performed-by {
+        display: inline-block;
+        margin-top: 4px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        margin: 5px 0;
+    }
+
+    .status-badge .badge {
+        font-size: 0.8rem;
+        padding: 8px 29px;
+        border-radius: 25px;
+        background-color: #1991EE !important;
+        color: #fff !important;
+    }
+
+    .status-badge .badge:hover {
+        opacity: 0.9;
+        cursor: pointer;
+    }
+
+    /* Highlight pending rows */
+    table.table tbody tr.pending-row {
+        background-color: #fff3cd;
+    }
+
+    .pagination {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Status column styles */
+    .status-column {
+        min-width: 120px;
+    }
+
+    .status-pending {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .status-approved {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .status-rejected {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
+    .status-na {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+    .status-returned_to_staff {
+        background-color: #ffc107;
+        color: #fff;
+    }
+
+    .log-link {
+        color: #17a2b8;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .log-link:hover {
+        color: #0e8295;
+        background-color: rgba(23, 162, 184, 0.1);
+        transform: translateY(-1px);
+        text-decoration: underline;
+    }
+
+    .log-link:active {
+        transform: translateY(0);
+    }
+
+    /* Modal styles */
+    .logs-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+        background: linear-gradient(145deg, #ffffff, #f0f4f8);
+        margin: 5% auto;
+        padding: 30px;
+        border: none;
+        width: 65%;
+        max-width: 700px;
+        min-width: 350px;
+        border-radius: 12px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        animation: slideIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .close {
+        color: #555;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .close:hover {
+        color: #000;
+    }
+
+    .log-entry {
+        border: 1px solid #e0e4e8;
+        margin-bottom: 15px;
+        padding: 20px;
+        border-radius: 8px;
+        background: #fff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .log-entry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .log-header {
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #2c3e50;
+    }
+
+    .log-details {
+        font-size: 0.85rem;
+        color: #34495e;
+        line-height: 1.6;
+    }
+
+    .user-type-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .user-type-staff {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .user-type-approver {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+    .modal-content h3 {
+        margin: 0 0 25px 0;
+        font-size: 1.5rem;
+        color: #2c3e50;
+        display: inline-block;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+    }
+
+    .status-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .status-arrow {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+
+
 </style>
 
 <div class="col-md-12 content-header">
@@ -230,6 +481,11 @@
                                             <span class="status-badge status-{{ $item->status }}">
                                                 {{ trans('app.' . $item->status) }}
                                             </span>
+                                            <div class="mt-2">
+                                                <a href="#" class="log-link" onclick="showLogs({{ $item->id }})">
+                                                    Log
+                                                </a>
+                                            </div>
                                         </td>
                                         
                                         <td>
@@ -298,7 +554,222 @@
     </div>
 </section>
 
+<!-- Logs Modal -->
+        <div id="logsModal" class="logs-modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeLogs()">×</span>
+                <h3>@lang('app.application_logs')</h3>
+                <div id="logsContent">
+                    <!-- Logs will be loaded here -->
+                </div>
+            </div>
+        </div>
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+            $(document).ready(function() {
+                $('.btn-primary').click(function() {
+                    $('table tbody tr').show();
+                });
+
+                $('.btn-alert').click(function() {
+                    $('table tbody tr').hide();
+                    $('table tbody tr').each(function() {
+                        if ($(this).find('.status-badge .badge').text().trim() ===
+                            '{{ trans('app.approved') }}') {
+                            $(this).show();
+                        }
+                    });
+                });
+
+                $('.btn-danger').click(function() {
+                    $('table tbody tr').hide();
+                    $('table tbody tr').each(function() {
+                        if ($(this).find('.sbtn a').text().trim() === '{{ trans('app.rejected') }}') {
+                            $(this).show();
+                        }
+                    });
+                });
+            });
+
+            function changePerPage() {
+                const perPage = document.getElementById('perPageSelect').value;
+                const url = new URL(window.location.href);
+                const statusFilter = url.searchParams.get('status') || '';
+                const adminStaffStatus = url.searchParams.get('admin_staff_status') || '';
+                const approverStatus = url.searchParams.get('approver_status') || '';
+
+                url.searchParams.set('page', 1);
+                url.searchParams.set('per_page', perPage);
+
+                if (statusFilter) url.searchParams.set('status', statusFilter);
+                if (adminStaffStatus) url.searchParams.set('admin_staff_status', adminStaffStatus);
+                if (approverStatus) url.searchParams.set('approver_status', approverStatus);
+
+                window.location.href = url.toString();
+            }
+
+            const applicationLogs = {};
+            @foreach ($approvedApplications as $application)
+                applicationLogs[{{ $application->id }}] = {!! json_encode(
+                    $application->logs->map(function ($log) {
+                        return [
+                            'user_type' => $log->user_type,
+                            'action' => $log->action,
+                            'status_from' => $log->status_from,
+                            'status_to' => $log->status_to,
+                            'remarks' => $log->remarks,
+                            'user_id' => $log->user_id,
+                            'user_email' => $log->user ? $log->user->email : null,
+                            'action_at' => $log->action_at ? $log->action_at->format('Y-m-d H:i:s') : null,
+                        ];
+                    }),
+                ) !!};
+            @endforeach
+
+            function formatAction(action) {
+                return action
+                    .replace(/_/g, ' ')
+                    .replace(/\b\w/g, char => char.toUpperCase());
+            }
+
+            function showLogs(applicationId) {
+                document.getElementById('logsModal').style.display = 'block';
+                const logs = applicationLogs[applicationId] || [];
+                displayLogs(logs);
+            }
+            
+        
+            const actionStatusTranslations = {
+                'approved': 'Lulus',
+                'rejected': 'Tolak',
+                'forwarded_to_approver': 'Bil Telah Dihantar ke Pelulus',
+                'Pending': 'Dalam Proses',
+                'reapply': 'Memohon Semula',
+                'Completed': 'Selesai',
+                'Created': 'Dicipta',
+                'Updated': 'Dikemaskini',
+                'awaiting_review': 'Menunggu Semakan',
+                'status_reset_for_appeal': 'Tetapan Semula Status Untuk Rayuan'
+            };
+
+            function displayLogs(logs) {
+                let html = '';
+                if (logs.length === 0) {
+                    html = '<p class="text-muted">No logs found for this application.</p>';
+                } else {
+                    const hasRejection = logs.some(log =>
+                        log.user_type === 'admin_approver' && log.status_to === 'rejected'
+                    );
+                    if (hasRejection) {
+                        html += `
+            <div class="log-entry" style="background-color: #fff8e1; border-left: 4px solid #ffc107;">
+                <div class="log-header">
+                    <div>
+                        <span class="user-type-badge" style="background-color: #6c757d;">SYSTEM</span>
+                        <strong>Status Update</strong>
+                    </div>
+                </div>
+                <div class="log-details">
+                    <div><strong>Note:</strong> Admin Staff status displayed as "In Process" because application was rejected by Approver.</div>
+                    <div class="mt-2"><small class="text-muted">This doesn't represent an actual status change in logs, but reflects the current workflow state.</small></div>
+                </div>
+            </div>
+            `;
+                    }
+                    const sortedLogs = [...logs];
+                    sortedLogs.sort((a, b) => new Date(b.action_at) - new Date(a.action_at));
+                    sortedLogs.forEach(function(log) {
+                        const userTypeBadge = log.user_type === 'admin_staff' ? 'user-type-staff' :
+                            log.user_type === 'admin_approver' ? 'user-type-approver' : 'user-type-staff';
+
+                        const actionDate = new Date(log.action_at).toLocaleString();
+                        const displayUserType = log.user_type === 'admin_staff' ? 'Penyedia' :
+                            log.user_type === 'admin_approver' ? 'Pelulus' :
+                            log.user_type === 'applicant' ? 'Pemohon' :
+                            log.user_type.toUpperCase();
+
+                        // const formattedAction = formatAction(log.action);
+                        const formattedAction = actionStatusTranslations[log.action] || 
+                       actionStatusTranslations[log.action?.toLowerCase()] ||
+                       actionStatusTranslations[log.status_to] || 
+                       actionStatusTranslations[log.status_from] || 
+                       log.action;
+
+                        // Special formatting for status changes
+                        let statusDisplay = '';
+                        if (log.status_from || log.status_to) {
+                            let fromStatus = log.status_from || 'Belum Terima';
+                            let toStatus = log.status_to || 'Belum Terima';
+                            fromStatus = fromStatus === 'pending' ? 'Dalam Proses' : 
+                            fromStatus === 'approved' ? 'Lulus' : 
+                            fromStatus === 'rejected' ? 'Tolak' : 
+                            fromStatus;
+    
+                            toStatus = toStatus === 'pending' ? 'Dalam Proses' : 
+                                      toStatus === 'approved' ? 'Lulus' : 
+                                      toStatus === 'rejected' ? 'Tolak' : 
+                                      toStatus;
+
+                            statusDisplay = `
+                            <div class="status-change">
+                                <strong>Status:</strong>
+                                <span class="badge status-${log.status_from || 'na'}">${fromStatus}</span>
+                                <span class="status-arrow">→</span>
+                                <span class="badge status-${log.status_to || 'na'}">${toStatus}</span>
+                            </div>`;
+                        }
+                        
+                        const remarkTranslations = {
+                            'Application forwarded to approver for final review': 'Bil telah dijana dan dihantar kepada pelulus',
+                            'Application approved by approver': 'Permohonan telah diluluskan dan bil telah dihantar ke pemaju',
+                            'Application resubmitted by user' : 'Permohonan dihantar semula oleh pemohon',
+                            'Staff status reset to pending after approver rejection' : 'Status penyedia ditetapkan semula kepada dalam proses selepas penolakan oleh pelulus',
+                            'Approver status reset to pending after staff re-forwarded application' : 'Status pelulus ditetapkan semula kepada "Dalam Proses" selepas penyedia menghantar semula permohonan',
+                            'Application sent to approver for review': 'Permohonan dihantar ke pelulus untuk semakan',
+                            'Approver status reset after staff resubmitted rejected application': 'Status pelulus berubah selepas permohonan ditolak dihantar semula.',
+                            'Approver status reset to pending due to appeal submission': 'Status kelulusan ditetapkan semula kepada belum selesai kerana penyerahan rayuan'
+                        };
+                        
+                        let remarksDisplay = '';
+                        if (log.remarks && log.remarks.trim() !== '') {
+                            const translatedRemark = remarkTranslations[log.remarks.trim()] || log.remarks;
+                            remarksDisplay = `<div class="mt-2"><strong>Nota:</strong> ${translatedRemark}</div>`;
+                        }
+
+                        html += `
+            <div class="log-entry">
+                <div class="log-header">
+                    <div>
+                        <span class="user-type-badge ${userTypeBadge}">${displayUserType}</span>
+                        <strong>${formattedAction}</strong>
+                    </div>
+                    <small class="text-muted">${actionDate}</small>
+                </div>
+                <div class="log-details">
+                    <div><strong>Oleh:</strong> ${log.user_email || 'Sistem'}</div>
+                    ${statusDisplay}
+                    ${remarksDisplay}
+                </div>
+            </div>`;
+                    });
+                }
+
+                document.getElementById('logsContent').innerHTML = html;
+            }
+
+            function closeLogs() {
+                document.getElementById('logsModal').style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                const modal = document.getElementById('logsModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        </script>
 <script>
     $(document).ready(function() {
     // Search button click handler

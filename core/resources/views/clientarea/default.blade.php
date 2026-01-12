@@ -656,6 +656,10 @@ body {
     z-index: 10;
 }
 
+.dropdown-item{
+    font-size: 13px !important;
+}
+
 </style>
 </head>
 <body class="login-page">
