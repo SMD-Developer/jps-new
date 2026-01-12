@@ -33,13 +33,18 @@ class ApplicationApproverController extends Controller
     public function index()
     {
         $totalapplication = DB::table('applications')
+        ->whereYear('created_at', 2026)
         ->where('forwarded_by_admin_staff', 1)
         ->count();
-        $totalclient = DB::table('client_register')->count();
+        $totalclient = DB::table('client_register')
+        ->whereYear('created_at', 2026)
+        ->count();
         $newapplication = DB::table('applications')->where('status', 'pending')
+        ->whereYear('created_at', 2026)
         ->where('forwarded_by_admin_staff', 1)
         ->count(); 
         $monthapplication = DB::table('applications')
+            ->whereYear('created_at', 2026)
             ->whereMonth('created_at', date('m'))
             ->where('forwarded_by_admin_staff', 1)
             ->count(); 
