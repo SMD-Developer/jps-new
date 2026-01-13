@@ -157,4 +157,22 @@ class DepartmentController extends Controller
         return response()->json(['success' => true, 'message' => 'FAQ updated successfully']);
     }
 
+
+    public function deleteDepartment($id)
+    {
+        try {
+            $department = Department::findOrFail($id);
+            $department->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Jabatan berjaya dipadamkan'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete department: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

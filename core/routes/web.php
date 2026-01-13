@@ -249,6 +249,7 @@ Route::group(['middleware' => 'install'], function(){
         // Route::get('department','RolesController@department')->name('department');
         Route::get('/department', [DepartmentController::class, 'index'])->name('department');
         Route::post('/department/store', [DepartmentController::class, 'store'])->name('departments.store');
+        Route::delete('/admin/department/delete/{id}', [DepartmentController::class, 'deleteDepartment'])->name('department.delete');
         Route::put('/department/update/{id}', [DepartmentController::class, 'update'])->name('departments.update');
         Route::get('staff','UsersController@staff')->name('staff');
         Route::delete('staff/{uuid}', 'UsersController@destroy')->name('staff.destroy');
