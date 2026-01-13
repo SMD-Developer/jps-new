@@ -2015,7 +2015,7 @@ class HomeController extends Controller {
             'admin_notes' => 'nullable|string',
             'cheque_number' => 'required_if:payment_method,cheque|string|max:255',
             'cheque_date' => 'required_if:payment_method,cheque|date',
-            'bank_name' => 'required_if:payment_method,cheque|string|max:255',
+            'bank_name' => 'required_if:payment_method,cheque,bank_draf|string|max:255',
             'deposit_date' => 'nullable|date',
             'transaction_id' => 'required_if:payment_method,bank_draf|string|max:255',
             'transfer_date' => 'required_if:payment_method,bank_draf|date',
@@ -2071,7 +2071,7 @@ class HomeController extends Controller {
         
             case 'bank_draf':
                 $transactionId = $request->transaction_id
-                    ? 'BD-'.$request->transaction_id
+                    ? $request->transaction_id
                     : 'BD-'.mt_rand(1000000000,9999999999);
                 break;
         
@@ -2137,10 +2137,10 @@ class HomeController extends Controller {
                 'cheque_date' => $request->cheque_date ?? null,
                 'cheque_bank_name' => $request->bank_name ?? null,
                 
-                // Bank transfer specific fields
+                // Bank Darf specific fields
                 'bank_transfer_transaction_id' => $request->transaction_id ?? null,
                 'transfer_date' => $request->transfer_date ?? null,
-                'from_bank' => $request->from_bank ?? null,
+                'bank_name' => $request->bank_name ?? null,
                 'account_number' => $request->account_number ?? null,
                 'bank_transfer_receipt_path' => $bankTransferReceiptPath ?? null,
                 

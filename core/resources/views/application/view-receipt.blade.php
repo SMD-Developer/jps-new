@@ -443,7 +443,7 @@
                                 <label for="payment_method" class="form-label">{{ trans('app.payment_method') }} <span class="text-danger">*</span></label>
                                 <select name="payment_method" id="payment_method" class="form-select" required>
                                     <option value="">{{ trans('Pilih Cara Bayaran') }}</option>
-                                    <option value="cheque">{{ trans('app.cheque') }}</option>
+                                    <option value="cheque" style="display:none;">{{ trans('app.cheque') }}</option>
                                     <option value="bank_draf">{{ trans('Bank Draf') }}</option>
                                 </select>
                             </div>
@@ -502,14 +502,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
-                                        <label for="amount" class="form-label">{{ trans('Jumlah (RM) :') }} <span class="text-danger">*</span></label>
-                                        <input type="number" name="amount" id="amount" class="form-control" placeholder="">
+                                        <label for="bank_name_transfer" class="form-label">{{ trans('Nama Bank') }}<span class="text-danger">*</span></label>
+                                        <input type="text" name="bank_name" id="bank_name_transfer" class="form-control" placeholder="">
                                     </div>
                                 </div>
-                                <div class="col-md-6" style="display:none;">
+                                <div class="col-md-6">
                                     <div class="form-group mb-3">
-                                        <label for="account_number" class="form-label">{{ trans('app.account_number') }}</label>
-                                        <input type="text" name="account_number" id="account_number" class="form-control" placeholder="{{ trans('app.enter_account_number') }}">
+                                        <label for="amount" class="form-label">{{ trans('Jumlah (RM) :') }} <span class="text-danger">*</span></label>
+                                        <input type="number" name="amount" id="amount" class="form-control" placeholder="" step="0.01">
                                     </div>
                                 </div>
                             </div>
@@ -558,25 +558,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function changePerPage() {
-            const perPage = document.getElementById('perPageSelect').value;
-            const search = '{{ request("q") }}';
-            let url = window.location.pathname + '?per_page=' + perPage;
-            if (search) url += '&q=' + encodeURIComponent(search);
-            window.location.href = url;
-        }
-
-        function changeStatusFilter() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const perPage = document.getElementById('perPageSelect').value;
-            const search = '{{ request("q") }}';
-            
-            let url = window.location.pathname + '?per_page=' + perPage + '&status=' + statusFilter;
-            if (search) url += '&q=' + encodeURIComponent(search);
-            
-            window.location.href = url;
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             const paymentMethodSelect = document.getElementById('payment_method');
             const conditionalFields = {
@@ -589,6 +570,10 @@
                     if (field) {
                         field.classList.remove('show');
                         field.style.display = 'none';
+                        // Remove required from hidden fields
+                        field.querySelectorAll('input, select').forEach(input => {
+                            input.removeAttribute('required');
+                        });
                     }
                 });
             }
@@ -612,6 +597,7 @@
             }
 
             function updateRequiredFields(method) {
+                // Remove all required attributes first
                 document.querySelectorAll('.conditional-fields input, .conditional-fields select')
                     .forEach(input => input.removeAttribute('required'));
 
@@ -621,7 +607,7 @@
                         if (f) f.setAttribute('required', 'required');
                     });
                 } else if (method === 'bank_draf') {
-                    ['transaction_id', 'transfer_date', 'amount'].forEach(id => {
+                    ['transaction_id', 'transfer_date', 'amount', 'bank_name_transfer'].forEach(id => {
                         const f = document.getElementById(id);
                         if (f) f.setAttribute('required', 'required');
                     });
@@ -660,12 +646,22 @@
                     const originalText = submitBtn.innerHTML;
 
                     let isValid = true;
+                    let errorMessages = [];
+
+                    // Only validate visible required fields
                     this.querySelectorAll('[required]').forEach(f => {
-                        if (!f.value.trim() || (f.type === 'file' && f.files && !f.files.length)) {
-                            f.classList.add('is-invalid');
-                            isValid = false;
-                        } else {
-                            f.classList.remove('is-invalid');
+                        // Check if field is visible
+                        const isVisible = f.offsetParent !== null;
+                        
+                        if (isVisible) {
+                            if (!f.value.trim()) {
+                                f.classList.add('is-invalid');
+                                isValid = false;
+                                const label = f.previousElementSibling?.textContent || f.name;
+                                errorMessages.push(label);
+                            } else {
+                                f.classList.remove('is-invalid');
+                            }
                         }
                     });
 
@@ -724,8 +720,31 @@
                 editPaymentModal.addEventListener('hidden.bs.modal', () => {
                     editPaymentForm.reset();
                     hideAllConditionalFields();
+                    // Remove validation classes
+                    editPaymentForm.querySelectorAll('.is-invalid').forEach(el => {
+                        el.classList.remove('is-invalid');
+                    });
                 });
             }
         });
+
+        function changePerPage() {
+            const perPage = document.getElementById('perPageSelect').value;
+            const search = '{{ request("q") }}';
+            let url = window.location.pathname + '?per_page=' + perPage;
+            if (search) url += '&q=' + encodeURIComponent(search);
+            window.location.href = url;
+        }
+
+        function changeStatusFilter() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const perPage = document.getElementById('perPageSelect').value;
+            const search = '{{ request("q") }}';
+            
+            let url = window.location.pathname + '?per_page=' + perPage + '&status=' + statusFilter;
+            if (search) url += '&q=' + encodeURIComponent(search);
+            
+            window.location.href = url;
+        }
     </script>
 @endsection

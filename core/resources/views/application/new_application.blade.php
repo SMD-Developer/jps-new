@@ -329,10 +329,10 @@
                                                 <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($landGrantFiles) }}
                                             </small>
                                         @else
-                                            <p style="color: #999;">No file uploaded</p>
+                                            <p style="color: #999;">Tiada Fail Dipilih</p>
                                         @endif
                                     @else
-                                        <p style="color: #999;">No file uploaded</p>
+                                        <p style="color: #999;">Tiada Fail Dipilih</p> 
                                     @endif
                                 </div>
                             </div>
@@ -365,10 +365,10 @@
                                                 <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($permissionPlanFiles) }}
                                             </small>
                                         @else
-                                            <p style="color: #999;">No file uploaded</p>
+                                            <p style="color: #999;">Tiada Fail Dipilih</p>
                                         @endif
                                     @else
-                                        <p style="color: #999;">No file uploaded</p>
+                                        <p style="color: #999;">Tiada Fail Dipilih</p>
                                     @endif
                                 </div>
                             </div>
@@ -401,10 +401,10 @@
                                                 <i class="fa fa-info-circle"></i> Jumlah fail: {{ count($letterOfSupportFiles) }}
                                             </small>
                                         @else
-                                            <p style="color: #999;">No file uploaded</p>
+                                            <p style="color: #999;">Tiada Fail Dipilih</p>
                                         @endif
                                     @else
-                                        <p style="color: #999;">No file uploaded</p>
+                                        <p style="color: #999;">Tiada Fail Dipilih</p>
                                     @endif
                                 </div>
                             </div>
