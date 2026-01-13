@@ -68,14 +68,25 @@ class HomeController extends Controller {
      */
     public function index()
     {
-        $totalapplication = DB::table('applications')->count(); // Total applications
-        $newapplication = DB::table('applications')->where('status', 'pending')->count(); 
+        $totalapplication = DB::table('applications')
+        ->whereYear('created_at', '>=', 2026)
+        ->count(); 
+        $newapplication = DB::table('applications')->where('status', 'pending')
+        ->whereYear('created_at', '>=', 2026)
+        ->count(); 
         $monthapplication = DB::table('applications')
+            ->whereYear('created_at', '>=', 2026)
             ->whereMonth('created_at', date('m'))
             ->count(); 
-        $approvedapplication = DB::table('applications')->where('status', 'approved')->count(); 
-        $passed = DB::table('applications')->where('status', 'approved')->count();
-        $rejected = DB::table('applications')->where('status', 'rejected')->count();
+        $approvedapplication = DB::table('applications')->where('status', 'approved')
+        ->whereYear('created_at', '>=', 2026)
+        ->count(); 
+        $passed = DB::table('applications')->where('status', 'approved')
+        ->whereYear('created_at', '>=', 2026)
+        ->count();
+        $rejected = DB::table('applications')->where('status', 'rejected')
+        ->whereYear('created_at', '>=', 2026)
+        ->count();
         
         $applicationsByDistrict = DB::table('applications')
             ->select('land_district', DB::raw('count(*) as total'))
