@@ -1624,7 +1624,8 @@ if(! function_exists('getMenus')){
                         'text' => trans('Permohonan Salinan Resit'),
                         'route' =>  url('third-party-request'),
                         'menu_active' => request()->is('third-party-request') ? 'active' : '',
-                        'badge_count' => $thirdPartyRequestCount
+                        'badge_count' => $thirdPartyRequestCount,
+                        'permission' => 'permohonan.salinan.resit.list'
                     ],
                         
                     
