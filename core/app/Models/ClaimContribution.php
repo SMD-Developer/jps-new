@@ -55,7 +55,9 @@ class ClaimContribution extends Model
         'rejected_by',
         'rejected_by_role',
         'eft_no',
-        'payment_document'
+        'payment_document',
+        'query_date',
+        'query_remarks'
     ];
 
     /**

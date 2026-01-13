@@ -582,8 +582,6 @@ class HomeController extends Controller {
 
         } catch (Exception $e) {
             DB::rollBack();
-            
-            \Log::error('Send to Approver Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Ralat sistem: ' . $e->getMessage()
@@ -596,7 +594,7 @@ class HomeController extends Controller {
     {
         try {
             $validated = $request->validate([
-                'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid',
+                'status' => 'required|in:pending,approve_payment_in_process,rejected,approve_paid,check_query',
                 'payment_amount' => 'nullable|numeric|min:0',
                 'process_remarks' => 'nullable|string|max:1000',
                 'payment_remarks' => 'nullable|string|max:1000',
@@ -604,6 +602,8 @@ class HomeController extends Controller {
                 'verification_date' => 'nullable|date',
                 'reason' => 'nullable|string|max:500',
                 'eft_no' => 'nullable|string|max:100',
+                'query_date' => 'nullable|date',
+                'query_remarks' => 'nullable|string|max:1000',
                 'payment_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
             ]);
 
@@ -683,6 +683,24 @@ class HomeController extends Controller {
                 }
             }
 
+            if ($request->status === 'check_query') {
+                if ($request->filled('query_date')) {
+                    $updateData['query_date'] = $request->query_date;
+                }
+
+                if ($request->filled('query_remarks')) {
+                    $updateData['query_remarks'] = $request->query_remarks;
+                }
+                
+                // ADD THIS DEBUG LOG
+                \Log::info('Check Query Update Data:', [
+                    'updateData' => $updateData,
+                    'query_date' => $request->query_date,
+                    'query_remarks' => $request->query_remarks,
+                    'request_all' => $request->all()
+                ]);
+            }
+
 
            // Add payment amount if status is approve_paid
             if ($request->status === 'approve_paid' && $request->payment_amount) {
@@ -730,7 +748,12 @@ class HomeController extends Controller {
                 if ($request->filled('reason')) {
                     $activityDescription .= ' - Reason: ' . $request->reason;
                 }
-            } 
+            } elseif ($request->status === 'check_query') {
+                $activityDescription = 'Claim status set to Query by admin: ' . $causerUsername;
+                if ($request->filled('query_remarks')) {
+                    $activityDescription .= ' - Query: ' . $request->query_remarks;
+                }
+            }
 
             ActivityLog::create([
                 'log_name' => 'claim_contribution',

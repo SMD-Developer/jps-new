@@ -899,7 +899,7 @@
                                             <label for="modal_status" class="form-label">@lang('app.status')</label>
                                             <select class="form-select" id="modal_status" name="status" required>
                                                 <option value="pending" {{ ($claim->status ?? '') == 'pending' ? 'selected' : '' }}>Dalam Proses</option>
-                                                <option value="approve_payment_in_process" style="display:none;" {{ ($claim->status ?? '') == 'approve_payment_in_process' ? 'selected' : '' }}>@lang('app.approve_payment_in_process')</option>
+                                                <option value="check_query"  {{ ($claim->status ?? '') == 'check_query' ? 'selected' : '' }}>Kuiri</option>
                                                 <option value="approve_paid" {{ ($claim->status ?? '') == 'approve_paid' ? 'selected' : '' }}>@lang('Lulus-Telah Dibayar')</option>
                                                 <option value="rejected" style="display:none;" {{ ($claim->status ?? '') == 'rejected' ? 'selected' : '' }}>@lang('app.rejected')</option>
                                             </select>
@@ -926,6 +926,32 @@
                                                     rows="3"
                                                     placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ old('process_remarks', $claim->process_remarks ?? '') }}</textarea>
                                                 <small class="text-muted">Contoh: Dokumen sokongan tidak lengkap</small>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Fields for "check_query" Status (NEW) -->
+                                        <div id="queryFields" style="display: none;">
+                                            <div class="mb-3">
+                                                <label for="query_date" class="form-label">Tarikh Kuiri: <span class="text-danger">*</span></label>
+                                                <input type="date" 
+                                                    class="form-control" 
+                                                    id="query_date" 
+                                                    name="query_date"
+                                                    value="{{ $claim->query_date ?? '' }}">
+                                                <small class="text-muted">Tarikh kuiri dibuat</small>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="query_remarks" class="form-label">Catatan Kuiri: <span class="text-danger">*</span></label>
+                                                <textarea 
+                                                    class="form-control" 
+                                                    id="query_remarks" 
+                                                    name="query_remarks"
+                                                    rows="3"
+                                                    required
+                                                    placeholder="Masukkan butiran kuiri atau maklumat tambahan yang diperlukan">{{ old('query_remarks', $claim->query_remarks ?? '') }}</textarea>
+                                                <small class="text-muted">Contoh: Sila kemukakan resit asal pembayaran</small>
                                             </div>
                                         </div>
 
@@ -1311,105 +1337,219 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            function toggleModalFields() {
-                const status = $('#modal_status').val();
-
-                // Hide all conditional fields first
-                $('#processFields').hide();
-                $('#paidFields').hide();
-                
-                if (status === 'pending' || status === 'approve_payment_in_process') {
-                    $('#processFields').slideDown();
-                    $('#visit_date').attr('required', 'required');
-                } else {
-                    $('#visit_date').removeAttr('required');
-                }
-                
-                if (status === 'approve_paid') {
-                    $('#paidFields').slideDown();
-                    $('#eft_no').attr('required', 'required');
-                    $('#payment_document').attr('required', 'required');
-                    $('#modal_payment_amount').attr('required', 'required');
-                    $('#modal_verification_date').attr('required', 'required');
-                } else {
-                    $('#eft_no').removeAttr('required');
-                    $('#payment_document').removeAttr('required');
-                    $('#modal_payment_amount').removeAttr('required');
-                    $('#modal_verification_date').removeAttr('required');
+    $(document).ready(function() {
+        function toggleModalFields() {
+            const status = $('#modal_status').val();
+            $('#processFields').hide();
+            $('#queryFields').hide();
+            $('#paidFields').hide();
+            
+            // Clear all required attributes first
+            $('#visit_date').removeAttr('required');
+            $('#query_date').removeAttr('required');
+            $('#query_remarks').removeAttr('required');
+            $('#eft_no').removeAttr('required');
+            $('#payment_document').removeAttr('required');
+            $('#modal_payment_amount').removeAttr('required');
+            $('#modal_verification_date').removeAttr('required');
+            
+            // Show relevant fields based on status
+            if (status === 'pending' || status === 'approve_payment_in_process') {
+                $('#processFields').slideDown();
+                $('#visit_date').attr('required', 'required');
+            } 
+            else if (status === 'check_query') {
+                $('#queryFields').slideDown();
+                $('#query_date').attr('required', 'required');
+                $('#query_remarks').attr('required', 'required');
+            }
+            else if (status === 'approve_paid') {
+                $('#paidFields').slideDown();
+                $('#eft_no').attr('required', 'required');
+                $('#payment_document').attr('required', 'required');
+                $('#modal_payment_amount').attr('required', 'required');
+                $('#modal_verification_date').attr('required', 'required');
+            }
+        }
+        
+        $('#financeStatusModal').on('shown.bs.modal', function() {
+            toggleModalFields();
+        });
+        
+        // Run when status changes
+        $('#modal_status').on('change', function() {
+            toggleModalFields();
+        });
+        
+        // Initial call
+        toggleModalFields();
+        
+        // Handle form submission with validation
+        $('#statusUpdateForm').submit(function(e) {
+            e.preventDefault();
+            
+            const status = $('#modal_status').val();
+            
+            // Validation for pending/in process status
+            if (status === 'pending' || status === 'approve_payment_in_process') {
+                const visitDate = $('#visit_date').val();
+                if (!visitDate) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        text: 'Sila masukkan tarikh kehadiran',
+                        confirmButtonColor: '#d33'
+                    });
+                    return false;
                 }
             }
             
-            $('#financeStatusModal').on('shown.bs.modal', function() {
-                toggleModalFields();
-            });
-            
-            // Run when status changes
-            $('#modal_status').on('change', function() {
-                toggleModalFields();
-            });
-            
-            // Initial call
-            toggleModalFields();
-            
-            // Handle form submission with validation
-            $('#statusUpdateForm').submit(function(e) {
-                e.preventDefault();
+            // Validation for check_query status
+            if (status === 'check_query') {
+                const queryDate = $('#query_date').val();
+                const queryRemarks = $('#query_remarks').val();
                 
-                const status = $('#modal_status').val();
-                
-                if (status === 'approve_payment_in_process') {
-                    const visitDate = $('#visit_date').val();
-                    if (!visitDate) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Ralat!',
-                            text: 'Sila masukkan tarikh kehadiran',
-                            confirmButtonColor: '#d33'
-                        });
-                        return false;
-                    }
+                if (!queryDate) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        text: 'Sila masukkan tarikh kuiri',
+                        confirmButtonColor: '#d33'
+                    });
+                    return false;
                 }
                 
-                if (status === 'approve_paid') {
-                    const eftNo = $('#eft_no').val();
-                    const paymentDocument = $('#payment_document')[0].files.length;
-                    const amount = $('#modal_payment_amount').val();
-                    const verificationDate = $('#modal_verification_date').val();
-                    
-                    if (!eftNo) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Ralat!',
-                            text: 'Sila masukkan No. EFT',
-                            confirmButtonColor: '#d33'
-                        });
-                        return false;
-                    }
-                    
-                    if (paymentDocument === 0) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Ralat!',
-                            text: 'Sila muat naik dokumen bayaran',
-                            confirmButtonColor: '#d33'
-                        });
-                        return false;
-                    }
-                    
-                    if (!amount || !verificationDate) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Ralat!',
-                            text: 'Sila masukkan jumlah bayaran dan tarikh bayaran',
-                            confirmButtonColor: '#d33'
-                        });
-                        return false;
-                    }
+                if (!queryRemarks || queryRemarks.trim() === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        text: 'Sila masukkan catatan kuiri',
+                        confirmButtonColor: '#d33'
+                    });
+                    return false;
+                }
+            }
+            
+            // Validation for approve_paid status
+            if (status === 'approve_paid') {
+                const eftNo = $('#eft_no').val();
+                const paymentDocument = $('#payment_document')[0].files.length;
+                const amount = $('#modal_payment_amount').val();
+                const verificationDate = $('#modal_verification_date').val();
+                
+                if (!eftNo) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        text: 'Sila masukkan No. EFT',
+                        confirmButtonColor: '#d33'
+                    });
+                    return false;
                 }
                 
+                if (paymentDocument === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        text: 'Sila muat naik dokumen bayaran',
+                        confirmButtonColor: '#d33'
+                    });
+                    return false;
+                }
+                
+                if (!amount || !verificationDate) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        text: 'Sila masukkan jumlah bayaran dan tarikh bayaran',
+                        confirmButtonColor: '#d33'
+                    });
+                    return false;
+                }
+            }
+            
+            Swal.fire({
+                title: 'Memproses...',
+                text: 'Sila tunggu',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Use FormData for file upload
+            var formData = new FormData(this);
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    $('#financeStatusModal').modal('hide');
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berjaya!',
+                        text: response.message || 'Status tuntutan berjaya dikemaskini',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => {
+                        // Redirect based on status
+                        const status = $('#modal_status').val();
+                        if (status === 'pending' || status === 'approve_payment_in_process' || status === 'check_query') {
+                            window.location.href = "{{ route('claim.list') }}";
+                        } else if (status === 'approve_paid') {
+                            window.location.href = "{{ route('claim.approved.list') }}";
+                        } else {
+                            // Default redirect
+                            window.location.href = "{{ route('claim.list') }}";
+                        }
+                    });
+                },
+                error: function(xhr) {
+                    $('#financeStatusModal').modal('hide');
+                    
+                    let errorMessage = 'Gagal mengemaskini status';
+                    
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseJSON.errors) {
+                            const errors = xhr.responseJSON.errors;
+                            errorMessage = Object.values(errors).flat().join('<br>');
+                        }
+                    }
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat!',
+                        html: errorMessage,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            });
+        });
+    });
+    
+    function sendToApprover(claimId) {
+        Swal.fire({
+            title: 'Hantar ke Pelulus?',
+            text: 'Adakah anda pasti untuk menghantar tuntutan ini ke pelulus?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Hantar!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 Swal.fire({
-                    title: 'Memproses...',
+                    title: 'Menghantar...',
                     text: 'Sila tunggu',
                     allowOutsideClick: false,
                     allowEscapeKey: false,
@@ -1417,124 +1557,57 @@
                         Swal.showLoading();
                     }
                 });
-                
-                // Use FormData for file upload
-                var formData = new FormData(this);
-                
+
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: "{{ route('claim.sendToApprover', ':id') }}".replace(':id', claimId),
                     method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
                     dataType: 'json',
                     success: function(response) {
-                        $('#financeStatusModal').modal('hide');
-                        
                         Swal.fire({
                             icon: 'success',
                             title: 'Berjaya!',
-                            text: response.message || 'Status tuntutan berjaya dikemaskini',
+                            text: response.message || 'Tuntutan berjaya dihantar ke pelulus',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            // Redirect based on status
-                            const status = $('#modal_status').val();
-                            if (status === 'pending' || status === 'approve_payment_in_process') {
-                                window.location.href = "{{ route('claim.list') }}";
-                            } else if (status === 'approve_paid') {
-                                window.location.href = "{{ route('claim.approved.list') }}";
-                            } else {
-                                // Default redirect
-                                window.location.href = "{{ route('claim.list') }}";
-                            }
+                            window.location.href = "{{ route('claim.list') }}";
                         });
                     },
                     error: function(xhr) {
-                        $('#financeStatusModal').modal('hide');
+                        let errorMessage = 'Gagal menghantar tuntutan';
                         
-                        let errorMessage = 'Gagal mengemaskini status';
-                        
-                        if (xhr.responseJSON) {
-                            if (xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            } else if (xhr.responseJSON.errors) {
-                                const errors = xhr.responseJSON.errors;
-                                errorMessage = Object.values(errors).flat().join('<br>');
-                            }
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
                         }
                         
                         Swal.fire({
                             icon: 'error',
                             title: 'Ralat!',
-                            html: errorMessage,
+                            text: errorMessage,
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#d33'
                         });
                     }
                 });
-            });
+            }
         });
-        function sendToApprover(claimId) {
-            Swal.fire({
-                title: 'Hantar ke Pelulus?',
-                text: 'Adakah anda pasti untuk menghantar tuntutan ini ke pelulus?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Hantar!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Menghantar...',
-                        text: 'Sila tunggu',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+    }
 
-                    $.ajax({
-                        url: "{{ route('claim.sendToApprover', ':id') }}".replace(':id', claimId),
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berjaya!',
-                                text: response.message || 'Tuntutan berjaya dihantar ke pelulus',
-                                confirmButtonText: 'OK',
-                                confirmButtonColor: '#3085d6'
-                            }).then(() => {
-                                window.location.href = "{{ route('claim.list') }}";
-                            });
-                        },
-                        error: function(xhr) {
-                            let errorMessage = 'Gagal menghantar tuntutan';
-                            
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Ralat!',
-                                text: errorMessage,
-                                confirmButtonText: 'OK',
-                                confirmButtonColor: '#d33'
-                            });
-                        }
-                    });
-                }
-            });
-        }
-    </script>
+    // File name update function for query document
+    function updateQueryFileName(input) {
+        const fileName = input.files[0] ? input.files[0].name : 'Tiada fail dipilih';
+        $('#query-file-name').text(fileName);
+    }
+
+    // File name update function for payment document
+    function updateFileName(input) {
+        const fileName = input.files[0] ? input.files[0].name : 'Tiada fail dipilih';
+        $('#file-name').text(fileName);
+    }
+</script>
 
     <script>
         function updateFileName(input) {
