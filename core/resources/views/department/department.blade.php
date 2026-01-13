@@ -87,7 +87,7 @@
                                         </span>
                                     </td>                                    
                                     <td>
-                                        <div class="btn-group">
+                                        <div class="btn-group gap-3">
                                             <button type="button" class="btn btn-warning btn-sm editDepartmentBtn" 
                                                 data-id="{{ $department->id }}" 
                                                 data-name="{{ $department->name }}" 
@@ -96,6 +96,11 @@
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#updateRoleModal">
                                                 <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm deleteDepartmentBtn" 
+                                                data-id="{{ $department->id }}" 
+                                                data-name="{{ $department->name }}">
+                                                <i class="fa fa-trash"></i>
                                             </button>
                                         </div>
                                     </td>                                    
@@ -355,5 +360,55 @@ function changePerPage() {
     }
     window.location.href = url.toString();
 }
+</script>
+<script>
+$(document).ready(function() {
+    // Delete Department
+    $('.deleteDepartmentBtn').on('click', function() {
+        const departmentId = $(this).data('id');
+        const departmentName = $(this).data('name');
+        
+        Swal.fire({
+            title: 'Adakah anda pasti?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/department/delete/${departmentId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Dipadamkan!',
+                                text: response.message,
+                                confirmButtonColor: '#28a745'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: xhr.responseJSON?.message || 'Failed to delete department',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
 </script>
 @endsection

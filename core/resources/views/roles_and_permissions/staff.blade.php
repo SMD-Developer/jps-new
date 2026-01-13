@@ -105,7 +105,6 @@
                 <div class="card-body">
                     <div class="row search-row align-items-center g-2 mb-3">
                                  
-                            
                         <!--</div>-->
                         <div class="col-lg-12 col-md-12 g-2 mb-3 d-flex justify-content-end">
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal"><i class="fa fa-plus"></i> @lang('app.add_staff')</button>
@@ -127,7 +126,7 @@
                                     <strong>{{ trans('app.search_b') }}</strong>
                                 </button>
                                 <a href="{{ request()->url() }}" class="btn btn-secondary btn-sm ms-1" title="Reset">
-                                    <i class="fas fa-undo"></i> Reset
+                                    <i class="fas fa-undo"></i> isi Semula
                                 </a>
                             </form>
                         </div>
@@ -860,7 +859,7 @@ $(document).ready(function() {
 
             Swal.fire({
                 title: "@lang('app.are_you_sure')",
-                text: "You are about to delete " + staffName + ". This action cannot be undone!",
+                text: "Anda akan memadam kakitangan ini. Tindakan ini tidak boleh dibatalkan",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -890,8 +889,8 @@ $(document).ready(function() {
                             if (response.success) {
                                 Swal.fire({
                                     icon: 'success',
-                                    title: "@lang('app.success')!",
-                                    text: response.message || "@lang('app.staff_deleted_successfully')",
+                                    title: "Berjaya!",
+                                    text: "",
                                     timer: 2000,
                                     showConfirmButton: false
                                 }).then(() => {
