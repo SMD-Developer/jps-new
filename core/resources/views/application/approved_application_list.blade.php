@@ -357,33 +357,59 @@
                         </div>
 
                         <!-- Buttons + Show Per Page (Right Aligned) -->
-                         <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                            <!-- Show Per Page (LEFT) -->
-                            <div class="d-flex align-items-center">
-                                <label for="perPageSelect" class="me-2 mb-0 fw-semibold" style="white-space: nowrap;">
-                                    @lang('app.show'):
-                                </label>
-                                <select id="perPageSelect" name="perPage" class="form-select form-select-sm" style="width:80px;">
-                                    <option value="5" {{ request('perPage') == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ request('perPage') == 20 ? 'selected' : '' }}>20</option>
-                                    <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
-                                    <option value="500" {{ request('perPage') == 500 ? 'selected' : '' }}>500</option>
-                                </select>
+                        <div class="col-md-12 col-sm-12 mt-3 mb-2 d-flex align-items-center flex-wrap gap-3">
+
+                            <!-- LEFT SIDE (Show Per Page + Year) -->
+                            <div class="d-flex align-items-center gap-3">
+
+                                <!-- Show Per Page -->
+                                <div class="d-flex align-items-center">
+                                    <label for="perPageSelect" class="me-2 mb-0 fw-semibold" style="white-space: nowrap;">
+                                        @lang('app.show'):
+                                    </label>
+                                    <select id="perPageSelect" name="perPage"
+                                        class="form-select form-select-sm" style="width:80px;">
+                                        <option value="5" {{ request('perPage') == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="20" {{ request('perPage') == 20 ? 'selected' : '' }}>20</option>
+                                        <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
+                                        <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
+                                        <option value="500" {{ request('perPage') == 500 ? 'selected' : '' }}>500</option>
+                                    </select>
+                                </div>
+
+                                <!-- Year Dropdown -->
+                                <div class="d-flex align-items-center">
+                                    <label for="year" class="me-2 mb-0 fw-semibold">Tahun:</label>
+                                    <select id="year" class="form-select form-select-sm" style="width:159px;">
+                                        <option value="">Semua Tahun</option>
+                                        @php
+                                            $currentYear = date('Y');
+                                            $startYear = 2000;
+                                        @endphp
+                                        @for ($y = $currentYear; $y >= $startYear; $y--)
+                                            <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
+                                                {{ $y }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </div>
+
                             </div>
 
-                            <!-- Buttons (RIGHT) -->
-                            <div class="d-flex gap-2">
+                            <!-- RIGHT SIDE BUTTONS -->
+                            <div class="d-flex gap-2 ms-auto">
                                 <a href="#" class="btn btn-primary btn-sm search-btn"
-                                    style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
+                                style="background:#3c8dbc !important; border:solid 1px #3c8dbc;">
                                     <strong>{{ trans('app.search_b') }}</strong>
                                 </a>
                                 <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
                                     <strong>{{ trans('app.reset') }}</strong>
                                 </a>
                             </div>
+
                         </div>
+
                     </div>
 
 
@@ -935,6 +961,39 @@
         url.searchParams.set('page', '1'); 
         window.location.href = url.toString();
     });
+</script>
+
+<script>
+$(document).ready(function() {
+    // Auto-submit on year change
+    $('#year').on('change', function() {
+        var url = new URL(window.location.href);
+        var params = new URLSearchParams(url.search);
+        
+        var year = $(this).val();
+        
+        if (year) {
+            params.set('year', year);
+        } else {
+            params.delete('year');
+        }
+        
+        // Keep other existing parameters
+        var search = $('#search').val();
+        var district = $('#district').val();
+        var division = $('#division').val();
+        var lot = $('#lot').val();
+        var perPage = $('#perPageSelect').val();
+        
+        if (search) params.set('search', search);
+        if (district) params.set('district', district);
+        if (division) params.set('division', division);
+        if (lot) params.set('lot', lot);
+        if (perPage) params.set('perPage', perPage);
+        
+        window.location.href = url.pathname + '?' + params.toString();
+    });
+});
 </script>
 
 @endsection

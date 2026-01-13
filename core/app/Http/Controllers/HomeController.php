@@ -263,6 +263,12 @@ class HomeController extends Controller {
         if ($request->filled('lot')) {
             $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
         }
+
+
+        // Year filter - ADD THIS
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->get('year'));
+        }
         
         $perPage = $request->input('perPage', 10); 
 
