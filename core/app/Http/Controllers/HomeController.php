@@ -2154,8 +2154,6 @@ class HomeController extends Controller {
             ]
         );
 
-        \Log::info('Payment record updated/created with receipt_number: ' . $payment->receipt_number);
-
         return response()->json([
             'success' => true,
             'message' => trans('app.payment_updated_successfully'),

@@ -694,7 +694,7 @@
                             if (editPaymentModalInstance) editPaymentModalInstance.hide();
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Success!',
+                                title: 'Berjaya',
                                 text: data.message || 'Payment updated successfully',
                                 confirmButtonColor: '#28a745'
                             }).then(() => window.location.reload());
