@@ -1,5 +1,4 @@
 @extends('third-party.layouts.app')
-
 <style>
     .form-group {
         margin-bottom: 15px;
@@ -81,6 +80,100 @@
         vertical-align: middle;
         text-align: center;
     }
+
+    .select2-container--default .select2-selection--single {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+    color: #495057;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+
+/* FORCE dropdown to always open BELOW */
+.select2-container--default.select2-container--open .select2-dropdown {
+    top: 100% !important;
+    bottom: auto !important;
+}
+
+.select2-dropdown {
+    border: 1px solid #ced4da;
+    border-top: none;
+}
+
+/* Always show dropdown below */
+.select2-dropdown--below {
+    border-top: 1px solid #ced4da;
+    margin-top: -1px;
+}
+
+/* Remove above dropdown positioning */
+.select2-dropdown--above {
+    display: none !important;
+}
+
+/* Style the search input box INSIDE dropdown */
+.select2-search--dropdown {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.select2-search--dropdown .select2-search__field {
+    border: 2px solid #007bff;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.select2-search--dropdown .select2-search__field:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Add search icon placeholder */
+.select2-search--dropdown .select2-search__field::placeholder {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Style the dropdown results */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #007bff;
+    color: white;
+}
+
+.select2-results__option {
+    padding: 10px 12px;
+    cursor: pointer;
+}
+
+.select2-results__option:hover {
+    background-color: #f8f9fa;
+}
+
+/* Dropdown container */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Make sure dropdown has enough space */
+.select2-container {
+    z-index: 1050;
+}
+
+.select2-dropdown {
+    z-index: 1051;
+}
 </style>
 
 <title>{{ $title }} | JPS</title>
@@ -94,190 +187,164 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-12">
-                    <div class="card">
-
-                        <div class="card-body">
-                            <form action="{{ route('third.party.search-results') }}" method="GET" id="searchForm">
-                                <!-- District Dropdown -->
-                                <div class="form-group">
-                                    <label>Daerah</label>
-                                    <select class="form-control" name="district" id="district" onchange="loadDivisions()">
-                                        <option value="">{{ __('app.select_district') }}</option>
-                                        @foreach ($districts as $district)
-                                            <option value="{{ $district->iddaerah ?? '' }}"
-                                                {{ old('district', $request->district ?? '') == ($district->iddaerah ?? '') ? 'selected' : '' }}>
-                                                {{ $district->daerah ?? 'Unknown District' }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- Division Dropdown -->
-                                <div class="form-group">
-                                    <label>Mukim</label>
-                                    <select class="form-control" name="division" id="division">
-                                        <option value="">{{ __('app.select_division') }}</option>
-                                        @if (old('district', $request->district ?? ''))
-                                            @foreach ($divisions->where('daerah_id', old('district', $request->district ?? '')) as $division)
-                                                <option value="{{ $division->idmukim ?? '' }}"
-                                                    {{ old('division', $request->division ?? '') == ($division->idmukim ?? '') ? 'selected' : '' }}>
-                                                    {{ $division->mukim ?? 'Unknown Division' }}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-
-                                <!-- Hidden Input to Store Selected Lot/PT -->
-                                <input type="hidden" id="lot_pt_grant" name="lot_pt_grant"
-                                    value="{{ old('lot_pt_grant') }}">
-
-                                <!-- Applicant Dropdown -->
-                                <div class="form-group">
-                                    <label>Nama Pemohon</label>
-                                    <div class="dropdown-container">
-                                        <button type="button" class="dropdown-btn" data-target="applicantDropdown"
-                                                onclick="toggleDropdown('applicantDropdown', event)">
-                                            <span id="selectedApplicantText">{{ __('app.select_applicant_list') }}</span>
-                                            <span>▼</span>
-                                        </button>
-
-                                        <div id="applicantDropdown" class="dropdown-content">
-                                            <input type="text" class="dropdown-search"
-                                                placeholder="{{ __('app.search_applicant') }}" id="applicantSearchInput"
-                                                onkeyup="filterApplicants()">
-
-                                            <div id="applicantsList">
-                                                @foreach ($applicants as $applicant)
-                                                    <a href="#"
-                                                        onclick="selectApplicant('{{ $applicant->userName }}', '{{ $applicant->client_id }}')">
-                                                        {{ $applicant->userName }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="applicant_id" name="applicant_id"
-                                        value="{{ old('applicant_id') }}">
-                                    <input type="hidden" id="applicant_name" name="applicant_name" value="{{ old('applicant_name') }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>{{ __('app.date_of_application') }}</label>
-                                    <input type="date" class="form-control" name="application_date" id="application_date"
-                                        value="{{ old('application_date') }}">
-                                </div>
-
-                                <!-- ✅ FIXED: Lot/PT Dropdown -->
-                                <div class="form-group">
-                                    <label>{{ __('app.lot_pt') }}</label>
-                                    <div class="dropdown-container">
-                                        <button type="button" class="dropdown-btn" data-target="lotPtDropdown"
-                                            onclick="toggleDropdown('lotPtDropdown', event)">
-                                            <span id="selectedLotPtText">{{ __('app.select_lot_pt') }}</span>
-                                            <span>▼</span>
-                                        </button>
-
-                                        <div id="lotPtDropdown" class="dropdown-content">
-                                            <input type="text" class="dropdown-search"
-                                                placeholder="{{ __('app.search_lot_pt') }}" id="lotPtSearchInput"
-                                                onkeyup="filterLotPt()">
-
-                                            <div id="lotPtList">
-                                                @foreach ($lotPts ?? [] as $lotPt)
-                                                    <a href="#" onclick="selectLotPt('{{ $lotPt->lot_number }}')">
-                                                        {{ $lotPt->lot_number }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Reference Number Field -->
-                                <div class="form-group">
-                                    <label>{{ __('app.reference_number') }}</label>
-                                    <input type="text" class="form-control" name="reference_number" id="reference_number"
-                                         value="{{ old('reference_number') }}">
-                                </div>
-
-                                <button type="submit" class="btn btn-primary float-right">{{ __('Cari') }}</button>
-                                <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">{{ __('app.reset') }}</button>
-                            </form>
-                        </div>
-                        {{-- ✅ Show results table only if search was performed --}}
-                        @if($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_id', 'reference_number', 'application_date']))
-                        <div class="card-body mt-4">
-                            <h5 class="mb-3">Hasil Carian</h5>
+                    
+                  <div class="card">
+                    <div class="card-body">
+                        <form action="{{ route('third.party.search-results') }}" method="GET" id="searchForm">
                             
-                            <p class="mb-3"><strong>{{ $results->total() }}</strong> Permohonan Dijumpai</p>
-                            
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
-                                    <thead class="table-header">
-                                        <tr>
-                                            <th>Bil</th>
-                                            <th>Nama Pemohon</th>
-                                            <th>Lot/PT</th>
-                                            <th>Tarikh Permohonan</th>
-                                            <th>{{ __('app.reference_number') }}</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if ($results->count() > 0)
-                                            @foreach ($results as $key => $result)
-                                                <tr>
-                                                    <td>{{ $results->firstItem() + $key }}</td>
-                                                    <td>{{ $result->applicant ?? 'N/A' }}</td>
-                                                    <td>{{ $result->land_lot ?? 'N/A' }}, {{ $result->landDivision->mukim ?? 'N/A' }}, DAERAH {{ $result->landDistrict->daerah ?? 'N/A' }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
-                                                    <td>
-                                                        <a href="#">{{ $result->refference_no }}</a>
-                                                    </td>
-                                                    <td>
-                                                        @switch($result->status)
-                                                            @case('approved')
-                                                                <span class="badge bg-success">Diluluskan</span>
-                                                                @break
-                                                            @case('rejected')
-                                                                <span class="badge bg-danger">Tolak</span>
-                                                                @break
-                                                            @case('pending')
-                                                                <span class="badge bg-warning">Belum selesai</span>
-                                                                @break
-                                                            @default
-                                                                <span class="badge bg-secondary">N/A</span>
-                                                        @endswitch
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td colspan="6" class="text-center text-muted py-4">
-                                                    Tiada Permohonan Ditemui
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
+                            <!-- Radio Button Group - FIRST -->
+                            <div class="form-group">
+                                <label class="d-block mb-2">Cari Berdasarkan</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="search_type" id="searchByApplicant" 
+                                        value="applicant" onchange="toggleSearchFields()" 
+                                        {{ old('search_type', $request->search_type ?? '') == 'applicant' ? 'checked' : '' }}>
+                                    <label class="form-check-label me-5" for="searchByApplicant">
+                                        Nama Pemohon
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="search_type" id="searchByLot" 
+                                        value="lot" onchange="toggleSearchFields()"
+                                        {{ old('search_type', $request->search_type ?? '') == 'lot' ? 'checked' : '' }}>
+                                    <label class="form-check-label " for="searchByLot">
+                                       No Lot/PT
+                                    </label>
+                                </div>
                             </div>
 
-                            @if($results->count() > 0)
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div>
-                                        <p class="text-muted mb-0">
-                                            Menunjukkan {{ $results->firstItem() }} hingga {{ $results->lastItem() }} daripada {{ $results->total() }} rekod
-                                        </p>
-                                    </div>
-                                    <div>
-                                        {{ $results->links('pagination::bootstrap-5') }}
-                                    </div>
-                                </div>
-                            @endif
+                            <!-- Applicant Dropdown with Search (Hidden by default) -->
+                            <div class="form-group" id="applicantSection" style="display: none;">
+                                <label>Nama Pemohon</label>
+                                <select class="form-control select2-applicant" name="applicant_id" id="applicant_select">
+                                    <option value="">{{ __('app.select_applicant_list') }}</option>
+                                    @foreach ($applicants as $applicant)
+                                        <option value="{{ $applicant->client_id }}" 
+                                            {{ old('applicant_id', $request->applicant_id ?? '') == $applicant->client_id ? 'selected' : '' }}>
+                                            {{ $applicant->userName }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Lot/PT Dropdown with Search (Hidden by default) -->
+                            <div class="form-group" id="lotSection" style="display: none;">
+                                <label>{{ __('app.lot_pt') }}</label>
+                                <select class="form-control select2-lot" name="lot_pt_grant" id="lot_select">
+                                    <option value="">{{ __('app.select_lot_pt') }}</option>
+                                    @foreach ($lotPts ?? [] as $lotPt)
+                                        <option value="{{ $lotPt->lot_number }}"
+                                            {{ old('lot_pt_grant', $request->lot_pt_grant ?? '') == $lotPt->lot_number ? 'selected' : '' }}>
+                                            {{ $lotPt->lot_number }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- District Dropdown - MOVED BELOW -->
+                            <div class="form-group">
+                                <label>Daerah</label>
+                                <select class="form-control" name="district" id="district" onchange="loadDivisions()">
+                                    <option value="">{{ __('app.select_district') }}</option>
+                                    @foreach ($districts as $district)
+                                        <option value="{{ $district->iddaerah ?? '' }}"
+                                            {{ old('district', $request->district ?? '') == ($district->iddaerah ?? '') ? 'selected' : '' }}>
+                                            {{ $district->daerah ?? 'Unknown District' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Division Dropdown - MOVED BELOW -->
+                            <div class="form-group">
+                                <label>Mukim</label>
+                                <select class="form-control" name="division" id="division">
+                                    <option value="">{{ __('Pilih mukim') }}</option>
+                                    @if (old('district', $request->district ?? ''))
+                                        @foreach ($divisions->where('daerah_id', old('district', $request->district ?? '')) as $division)
+                                            <option value="{{ $division->idmukim ?? '' }}"
+                                                {{ old('division', $request->division ?? '') == ($division->idmukim ?? '') ? 'selected' : '' }}>
+                                                {{ $division->mukim ?? 'Unknown Division' }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary float-right">
+                                <i class="fas fa-search"></i> {{ __('Cari') }}
+                            </button>
+                            <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">
+                                <i class="fas fa-redo"></i> {{ __('app.reset') }}
+                            </button>
+                        </form>
+                    </div>
+                    @if($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_id']))
+                    <div class="card-body mt-4">
+                        <h5 class="mb-3">Hasil Carian</h5>
+                        
+                        <p class="mb-3"><strong>{{ $results->total() }}</strong> Permohonan Dijumpai</p>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-header">
+                                    <tr>
+                                        <th>Bil</th>
+                                        <th>Nama Pemohon</th>
+                                        <th>Lot/PT</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if ($results->count() > 0)
+                                        @foreach ($results as $key => $result)
+                                            <tr>
+                                                <td>{{ $results->firstItem() + $key }}</td>
+                                                <td>{{ $result->applicant ?? 'N/A' }}</td>
+                                                <td>{{ $result->land_lot ?? 'N/A' }}, {{ $result->landDivision->mukim ?? 'N/A' }}, DAERAH {{ $result->landDistrict->daerah ?? 'N/A' }}</td>
+                                                <td>
+                                                    @switch($result->status)
+                                                        @case('approved')
+                                                            <span class="badge bg-success">Diluluskan</span>
+                                                            @break
+                                                        @case('rejected')
+                                                            <span class="badge bg-danger">Tolak</span>
+                                                            @break
+                                                        @case('pending')
+                                                            <span class="badge bg-warning">Belum selesai</span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge bg-secondary">N/A</span>
+                                                    @endswitch
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted py-4">
+                                                Tiada Permohonan Ditemui
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
+
+                        @if($results->count() > 0)
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <p class="text-muted mb-0">
+                                        Menunjukkan {{ $results->firstItem() }} hingga {{ $results->lastItem() }} daripada {{ $results->total() }} rekod
+                                    </p>
+                                </div>
+                                <div>
+                                    {{ $results->links('pagination::bootstrap-5') }}
+                                </div>
+                            </div>
                         @endif
                     </div>
+                    @endif
+                </div>
                 </div>
             </div>
         </div>
@@ -454,4 +521,137 @@
             }
         });
     </script>
+
+    <script>
+// Toggle search fields based on radio selection
+function toggleSearchFields() {
+    const applicantRadio = document.getElementById('searchByApplicant');
+    const lotRadio = document.getElementById('searchByLot');
+    const applicantSection = document.getElementById('applicantSection');
+    const lotSection = document.getElementById('lotSection');
+    
+    if (applicantRadio.checked) {
+        applicantSection.style.display = 'block';
+        lotSection.style.display = 'none';
+        // Clear lot selection
+        $('#lot_select').val('').trigger('change');
+    } else if (lotRadio.checked) {
+        lotSection.style.display = 'block';
+        applicantSection.style.display = 'none';
+        // Clear applicant selection
+        $('#applicant_select').val('').trigger('change');
+    }
+}
+
+// Reset form
+function resetSearchForm() {
+    document.getElementById('searchForm').reset();
+    document.getElementById('applicantSection').style.display = 'none';
+    document.getElementById('lotSection').style.display = 'none';
+    
+    // Reset Select2 dropdowns
+    $('#applicant_select').val('').trigger('change');
+    $('#lot_select').val('').trigger('change');
+    
+    // Uncheck radio buttons
+    document.getElementById('searchByApplicant').checked = false;
+    document.getElementById('searchByLot').checked = false;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2 for Applicant with enhanced search
+    $('.select2-applicant').select2({
+        placeholder: 'Pilih nama pemohon',
+        allowClear: true,
+        width: '100%',
+        minimumResultsForSearch: 0, // Always show search box
+        matcher: function(params, data) {
+            // If there are no search terms, return all data
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            // Do not display the item if there is no 'text' property
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            // `params.term` is the user's search term
+            // `data.text` is the text that is displayed for the option
+            var searchTerm = params.term.toLowerCase();
+            var optionText = data.text.toLowerCase();
+
+            // Check if the option text contains the search term
+            if (optionText.indexOf(searchTerm) > -1) {
+                return data;
+            }
+
+            // Return `null` if the term should not be displayed
+            return null;
+        },
+        language: {
+            noResults: function() {
+                return "Tiada keputusan ditemui";
+            },
+            searching: function() {
+                return "Mencari...";
+            },
+            inputTooShort: function() {
+                return "Sila masukkan nama untuk mencari";
+            }
+        }
+    });
+    
+    // Initialize Select2 for Lot with enhanced search
+    $('.select2-lot').select2({
+        placeholder: 'Pilih lot/PT',
+        allowClear: true,
+        width: '100%',
+        minimumResultsForSearch: 0, // Always show search box
+        matcher: function(params, data) {
+            // If there are no search terms, return all data
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            // Do not display the item if there is no 'text' property
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            // `params.term` is the user's search term
+            // `data.text` is the text that is displayed for the option
+            var searchTerm = params.term.toLowerCase();
+            var optionText = data.text.toLowerCase();
+
+            // Check if the option text contains the search term
+            if (optionText.indexOf(searchTerm) > -1) {
+                return data;
+            }
+
+            // Return `null` if the term should not be displayed
+            return null;
+        },
+        language: {
+            noResults: function() {
+                return "Tiada keputusan ditemui";
+            },
+            searching: function() {
+                return "Mencari...";
+            },
+            inputTooShort: function() {
+                return "Sila masukkan lot/PT untuk mencari";
+            }
+        }
+    });
+    
+    // Show the appropriate section if form was submitted
+    if (document.getElementById('searchByApplicant').checked || 
+        document.getElementById('searchByLot').checked) {
+        toggleSearchFields();
+    }
+});
+</script>
+
 @endsection

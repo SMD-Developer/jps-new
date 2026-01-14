@@ -721,7 +721,7 @@ body {
                             required>
                         <i class="bi bi-eye-slash toggle-password position-absolute" 
                             data-target="password" 
-                            style="cursor: pointer; right: 15px; top: 50%; transform: translateY(-50%);"></i>
+                            style="cursor: pointer; right: 15px; top: 25%; transform: translateY(-50%);"></i>
                     </div>
                 </div>
 
@@ -737,7 +737,7 @@ body {
                             required>
                         <i class="bi bi-eye-slash toggle-password position-absolute" 
                             data-target="password_confirmation" 
-                            style="cursor: pointer; right: 15px; top: 50%; transform: translateY(-50%);"></i>
+                            style="cursor: pointer; right: 15px; top: 25%; transform: translateY(-50%);"></i>
                     </div>
                 </div>
                 
