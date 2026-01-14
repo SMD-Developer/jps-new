@@ -26,8 +26,8 @@
             <p>Pautan tetapan semula kata laluan ini akan tamat tempoh {{ config('auth.passwords.users.expire') }} minit.</p>
             <p>Jika anda tidak meminta tetapan semula kata laluan, sila abaikan e-mel ini atau hubungi sokongan.</p>        </div>
         <div class="footer">
-            salam hormat,<br>
-            <strong>JPS</strong>
+            Yang benar,<br>
+            <strong>Portal e-CP Caruman Parit</strong>
         </div>
     </div>
 </body>
