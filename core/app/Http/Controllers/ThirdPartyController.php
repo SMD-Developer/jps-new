@@ -1525,35 +1525,37 @@ class ThirdPartyController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:8'
-        ], [
-            'email.required' => 'E-mel diperlukan',
-            'email.email' => 'Format e-mel tidak sah',
-            'password.required' => 'Kata laluan perlu diisi',
-            'password.min' => 'Kata laluan mestilah sekurang-kurangnya 8 aksara'
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required'
+            ], [
+                'email.required' => 'E-mel diperlukan',
+                'email.email' => 'Format e-mel tidak sah',
+                'password.required' => 'Kata laluan perlu diisi'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        }
 
         $credentials = $request->only('email', 'password');
 
         if (auth('third_party')->attempt($credentials)) {
             $request->session()->regenerate();
             
-            // Check if it's an AJAX request
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Login successful!',
+                    'message' => 'Log masuk berjaya!',
                     'redirect' => route('third.party.search')
                 ]);
             }
             
-            // Regular form submission - redirect directly
             return redirect()->route('third.party.search');
         }
 
-        // Check if it's an AJAX request
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => false,
