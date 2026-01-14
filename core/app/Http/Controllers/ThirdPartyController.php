@@ -1530,8 +1530,8 @@ class ThirdPartyController extends Controller
             'password' => 'required|min:8'
         ], [
             'email.required' => 'E-mel diperlukan',
-            'email.email' => 'Sila masukkan e-mel yang sah',
-            'password.required' => 'Kata laluan diperlukan',
+            'email.email' => 'Format e-mel tidak sah',
+            'password.required' => 'Kata laluan perlu diisi',
             'password.min' => 'Kata laluan mestilah sekurang-kurangnya 8 aksara'
         ]);
 
@@ -1557,14 +1557,13 @@ class ThirdPartyController extends Controller
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Bukti kelayakan tidak sah. Sila cuba lagi.'
+                'message' => 'E-mel dan kata laluan tidak sepadan. Klik Lupa kata laluan jika anda lupa kata laluan.'
             ], 401);
         }
 
-        // Flash error to session and redirect back
         return redirect()->back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Bukti kelayakan tidak sah. Sila cuba lagi.']);
+            ->withErrors(['email' => 'E-mel dan kata laluan tidak sepadan. Klik Lupa kata laluan jika anda lupa kata laluan.']);
     }
 
 
