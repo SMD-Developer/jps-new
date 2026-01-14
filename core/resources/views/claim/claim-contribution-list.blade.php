@@ -340,6 +340,11 @@
                                                                 $badgeText = 'Ditolak';
                                                                 break;
 
+                                                            case 'check_query':
+                                                                $badgeClass = 'status-badge status-rejected';
+                                                                $badgeText = 'Kuiri';
+                                                                break;
+
                                                             case 'approve_paid':
                                                                 $badgeClass = 'status-badge status-approved';
                                                                 $badgeText = 'Diluluskan';

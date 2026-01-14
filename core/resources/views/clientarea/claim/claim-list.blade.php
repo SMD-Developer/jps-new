@@ -164,6 +164,32 @@
         margin-right: 5px;
     }
 
+    .query-badge {
+    background-color: #dc3545;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.query-badge i {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.query-reason {
+    padding-top: 4px;
+    font-size: 12px;
+    color: #dc3545;
+    font-weight: 500;
+    margin: 0;
+}
+
+
 
 </style>
 <title>{{ trans('app.claim_contribution_list_user') }} | JPS</title>
@@ -260,14 +286,22 @@
                                                             @endif
                                                         
                                                         @break
-                                                        @case('approve_payment_in_process')
+                                                        @case('check_query')
                                                             <div class="status-badge">
-                                                                <span class="badge bg-success text-dark d-flex align-items-center justify-content-center">
-                                                                    <i class="bi bi-hourglass-split me-2"></i>
-                                                                    {{trans('app.approve_payment_in_process')}}
+                                                                <span class="badge query-badge" style="padding: 9px 30px 7px 26px;">
+                                                                    <i class="bi bi-hourglass-split"></i>
+                                                                    <span class="badge-text">{{ trans('Kuiri') }}</span>
                                                                 </span>
                                                             </div>
+
+                                                            {{-- ✅ Show reason below --}}
+                                                            @if(!empty($item->query_remarks))
+                                                                <p class="query-reason">
+                                                                    {{ trans('app.reason') }}: {{ $item->query_remarks }}
+                                                                </p>
+                                                            @endif
                                                         @break
+
                                                         @case('approve_paid')
                                                         <div class="status-badge">
                                                                 <span class="badge bg-success text-dark d-flex align-items-center justify-content-center">
@@ -492,6 +526,9 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                         <button type="button" class="btn btn-primary" onclick="printModal()">
+                            <i class="bi bi-printer"></i> Cetak
+                        </button>
                     </div>
                 </div>
             </div>
@@ -621,4 +658,16 @@
             });
         });
     </script>
+    <script>
+    function printModal() {
+        var printContents = document.querySelector('#readMoreModal .modal-body').innerHTML;
+        var originalContents = document.body.innerHTML;
+        
+        document.body.innerHTML = '<div style="background:white; padding:20px;">' + printContents + '</div>';
+        document.body.style.backgroundColor = 'white';
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload(); 
+    }
+</script>
 @endsection
