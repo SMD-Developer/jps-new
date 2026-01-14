@@ -322,7 +322,8 @@
         <div class="container pb-5">
             <div class="row mb-5 justify-content-end">
                 <div class="col-auto">
-                    <a href="{{ url()->previous() }}" class="btn btn-success">
+                    <a href="{{ url()->previous() }}" class="btn btn-success" style="border-radius: 20px;
+                      padding: 8px 50px 6px 50px;">
                         Kembali
                     </a>
                 </div>
