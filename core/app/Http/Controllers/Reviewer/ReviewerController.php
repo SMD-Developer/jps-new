@@ -43,8 +43,14 @@ class ReviewerController extends Controller
             ->whereMonth('created_at', date('m'))
             ->count(); 
         $approvedapplication = DB::table('applications')->where('status', 'approved')->count(); 
-        $passed = DB::table('applications')->where('status', 'approved')->count();
-        $rejected = DB::table('applications')->where('status', 'rejected')->count();
+        $passed = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'approved')
+        ->count();
+        $rejected = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'rejected')
+        ->count();
         $assignmentcount=DB::table('report_reviews')->count();
         
             $applicationsByDistrict = DB::table('applications')

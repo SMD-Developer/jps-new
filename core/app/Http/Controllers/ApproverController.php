@@ -61,8 +61,13 @@ class ApproverController extends Controller
                 ->where('payment_status', 'completed')
                 ->whereDate('created_at', Carbon::today())
                 ->sum('amount');
-        $passed = DB::table('applications')->where('status', 'approved')->count();
-        $rejected = DB::table('applications')->where('status', 'rejected')->count();
+        $passed = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'approved')->count();
+        $rejected = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'rejected')
+        ->count();
         $assignmentcount=DB::table('report_approvals')->count();
         $assignmentnotTakencount=DB::table('report_approvals')
         ->where('status', 'rejected')

@@ -46,16 +46,23 @@ class AdminStaffController extends Controller
                     ->count();
         
         $monthapplication = DB::table('applications')
-        ->whereYear('created_at', 2026)
+        ->where('created_at', '>=', '2026-01-01')
         ->whereMonth('created_at', date('m'))
         ->count();
 
-        $approvedapplication = DB::table('applications')->where('status', 'approved')
-        ->whereYear('created_at', 2026)
+        $approvedapplication = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'approved')
         ->count();
 
-        $passed = DB::table('applications')->where('status', 'approved')->count();
-        $rejected = DB::table('applications')->where('status', 'rejected')->count();
+        $passed = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'approved')
+        ->count();
+        $rejected = DB::table('applications')
+        ->where('created_at', '>=', '2026-01-01')
+        ->where('status', 'rejected')
+        ->count();
 
         $applicationsByDistrict = DB::table('applications')
             ->select('land_district', DB::raw('count(*) as total'))
