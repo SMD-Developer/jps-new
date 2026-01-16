@@ -916,17 +916,6 @@
                                                     value="{{ $claim->visit_date ?? '' }}">
                                                 <small class="text-muted">Tarikh pengguna hadir ke pejabat</small>
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="process_remarks" class="form-label">Catatan:</label>
-                                                <textarea 
-                                                    class="form-control" 
-                                                    id="process_remarks" 
-                                                    name="process_remarks"
-                                                    rows="3"
-                                                    placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ old('process_remarks', $claim->process_remarks ?? '') }}</textarea>
-                                                <small class="text-muted">Contoh: Dokumen sokongan tidak lengkap</small>
-                                            </div>
                                         </div>
 
 
@@ -950,8 +939,8 @@
                                                     name="query_remarks"
                                                     rows="3"
                                                     required
-                                                    placeholder="Masukkan butiran kuiri atau maklumat tambahan yang diperlukan">{{ old('query_remarks', $claim->query_remarks ?? '') }}</textarea>
-                                                <small class="text-muted">Contoh: Sila kemukakan resit asal pembayaran</small>
+                                                    placeholder="Masukkan catatan jika ada dokumen yang kurang atau sebarang maklumat tambahan">{{ old('query_remarks', $claim->query_remarks ?? '') }}</textarea>
+                                                 <small class="text-muted">Contoh: Dokumen sokongan tidak lengkap</small>
                                             </div>
                                         </div>
 
