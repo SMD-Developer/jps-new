@@ -365,7 +365,6 @@
                                                                 $badgeText = 'Tidak Diketahui';
                                                         }
                                                     @endphp
-
                                                     <span class="{{ $badgeClass }}">
                                                         {{ $badgeText }}
                                                     </span>
@@ -438,7 +437,30 @@
                                                 @endif
                                             </td>
                                              <td>
-                                                @if ($item->status == 'approve_paid')
+                                                @if ($item->status == 'rejected')
+                                                    <a href="{{ route('claim.application.reapply', $item->id) }}" class="btn-reapply">
+                                                        Mohon semula
+                                                    </a>
+
+                                                @elseif ($item->status == 'check_query')
+                                                    {{-- ✅ Show query date and remarks for check_query status --}}
+                                                    @if(!empty($item->query_date))
+                                                        <div class="mb-1">
+                                                            <small class="text-muted">
+                                                                <strong>Tarikh Kuiri:</strong>
+                                                                {{ \Carbon\Carbon::parse($item->query_date)->format('d/m/Y') }}
+                                                            </small>
+                                                        </div>
+                                                    @endif
+                                                    @if(!empty($item->query_remarks))
+                                                        <div>
+                                                            <small class="text-muted">
+                                                                <strong>{{ trans('app.reason') }}:</strong> <strong>{{ $item->query_remarks }}</strong>
+                                                            </small>
+                                                        </div>
+                                                    @endif
+
+                                                @elseif ($item->status == 'approve_paid')
                                                     {{-- ✅ Show verification date, EFT number & payment remarks when approved and paid --}}
                                                     @if(!empty($item->verified_date) || !empty($item->eft_no) || !empty($item->payment_remarks))
                                                         <div class="mb-1">
@@ -468,26 +490,18 @@
                                                     @else
                                                         <small class="text-muted">Tiada maklumat pembayaran.</small>
                                                     @endif
+
                                                 @elseif ($item->send_to_finance == 1 && $item->status != 'approve_paid')
-                                                    @if(!empty($item->visit_date) || !empty($item->process_remarks))
-                                                        {{-- ✅ Show visit date and remarks if available --}}
+                                                    {{-- ✅ Show only visit date --}}
+                                                    @if(!empty($item->visit_date))
                                                         <div class="mb-1">
-                                                            @if(!empty($item->visit_date))
-                                                                <small class="text-muted">
-                                                                    <strong>Tarikh Kemaskini:</strong>
-                                                                    {{ \Carbon\Carbon::parse($item->visit_date)->format('d/m/Y') }}
-                                                                </small>
-                                                            @endif
+                                                            <small class="text-muted">
+                                                                <strong>Tarikh Kemaskini:</strong>
+                                                                {{ \Carbon\Carbon::parse($item->visit_date)->format('d/m/Y') }}
+                                                            </small>
                                                         </div>
-                                                        @if(!empty($item->process_remarks))
-                                                            <div>
-                                                                <small class="text-muted">
-                                                                    <strong>Catatan:</strong> <strong>{{ $item->process_remarks }}</strong>
-                                                                </small>
-                                                            </div>
-                                                        @endif
                                                     @else
-                                                        {{-- ❌ If no visit_date or remarks, show the original finance message --}}
+                                                        {{-- ❌ If no visit_date, show the original finance message --}}
                                                         @if(!empty($item->sent_to_finance_at))
                                                             <div class="mb-1">
                                                                 <small class="text-muted">
