@@ -846,7 +846,7 @@ body {
                                     <div style="display: flex; align-items: flex-start;">
                                         <i class="fas fa-envelope" style="font-size: 18px; margin-right: 12px; color: #333; flex-shrink: 0;"></i>
                                         <div style="flex: 1; overflow-wrap: break-word;">
-                                            <span class="ag-courses-item_date" style="color: #ff6600;">ecp-jps.selangor.gov.my</span>
+                                            <span class="ag-courses-item_date" style="color: #ff6600;">ecp@selangor.gov.my</span>
                                         </div>
                                     </div>
                                 </div>
@@ -857,9 +857,8 @@ body {
 
                 <!-- Google Map -->
                 <div class="text-center mt-3">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d831.3055878343583!2d101.5151222!3d3.0835306999999985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc527aecf7d7db%3A0x63f9c30732d0a1f9!2sBangunan%20Sultan%20Salahuddin%20Abdul%20Aziz%20Shah!5e1!3m2!1sen!2sin!4v1739774441278!5m2!1sen!2sin" width="85%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div> 
-
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d831.3055878343583!2d101.5151222!3d3.0835306999999985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc527aecf7d7db%3A0x63f9c30732d0a1f9!2sBangunan%20Sultan%20Salahuddin%20Abdul%20Aziz%20Shah!5e0!3m2!1sen!2sin!4v1739774441278!5m2!1sen!2sin" width="85%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
             </div>
         </div>
     </div>

@@ -304,10 +304,10 @@
                         <i class="fas fa-angle-right right mt-2"></i>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ asset('Manual1.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/guide') ? 'active' : '' }}">
+                         <li class="nav-item">
+                            <a href="{{ asset('Manual3.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/troubleshooting') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Manual Pembayaran Bil Caruman</p>
+                                <p>Manual Permohonan Bil Caruman</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -317,11 +317,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ asset('Manual3.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/troubleshooting') ? 'active' : '' }}">
+                            <a href="{{ asset('Manual1.pdf') }}" target="_blank" class="nav-link {{ request()->is('clientarea/user-manual/guide') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Manual Permohonan Bil Caruman</p>
+                                <p>Manual Pembayaran Bil Caruman</p>
                             </a>
                         </li>
+                       
                     </ul>
                 </li>
                 
