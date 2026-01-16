@@ -155,12 +155,10 @@
                     <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
                     <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di <strong>ecp@selangor.gov.my.</strong></p>
                 </div>
-
-                <div class="divider"></div>
             </td>
         </tr>
         <tr>
-            <td class="footer">
+            <td>
                 <p>Terima kasih</p>
                 <p><strong>Portal e-CP Caruman Parit</strong></p>
             </td>
