@@ -1614,26 +1614,11 @@ class ThirdPartyController extends Controller
             ->where('stat', 1)
             ->orderBy('daerah_code', 'asc')
             ->get();
-            
-        $applicants = ClientRegisterModel::select('client_id', 'userName')->get();
         
-        $lotPts = Application::select('land_lot')
-            ->whereNotNull('land_lot')
-            ->where('land_lot', '!=', '')
-            ->groupBy('land_lot')
-            ->orderBy('land_lot', 'asc')
-            ->get()
-            ->map(function($item) {
-                return (object)[
-                    'lot_number' => $item->land_lot
-                ];
-            });
-        
-        // Initialize empty paginated collection
         $results = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 50);
             
-        // Check if ANY search parameter is filled
-        if ($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_id', 'reference_number', 'application_date'])) {
+
+        if ($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_name', 'reference_number', 'application_date'])) {
             $query = Application::query();
 
             if ($request->filled('lot_pt_grant')) {
@@ -1648,8 +1633,9 @@ class ThirdPartyController extends Controller
                 $query->where('land_district', $request->district);
             }
             
-            if ($request->filled('applicant_id')) {
-                $query->where('user_id', $request->applicant_id);
+            // Changed from applicant_id to applicant_name with LIKE search
+            if ($request->filled('applicant_name')) {
+                $query->where('applicant', 'like', '%' . $request->applicant_name . '%');
             }
             
             if ($request->filled('reference_number')) {
@@ -1670,8 +1656,6 @@ class ThirdPartyController extends Controller
             'title' => $title,
             'divisions' => $divisions,
             'districts' => $districts,
-            'applicants' => $applicants,
-            'lotPts' => $lotPts,
             'results' => $results,
             'request' => $request
         ]);
@@ -1684,7 +1668,7 @@ class ThirdPartyController extends Controller
         
         $query = Application::query();
 
-        // Build search query
+
         if ($request->filled('lot_pt_grant')) {
             $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
         }
@@ -1697,8 +1681,9 @@ class ThirdPartyController extends Controller
             $query->where('land_district', $request->district);
         }
         
-        if ($request->filled('applicant_id')) {
-            $query->where('user_id', $request->applicant_id);
+
+        if ($request->filled('applicant_name')) {
+            $query->where('applicant', 'like', '%' . $request->applicant_name . '%');
         }
         
         if ($request->filled('reference_number')) {
@@ -1713,21 +1698,17 @@ class ThirdPartyController extends Controller
             $q->where('payment_status', 'completed');
         });
         
-        // Get results with pagination
         $applications = $query->with(['applicant', 'division', 'districts', 'payment' => function($q) {
-                            // Load ALL payments, but you can order to get completed first
                             $q->orderByRaw("FIELD(payment_status, 'completed') DESC");
                         }])
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
         
-        // Get filter data for display
         $filters = [
             'district' => $request->district,
             'division' => $request->division,
-            'applicant_name' => $request->applicant_id ? ClientRegisterModel::find($request->applicant_id)->userName ?? '' : '',
+            'applicant_name' => $request->applicant_name, 
             'lot_number' => $request->lot_pt_grant,
-            'applicant_name' => $request->applicant_name,
             'reference_number' => $request->reference_number,
             'application_date' => $request->application_date
         ];
