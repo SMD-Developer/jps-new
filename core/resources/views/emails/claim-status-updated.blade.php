@@ -89,65 +89,6 @@
             color: #333;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 8px 12px;
-            border-radius: 4px;
-            color: white !important;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .status-pending {
-            background-color: #FFA500 !important;
-        }
-
-        .status-approve-payment-in-process {
-            background-color: #4169E1 !important;
-        }
-
-        .status-rejected {
-            background-color: #DC143C !important;
-        }
-
-        .status-approve-paid {
-            background-color: #28A745 !important;
-        }
-
-        .message-box {
-            background: #e8f4f8;
-            border-left: 4px solid #4169E1;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 3px;
-            font-size: 13px;
-            color: #0c5460;
-        }
-
-        .message-box.rejected {
-            background: #f8e8e8;
-            border-left-color: #DC143C;
-            color: #721c24;
-        }
-
-        .message-box.approved {
-            background: #e8f8e8;
-            border-left-color: #28A745;
-            color: #155724;
-        }
-
-        .action-button {
-            display: inline-block;
-            background-color: #ff6600;
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 15px 0;
-            font-weight: bold;
-            text-align: center;
-        }
-
         .footer {
             text-align: left;
             padding: 20px;
@@ -199,11 +140,7 @@
                     <table>
                         <tr>
                             <td class="label">Status Terbaharu :</td>
-                            <td class="value">
-                                <span class="status-badge status-{{ str_replace('_', '-', $claim->status) }}">
-                                    {{ $statusLabel }}
-                                </span>
-                            </td>
+                            <td class="value">{{ $statusLabel }}</td>
                         </tr>
                         <tr>
                             <td class="label">Tarikh Kemas Kini:</td>
@@ -215,9 +152,8 @@
                     <p class="mt-1 text-muted">
                         Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda. 
                     </p>
-                    <p>Sila log masuk ke Portal Caruman Parit (e-CP) untuk mendapatkan maklumat lebih lanjut atau mengemas kini permohonan anda.</p>
                     <p>👉 <a href="https://ecp-jps.selangor.gov.my/clientarea/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
-                    <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
+                    <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di <strong>ecp@selangor.gov.my.</strong></p>
                 </div>
 
                 <div class="divider"></div>

@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Assalamualaikum / Salam Sejahtera Pengguna yang Diharga, {{ $application->applicant }},</p>
+                <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai, {{ $application->applicant }},</p>
                 <p>Dimaklumkan bahawa permohonan anda tidak dapat diluluskan kerana dokumen sokongan yang dikemukakan adalah tidak lengkap.</p>
                 <p>Bagi membolehkan kami memproses semula permohonan anda, sila pastikan semua dokumen yang diperlukan dilampirkan dan dikemukakan dengan lengkap.</p>
                 <p>Sila log masuk ke Portal Caruman Parit (e-CP) untuk mengemas kini permohonan anda.</p>
