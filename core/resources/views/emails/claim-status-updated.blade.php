@@ -133,7 +133,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,{{ $notifiable->name }}</p>
+                <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai, {{ $notifiable->name }}</p>
                 <p>Dimaklumkan bahawa status tuntutan Caruman Parit anda telah dikemas kini.</p>
 
                 <div class="claim-details">
@@ -157,13 +157,11 @@
                 </div>
             </td>
         </tr>
-        <tr>
-            <td>
-                <p>Terima kasih</p>
-                <p><strong>Portal e-CP Caruman Parit</strong></p>
-            </td>
-        </tr>
     </table>
+    <div>
+        <p>Terima kasih</p>
+        <p><strong>Portal e-CP Caruman Parit</strong></p>
+    </div>
 </body>
 
 </html>
