@@ -301,11 +301,6 @@
                 // Show success notification
                 Swal.fire({
                     title: 'Permohonan Dihantar!',
-                    html: `
-                        <p>Permohonan resit anda telah dihantar secara automatik.</p>
-                        <p>Anda akan dimaklumkan melalui email apabila resit sudah sedia.</p>
-                        <p><strong>Tempoh pemprosesan: 1-3 hari bekerja</strong></p>
-                    `,
                     icon: 'success',
                     confirmButtonText: 'OK',
                     timer: 5000
