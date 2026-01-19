@@ -122,7 +122,7 @@ class ThirdPartyController extends Controller
             ]);
         } else {
             return redirect()->route('third.party.pay.details.b2b', [
-                'amount' => 10.00,
+                'amount' => 2.00,
                 'bank' => $request->selected_bank
             ]);
         }
@@ -1315,7 +1315,7 @@ class ThirdPartyController extends Controller
                 ->with('error', 'Application not found. Please search again.');
         }
 
-        $amount = 1.00; 
+        $amount = 2.00; 
         $bankCode = $request->get('bank', session('selected_bank'));
         $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
 
