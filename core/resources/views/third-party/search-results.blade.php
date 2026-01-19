@@ -166,87 +166,36 @@
                                             @if($hasOriginalPayment)
                                                 @if($isLegacy)
                                                     {{-- LEGACY APPLICATION (Before 16 Nov 2025) --}}
-                                                    
-                                                    @if($thirdPartyPayment)
-                                                        {{-- Third party has paid --}}
-                                                        @if($receiptRequest)
-                                                            {{-- Request already submitted --}}
-                                                            @if($receiptRequest->status === 'pending')
-                                                                <span class="badge bg-warning" style="font-size: 12px;">
-                                                                    <i class="fa fa-clock"></i> Dalam Proses
-                                                                </span>
-                                                            @elseif($receiptRequest->status === 'approved')
-                                                                <a href="{{ route('third.party.download.receipt', $receiptRequest->id) }}" 
-                                                                class="btn btn-sm btn-success"
-                                                                style="border-radius: 20px; padding: 6px 16px; font-weight: 600; font-size: 13px;">
-                                                                    <i class="fa fa-download"></i> Muat Turun Resit
-                                                                </a>
-                                                            @else
-                                                                <span class="badge bg-danger" style="font-size: 12px;">
-                                                                    <i class="fa fa-times"></i> Ditolak
-                                                                </span>
-                                                            @endif
-                                                        @else
-                                                            {{-- Paid but not submitted request yet --}}
-                                                            <button class="btn btn-sm submit-request-btn"
-                                                                    data-application-id="{{ $app->id }}"
-                                                                    style="
-                                                                        background-color: #17a2b8;
-                                                                        color: #fff;
-                                                                        border-radius: 20px;
-                                                                        padding: 6px 16px;
-                                                                        font-weight: 600;
-                                                                        font-size: 13px;
-                                                                        border: none;">
-                                                                <i class="fa fa-paper-plane"></i> Hantar Permohonan
-                                                            </button>
-                                                        @endif
-                                                    @else
-                                                        {{-- Not paid yet - Show payment button --}}
-                                                        <a href="javascript:void(0)" 
-                                                            class="btn btn-sm pay-for-legacy-receipt"
-                                                            data-application-id="{{ $app->id }}"
-                                                            style="
-                                                                background-color: #f4a100;
-                                                                color: #fff;
-                                                                border-radius: 20px;
-                                                                padding: 6px 16px;
-                                                                font-weight: 600;
-                                                                white-space:nowrap;
-                                                                font-size: 13px;
-                                                                border: none;">
-                                                            <i class="fa fa-credit-card"></i> Mohon Resit
-                                                        </a>
-                                                    @endif
-                                                    
+                                                    <a href="javascript:void(0)" 
+                                                        class="btn btn-sm pay-for-legacy-receipt"
+                                                        data-application-id="{{ $app->id }}"
+                                                        style="
+                                                            background-color: #f4a100;
+                                                            color: #fff;
+                                                            border-radius: 20px;
+                                                            padding: 6px 16px;
+                                                            font-weight: 600;
+                                                            white-space:nowrap;
+                                                            font-size: 13px;
+                                                            border: none;">
+                                                        <i class="fa fa-credit-card"></i> Mohon Resit
+                                                    </a>
                                                 @else
                                                     {{-- NEW APPLICATION (After 16 Nov 2024) - Automated Flow --}}
-                                                    
-                                                    @if($thirdPartyPayment)
-                                                        {{-- Already paid - Show receipt directly --}}
-                                                        <a href="{{ route('third.party.receipt.copy', $app->id) }}" 
-                                                        class="btn btn-sm btn-success"
-                                                        target="_blank"
-                                                        style="border-radius: 20px; padding: 6px 16px; font-weight: 600; font-size: 13px;">
-                                                            <i class="fa fa-print"></i> Cetak Resit
-                                                        </a>
-                                                    @else
-                                                        {{-- Not paid yet - Show payment button --}}
-                                                        <a href="javascript:void(0)" 
-                                                            class="btn btn-sm print-receipt-third-party"
-                                                            data-application-id="{{ $app->id }}"
-                                                            style="
-                                                                background-color: #f4a100;
-                                                                color: #fff;
-                                                                border-radius: 20px;
-                                                                padding: 6px 16px;
-                                                                font-weight: 600;
-                                                                font-size: 13px;
-                                                                white-space: nowrap;
-                                                                border: none;">
-                                                            <i class=""></i>Cetak Resit
-                                                        </a>
-                                                    @endif
+                                                    <a href="javascript:void(0)" 
+                                                        class="btn btn-sm print-receipt-third-party"
+                                                        data-application-id="{{ $app->id }}"
+                                                        style="
+                                                            background-color: #f4a100;
+                                                            color: #fff;
+                                                            border-radius: 20px;
+                                                            padding: 6px 16px;
+                                                            font-weight: 600;
+                                                            font-size: 13px;
+                                                            white-space: nowrap;
+                                                            border: none;">
+                                                        <i class="fa fa-credit-card"></i> Cetak Resit
+                                                    </a>
                                                 @endif
                                             @endif
                                         </td>
