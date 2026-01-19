@@ -1040,7 +1040,7 @@ body {
 
 
 <!-- Modal -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1048,59 +1048,58 @@ body {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="filterSearchForm"  class="filterform">
+                        <form id="feedbackForm" method="POST" action="{{ route('feedback.submit') }}">
+                            @csrf
                             
-
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="username" class="col-md-3 col-form-label">@lang('app.name'):<span class="important">*</span></label>
+                                    <label for="name" class="col-form-label">@lang('app.name'):<span class="important">*</span></label>
                                 </div>    
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control"  placeholder=" @lang('app.name') ">
+                                    <input type="text" class="form-control" name="name" id="name" placeholder="@lang('app.name')" required>
                                 </div>
                             </div>
+                            
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3" style="white-space: nowrap;">
-                                    <label for="mail" class="col-md-3 col-form-label">@lang('app.email'):<span class="important">*</span></label>
+                                    <label for="email" class="col-form-label">@lang('app.email'):<span class="important">*</span></label>
                                 </div>    
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control"  placeholder=" @lang('app.email') ">
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="@lang('app.email')" required>
                                 </div>
                             </div>
                             
-                            <div class="row align-items-center mb-3"  style="white-space: nowrap;">
+                            <div class="row align-items-center mb-3" style="white-space: nowrap;">
                                 <div class="col-md-3">
-                                    <label for="username" class="col-md-4 col-form-label">@lang('app.telephone_no'):<span class="important">*</span></label>
+                                    <label for="telephone" class="col-form-label">@lang('app.telephone_no'):<span class="important">*</span></label>
                                 </div>    
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control"  placeholder=" @lang('app.telephone_no') ">
+                                    <input type="text" class="form-control" name="telephone" id="telephone" placeholder="@lang('app.telephone_no')" required>
                                 </div>
                             </div>
+                            
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="username" class="col-md-3 col-form-label">@lang('app.comment'):<span class="important">*</span></label>
+                                    <label for="comment" class="col-form-label">@lang('app.comment'):<span class="important">*</span></label>
                                 </div>    
                                 <div class="col-md-9">
-                                    <textarea rows="4" cols="50" name="comment" class="form-control" placeholder=" @lang('app.please_fill')"></textarea>
+                                    <textarea rows="4" cols="50" name="comment" id="comment" class="form-control" placeholder="@lang('app.please_fill')" required></textarea>
                                 </div>
                             </div>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="captcha" class="col-md-3 col-form-label">@lang('app.safety'):<span class="important">*</span></label>
+                                    <label for="captcha" class="col-form-label">@lang('app.safety'):<span class="important">*</span></label>
                                 </div>    
                                 <div class="col-md-9">
-                                    <div class="col-md-9">
-                                        <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                                    </div>
+                                    <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-start gap-2">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> @lang('app.send')</button>&nbsp;&nbsp;
-                                <button type="reset" class="btn btn-primary">↻ @lang('app.reset')</button>
-                            </div>    
-                            <p class="mt-4"><b>Note : </b> Maklum balas ini hanyalah yang berkaitan dengan Portal e-CP (Caruman Parit) sahaja. Untuk sebarang aduan berkaitan Portal Awam sila hantar ke mysupport@jps.gov</p>  
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> @lang('app.send')</button>&nbsp;&nbsp;
+                                <button type="reset" class="btn btn-secondary">↻ @lang('app.reset')</button>
+                            </div>      
                         </form>
                     </div>
                 </div>
@@ -1121,7 +1120,6 @@ body {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Success/Error Messages -->
                 <div id="thirdPartyRegisterMessage"></div>
                 
                 <form id="thirdPartyRegisterForm" method="POST" action="{{ route('third.party.register.submit') }}">
@@ -1721,6 +1719,32 @@ $(document).ready(function() {
             el.classList.remove('is-valid');
         });
     });
+</script>
+<script>
+    document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+        // Check if reCAPTCHA is completed
+        if (grecaptcha.getResponse() === '') {
+            e.preventDefault();
+            alert('Sila lengkapkan reCAPTCHA.');
+            return false;
+        }
+    });
+
+    // Reset reCAPTCHA when modal is closed
+    $('#feedbackModal').on('hidden.bs.modal', function () {
+        grecaptcha.reset();
+        document.getElementById('feedbackForm').reset();
+    });
+
+    // Show success/error messages
+    @if(session('success'))
+        $('#feedbackModal').modal('hide');
+        alert('{{ session('success') }}');
+    @endif
+
+    @if(session('error'))
+        alert('{{ session('error') }}');
+    @endif
 </script>
 </body>
 </html>
