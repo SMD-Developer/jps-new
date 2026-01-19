@@ -123,7 +123,7 @@ Route::group(['middleware' => 'install'], function(){
 
 
         // Password Reset Routes...
-        Route::post('feedback/submit', 'ClientArea\Auth\ForgotPasswordController@submitFeedback')->name('client.feedback.submit');
+        Route::post('feedback/submit', 'ClientArea\Auth\ForgotPasswordController@submitFeedback')->name('feedback.submit');
         Route::get('password/reset', 'ClientArea\Auth\ForgotPasswordController@showLinkRequestForm')->name('client.password.request');
         Route::post('client/password/email', 'ClientArea\Auth\ForgotPasswordController@sendResetLinkEmail')->name('client.password.email');
         Route::get('password/reset/{token}', 'ClientArea\Auth\ResetPasswordController@showResetForm')->name('client.password.reset');
