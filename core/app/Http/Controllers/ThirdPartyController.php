@@ -1298,20 +1298,40 @@ class ThirdPartyController extends Controller
 
     public function b2b(Request $request)
     {
-        $thirdPartyData = session('third_party_data');
-        $applicationId = session('application_id');
-        $amount = session('payment_amount', 10.00);
-        
-        if (!$thirdPartyData || !$applicationId) {
-            return redirect()->route('applications.search')->with('error', 'Session expired. Please start over.');
+       
+        if (!auth('third_party')->check()) {
+            return redirect()->route('third.party.login')
+                ->with('error', 'Session expired. Please login again.');
         }
 
-        $application = Application::find($applicationId);
-        $referenceNo = $application ? $application->refference_no : null;
+
+        $thirdPartyUser = auth('third_party')->user();
+        $applicationId = session('application_id');
+        $thirdPartyId = session('third_party_id');
+
         
-        $bankCode = session('selected_bank', 'TEST0021');
-        $payController = app('App\Http\Controllers\ClientArea\PayController');
-        $bankData = $payController->getDynamicBankData($bankCode);
+        if (!$applicationId || !$thirdPartyId) {
+            return redirect()->route('third.party.search')
+                ->with('error', 'Application not found. Please search again.');
+        }
+
+        $amount = 1.00; 
+        $bankCode = $request->get('bank', session('selected_bank'));
+        $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
+
+        $fpx_callbackUrl = route('fpx.callback'); 
+        $fpx_returnUrl = route('fpx.return');
+
+        $application = Application::find($applicationId);
+
+        if (!$application) {
+            return redirect()->route('third.party.search')
+                ->with('error', 'Application not found.');
+        }
+
+        $referenceNo = $application->refference_no;
+        $bankData = $this->getDynamicBankData($bankCode);
+        
         
         // B2B FPX parameters
         $fpx_msgType = "AR";
@@ -1326,16 +1346,16 @@ class ThirdPartyController extends Controller
         $fpx_txnCurrency = "MYR";
         $fpx_txnAmount = number_format($amount, 2, '.', '');
         
-        $fpx_buyerEmail = $thirdPartyData['email'];
-        $fpx_buyerName = $thirdPartyData['name'];
-        $fpx_buyerBankId = $bankData['bank_code'];
-        $fpx_buyerBankBranch = "";
+        $fpx_buyerEmail = session('buyer_email', $thirdPartyUser->email);
+        $fpx_buyerName = $thirdPartyUser->name;
+        $fpx_buyerBankId = $bankData['bank_code']; 
+        $fpx_buyerBankBranch = $bankData['bank_name'];
         
         $fpx_buyerAccNo = "";
         $fpx_buyerId = "";
         $fpx_makerName = "";
         $fpx_buyerIban = "";
-        $fpx_productDesc = "Third Party Document Print";
+        $fpx_productDesc = "Card";
         $fpx_version = "7.0";
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
@@ -1352,10 +1372,10 @@ class ThirdPartyController extends Controller
         $receiptNumber = $this->generateReceiptNumber();
         
         // Store B2B payment with third_party_id
-        $paymentId = DB::table('payments')->insertGetId([
-            'uuid' => (string) Str::uuid(),
+            $this->storePaymentData([
             'user_id' => null, 
-            'third_party_id' => $thirdPartyData['id'], 
+            'third_party_id' => $thirdPartyId,
+            'payment_type' => 'third_party',
             'application_id' => $applicationId,
             'payment_date' => now()->toDateString(),
             'amount' => $fpx_txnAmount,
@@ -1376,8 +1396,17 @@ class ThirdPartyController extends Controller
                 'fpx_data' => $data,
                 'action_url' => $actionUrl,
                 'payment_type' => 'third_party_print',
-                'timestamp' => now()
+                'timestamp' => now(),
+                'third_party_info' => [
+                    'id' => $thirdPartyId,
+                    'name' => $thirdPartyUser->name,
+                    'email' => $thirdPartyUser->email,
+                    'id_card_number' => $thirdPartyUser->id_card_number ?? null,
+                    'address' => $thirdPartyUser->address ?? null
+                ]
+
             ]),
+            'payment_date' => now()->toDateString(),
             'created_at' => now(),
             'updated_at' => now()
         ]);
