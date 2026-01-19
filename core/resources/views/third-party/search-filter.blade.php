@@ -31,8 +31,7 @@
                     
                   <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('third.party.search-results') }}" method="GET" id="searchForm">
-                            
+                        <form action="{{ route('third.party.search-results') }}" method="GET" id="searchForm" onsubmit="return validateForm()">
                             <!-- Radio Button Group -->
                             <div class="form-group">
                                 <label class="d-block mb-2">Cari Berdasarkan</label>
@@ -240,6 +239,34 @@
             window.location.href = "{{ route('third.party.search') }}";
         }
 
+        function validateForm() {
+            const applicantRadio = document.getElementById('searchByApplicant');
+            const lotRadio = document.getElementById('searchByLot');
+            const applicantName = document.getElementById('applicant_name').value.trim();
+            const lotPtGrant = document.getElementById('lot_pt_grant').value.trim();
+            
+            // Check if either radio is selected
+            if (!applicantRadio.checked && !lotRadio.checked) {
+                alert('Sila pilih sama ada Nama Pemohon atau No Lot/PT');
+                return false;
+            }
+            
+            // Check if applicant radio is selected but name is empty
+            if (applicantRadio.checked && !applicantName) {
+                alert('Sila masukkan Nama Pemohon');
+                document.getElementById('applicant_name').focus();
+                return false;
+            }
+            
+            // Check if lot radio is selected but lot number is empty
+            if (lotRadio.checked && !lotPtGrant) {
+                alert('Sila masukkan No Lot/PT');
+                document.getElementById('lot_pt_grant').focus();
+                return false;
+            }
+            
+            return true;
+        }
         document.addEventListener('DOMContentLoaded', function() {
             if (document.getElementById('searchByApplicant').checked || 
                 document.getElementById('searchByLot').checked) {

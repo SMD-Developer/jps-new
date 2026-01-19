@@ -83,8 +83,9 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Kepada Finance Admin,</p>
-                <p><strong>Permohonan pulang balik telah dihantar untuk semakan</strong></p>
+                <p>Kepada Pegawai Pelulus,</p>
+                <p>Dimaklumkan bahawa satu permohonan baharu telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan</p>
+                <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
             </td>
         </tr>
         <tr>

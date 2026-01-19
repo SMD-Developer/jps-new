@@ -93,7 +93,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Kepada, {{ $notifiable->name ?? 'Pengguna' }},</p>
+                <p>Kepada Pegawai Pelulus, {{ $recipientName }},</p>
                 <p>Dimaklumkan bahawa satu permohonan baharu telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
                 <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
                 <p>Yang benar,</p>

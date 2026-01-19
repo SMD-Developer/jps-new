@@ -1665,34 +1665,53 @@ class ThirdPartyController extends Controller
     public function searchResults(Request $request)
     {
         $title = __("app.search_results");
+
+        $request->validate([
+            'search_type' => 'required|in:applicant,lot',
+            'applicant_name' => 'required_if:search_type,applicant',
+            'lot_pt_grant' => 'required_if:search_type,lot',
+        ], [
+            'search_type.required' => 'Sila pilih jenis carian',
+            'applicant_name.required_if' => 'Nama pemohon diperlukan',
+            'lot_pt_grant.required_if' => 'No Lot/PT diperlukan',
+        ]);
         
         $query = Application::query();
 
-
-        if ($request->filled('lot_pt_grant')) {
-            $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
-        }
-        
-        if ($request->filled('division')) {
-            $query->where('land_state', $request->division);
-        }
-        
-        if ($request->filled('district')) {
-            $query->where('land_district', $request->district);
-        }
-        
-
-        if ($request->filled('applicant_name')) {
-            $query->where('applicant', 'like', '%' . $request->applicant_name . '%');
-        }
-        
-        if ($request->filled('reference_number')) {
-            $query->where('refference_no', 'like', '%' . $request->reference_number . '%');
-        }
-        
-        if ($request->filled('application_date')) {
-            $query->whereDate('created_at', $request->application_date);
-        }
+        // Use OR logic - wrap all conditions in orWhere
+        $query->where(function($q) use ($request) {
+            $hasCondition = false;
+            
+            if ($request->filled('lot_pt_grant')) {
+                $q->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
+                $hasCondition = true;
+            }
+            
+            if ($request->filled('division')) {
+                $q->orWhere('land_state', $request->division);
+                $hasCondition = true;
+            }
+            
+            if ($request->filled('district')) {
+                $q->orWhere('land_district', $request->district);
+                $hasCondition = true;
+            }
+            
+            if ($request->filled('applicant_name')) {
+                $q->orWhere('applicant', 'like', '%' . $request->applicant_name . '%');
+                $hasCondition = true;
+            }
+            
+            if ($request->filled('reference_number')) {
+                $q->orWhere('refference_no', 'like', '%' . $request->reference_number . '%');
+                $hasCondition = true;
+            }
+            
+            if ($request->filled('application_date')) {
+                $q->orWhereDate('created_at', $request->application_date);
+                $hasCondition = true;
+            }
+        });
 
         $query->whereHas('payment', function ($q) {
             $q->where('payment_status', 'completed');
@@ -1713,7 +1732,6 @@ class ThirdPartyController extends Controller
             'application_date' => $request->application_date
         ];
         
-        // Get districts and divisions for filter display
         $districts = DB::table('district')->get()->keyBy('iddaerah');
         $divisions = DB::table('division')->get()->keyBy('idmukim');
         
@@ -1726,7 +1744,6 @@ class ThirdPartyController extends Controller
             'request' => $request
         ]);
     }
-
 
     public function success()
     {

@@ -37,6 +37,8 @@ class ApproverClaimNotification extends Notification
             'type' => 'forward_claim_to_approver',
             'message' => $message,
             'sent_by' => $this->senderUsername,
+            'sent_to' => $notifiable->name ?? $notifiable->username ?? $notifiable->email, // Add recipient info
+            'sent_to_id' => $notifiable->id ?? $notifiable->uuid, // Add recipient ID
             'is_resent' => $this->isResent,
             'sent_at' => now()->toDateTimeString(),
         ];
@@ -44,7 +46,13 @@ class ApproverClaimNotification extends Notification
 
     public function toMail($notifiable)
     {
-        $subject = $this->isResent ? 'Tuntutan Dihantar Semula' : 'Tuntutan Baru Untuk Kelulusan';
+        $subject = $this->isResent ? 'Permohonan Tuntutan Pulang Balik Diterima untuk Semakan' : 'Permohonan Tuntutan Pulang Balik Diterima untuk Semakan';
+
+        $recipientName = $notifiable->name 
+            ?? $notifiable->username 
+            ?? $notifiable->email 
+            ?? 'Pegawai Pelulus';
+
         $mainMessage = $this->isResent 
             ? 'Tuntutan yang ditolak telah dihantar semula untuk kelulusan.' 
             : 'Tuntutan baru telah dihantar untuk kelulusan.';
@@ -56,6 +64,7 @@ class ApproverClaimNotification extends Notification
                 'senderUsername' => $this->senderUsername,
                 'subject' => $subject,
                 'mainMessage' => $mainMessage,
+                'recipientName' => $recipientName,
                 'notifiable' => $notifiable,
                 'sentAt' => now()->format('d/m/Y H:i'),
                 'loginUrl' => url('/clientarea/login'),
