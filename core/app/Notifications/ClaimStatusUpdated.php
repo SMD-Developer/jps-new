@@ -70,10 +70,11 @@ class ClaimStatusUpdated extends Notification
     protected function getStatusLabel($status)
     {
         $labels = [
-            'pending' => 'Menunggu Ulasan',
+            'pending' => 'Dalam Proses',
             'approve_payment_in_process' => 'Pembayaran Dalam Proses',
             'rejected' => 'Ditolak',
-            'approve_paid' => 'Diluluskan & Dibayar',
+            'approve_paid' => 'Diluluskan',
+            'check_query' => 'Kuiri - Perlukan Dokumen Sokongan',
         ];
 
         return $labels[$status] ?? ucfirst(str_replace('_', ' ', $status));

@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Kepada Adminastaff,</p>
+                <p>Kepada Penyedia,</p>
                 <p>Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan.</p>
                 <p>Dimaklumkan bahawa satu permohonan baharu telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
                 <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
