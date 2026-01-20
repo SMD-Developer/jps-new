@@ -912,11 +912,15 @@ class HomeController extends Controller {
             $clientId = auth('user')->id();
             $perPage = $request->input('per_page', 10);
             
-            $applications = Application::with('client')
+            $applications = Application::with(['client', 'payments'])
                 ->where('user_id', $clientId)
                 ->where('status', 'approved')
-                ->whereHas('payment', function($query) {
-                    $query->where('payment_status', 'completed');
+                ->whereHas('payments', function($query) {
+                    $query->where('payment_status', 'completed')
+                        ->where(function($q) {
+                            $q->whereNull('payment_type')
+                                ->orWhere('payment_type', '!=', 'reprint');
+                        });
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage);
