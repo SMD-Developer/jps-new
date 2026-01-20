@@ -1,0 +1,1659 @@
+/* General Styles */
+body {
+  line-height: 1.5;
+  margin: 20px;
+  color: #333;
+  font-weight: 700;
+  background-color: white !important;
+}
+.content-wrapper {
+  background-color: #fff !important;
+}
+
+.address-wrap {
+  white-space: normal !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+@media print {
+  html,
+  body {
+    height: 100%;
+  }
+
+  .row, .head-row {
+            display: table !important;
+            width: 100% !important;
+           
+        }
+
+  .font-print {
+    font-size: 15pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .last_para {
+    position: absolute !important;
+    top: 150% !important;
+    left: 0;
+    right: 0;
+    text-align: center !important;
+    width: 100%;
+    font-size: 16pt;
+    margin-left: 25px !important;
+  }
+
+  @media print {
+    .img3 {
+      float: left !important;
+      margin-right: auto !important;
+      margin-left: -15px !important;
+    }
+  }
+}
+
+@media screen {
+  .head-row,
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+
+  .col-md-2,
+  .col-md-3,
+  .col-md-4,
+  .col-md-5,
+  .col-md-6,
+  .col-md-8 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .col-md-2 {
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+
+  .col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+
+  .col-md-5 {
+    flex: 0 0 41.666667%;
+    max-width: 41.666667%;
+  }
+
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .col-md-8 {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+  }
+}
+
+.row.mt-3.head-row {
+  border-bottom: none !important;
+}
+
+.col-md-4.ruj.text-left {
+  padding-left: 250px !important;
+}
+.last_para {
+  margin-left: 83px;
+  color: grey;
+  white-space: nowrap;
+}
+
+/* user receipt css  start*/
+
+.rotingtxt {
+  -webkit-transform: rotate(331deg);
+  -moz-transform: rotate(331deg);
+  -o-transform: rotate(331deg);
+  transform: rotate(331deg);
+  font-size: 10em;
+  color: #cccccc;
+  position: absolute;
+  font-family: "Denk One", sans-serif;
+  text-transform: uppercase;
+  font-weight: 700;
+  top: 26rem;
+  left: 25%;
+  opacity: 0.5;
+}
+
+.receipt-table th {
+  font-size: 14px;
+}
+
+.receipt-footer .info-row {
+  display: flex;
+  margin-bottom: 5px;
+  align-items: flex-start;
+}
+
+.receipt-footer .label {
+  width: 150px;
+  flex-shrink: 0;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.receipt-footer .label::after {
+  content: ":";
+  margin-left: 5px;
+}
+
+.receipt-footer .value {
+  flex-grow: 1;
+  margin-left: 10px;
+  align-self: flex-start;
+}
+
+.receipt-header .info-row {
+  display: flex;
+  margin-bottom: 5px;
+  align-items: flex-start;
+}
+
+.receipt-header .label {
+  width: 202px;
+  flex-shrink: 0;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.receipt-header .label::after {
+  content: ":";
+  margin-left: 5px;
+}
+
+.receipt-header .value {
+  flex-grow: 1;
+  margin-left: 10px;
+  align-self: flex-start;
+}
+
+.contents {
+  background-color: #f4f6f9;
+  margin-bottom: 50px;
+}
+
+.containers {
+  padding-inline: 120px !important;
+}
+
+.rows {
+  display: flex;
+  justify-content: center;
+}
+
+.receipt-table {
+  border-collapse: collapse;
+}
+
+.receipt-table th,
+.receipt-table td {
+  border: 1px solid black !important;
+}
+
+.btnsuccess {
+  border-radius: 20px !important;
+  padding: 7px 50px !important;
+}
+
+.btnprimary {
+  width: max-content;
+}
+
+.custome-text {
+  font-size: 14px;
+}
+
+@media print {
+  #printButton,
+  #printSalinanButton,
+  #downloadButton,
+  #backButton {
+    display: none !important;
+  }
+}
+
+/* report-list-ditch */
+body {
+  line-height: 1.5;
+  margin: 20px;
+  color: #333;
+  font-weight: 700;
+  background-color: white !important;
+}
+.content-wrapper {
+  background-color: #fff !important;
+}
+
+.address-wrap {
+  white-space: normal !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+@media print {
+  .contents {
+    background-color: #fff;
+  }
+  .col-md-2,
+  .col-md-3,
+  .col-md-4,
+  .col-md-5,
+  .col-md-6,
+  .col-md-8 {
+    display: table-cell !important;
+    float: none !important;
+    vertical-align: top !important;
+  }
+
+  .last_para {
+    position: absolute !important;
+    top: 120% !important;
+    left: 0;
+    right: 0;
+    text-align: center !important;
+    width: 100%;
+    font-size: 16pt;
+    margin-left: 25px !important;
+  }
+
+  @media print {
+    .img3 {
+      float: left !important;
+      margin-right: auto !important;
+      margin-left: -15px !important;
+    }
+  }
+}
+@media screen {
+  .head-row,
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+
+  .col-md-2,
+  .col-md-3,
+  .col-md-4,
+  .col-md-5,
+  .col-md-6,
+  .col-md-8 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .col-md-2 {
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+
+  .col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+
+  .col-md-5 {
+    flex: 0 0 41.666667%;
+    max-width: 41.666667%;
+  }
+
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .col-md-8 {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+  }
+}
+
+.row.mt-3.head-row {
+  border-bottom: none !important;
+}
+
+.col-md-4.ruj.text-left {
+  padding-left: 250px !important;
+}
+.last_para {
+  margin-left: 83px;
+  color: grey;
+  white-space: nowrap;
+}
+
+/* user receipt css  start*/
+.report-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 20px auto;
+  background: white;
+  border: 1px solid #d0d7de;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+  overflow: hidden;
+}
+
+/* Header Section */
+.report-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #f6f8fa 0%, #ffffff 100%);
+  border-bottom: 2px solid #0969da;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.date-time-info {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.date-time-info strong {
+  color: #24292f;
+  font-weight: 600;
+}
+
+.main-title {
+  text-align: center;
+  flex: 1;
+  padding: 0 20px;
+}
+
+.main-title h1 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #24292f !important;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+
+.main-title p {
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.page-info {
+  font-size: 12px;
+  color: #656d76;
+  text-align: right;
+}
+
+.page-info strong {
+  color: #24292f;
+  font-weight: 600;
+}
+
+/* Department Info Table - Excel Style */
+.department-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.department-info-table th {
+  background: #f0f0f0;
+  color: #333;
+  padding: 12px 15px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.department-info-table td {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+
+.department-info-table .label-cell {
+  background: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+  width: 15%;
+  text-align: center;
+}
+
+.department-info-table .code-cell {
+  width: 20%;
+  color: #333;
+  font-weight: 500;
+}
+
+.department-info-table .description-cell {
+  width: 65%;
+  color: #333;
+}
+
+/* Main Data Table - Excel Style */
+.main-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 12px;
+}
+
+.main-data-table th {
+  background: #f0f0f0;
+  color: #333;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  text-transform: uppercase;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
+.main-data-table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+  background: white;
+}
+
+.main-data-table tbody td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.main-data-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.main-data-table tbody tr:hover {
+  background: #e8f4f8;
+}
+
+/* Column specific styling */
+.main-data-table .col-bil {
+  width: 4%;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+}
+
+.main-data-table .col-resit {
+  width: 10%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-perihal {
+  width: 20%;
+  text-align: left;
+  color: #333;
+}
+
+.main-data-table .col-nama {
+  width: 15%;
+  text-align: left;
+  color: #333;
+}
+
+.main-data-table .col-kategori {
+  width: 10%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-vot {
+  width: 6%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-kod {
+  width: 8%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-tarikh {
+  width: 8%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-masa {
+  width: 7%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-mod {
+  width: 8%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-jenis {
+  width: 7%;
+  text-align: center;
+  color: #333;
+}
+
+.main-data-table .col-kategori-bank {
+  width: 12%;
+  text-align: center;
+  color: #333;
+  font-size: 11px;
+}
+
+.main-data-table .col-jumlah {
+  width: 8%;
+  text-align: right;
+  color: #333;
+  font-size: 11px;
+}
+
+/* Action Buttons */
+.action-section {
+  padding: 20px;
+  background: #f6f8fa;
+  border-top: 1px solid #d0d7de;
+  text-align: right;
+}
+
+.btn-print {
+  background: linear-gradient(135deg, #0969da 0%, #54aeff 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btn-prints {
+  background: linear-gradient(135deg, #e6e33eff 0%, #bbb121ff 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btn-print:hover {
+  background: linear-gradient(135deg, #0550ae 0%, #368ce7 100%);
+  box-shadow: 0 3px 6px rgba(16, 24, 40, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Repeating header wrapper */
+.report-wrapper {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-wrapper thead {
+  display: table-header-group;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.report-wrapper tbody {
+  display: table-row-group;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    font-size: 11px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .report-container {
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .header-row {
+    border: none !important;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    width: 100%;
+  }
+
+  .header-row .date-time-info {
+    text-align: left !important;
+  }
+
+  .header-row .main-title {
+    text-align: center !important;
+  }
+
+  .header-row .page-info {
+    text-align: right !important;
+  }
+
+  .department-info-table {
+    border: 1px solid #000 !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+    margin: 10px 0 !important;
+  }
+
+  .department-info-table th,
+  .department-info-table td {
+    border: 1px solid #000 !important;
+    padding: 4px !important;
+    word-wrap: break-word !important;
+  }
+  #btn-section {
+    display: none !important;
+  }
+
+  .report-wrapper {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+  }
+
+  .report-wrapper thead {
+    display: table-header-group;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .report-wrapper tbody {
+    display: table-row-group;
+  }
+
+  .report-wrapper thead tr td {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
+
+  .report-wrapper tbody tr:first-child td {
+    page-break-before: avoid;
+  }
+
+  .report-header {
+    padding: 10px 0 !important;
+    background: white !important;
+    border: none !important;
+  }
+
+  .main-data-table {
+    border: 1px solid #000 !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  .main-data-table thead {
+    display: table-header-group;
+  }
+
+  .main-data-table tbody {
+    display: table-row-group;
+  }
+
+  .main-data-table th,
+  .main-data-table td {
+    border: 1px solid #000 !important;
+    padding: 4px !important;
+  }
+  .main-data-table tbody tr:nth-child(even) {
+    background: #f9f9f9 !important;
+  }
+
+  .main-data-table tbody tr:last-child {
+    background: #f0f0f0 !important;
+    font-weight: bold !important;
+  }
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 12px;
+}
+
+.summary-table th {
+  background: #f0f0f0;
+  color: #333;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.summary-table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+  /* background: white; */
+}
+
+.summary-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.summary-table tbody tr:hover {
+  background: #e8f4f8;
+}
+
+@media print {
+  @page {
+    margin: 20mm;
+    size: A4 portrait;
+
+    /* Add page numbering in bottom-right */
+    @bottom-right {
+      content: "MUKA SURAT " counter(page) " / " counter(pages);
+      font-size: 12px;
+      font-weight: bold;
+    }
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin: 0 !important;
+    color: #000 !important;
+  }
+
+  /* Remove any background colors */
+  * {
+    box-shadow: none !important;
+  }
+
+  .report-header {
+    padding: 10px 0 !important;
+    border: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .header-row {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100% !important;
+  }
+
+  /* Prevent date & time breaking into two lines */
+  .date-time-info p {
+    white-space: nowrap !important;
+    margin: 0 !important;
+  }
+
+  /* Make department info table same width as header */
+  .department-info-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+}
+
+/* payment report */
+.payment-report table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-report th {
+  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #999999;
+  border-right: 2px solid #999999;
+  border-left: 2px solid #999999;
+  padding: 8px 6px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 11px;
+  color: #333;
+  position: relative;
+}
+
+.payment-report th::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #999999;
+  z-index: 1;
+}
+
+.payment-report th:last-child::after {
+  display: none;
+}
+
+.payment-report td {
+  border: 1px solid #999999;
+  border-right: 2px solid #999999;
+  border-left: 2px solid #999999;
+  padding: 6px 8px;
+  text-align: left;
+  background-color: white;
+  vertical-align: middle;
+  position: relative;
+}
+
+.payment-report td::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #999999;
+  z-index: 1;
+}
+
+.payment-report td:last-child::after {
+  display: none;
+}
+
+/* Excel-like hover effect */
+.payment-report tbody tr:hover {
+  background-color: #f0f8ff;
+}
+
+.payment-report tbody tr:hover td {
+  background-color: #f0f8ff;
+}
+
+/* Excel-like cell selection effect */
+.payment-report td:hover {
+  background-color: #e6f3ff !important;
+  cursor: cell;
+}
+
+/* Zebra striping like Excel */
+.payment-report tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.payment-report tbody tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+/* Department info table specific styles */
+.payment-report .department-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.payment-report .department-info-table th {
+  background: #f0f0f0;
+  color: #333;
+  padding: 12px 15px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.payment-report .department-info-table td {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+
+.payment-report .department-info-table .label-cell {
+  background: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+  width: 15%;
+  text-align: center;
+}
+
+.payment-report .department-info-table .code-cell {
+  background: #ffffff;
+  width: 20%;
+  color: #333;
+  font-weight: 500;
+}
+
+.payment-report .department-info-table .description-cell {
+  background: #ffffff;
+  width: 65%;
+  color: #333;
+}
+
+.payment-report th:last-child::after {
+  display: none;
+}
+
+/* Excel-like hover effect */
+.payment-report tbody tr:hover {
+  background-color: #f0f8ff;
+}
+
+.payment-report tbody tr:hover td {
+  background-color: #f0f8ff;
+}
+
+/* Excel-like cell selection effect */
+.payment-report td:hover {
+  background-color: #e6f3ff !important;
+  cursor: cell;
+}
+
+/* Zebra striping like Excel */
+.payment-report tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.payment-report tbody tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+.payment-report .main-title {
+  text-align: center;
+  flex: 1;
+  padding: 0 20px;
+}
+
+.payment-report .main-title h1 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #24292f !important;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+
+.payment-report .main-title h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #24292f !important;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+
+.payment-report .main-title p {
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.payment-report .scrollbar {
+  overflow-x: auto;
+  border: 2px solid #999999;
+  border-radius: 3px;
+}
+
+.payment-report .form-container {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+  margin: 15px 0;
+}
+
+.payment-report .summary-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.payment-report .summary-box h6 {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.payment-report .summary-box h4 {
+  color: white;
+  font-weight: bold;
+  margin: 0;
+}
+
+.payment-report .amount-column {
+  text-align: right;
+  font-weight: 500;
+  font-family: "Courier New", monospace;
+}
+
+.payment-report .transaction-column {
+  text-align: center;
+  font-weight: 500;
+}
+
+.payment-report .total-row {
+  background: linear-gradient(to bottom, #28a745 0%, #20c997 100%) !important;
+  font-weight: bold;
+  color: white;
+}
+
+.payment-report .total-row td {
+  background: transparent !important;
+  border-color: #999999;
+  border-width: 2px;
+  font-weight: bold;
+}
+
+.payment-report .date-time-info {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.payment-report .date-time-info strong {
+  color: #24292f;
+  font-weight: 600;
+}
+
+.payment-report .header-info {
+  border: 2px solid #495057;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: linear-gradient(to right, #f8f9fa, #ffffff);
+  border-radius: 5px;
+}
+
+.payment-report .header-info table {
+  box-shadow: none;
+  margin: 0;
+}
+
+.payment-report .header-info th {
+  background: #495057;
+  color: white;
+  font-weight: bold;
+}
+
+/* Excel-like grid lines */
+.payment-report .excel-grid {
+  position: relative;
+}
+
+.payment-report .excel-grid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(90deg, #e0e0e0 1px, transparent 1px),
+    linear-gradient(180deg, #e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Excel-like column headers */
+.payment-report .excel-column {
+  background: linear-gradient(to bottom, #f1f3f4 0%, #e8eaed 100%);
+  font-weight: 600;
+  text-align: center;
+  min-width: 80px;
+}
+
+/* Print button styling */
+.payment-report .btn-primary {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.payment-report .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* Header table specific styles */
+.payment-report .header-table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: none;
+}
+
+.payment-report .header-table td {
+  border: 1px solid #999;
+  padding: 8px;
+  background-color: white;
+  vertical-align: top;
+  position: static;
+}
+
+.payment-report .header-table td::after {
+  display: none;
+}
+
+.payment-report .dept-table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: none;
+}
+
+.payment-report .dept-table th {
+  padding: 8px;
+  border: 1px solid #999;
+  background: #f0f0f0;
+  text-align: center;
+  position: static;
+}
+
+.payment-report .dept-table th::after {
+  display: none;
+}
+
+.payment-report .dept-table td {
+  padding: 8px;
+  border: 1px solid #999;
+  position: static;
+}
+
+.payment-report .dept-table td::after {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payment-report .scrollbar {
+    font-size: 10px;
+  }
+
+  .payment-report th,
+  .payment-report td {
+    padding: 4px;
+    font-size: 10px;
+  }
+}
+
+@media print {
+  .payment-report body {
+    background: white;
+    font-size: 12px !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .payment-report * {
+    color: #000 !important;
+  }
+
+  .payment-report .form-container,
+  .payment-report .summary-box,
+  .payment-report .header-info {
+    box-shadow: none;
+    border: 2px solid #000 !important;
+    background: white !important;
+  }
+
+  .payment-report #print-button {
+    display: none;
+  }
+
+  .payment-report .report-header {
+    padding: 15px;
+    background: white !important;
+    border-bottom: 3px solid #000 !important;
+  }
+
+  .payment-report .date-time-info {
+    font-size: 13px !important;
+  }
+
+  .payment-report .date-time-info strong,
+  .payment-report .date-time-info p {
+    color: #000 !important;
+    font-weight: 700 !important;
+  }
+
+  .payment-report .main-title h1 {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    margin-bottom: 8px;
+  }
+
+  .payment-report .main-title p,
+  .payment-report .main-title p strong {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+  }
+
+  .payment-report .page-info p,
+  .payment-report .page-info strong {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+  }
+
+  .payment-report .department-info-table {
+    border-collapse: collapse !important;
+    border: 2px solid #000 !important;
+    font-size: 13px !important;
+    margin: 15px 0 !important;
+    width: 100% !important;
+  }
+
+  .payment-report .department-info-table thead {
+    display: table-header-group !important;
+  }
+
+  .payment-report .department-info-table tbody {
+    display: table-row-group !important;
+  }
+
+  .payment-report .department-info-table tr {
+    border: 2px solid #000 !important;
+  }
+
+  .payment-report .department-info-table th {
+    background: #e0e0e0 !important;
+    color: #000 !important;
+    font-weight: 700 !important;
+    border: 2px solid #000 !important;
+    border-collapse: collapse !important;
+    padding: 10px !important;
+    font-size: 13px !important;
+    position: static !important;
+  }
+
+  .payment-report .department-info-table th::after,
+  .payment-report .department-info-table th::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .payment-report .department-info-table td {
+    border: 2px solid #000 !important;
+    border-collapse: collapse !important;
+    padding: 10px !important;
+    color: #000 !important;
+    font-size: 13px !important;
+    position: static !important;
+  }
+
+  .payment-report .department-info-table td::after,
+  .payment-report .department-info-table td::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .payment-report .department-info-table td strong {
+    font-weight: 700 !important;
+    color: #000 !important;
+  }
+
+  .payment-report table {
+    box-shadow: none !important;
+    page-break-inside: auto;
+    border-collapse: collapse !important;
+    border: 2px solid #000 !important;
+    width: 100% !important;
+  }
+
+  .payment-report thead {
+    display: table-header-group !important;
+  }
+
+  .payment-report tbody {
+    display: table-row-group !important;
+  }
+
+  .payment-report tr {
+    page-break-inside: avoid !important;
+    border: 2px solid #000 !important;
+  }
+
+  .payment-report th {
+    background: #d0d0d0 !important;
+    color: #000 !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    border: 2px solid #000 !important;
+    border-collapse: collapse !important;
+    padding: 10px 8px !important;
+    text-align: center !important;
+    position: static !important;
+  }
+
+  .payment-report th::after,
+  .payment-report th::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .payment-report td {
+    border: 2px solid #000 !important;
+    border-collapse: collapse !important;
+    background: white !important;
+    color: #000 !important;
+    font-size: 12px !important;
+    padding: 8px !important;
+    font-weight: 500 !important;
+    position: static !important;
+  }
+
+  .payment-report td::after,
+  .payment-report td::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Make amount columns more prominent */
+  .payment-report .amount-column {
+    text-align: right !important;
+    font-weight: 700 !important;
+    font-family: "Courier New", monospace !important;
+    font-size: 13px !important;
+    color: #000 !important;
+  }
+
+  .payment-report .transaction-column {
+    text-align: center !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    color: #000 !important;
+  }
+
+  /* Total row - Make it stand out */
+  .payment-report .total-row {
+    background: #333 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .payment-report .total-row td {
+    background: #333 !important;
+    color: #fff !important;
+    border: 2px solid #000 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 12px 8px !important;
+  }
+
+  .payment-report .total-row td strong {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+
+  /* Remove hover effects in print */
+  .payment-report tbody tr:hover,
+  .payment-report tbody tr:hover td,
+  .payment-report td:hover {
+    background-color: white !important;
+  }
+
+  /* Zebra striping for better readability */
+  .payment-report tbody tr:nth-child(even) td {
+    background-color: #f5f5f5 !important;
+  }
+
+  /* Method and Status Summary Cards - Display in single row */
+  .payment-report .card {
+    border: 2px solid #000 !important;
+    page-break-inside: avoid;
+    margin-bottom: 10px;
+    display: inline-block !important;
+    width: auto !important;
+    min-width: 200px !important;
+    vertical-align: top !important;
+  }
+
+  .payment-report .card-body {
+    padding: 10px !important;
+  }
+
+  .payment-report .card-title {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    margin-bottom: 8px;
+  }
+
+  .payment-report .card-text {
+    font-size: 12px !important;
+    color: #000 !important;
+  }
+
+  .payment-report .card-text small {
+    font-size: 11px !important;
+    color: #000 !important;
+    font-weight: 500 !important;
+  }
+
+  .payment-report .card-text strong {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+  }
+
+  /* Make rows display inline */
+  .payment-report .row {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .payment-report .col-md-3 {
+    display: inline-block !important;
+    width: 32% !important;
+    margin-right: 1% !important;
+    vertical-align: top !important;
+    page-break-inside: avoid !important;
+  }
+
+  .payment-report .col-md-3:last-child {
+    margin-right: 0 !important;
+  }
+
+  /* Summary section headings */
+  .payment-report h6 {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    margin: 15px 0 10px 0 !important;
+  }
+
+  /* Page breaks */
+  .payment-report .page-header {
+    page-break-after: avoid;
+  }
+
+  .payment-report table {
+    page-break-inside: auto;
+  }
+
+  .payment-report tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* Ensure borders are visible - CRITICAL */
+  .payment-report * {
+    box-sizing: border-box !important;
+  }
+
+  .payment-report table,
+  .payment-report thead,
+  .payment-report tbody,
+  .payment-report th,
+  .payment-report td,
+  .payment-report tr {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  .payment-report table {
+    border: 2px solid #000 !important;
+  }
+
+  .payment-report th,
+  .payment-report td {
+    border: 2px solid #000 !important;
+  }
+
+  /* Remove all pseudo-elements that might interfere with borders */
+  .payment-report *::before,
+  .payment-report *::after {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+/* Additional screen styles to match */
+.payment-report .amount-column {
+  text-align: right;
+  font-weight: 600;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+}
+
+.payment-report .transaction-column {
+  text-align: center;
+  font-weight: 600;
+}
+
+.payment-report .total-row {
+  background: linear-gradient(to bottom, #333 0%, #444 100%) !important;
+  font-weight: bold;
+  color: white;
+}
+
+.payment-report .total-row td {
+  background: transparent !important;
+  border-color: #000;
+  border-width: 2px;
+  font-weight: 700;
+  color: white;
+  font-size: 13px;
+}
+
+/* Department info table screen styles */
+.payment-report .department-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.payment-report .department-info-table th {
+  background: #f0f0f0;
+  color: #000;
+  padding: 12px 15px;
+  text-align: center;
+  font-weight: 700;
+  border: 2px solid #999;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.payment-report .department-info-table td {
+  padding: 10px 15px;
+  border: 2px solid #999;
+  vertical-align: middle;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.payment-report .department-info-table td strong {
+  font-weight: 700;
+}
+
+/* claim-contribution */
+.btnprint {
+  background: linear-gradient(135deg, #0969da 0%, #54aeff 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btnback {
+  background: linear-gradient(135deg, #d6d31cff 0%, #d3d62bff 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btnprint:hover {
+  background: linear-gradient(135deg, #0550ae 0%, #368ce7 100%);
+  box-shadow: 0 3px 6px rgba(16, 24, 40, 0.15);
+  transform: translateY(-1px);
+}

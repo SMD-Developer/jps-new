@@ -1,143 +1,18 @@
 @extends('app')
-<style>
-    /* General Styles */
-    body {
-        font-family: sans-serif;
-        line-height: 1.5;
-        margin: 20px;
-        color: #333;
-        font-weight: 700;
-    }
 
-    @import url(https://fonts.googleapis.com/css?family=Denk+One);
-    @import url(https://fonts.googleapis.com/css?family=Arimo);
-
-    .rotingtxt {
-        -webkit-transform: rotate(331deg);
-        -moz-transform: rotate(331deg);
-        -o-transform: rotate(331deg);
-        transform: rotate(331deg);
-        font-size: 10em;
-        color: #cccccc;
-        position: absolute;
-        font-family: 'Denk One', sans-serif;
-        text-transform: uppercase;
-        font-weight: 700;
-        top: 26rem;
-        left: 25%;
-        opacity: 0.5;
-    }
-    
-    .receipt-table th {
-        font-size: 14px; 
-    }
-    
-    .receipt-footer .info-row {
-        display: flex;
-        margin-bottom: 5px;
-        align-items: flex-start;
-    }
-
-    .receipt-footer .label {
-        width: 150px;
-        flex-shrink: 0;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .receipt-footer .label::after {
-        content: ":";
-        margin-left: 5px;
-    }
-
-    .receipt-footer .value {
-        flex-grow: 1;
-        margin-left: 10px;
-        align-self: flex-start;
-    }
-    
-    .receipt-header .info-row {
-        display: flex;
-        margin-bottom: 5px;
-        align-items: flex-start;
-    }
-
-    .receipt-header .label {
-        width: 202px;
-        flex-shrink: 0;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .receipt-header .label::after {
-        content: ":";
-        margin-left: 5px;
-    }
-
-    .receipt-header .value {
-        flex-grow: 1;
-        margin-left: 10px;
-        align-self: flex-start;
-    }
-
-    .content {
-        background-color: #f4f6f9;
-        margin-bottom: 50px;
-    }
-
-    .container {
-        padding-inline: 120px !important;
-    }
-
-    .row1 {
-        display: flex;
-        justify-content: center;
-    }
-
-    table,
-    th,
-    td {
-        border: 1px solid black !important;
-        border-collapse: collapse;
-    }
-
-    button {
-        border-radius: 20px !important;
-        padding: 7px 50px !important;
-    }
-
-    button.btn.btn-primary.float-right {
-        width: max-content;
-    }
-
-    .custome-text {
-        font-size: 14px;
-    }
-    
-    @media print {
-        #printButton, #printSalinanButton, #downloadButton, #backButton {
-            display: none !important;
-        }
-    }
-</style>
-<title>@lang('app.receipt') | JPS</title>
 @section('content')
     <div class="col-md-12 content-header">
         <h5><i class="fa fa-file"></i> @lang('app.receipt')</h5>
     </div>
-    <section class="content">
-        <div class="container" id="receipt-content">
+    <section class="content contents">
+        <div class="container containers" id="receipt-content">
             <div class="row">
                 <div class="col-4 mt-4 ml-auto text-right pr-0">
                     <p class="mb-0">(Kew.38E 03-2021)</p>
                 </div>
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-12 row1" style="text-align: center;">
+                        <div class="col-12 rows" style="text-align: center;">
                             <img src="{{ asset('assets/images/uploads/settings/logo_jps-removebg-preview.png') }}" style="width:30%; height:80%;" class="img" alt="...">
                         </div>
                     </div>
@@ -329,19 +204,19 @@
                 </div>
             </div>
         </div>
-        <div class="container pb-5">
+        <div class="container containers pb-5">
             <div class="row mb-5 justify-content-end">
                 <div class="col-auto">
-                    <button class="btn btn-success" id="backButton" onClick="window.history.back()">Kembali</button>
+                    <button class="btn btn-success btnsuccess" id="backButton" onClick="window.history.back()">Kembali</button>
                 </div>
                 <div class="col-auto" style="display:none;">
-                    <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
+                    <button type="button" id="downloadButton" class="btn btn-danger btnsuccess">@lang('app.download')</button>
                 </div>
                 <div class="col-auto">
-                    <button type="button" id="printButton" class="btn btn-primary">Cetak ASAL</button>
+                    <button type="button" id="printButton" class="btn btn-primary btnprimary btnsuccess">Cetak ASAL</button>
                 </div>
                 <div class="col-auto">
-                    <button type="button" id="printSalinanButton" class="btn btn-info">Cetak SALINAN</button>
+                    <button type="button" id="printSalinanButton" class="btn btn-info btnsuccess">Cetak SALINAN</button>
                 </div>
             </div>
         </div>
