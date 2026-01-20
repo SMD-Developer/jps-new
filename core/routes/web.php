@@ -419,6 +419,8 @@ Route::group(['middleware' => 'install'], function(){
 
         Route::get('settings/logo', 'SettingsController@logoPage')->name('settings.logo');
         Route::post('settings/logo', 'SettingsController@updateLogo')->name('settings.logo.update');
+        Route::get('settings/banner', 'SettingsController@banners')->name('settings.banner');
+        Route::post('settings/banner/update', 'SettingsController@updateBanner')->name('settings.banner.update');
         # expenses resource
         Route::group(array('prefix'=>'expenses'),function(){
             Route::resource('list', 'ExpensesController')->names('expenses');

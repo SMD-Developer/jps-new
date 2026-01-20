@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\State;
+use App\Models\Setting;
 use App\Models\District;
 use App\Models\Division;
 use Illuminate\Support\Str;
@@ -66,6 +67,7 @@ class HomeController extends Controller {
 	}
 	public function application(Request $request)
     {
+            $setting = Setting::first();
             $clientId = auth('user')->id(); 
             $client = DB::table('client_register')->where('client_id', $clientId)->first();
             $state = DB::table('state')->where('status', 1)->orderBy('negeri_code', 'asc')->get();
@@ -78,7 +80,7 @@ class HomeController extends Controller {
             $accountTypes = DB::table('account_types')->get();
             $landMeasurement = DB::table('land_measurement_unit')->get();
             // dd($landMeasurement);
-            return view('clientarea.application', compact('state', 'district', 'division', 'client','landMeasurement', 'accountTypes'));
+            return view('clientarea.application', compact('state', 'district', 'division', 'client','landMeasurement', 'accountTypes', 'setting'));
    }
 		
 	public function getDistricts($state_id)

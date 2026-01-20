@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Kris\LaravelFormBuilder\FormBuilderTrait;
 
@@ -133,5 +134,65 @@ class SettingsController extends CrudController {
         $setting->save();
 
         return redirect()->back()->with('success', 'Images updated successfully!');
+    }
+
+
+    public function banners()
+    {
+        $setting = Setting::first();
+        return view('settings.banner-settings', compact('setting'));
+    }
+
+
+    public function updateBanner(Request $request)
+    {
+        $request->validate([
+            'banner_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:3072',
+            'banner_title' => 'nullable|string|max:255',
+            'banner_link' => 'nullable|url|max:500',
+            'banner_position' => 'nullable|in:top,middle,bottom',
+            'banner_start_date' => 'nullable|date',
+            'banner_end_date' => 'nullable|date|after_or_equal:banner_start_date',
+        ]);
+
+        $setting = Setting::firstOrCreate([]);
+        
+        // Handle banner image upload
+        if ($request->hasFile('banner_image')) {
+            // Delete old banner if exists
+            if ($setting->banner_image) {
+                $oldImagePath = public_path('assets/images/uploads/settings/' . $setting->banner_image);
+                if (file_exists($oldImagePath)) {
+                    @unlink($oldImagePath);
+                }
+            }
+            
+            // Upload new banner image with timestamp
+            $image = $request->file('banner_image');
+            $timestamp = time();
+            $extension = $image->getClientOriginalExtension();
+            $imageName = $timestamp . '.' . $extension;
+            
+            // Move to the settings directory
+            $destinationPath = public_path('assets/images/uploads/settings');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            
+            $image->move($destinationPath, $imageName);
+            $setting->banner_image = $imageName;
+        }
+
+        $setting->banner_enabled = $request->has('banner_enabled') ? 1 : 0;
+        $setting->banner_title = $request->banner_title;
+        $setting->banner_link = $request->banner_link;
+        $setting->banner_new_tab = $request->has('banner_new_tab') ? 1 : 0;
+        $setting->banner_position = $request->banner_position ?? 'top';
+        $setting->banner_start_date = $request->banner_start_date;
+        $setting->banner_end_date = $request->banner_end_date;
+        
+        $setting->save();
+
+        return redirect()->back()->with('success', 'Banner settings updated successfully!');
     }
 }

@@ -9,7 +9,8 @@ class Setting extends Model {
 
     protected $fillable = ['name', 'email', 'phone', 'address1', 'address2', 'city', 'state', 'postal_code','login_bg',
         'country', 'contact', 'vat', 'website', 'logo', 'favicon','date_format','thousand_separator','decimal_separator',
-        'decimals','purchase_code','currency_position'];
+        'decimals','purchase_code','currency_position', 'banner_enabled', 'banner_image', 'banner_title', 'banner_link', 
+        'banner_new_tab', 'banner_position', 'banner_start_date', 'banner_end_date'];
 
     public static function boot(){
         parent::boot();

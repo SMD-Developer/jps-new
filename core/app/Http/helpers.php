@@ -239,6 +239,13 @@ if(! function_exists('getMenus')){
                             'route' => url('settings/logo'),
                             'menu_active' => FormFacade::menu_active('settings')
                             ],
+
+                            [
+                            'icon' => 'cogs',
+                            'text' => trans('Banners'),
+                            'route' => url('settings/banner'),
+                            'menu_active' => FormFacade::menu_active('settings')
+                            ],
         
                             //  [
                             //     'icon' => 'question',

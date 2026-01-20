@@ -660,6 +660,38 @@ body {
     font-size: 13px !important;
 }
 
+
+/* Banner Styles */
+.banner-container {
+    margin-bottom: 20px;
+}
+
+.banner-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.banner-top {
+    margin-top: 0;
+}
+
+.banner-middle {
+    margin: 20px 0;
+}
+
+.banner-bottom {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .banner-container img {
+        max-height: 150px !important;
+    }
+}
+
 </style>
 </head>
 <body class="login-page">
@@ -708,6 +740,127 @@ body {
         </div>
     </div>
 </nav>
+
+
+{{-- Banner Modal/Popup - Fetched directly from DB --}}
+@php
+    $banner = DB::table('settings')
+                ->select('banner_image', 'banner_enabled', 'banner_title', 'banner_link', 
+                        'banner_new_tab', 'banner_position', 'banner_start_date', 'banner_end_date')
+                ->first();
+    
+    $showBanner = false;
+    if ($banner && $banner->banner_enabled && $banner->banner_image) {
+        $now = \Carbon\Carbon::now();
+        $showBanner = true;
+        
+        // Check date range if set
+        if ($banner->banner_start_date && $now->lt(\Carbon\Carbon::parse($banner->banner_start_date))) {
+            $showBanner = false;
+        }
+        if ($banner->banner_end_date && $now->gt(\Carbon\Carbon::parse($banner->banner_end_date))) {
+            $showBanner = false;
+        }
+    }
+@endphp
+
+@if($showBanner)
+    <!-- Banner Overlay -->
+    <div id="bannerOverlay" class="banner-overlay" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    ">
+        <!-- Banner Modal Container -->
+        <div class="banner-modal" style="
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 9999999;
+        ">
+            <!-- Close Button -->
+            <button onclick="closeBanner()" style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                color: #e74c3c;
+                cursor: pointer;
+                z-index: 99999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                transition: all 0.3s ease;
+            " 
+            onmouseover="this.style.background='#e74c3c'; this.style.color='white'; this.style.transform='scale(1.1)';"
+            onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#e74c3c'; this.style.transform='scale(1)';">
+                ×
+            </button>
+
+            <!-- Banner Image -->
+            @if($banner->banner_link)
+                <a href="{{ $banner->banner_link }}" 
+                   {!! $banner->banner_new_tab ? 'target="_blank" rel="noopener noreferrer"' : '' !!}>
+                    <img src="{{ asset('assets/images/uploads/settings/' . $banner->banner_image) }}" 
+                         alt="{{ $banner->banner_title ?? 'Banner' }}" 
+                         style="
+                            display: block;
+                            width: 100%;
+                            height: auto;
+                            max-height: 85vh;
+                            object-fit: contain;
+                         ">
+                </a>
+            @else
+                <img src="{{ asset('assets/images/uploads/settings/' . $banner->banner_image) }}" 
+                     alt="{{ $banner->banner_title ?? 'Banner' }}" 
+                     style="
+                        display: block;
+                        width: 100%;
+                        height: auto;
+                        max-height: 85vh;
+                        object-fit: contain;
+                     ">
+            @endif
+        </div>
+    </div>
+
+    <script>
+        function closeBanner() {
+            document.getElementById('bannerOverlay').style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeBanner();
+            }
+        });
+
+        document.getElementById('bannerOverlay').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeBanner();
+            }
+        });
+    </script>
+
+@endif
 
 <div class="container-fluid ps-0 mt-5">
         <div class="row ">
@@ -912,7 +1065,6 @@ body {
     </div>
 </div>
 </div>
-<!--search Modal -->
 <!--search Modal -->
 <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
