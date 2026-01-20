@@ -1498,7 +1498,15 @@ class PayController extends Controller
         }
 
         $currentUserId = auth('user')->id();
-        $amount = $request->get('amount', session('payment_amount', 30.00));
+
+        $isReprint = session('payment_type') === 'reprint';
+        $paymentMode = session('payment_mode');
+
+        if ($isReprint) {
+            $amount = ($paymentMode === 'b2b') ? 2.00 : 1.00;
+        } else {
+            $amount = $request->get('amount', session('payment_amount', 30.00));
+        }
         $bankCode = $request->get('bank', session('selected_bank', 'SBI_BANK_A'));
         $testCase = $request->get('testCase', session('test_case', '1.1 - Valid Account'));
         
