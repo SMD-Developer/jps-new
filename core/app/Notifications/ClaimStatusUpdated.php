@@ -73,7 +73,7 @@ class ClaimStatusUpdated extends Notification
             'pending' => 'Dalam Proses',
             'approve_payment_in_process' => 'Pembayaran Dalam Proses',
             'rejected' => 'Ditolak',
-            'approve_paid' => 'Diluluskan',
+            'approve_paid' => 'Lulus-Telah Dibayar',
             'check_query' => 'Kuiri - Perlukan Dokumen Sokongan',
         ];
 

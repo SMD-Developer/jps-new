@@ -78,7 +78,7 @@
         </tr>
         <tr>
             <td class="title">
-               <strong> Permohonan Tuntutan Caruman Parit Diterima Untuk Semakan</strong>
+               <strong> Permohonan Tuntutan Pulang Balik Diterima untuk Semakan</strong>
             </td>
         </tr>
         <tr>
