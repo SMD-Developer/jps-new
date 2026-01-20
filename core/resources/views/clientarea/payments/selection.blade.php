@@ -234,12 +234,13 @@
                 </div>
             </div>
 
+        
             <!-- Payment Amount -->
             <div class="form-row">
                 <label class="form-label">Amount:</label>
-                <input type="text" class="form-control" 
-                       value="RM {{ request()->get('type') === 'reprint' ? '1.00' : number_format($application->final_amount, 2) }}" 
-                       readonly style="background-color: #f8f9fa;">
+                <input type="text" class="form-control" id="amountDisplay"
+                    value="RM {{ request()->get('type') === 'reprint' ? '1.00' : number_format($application->final_amount, 2) }}" 
+                    readonly style="background-color: #f8f9fa;">
             </div>
 
             <!-- Terms and Conditions -->
@@ -262,11 +263,13 @@
             <!-- Action Buttons -->
             <div class="btn-section">
                 <button type="submit" class="btn-proceed" id="proceedBtn" disabled>
-                    @if(request()->get('type') === 'reprint')
-                        Pay RM 1.00 for Reprint
-                    @else
-                        Proceed
-                    @endif
+                    <span id="btnText">
+                        @if(request()->get('type') === 'reprint')
+                            Pay RM 1.00 for Reprint
+                        @else
+                            Proceed
+                        @endif
+                    </span>
                 </button>
                 <button type="button" class="btn-cancel" onclick="window.history.back()">
                     Cancel
@@ -282,7 +285,8 @@
 <script>
 $(document).ready(function() {
     const isReprint = $('input[name="payment_type"]').val() === 'reprint';
-    const paymentAmount = isReprint ? 1.00 : {{ $application->final_amount ?? 0 }};
+    let paymentAmount = isReprint ? 1.00 : {{ $application->final_amount ?? 0 }};
+    window.currentPaymentAmount = paymentAmount;
 
     // Payment mode selection change
     $('#paymentModeSelect').change(function() {
@@ -292,6 +296,13 @@ $(document).ready(function() {
             $('#bankSelectionRow').show();
             loadBankList(); 
             updateBankListNote(selectedMode); 
+
+            if (isReprint) {
+                const newAmount = selectedMode === 'b2b' ? '2.00' : '1.00';
+                $('#amountDisplay').val('RM ' + newAmount);
+                $('#btnText').text('Pay RM ' + newAmount + ' for Reprint');
+                window.currentPaymentAmount = parseFloat(newAmount);
+            }
         } else {
             $('#bankSelectionRow').hide();
         }
@@ -309,7 +320,6 @@ $(document).ready(function() {
 
     function loadBankList() {
         const paymentMode = $('#paymentModeSelect').val(); 
-        console.log('Payment Mode:', paymentMode);
         
         fetch('{{ route("pay.bank.details") }}', {
             method: 'GET',
@@ -392,9 +402,9 @@ $(document).ready(function() {
             let validation;
             
             if (paymentMode === 'b2c') {
-                validation = validateB2CPayment(paymentAmount, selectedBank);
+                validation = validateB2CPayment(window.currentPaymentAmount, selectedBank);
             } else if (paymentMode === 'b2b') {
-                validation = validateB2BPayment(paymentAmount, selectedBank);
+                validation = validateB2BPayment(window.currentPaymentAmount, selectedBank);
             }
             
             if (validation) {
@@ -467,9 +477,9 @@ $(document).ready(function() {
                 let validation;
                 
                 if (paymentMode === 'b2c') {
-                    validation = validateB2CPayment(paymentAmount, selectedBank);
+                    validation = validateB2CPayment(window.currentPaymentAmount, selectedBank);
                 } else {
-                    validation = validateB2BPayment(paymentAmount, selectedBank);
+                    validation = validateB2BPayment(window.currentPaymentAmount, selectedBank);
                 }
                 
                 validationPassed = validation.isValid;
@@ -493,9 +503,9 @@ $(document).ready(function() {
             let validation;
             
             if (paymentMode === 'b2c') {
-                validation = validateB2CPayment(paymentAmount, selectedBank);
+                validation = validateB2CPayment(window.currentPaymentAmount, selectedBank);
             } else {
-                validation = validateB2BPayment(paymentAmount, selectedBank);
+                validation = validateB2BPayment(window.currentPaymentAmount, selectedBank);
             }
             
             if (!validation.isValid) {
