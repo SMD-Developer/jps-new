@@ -233,30 +233,32 @@
                                                 </div>
 
                                                 @php
-                                                    // Check if there's any reprint payment for this application
-                                                    $reprintPayment = $application->payments()->where('payment_type', 'reprint')->first();
+                                                    $reprintPayment = $application->payments()
+                                                        ->where('payment_type', 'reprint')
+                                                        ->where('payment_status', 'completed') 
+                                                        ->first();
                                                     $isReprintReceiptPrinted = $reprintPayment && $reprintPayment->receipt_viewed_at !== null;
                                                 @endphp
                                                 
                                                 @if($application->print_status_count > 0 && $reprintPayment)
-                                                <br>
-                                                <div class="sbtn">
-                                                    @if($isReprintReceiptPrinted)
-                                                       <button class="btn btn-primary btn-sm" 
-                                                                disabled
-                                                                style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
-                                                            <strong>{{ __('Resit Bayaran Dicetak') }}</strong>
-                                                        </button>
-                                                    @else
-                                                        <a href="{{ route('reprint.payment.receipt', $application->id) }}"
-                                                            class="btn btn-primary btn-sm print-reprint-receipt"
-                                                            data-application-id="{{ $application->id }}"
-                                                            style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
-                                                            <strong>{{ __('Cetak Resit Bayaran') }}</strong>
-                                                        </a>
-                                                    @endif
-                                                </div>
-                                            @endif
+                                                    <br>
+                                                    <div class="sbtn">
+                                                        @if($isReprintReceiptPrinted)
+                                                        <button class="btn btn-primary btn-sm" 
+                                                                    disabled
+                                                                    style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
+                                                                <strong>{{ __('Resit Bayaran Dicetak') }}</strong>
+                                                            </button>
+                                                        @else
+                                                            <a href="{{ route('reprint.payment.receipt', $application->id) }}"
+                                                                class="btn btn-primary btn-sm print-reprint-receipt"
+                                                                data-application-id="{{ $application->id }}"
+                                                                style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
+                                                                <strong>{{ __('Cetak Resit Bayaran') }}</strong>
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
