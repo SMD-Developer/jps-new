@@ -1298,18 +1298,15 @@ class ThirdPartyController extends Controller
 
     public function b2b(Request $request)
     {
-       
         if (!auth('third_party')->check()) {
             return redirect()->route('third.party.login')
                 ->with('error', 'Session expired. Please login again.');
         }
 
-
         $thirdPartyUser = auth('third_party')->user();
         $applicationId = session('application_id');
         $thirdPartyId = session('third_party_id');
 
-        
         if (!$applicationId || !$thirdPartyId) {
             return redirect()->route('third.party.search')
                 ->with('error', 'Application not found. Please search again.');
@@ -1331,7 +1328,6 @@ class ThirdPartyController extends Controller
 
         $referenceNo = $application->refference_no;
         $bankData = $this->getDynamicBankData($bankCode);
-        
         
         // B2B FPX parameters
         $fpx_msgType = "AR";
@@ -1356,7 +1352,7 @@ class ThirdPartyController extends Controller
         $fpx_makerName = "";
         $fpx_buyerIban = "";
         $fpx_productDesc = "Card";
-        $fpx_version = "7.0";
+        $fpx_version = "6.0";
         
         $data = $fpx_buyerAccNo."|".$fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerEmail."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_productDesc."|".$fpx_sellerBankCode."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency."|".$fpx_version;
 
@@ -1371,8 +1367,8 @@ class ThirdPartyController extends Controller
         
         $receiptNumber = $this->generateReceiptNumber();
         
-        // Store B2B payment with third_party_id
-            $this->storePaymentData([
+        // Store B2B payment with third_party_id - THIS IS THE FIX
+        $paymentId = $this->storePaymentData([
             'user_id' => null, 
             'third_party_id' => $thirdPartyId,
             'payment_type' => 'third_party',
@@ -1404,9 +1400,7 @@ class ThirdPartyController extends Controller
                     'id_card_number' => $thirdPartyUser->id_card_number ?? null,
                     'address' => $thirdPartyUser->address ?? null
                 ]
-
             ]),
-            'payment_date' => now()->toDateString(),
             'created_at' => now(),
             'updated_at' => now()
         ]);
