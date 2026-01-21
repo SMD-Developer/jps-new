@@ -70,7 +70,7 @@
             <div class="form-row">
                 <label class="form-label">Amount:</label>
                 <input type="text" class="form-control" 
-                       value="RM {{ number_format($amount, 2) }}" 
+                       value="RM {{ number_format($amount, 2) }}" id="displayAmount"
                        readonly style="background-color: #f8f9fa; font-weight: bold;">
             </div>
 
@@ -253,11 +253,20 @@
 
 <script>
     $(document).ready(function() {
-        const paymentAmount = 1.00;
+        let paymentAmount = 1.00;
 
         // Payment mode selection change
         $('#paymentModeSelect').change(function() {
             const selectedMode = $(this).val();
+
+            if (selectedMode === 'b2b') {
+                paymentAmount = 2.00;
+            } else {
+                paymentAmount = 1.00;
+            }
+
+            $('#displayAmount').val('RM ' + paymentAmount.toFixed(2));
+            $('#amount').val(paymentAmount);
             
             if (selectedMode === 'b2c' || selectedMode === 'b2b') {
                 $('#bankSelectionRow').show();
