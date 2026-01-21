@@ -253,43 +253,35 @@
 
 <script>
     $(document).ready(function() {
-        let paymentAmount = 1.00;
-
+        const isReprint = $('input[name="payment_type"]').val() === 'reprint';
+        const paymentAmount = isReprint ? 1.00 : {{ $application->final_amount ?? 0 }};
+    
         // Payment mode selection change
         $('#paymentModeSelect').change(function() {
             const selectedMode = $(this).val();
-
-            if (selectedMode === 'b2b') {
-                paymentAmount = 2.00;
-            } else {
-                paymentAmount = 1.00;
-            }
-
-            $('#displayAmount').val('RM ' + paymentAmount.toFixed(2));
-            $('#amount').val(paymentAmount);
-            
+        
             if (selectedMode === 'b2c' || selectedMode === 'b2b') {
                 $('#bankSelectionRow').show();
-                loadBankList(); 
-                updateBankListNote(selectedMode); 
+                loadBankList();
+                updateBankListNote(selectedMode);
             } else {
                 $('#bankSelectionRow').hide();
             }
-            
+        
             validateForm();
         });
-        
+    
         function updateBankListNote(paymentMode) {
-            const noteText = paymentMode === 'b2c' 
-                ? 'Select your bank from the list' 
+            const noteText = paymentMode === 'b2c'
+                ? 'Select your bank from the list'
                 : 'Select your corporate bank';
-            
+        
             $('.bank-list-note strong').text(noteText);
         }
-
+    
         function loadBankList() {
-            const paymentMode = $('#paymentModeSelect').val(); 
-            
+            const paymentMode = $('#paymentModeSelect').val();
+        
             fetch('{{ route("pay.bank.details") }}', {
                 method: 'GET',
                 headers: {
@@ -300,50 +292,50 @@
             .then(response => response.json())
             .then(data => {
                 let bankOptions = '<option value="">Select Bank</option>';
-                
+            
                 if (data.success && data.banks) {
                     const banksArray = Array.isArray(data.banks) ? data.banks : Object.entries(data.banks).map(([code, name]) => ({bank_code: code, bank_name: name}));
-                    
+                
                     const filteredBanks = banksArray.filter(bank => {
                         if (paymentMode === 'b2c') {
-                            return bank.type === 'B2C' || !bank.type; 
+                            return bank.type === 'B2C' || !bank.type;
                         } else if (paymentMode === 'b2b') {
                             return bank.type === 'B2B';
                         }
                         return false;
                     });
-                    
+                
                     filteredBanks.sort((a, b) => {
                         const nameA = (a.display_name || a.bank_name || a.name || '').toUpperCase();
                         const nameB = (b.display_name || b.bank_name || b.name || '').toUpperCase();
                         return nameA.localeCompare(nameB);
                     });
-                    
+                
                     filteredBanks.forEach(bank => {
                         const bankCode = bank.bank_code || bank.code;
                         const bankName = bank.bank_name || bank.name || bank;
                         const displayName = bank.display_name || bankName;
                         const status = bank.status || 'active';
-                        
+                    
                         let optionText = `${displayName}`;
-                        
+                    
                         if (status === 'inactive') {
                             optionText += ' (offline)';
                         }
-                        
+                    
                         const disabled = status === 'inactive' ? 'disabled' : '';
                         const className = status === 'inactive' ? 'offline-bank' : 'online-bank';
-                        
+                    
                         bankOptions += `<option value="${bankCode}" ${disabled} class="${className}">${optionText}</option>`;
                     });
                 } else {
-                    
+                
                     fallbackBanks.sort((a, b) => a.name.localeCompare(b.name));
                     fallbackBanks.forEach(bank => {
                         bankOptions += `<option value="${bank.code}">${bank.name}</option>`;
                     });
                 }
-                
+            
                 $('#bankSelect').html(bankOptions);
             })
             .catch(error => {
@@ -355,21 +347,21 @@
                 });
             });
         }
-
+    
         // Bank selection change with client-side blocking
         $('#bankSelect').change(function() {
             const selectedBank = $(this).val();
             const paymentMode = $('#paymentModeSelect').val();
-            
+        
             if (selectedBank) {
                 let validation;
-                
+            
                 if (paymentMode === 'b2c') {
                     validation = validateB2CPayment(paymentAmount, selectedBank);
                 } else if (paymentMode === 'b2b') {
                     validation = validateB2BPayment(paymentAmount, selectedBank);
                 }
-                
+            
                 if (validation) {
                     // Client-side blocking for limit exceeded scenarios
                     if (!validation.isValid && (validation.testCase.includes('2.1') || validation.testCase.includes('2.2'))) {
@@ -386,33 +378,33 @@
                 $('#validationMessage').hide();
                 window.validationResult = null;
             }
-            
+        
             validateForm();
         });
-
+    
         // Show limit exceeded alert (as per documentation Image 1)
         function showLimitExceededModal(validation) {
             let message = '';
-            
+        
             // Get the current payment mode from the select element
             const currentPaymentMode = $('#paymentModeSelect').val();
-            
+        
             if (validation.testCase.includes('2.1')) {
-                message = currentPaymentMode === 'b2c' ? 
-                    'Maximum Transaction Limit Exceeded RM30000' : 
+                message = currentPaymentMode === 'b2c' ?
+                    'Maximum Transaction Limit Exceeded RM30000' :
                     'Maximum Transaction Limit Exceeded RM1000000';
             } else if (validation.testCase.includes('2.2')) {
-                message = currentPaymentMode === 'b2c' ? 
-                    'Transaction Amount is Lower than the Minimum Limit RM1.00' : 
+                message = currentPaymentMode === 'b2c' ?
+                    'Transaction Amount is Lower than the Minimum Limit RM1.00' :
                     'Transaction Amount is Lower than the Minimum Limit RM2.00';
             }
-            
+        
             alert(message);
         }
-        
+    
         function displayValidationMessage(validation) {
             const messageDiv = $('#validationMessage');
-            
+        
             if (validation.isValid) {
                 messageDiv.removeClass('alert-danger').addClass('alert-success').show();
                 messageDiv.html(`<i class="bi bi-check-circle"></i> <strong>${validation.testCase}</strong> - Payment can proceed`);
@@ -421,7 +413,7 @@
                 messageDiv.html(`<i class="bi bi-exclamation-triangle"></i> <strong>${validation.testCase}</strong><br>${validation.errors.join('<br>')}`);
             }
         }
-
+    
         // Form validation
         function validateForm() {
             const paymentMode = $('#paymentModeSelect').val();
@@ -429,27 +421,27 @@
             const termsAccepted = $('#agreeTerms').is(':checked');
             let bankSelected = true;
             let validationPassed = true;
-            
+        
             if (paymentMode === 'b2c' || paymentMode === 'b2b') {
                 bankSelected = $('#bankSelect').val() !== '';
-                
+            
                 if (bankSelected && window.validationResult) {
                     validationPassed = window.validationResult.isValid;
                 } else if (bankSelected) {
                     const selectedBank = $('#bankSelect').val();
                     let validation;
-                    
+                
                     if (paymentMode === 'b2c') {
                         validation = validateB2CPayment(paymentAmount, selectedBank);
                     } else {
                         validation = validateB2BPayment(paymentAmount, selectedBank);
                     }
-                    
+                
                     validationPassed = validation.isValid;
                     window.validationResult = validation;
                 }
             }
-            
+        
             if (paymentMode && email && termsAccepted && bankSelected && validationPassed) {
                 $('#proceedBtn').prop('disabled', false);
             } else {
@@ -461,19 +453,19 @@
         $('#paymentSelectionForm').on('submit', function(e) {
             const paymentMode = $('#paymentModeSelect').val();
             const selectedBank = $('#bankSelect').val();
-            
+        
             if ((paymentMode === 'b2c' || paymentMode === 'b2b') && selectedBank) {
                 let validation;
-                
+            
                 if (paymentMode === 'b2c') {
                     validation = validateB2CPayment(paymentAmount, selectedBank);
                 } else {
                     validation = validateB2BPayment(paymentAmount, selectedBank);
                 }
-                
+            
                 if (!validation.isValid) {
                     e.preventDefault();
-                    
+                
                     // Show appropriate alert for limit scenarios
                     if (validation.testCase.includes('2.1') || validation.testCase.includes('2.2')) {
                         showLimitExceededModal(validation);
@@ -484,9 +476,9 @@
                 }
             }
         });
-
+    
         $('input[name="email"], #agreeTerms').on('input change', validateForm);
-
+    
         // B2C validation function (updated with exact documentation messages)
         function validateB2CPayment(amount, bankCode) {
             const validationRules = {
@@ -494,13 +486,13 @@
                 maxAmount: 30000.00,
                 currency: 'RM'
             };
-
+    
             const validationResult = {
                 isValid: true,
                 errors: [],
                 testCase: null
             };
-
+    
             // Test Case 2.1 - Maximum Scenario
             if (amount > validationRules.maxAmount) {
                 validationResult.isValid = false;
@@ -508,7 +500,7 @@
                 validationResult.testCase = '2.1 - Maximum Scenario (Exceeded Amount)';
                 return validationResult;
             }
-
+    
             // Test Case 2.2 - Minimum Scenario (updated message to match documentation)
             if (amount < validationRules.minAmount) {
                 validationResult.isValid = false;
@@ -516,31 +508,31 @@
                 validationResult.testCase = '2.2 - Minimum Scenario (Below Minimum)';
                 return validationResult;
             }
-
+    
             // Test Case 1.1 - Valid Account
             if (amount >= validationRules.minAmount && amount <= validationRules.maxAmount) {
                 validationResult.testCase = 'Payment Validated Successfully';
                 return validationResult;
             }
-
+    
             validationResult.testCase = '4.1 - Retrieved Bank List';
             return validationResult;
         }
-        
-        // B2B validation function (updated to allow RM 1.00 for third-party print)
+    
+        // B2B validation function (updated with exact documentation messages)
         function validateB2BPayment(amount, bankCode) {
             const validationRules = {
-                minAmount: 1.00,  
+                minAmount: 2.00,
                 maxAmount: 1000000.00,
                 currency: 'RM'
             };
-
+    
             const validationResult = {
                 isValid: true,
                 errors: [],
                 testCase: null
             };
-
+    
             // Test Case 2.1 - Maximum Amount
             if (amount > validationRules.maxAmount) {
                 validationResult.isValid = false;
@@ -548,21 +540,21 @@
                 validationResult.testCase = '2.1 - Maximum Scenario';
                 return validationResult;
             }
-
-            // Test Case 2.2 - Minimum Amount
+    
+            // Test Case 2.2 - Minimum Amount (updated message)
             if (amount < validationRules.minAmount) {
                 validationResult.isValid = false;
                 validationResult.errors.push(`Transaction Amount is Lower Than Minimum Limit (Minimum: ${validationRules.currency}${validationRules.minAmount.toFixed(2)})`);
                 validationResult.testCase = '2.2 - Minimum Scenario';
                 return validationResult;
             }
-
+    
             // Test Case 1.1 - Success
             if (amount >= validationRules.minAmount && amount <= validationRules.maxAmount) {
                 validationResult.testCase = 'Payment Validated Successfully';
                 return validationResult;
             }
-
+    
             validationResult.testCase = '3.1 - Re-query Scenario';
             validationResult.errors.push('Payment requires manual verification');
             validationResult.isValid = false;
