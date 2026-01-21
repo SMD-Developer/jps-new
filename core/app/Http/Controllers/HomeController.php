@@ -232,35 +232,33 @@ class HomeController extends Controller {
     }
 
 
-    public function approvedApplicationList( Request $request)
+    public function approvedApplicationList(Request $request)
     {
-
         $isAuthenticated = auth('admin')->check();  
         $isAdminOrStaff = false;         
         if ($isAuthenticated) {             
             $roleId = auth('admin')->user()->role_id;             
             $isAdminOrStaff = ($roleId === '9e032984-8ef0-4e00-b7b9-439679a4d1aa');         
         } 
+        
         $district = DB::table('district')->where('stat', 1)
-        ->where('idnegeri', 1)
-        ->orderBy('daerah_code', 'asc')->get();
-       $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);
+            ->where('idnegeri', 1)
+            ->orderBy('daerah_code', 'asc')->get();
 
-       $query->where('status', 'approved');
+        $query = Application::with(['state', 'landDistrict', 'landDivision', 'client']);
 
+        $query->where('status', 'approved');
+
+        // SIMPLIFIED SEARCH - Fast and efficient
         if ($request->filled('search')) {
-        $searchTerm = $request->get('search');
-        $query->where(function($q) use ($searchTerm) {
+            $searchTerm = $request->get('search');
+            $query->where(function($q) use ($searchTerm) {
                 $q->where('refference_no', 'like', '%' . $searchTerm . '%')
-                ->orWhere('applicant', 'like', '%' . $searchTerm . '%')
-                ->orWhereHas('client', function($clientQuery) use ($searchTerm) {
-                    $clientQuery->where('name', 'like', '%' . $searchTerm . '%');
-                });
+                ->orWhere('applicant', 'like', '%' . $searchTerm . '%');
             });
         }
 
-
-            // District filter
+        // District filter
         if ($request->filled('district')) {
             $query->where('land_district', $request->get('district'));
         }
@@ -275,17 +273,17 @@ class HomeController extends Controller {
             $query->where('land_lot', 'like', '%' . $request->get('lot') . '%');
         }
 
-
-        // Year filter - ADD THIS
+        // Year filter
         if ($request->filled('year')) {
             $query->whereYear('created_at', $request->get('year'));
         }
         
         $perPage = $request->input('perPage', 10); 
 
-        $approvedApplications = $query->orderBy('created_at', 'desc')
-                                            ->paginate($perPage)
-                                            ->appends($request->query());
+        $approvedApplications = $query
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->appends($request->except('page'));
 
         return view('application.approved_application_list', compact('approvedApplications', 'isAdminOrStaff', 'district'));
     }
@@ -336,12 +334,11 @@ class HomeController extends Controller {
             $query->where('status', $request->status);         
         }    
 
-        // Get the paginated results with ordering - call ->get() or ->paginate() at the END
         $list = $query->orderBy('updated_at', 'desc')
             ->paginate($perPage)
             ->appends($request->except('page'));
 
-        // Get current user ID for highlighting
+
         $currentUserId = auth('admin')->id();
 
         $district = DB::table('district')->where('stat', 1)
@@ -403,12 +400,10 @@ class HomeController extends Controller {
             $query->where('status', $request->status);         
         }    
 
-        // Get the paginated results with activity tracking
         $list = $query->orderBy('verified_date', 'desc')
             ->paginate($perPage)
             ->appends($request->except('page'));
 
-        // Get current user ID for highlighting
         $currentUserId = auth('admin')->id();
 
         $district = DB::table('district')->where('stat', 1)
@@ -489,7 +484,6 @@ class HomeController extends Controller {
                 ], 404);
             }
 
-            // Allow resending if rejected, otherwise check if already sent
             if ($claim->sent_to_approver == 1 && $claim->status !== 'rejected') {
                 return response()->json([
                     'success' => false,

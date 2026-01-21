@@ -594,406 +594,329 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-            $(document).ready(function() {
-                $('.btn-primary').click(function() {
-                    $('table tbody tr').show();
-                });
-
-                $('.btn-alert').click(function() {
-                    $('table tbody tr').hide();
-                    $('table tbody tr').each(function() {
-                        if ($(this).find('.status-badge .badge').text().trim() ===
-                            '{{ trans('app.approved') }}') {
-                            $(this).show();
-                        }
-                    });
-                });
-
-                $('.btn-danger').click(function() {
-                    $('table tbody tr').hide();
-                    $('table tbody tr').each(function() {
-                        if ($(this).find('.sbtn a').text().trim() === '{{ trans('app.rejected') }}') {
-                            $(this).show();
-                        }
-                    });
-                });
-            });
-
-            function changePerPage() {
-                const perPage = document.getElementById('perPageSelect').value;
-                const url = new URL(window.location.href);
-                const statusFilter = url.searchParams.get('status') || '';
-                const adminStaffStatus = url.searchParams.get('admin_staff_status') || '';
-                const approverStatus = url.searchParams.get('approver_status') || '';
-
-                url.searchParams.set('page', 1);
-                url.searchParams.set('per_page', perPage);
-
-                if (statusFilter) url.searchParams.set('status', statusFilter);
-                if (adminStaffStatus) url.searchParams.set('admin_staff_status', adminStaffStatus);
-                if (approverStatus) url.searchParams.set('approver_status', approverStatus);
-
-                window.location.href = url.toString();
-            }
-
-            const applicationLogs = {};
-            @foreach ($approvedApplications as $application)
-                applicationLogs[{{ $application->id }}] = {!! json_encode(
-                    $application->logs->map(function ($log) {
-                        return [
-                            'user_type' => $log->user_type,
-                            'action' => $log->action,
-                            'status_from' => $log->status_from,
-                            'status_to' => $log->status_to,
-                            'remarks' => $log->remarks,
-                            'user_id' => $log->user_id,
-                            'user_email' => $log->user ? $log->user->email : null,
-                            'action_at' => $log->action_at ? $log->action_at->format('Y-m-d H:i:s') : null,
-                        ];
-                    }),
-                ) !!};
-            @endforeach
-
-            function formatAction(action) {
-                return action
-                    .replace(/_/g, ' ')
-                    .replace(/\b\w/g, char => char.toUpperCase());
-            }
-
-            function showLogs(applicationId) {
-                document.getElementById('logsModal').style.display = 'block';
-                const logs = applicationLogs[applicationId] || [];
-                displayLogs(logs);
-            }
-            
-        
-            const actionStatusTranslations = {
-                'approved': 'Lulus',
-                'rejected': 'Tolak',
-                'forwarded_to_approver': 'Bil Telah Dihantar ke Pelulus',
-                'Pending': 'Dalam Proses',
-                'reapply': 'Memohon Semula',
-                'Completed': 'Selesai',
-                'Created': 'Dicipta',
-                'Updated': 'Dikemaskini',
-                'awaiting_review': 'Menunggu Semakan',
-                'status_reset_for_appeal': 'Tetapan Semula Status Untuk Rayuan'
-            };
-
-            function displayLogs(logs) {
-                let html = '';
-                if (logs.length === 0) {
-                    html = '<p class="text-muted">No logs found for this application.</p>';
-                } else {
-                    const hasRejection = logs.some(log =>
-                        log.user_type === 'admin_approver' && log.status_to === 'rejected'
-                    );
-                    if (hasRejection) {
-                        html += `
-            <div class="log-entry" style="background-color: #fff8e1; border-left: 4px solid #ffc107;">
-                <div class="log-header">
-                    <div>
-                        <span class="user-type-badge" style="background-color: #6c757d;">SYSTEM</span>
-                        <strong>Status Update</strong>
-                    </div>
-                </div>
-                <div class="log-details">
-                    <div><strong>Note:</strong> Admin Staff status displayed as "In Process" because application was rejected by Approver.</div>
-                    <div class="mt-2"><small class="text-muted">This doesn't represent an actual status change in logs, but reflects the current workflow state.</small></div>
-                </div>
-            </div>
-            `;
-                    }
-                    const sortedLogs = [...logs];
-                    sortedLogs.sort((a, b) => new Date(b.action_at) - new Date(a.action_at));
-                    sortedLogs.forEach(function(log) {
-                        const userTypeBadge = log.user_type === 'admin_staff' ? 'user-type-staff' :
-                            log.user_type === 'admin_approver' ? 'user-type-approver' : 'user-type-staff';
-
-                        const actionDate = new Date(log.action_at).toLocaleString();
-                        const displayUserType = log.user_type === 'admin_staff' ? 'Penyedia' :
-                            log.user_type === 'admin_approver' ? 'Pelulus' :
-                            log.user_type === 'applicant' ? 'Pemohon' :
-                            log.user_type.toUpperCase();
-
-                        // const formattedAction = formatAction(log.action);
-                        const formattedAction = actionStatusTranslations[log.action] || 
-                       actionStatusTranslations[log.action?.toLowerCase()] ||
-                       actionStatusTranslations[log.status_to] || 
-                       actionStatusTranslations[log.status_from] || 
-                       log.action;
-
-                        // Special formatting for status changes
-                        let statusDisplay = '';
-                        if (log.status_from || log.status_to) {
-                            let fromStatus = log.status_from || 'Belum Terima';
-                            let toStatus = log.status_to || 'Belum Terima';
-                            fromStatus = fromStatus === 'pending' ? 'Dalam Proses' : 
-                            fromStatus === 'approved' ? 'Lulus' : 
-                            fromStatus === 'rejected' ? 'Tolak' : 
-                            fromStatus;
-    
-                            toStatus = toStatus === 'pending' ? 'Dalam Proses' : 
-                                      toStatus === 'approved' ? 'Lulus' : 
-                                      toStatus === 'rejected' ? 'Tolak' : 
-                                      toStatus;
-
-                            statusDisplay = `
-                            <div class="status-change">
-                                <strong>Status:</strong>
-                                <span class="badge status-${log.status_from || 'na'}">${fromStatus}</span>
-                                <span class="status-arrow">→</span>
-                                <span class="badge status-${log.status_to || 'na'}">${toStatus}</span>
-                            </div>`;
-                        }
-                        
-                        const remarkTranslations = {
-                            'Application forwarded to approver for final review': 'Bil telah dijana dan dihantar kepada pelulus',
-                            'Application approved by approver': 'Permohonan telah diluluskan dan bil telah dihantar ke pemaju',
-                            'Application resubmitted by user' : 'Permohonan dihantar semula oleh pemohon',
-                            'Staff status reset to pending after approver rejection' : 'Status penyedia ditetapkan semula kepada dalam proses selepas penolakan oleh pelulus',
-                            'Approver status reset to pending after staff re-forwarded application' : 'Status pelulus ditetapkan semula kepada "Dalam Proses" selepas penyedia menghantar semula permohonan',
-                            'Application sent to approver for review': 'Permohonan dihantar ke pelulus untuk semakan',
-                            'Approver status reset after staff resubmitted rejected application': 'Status pelulus berubah selepas permohonan ditolak dihantar semula.',
-                            'Approver status reset to pending due to appeal submission': 'Status kelulusan ditetapkan semula kepada belum selesai kerana penyerahan rayuan'
-                        };
-                        
-                        let remarksDisplay = '';
-                        if (log.remarks && log.remarks.trim() !== '') {
-                            const translatedRemark = remarkTranslations[log.remarks.trim()] || log.remarks;
-                            remarksDisplay = `<div class="mt-2"><strong>Nota:</strong> ${translatedRemark}</div>`;
-                        }
-
-                        html += `
-            <div class="log-entry">
-                <div class="log-header">
-                    <div>
-                        <span class="user-type-badge ${userTypeBadge}">${displayUserType}</span>
-                        <strong>${formattedAction}</strong>
-                    </div>
-                    <small class="text-muted">${actionDate}</small>
-                </div>
-                <div class="log-details">
-                    <div><strong>Oleh:</strong> ${log.user_email || 'Sistem'}</div>
-                    ${statusDisplay}
-                    ${remarksDisplay}
-                </div>
-            </div>`;
-                    });
-                }
-
-                document.getElementById('logsContent').innerHTML = html;
-            }
-
-            function closeLogs() {
-                document.getElementById('logsModal').style.display = 'none';
-            }
-
-            window.onclick = function(event) {
-                const modal = document.getElementById('logsModal');
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            }
-        </script>
-<script>
-    $(document).ready(function() {
-    // Search button click handler
-        $('.search-btn').on('click', function(e) {
-            e.preventDefault();
-            
-            var searchTerm = $('#search').val();
-            var district = $('#district').val();
-            var division = $('#division').val();
-            var lot = $('#lot').val();
-            
-            var queryParams = [];
-            
-            if (searchTerm) queryParams.push('search=' + encodeURIComponent(searchTerm));
-            if (district) queryParams.push('district=' + district);
-            if (division) queryParams.push('division=' + division);
-            if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
-            
-            // Redirect with all filters
-            window.location.href = window.location.pathname + '?' + queryParams.join('&');
-        });
-
-        // Status filter
-        $('#status').on('change', function() {
-            var status = $(this).val();
-            var url = new URL(window.location.href);
-            url.searchParams.set('status', status);
-            window.location.href = url.toString();
-        });
-
-       
-
-        
+$(document).ready(function() {
+    $('.btn-primary').click(function() {
+        $('table tbody tr').show();
     });
-</script>
-<script>
-    // Track application actions
-    $(document).ready(function() {
-        // Track view clicks
-        $(document).on('click', '.view-application', function(e) {
-            const applicationId = $(this).data('id');
-            const $button = $(this); // Store reference to the clicked button
-            trackAction(applicationId, 'view', $button);
+
+    $('.btn-alert').click(function() {
+        $('table tbody tr').hide();
+        $('table tbody tr').each(function() {
+            if ($(this).find('.status-badge .badge').text().trim() ===
+                '{{ trans('app.approved') }}') {
+                $(this).show();
+            }
         });
-    
-        // Track edit clicks
-        $(document).on('click', '.edit-application', function(e) {
-            const applicationId = $(this).data('id');
-            const $button = $(this); // Store reference to the clicked button
-            trackAction(applicationId, 'edit', $button);
+    });
+
+    $('.btn-danger').click(function() {
+        $('table tbody tr').hide();
+        $('table tbody tr').each(function() {
+            if ($(this).find('.sbtn a').text().trim() === '{{ trans('app.rejected') }}') {
+                $(this).show();
+            }
         });
-    
-        function trackAction(applicationId, actionType, $button) {
-            $.ajax({
-                url: '/track-application-action',
-                method: 'POST',
-                data: {
-                    application_id: applicationId,
-                    action_type: actionType,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function() {
-                    if (actionType === 'view') {
-                        $button.addClass('btn-viewed');
-                    } else if (actionType === 'edit') {
-                        $button.addClass('btn-edited');
-                    }
-                    console.log('Action tracked and UI updated');
-                },
-                error: function() {
-                    console.error('Failed to track action');
-                }
-            });
+    });
+});
+
+function changePerPage() {
+    const perPage = document.getElementById('perPageSelect').value;
+    const url = new URL(window.location.href);
+    const statusFilter = url.searchParams.get('status') || '';
+    const adminStaffStatus = url.searchParams.get('admin_staff_status') || '';
+    const approverStatus = url.searchParams.get('approver_status') || '';
+
+    url.searchParams.set('page', 1);
+    url.searchParams.set('per_page', perPage);
+
+    if (statusFilter) url.searchParams.set('status', statusFilter);
+    if (adminStaffStatus) url.searchParams.set('admin_staff_status', adminStaffStatus);
+    if (approverStatus) url.searchParams.set('approver_status', approverStatus);
+
+    window.location.href = url.toString();
+}
+
+const applicationLogs = {};
+@foreach ($approvedApplications as $application)
+    applicationLogs[{{ $application->id }}] = {!! json_encode(
+        $application->logs->map(function ($log) {
+            return [
+                'user_type' => $log->user_type,
+                'action' => $log->action,
+                'status_from' => $log->status_from,
+                'status_to' => $log->status_to,
+                'remarks' => $log->remarks,
+                'user_id' => $log->user_id,
+                'user_email' => $log->user ? $log->user->email : null,
+                'action_at' => $log->action_at ? $log->action_at->format('Y-m-d H:i:s') : null,
+            ];
+        }),
+    ) !!};
+@endforeach
+
+function formatAction(action) {
+    return action
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function showLogs(applicationId) {
+    document.getElementById('logsModal').style.display = 'block';
+    const logs = applicationLogs[applicationId] || [];
+    displayLogs(logs);
+}
+
+const actionStatusTranslations = {
+    'approved': 'Lulus',
+    'rejected': 'Tolak',
+    'forwarded_to_approver': 'Bil Telah Dihantar ke Pelulus',
+    'Pending': 'Dalam Proses',
+    'reapply': 'Memohon Semula',
+    'Completed': 'Selesai',
+    'Created': 'Dicipta',
+    'Updated': 'Dikemaskini',
+    'awaiting_review': 'Menunggu Semakan',
+    'status_reset_for_appeal': 'Tetapan Semula Status Untuk Rayuan'
+};
+
+function displayLogs(logs) {
+    let html = '';
+    if (logs.length === 0) {
+        html = '<p class="text-muted">No logs found for this application.</p>';
+    } else {
+        const hasRejection = logs.some(log =>
+            log.user_type === 'admin_approver' && log.status_to === 'rejected'
+        );
+        if (hasRejection) {
+            html += `
+<div class="log-entry" style="background-color: #fff8e1; border-left: 4px solid #ffc107;">
+    <div class="log-header">
+        <div>
+            <span class="user-type-badge" style="background-color: #6c757d;">SYSTEM</span>
+            <strong>Status Update</strong>
+        </div>
+    </div>
+    <div class="log-details">
+        <div><strong>Note:</strong> Admin Staff status displayed as "In Process" because application was rejected by Approver.</div>
+        <div class="mt-2"><small class="text-muted">This doesn't represent an actual status change in logs, but reflects the current workflow state.</small></div>
+    </div>
+</div>
+`;
         }
-    });
-</script>
-<script>
-    $(document).ready(function() {
+        const sortedLogs = [...logs];
+        sortedLogs.sort((a, b) => new Date(b.action_at) - new Date(a.action_at));
+        sortedLogs.forEach(function(log) {
+            const userTypeBadge = log.user_type === 'admin_staff' ? 'user-type-staff' :
+                log.user_type === 'admin_approver' ? 'user-type-approver' : 'user-type-staff';
 
-            // District change handler for loading divisions
-            $('#district').on('change', function() {
-                const distId = $(this).val();
-                $('#division').html('<option value="">Loading...</option>');
+            const actionDate = new Date(log.action_at).toLocaleString();
+            const displayUserType = log.user_type === 'admin_staff' ? 'Penyedia' :
+                log.user_type === 'admin_approver' ? 'Pelulus' :
+                log.user_type === 'applicant' ? 'Pemohon' :
+                log.user_type.toUpperCase();
 
-                if (distId) {
-                    $.ajax({
-                        url: `/division/${distId}`,
-                        type: 'GET',
-                        success: function(data) {
-                            let options = '<option value="">Sila Pilih</option>';
-                            data.forEach(mukin => {
-                                options +=
-                                    `<option value="${mukin.idmukim}">${ mukin.mukim_code +' - '+mukin.mukim}</option>`;
-                            });
-                            $('#division').html(options);
-                        },
-                        error: function() {
-                            $('#division').html(
-                                '<option value="">Error loading mukin</option>');
-                        }
-                    });
-                } else {
-                    $('#division').html('<option value="">Sila Pilih</option>');
-                }
-            });
+            const formattedAction = actionStatusTranslations[log.action] || 
+           actionStatusTranslations[log.action?.toLowerCase()] ||
+           actionStatusTranslations[log.status_to] || 
+           actionStatusTranslations[log.status_from] || 
+           log.action;
 
-            // Auto-filter for status dropdown
-            $('#status').on('change', function() {
-                var status = $(this).val();
-                var queryParams = [];
+            let statusDisplay = '';
+            if (log.status_from || log.status_to) {
+                let fromStatus = log.status_from || 'Belum Terima';
+                let toStatus = log.status_to || 'Belum Terima';
+                fromStatus = fromStatus === 'pending' ? 'Dalam Proses' : 
+                fromStatus === 'approved' ? 'Lulus' : 
+                fromStatus === 'rejected' ? 'Tolak' : 
+                fromStatus;
 
-                if (status) queryParams.push('status=' + status);
+                toStatus = toStatus === 'pending' ? 'Dalam Proses' : 
+                          toStatus === 'approved' ? 'Lulus' : 
+                          toStatus === 'rejected' ? 'Tolak' : 
+                          toStatus;
 
-                // Redirect with status filter
-                window.location.href = window.location.pathname + '?' + queryParams.join('&');
-            });
-
-        });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#search').on('input', function() {
-            var searchTerm = $(this).val();
-            if (searchTerm === '') {
-                $('tbody tr').show();
-                return;
+                statusDisplay = `
+                <div class="status-change">
+                    <strong>Status:</strong>
+                    <span class="badge status-${log.status_from || 'na'}">${fromStatus}</span>
+                    <span class="status-arrow">→</span>
+                    <span class="badge status-${log.status_to || 'na'}">${toStatus}</span>
+                </div>`;
             }
             
-            // Filter table rows based on search term
-            $('tbody tr').each(function() {
-                var row = $(this);
-                var found = false;
-                
-                // Search in specific columns (reference no, applicant name, account type)
-                var refNo = row.find('td:nth-child(3)').text().toLowerCase();
-                var applicantName = row.find('td:nth-child(6)').text().toLowerCase();
-                var accountType = row.find('td:nth-child(4)').text().toLowerCase();
-                
-                searchTerm = searchTerm.toLowerCase();
-                
-                // Check if search term matches any of the columns
-                if (refNo.includes(searchTerm) || 
-                    applicantName.includes(searchTerm) || 
-                    accountType.includes(searchTerm)) {
-                    found = true;
-                }
-                
-                // Show/hide row based on search result
-                if (found) {
-                    row.show();
-                } else {
-                    row.hide();
-                }
-            });
+            const remarkTranslations = {
+                'Application forwarded to approver for final review': 'Bil telah dijana dan dihantar kepada pelulus',
+                'Application approved by approver': 'Permohonan telah diluluskan dan bil telah dihantar ke pemaju',
+                'Application resubmitted by user' : 'Permohonan dihantar semula oleh pemohon',
+                'Staff status reset to pending after approver rejection' : 'Status penyedia ditetapkan semula kepada dalam proses selepas penolakan oleh pelulus',
+                'Approver status reset to pending after staff re-forwarded application' : 'Status pelulus ditetapkan semula kepada "Dalam Proses" selepas penyedia menghantar semula permohonan',
+                'Application sent to approver for review': 'Permohonan dihantar ke pelulus untuk semakan',
+                'Approver status reset after staff resubmitted rejected application': 'Status pelulus berubah selepas permohonan ditolak dihantar semula.',
+                'Approver status reset to pending due to appeal submission': 'Status kelulusan ditetapkan semula kepada belum selesai kerana penyerahan rayuan'
+            };
+            
+            let remarksDisplay = '';
+            if (log.remarks && log.remarks.trim() !== '') {
+                const translatedRemark = remarkTranslations[log.remarks.trim()] || log.remarks;
+                remarksDisplay = `<div class="mt-2"><strong>Nota:</strong> ${translatedRemark}</div>`;
+            }
+
+            html += `
+<div class="log-entry">
+    <div class="log-header">
+        <div>
+            <span class="user-type-badge ${userTypeBadge}">${displayUserType}</span>
+            <strong>${formattedAction}</strong>
+        </div>
+        <small class="text-muted">${actionDate}</small>
+    </div>
+    <div class="log-details">
+        <div><strong>Oleh:</strong> ${log.user_email || 'Sistem'}</div>
+        ${statusDisplay}
+        ${remarksDisplay}
+    </div>
+</div>`;
         });
-    });
-</script>
-<script>
-    document.getElementById('perPageSelect').addEventListener('change', function() {
-        const perPage = this.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('perPage', perPage);
-        url.searchParams.set('page', '1'); 
-        window.location.href = url.toString();
-    });
+    }
+
+    document.getElementById('logsContent').innerHTML = html;
+}
+
+function closeLogs() {
+    document.getElementById('logsModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('logsModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
 </script>
 
 <script>
 $(document).ready(function() {
-    // Auto-submit on year change
-    $('#year').on('change', function() {
-        var url = new URL(window.location.href);
-        var params = new URLSearchParams(url.search);
+    // SEARCH AND FILTER FUNCTIONALITY
+    function performSearch() {
+        let params = new URLSearchParams();
         
-        var year = $(this).val();
-        
-        if (year) {
-            params.set('year', year);
-        } else {
-            params.delete('year');
+        let search = $('#search').val().trim();
+        let district = $('#district').val();
+        let division = $('#division').val();
+        let lot = $('#lot').val().trim();
+        let year = $('#year').val();
+        let perPage = $('#perPageSelect').val();
+
+        if (search) params.append('search', search);
+        if (district) params.append('district', district);
+        if (division) params.append('division', division);
+        if (lot) params.append('lot', lot);
+        if (year) params.append('year', year);
+        if (perPage) params.append('perPage', perPage);
+
+        window.location.href = '{{ url()->current() }}?' + params.toString();
+    }
+
+    // Handle search button click
+    $('.search-btn').on('click', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+
+    // Handle Enter key in search inputs
+    $('#search, #lot').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            performSearch();
         }
-        
-        // Keep other existing parameters
-        var search = $('#search').val();
-        var district = $('#district').val();
-        var division = $('#division').val();
-        var lot = $('#lot').val();
-        var perPage = $('#perPageSelect').val();
-        
-        if (search) params.set('search', search);
-        if (district) params.set('district', district);
-        if (division) params.set('division', division);
-        if (lot) params.set('lot', lot);
-        if (perPage) params.set('perPage', perPage);
-        
-        window.location.href = url.pathname + '?' + params.toString();
+    });
+
+    // Handle year and perPage changes
+    $('#year, #perPageSelect').on('change', function() {
+        performSearch();
+    });
+
+    // DISTRICT CHANGE HANDLER - Load divisions, but DON'T auto-search
+    $('#district').on('change', function() {
+        const distId = $(this).val();
+        $('#division').html('<option value="">Loading...</option>');
+
+        if (distId) {
+            $.ajax({
+                url: `/division/${distId}`,
+                type: 'GET',
+                success: function(data) {
+                    let options = '<option value="">Sila Pilih</option>';
+                    data.forEach(mukin => {
+                        options += `<option value="${mukin.idmukim}">${mukin.mukim_code +' - '+mukin.mukim}</option>`;
+                    });
+                    $('#division').html(options);
+                },
+                error: function() {
+                    $('#division').html('<option value="">Error loading mukin</option>');
+                }
+            });
+        } else {
+            $('#division').html('<option value="">Sila Pilih</option>');
+        }
+    });
+
+    // DIVISION CHANGE - Trigger search when division selected
+    $('#division').on('change', function() {
+        performSearch();
+    });
+
+    // STATUS FILTER (if exists)
+    $('#status').on('change', function() {
+        var status = $(this).val();
+        var queryParams = [];
+
+        if (status) queryParams.push('status=' + status);
+
+        window.location.href = window.location.pathname + '?' + queryParams.join('&');
     });
 });
 </script>
 
+<script>
+// Track application actions
+$(document).ready(function() {
+    // Track view clicks
+    $(document).on('click', '.view-application', function(e) {
+        const applicationId = $(this).data('id');
+        const $button = $(this);
+        trackAction(applicationId, 'view', $button);
+    });
+
+    // Track edit clicks
+    $(document).on('click', '.edit-application', function(e) {
+        const applicationId = $(this).data('id');
+        const $button = $(this);
+        trackAction(applicationId, 'edit', $button);
+    });
+
+    function trackAction(applicationId, actionType, $button) {
+        $.ajax({
+            url: '/track-application-action',
+            method: 'POST',
+            data: {
+                application_id: applicationId,
+                action_type: actionType,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function() {
+                if (actionType === 'view') {
+                    $button.addClass('btn-viewed');
+                } else if (actionType === 'edit') {
+                    $button.addClass('btn-edited');
+                }
+                console.log('Action tracked and UI updated');
+            },
+            error: function() {
+                console.error('Failed to track action');
+            }
+        });
+    }
+});
+</script>
 @endsection
