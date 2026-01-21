@@ -83,7 +83,7 @@
                             <div class="col-md-3 col-sm-6 colsm36">
                                 <label for="search" class="form-label"> {{ trans('app.search') }}:&nbsp;</label>
                                 <input type="text" id="search" class="form-control form-control-sm"
-                                    placeholder="{{ trans('app.search') }}">
+                                 placeholder="{{ trans('app.search') }}" value="{{ request('search') }}">
                             </div>
 
                             <!-- District Dropdown -->
@@ -395,15 +395,19 @@
             $('.btn-primary.search-btn').click(function(e) {
                 e.preventDefault();
 
+                var search = $('#search').val();  
                 var district = $('#district').val();
                 var division = $('#division').val();
                 var lot = $('#lot').val();
                 var per_page = "{{ $perPage }}";
                 var queryParams = [];
+                
+                if (search) queryParams.push('search=' + encodeURIComponent(search)); 
                 if (district) queryParams.push('district=' + district);
                 if (division) queryParams.push('division=' + division);
                 if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
                 if (per_page) queryParams.push('per_page=' + per_page);
+                
                 window.location.href = window.location.pathname + '?' + queryParams.join('&');
             });
             $('.sbtn a.btn-primary').on('click', function(e) {
@@ -411,16 +415,6 @@
                 if (href) {
                     window.location.href = href;
                 }
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("#search").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $(".table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
             });
         });
     </script>

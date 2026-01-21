@@ -1812,6 +1812,16 @@ class HomeController extends Controller {
         if ($request->has('account_type') && $request->account_type) {
             $query->where('client_register.accountType', $request->account_type);
         }
+
+        if ($request->has('search') && $request->search) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('client_register.userName', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('client_register.registeredAddress', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('account_types.name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('client_register.registration_no', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
             
         $client_register = $query->orderBy('client_register.created_at', 'desc')
             ->distinct() 
