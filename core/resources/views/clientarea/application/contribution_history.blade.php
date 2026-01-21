@@ -215,7 +215,7 @@
                                                       {{ trans('app.new') }}
                                                 @endswitch
                                             </td>
-                                            <td style="display: flex;flex-direction: column;align-items: center;">
+                                             <td style="display: flex;flex-direction: column;align-items: center;">
                                                 <div class="sbtn">
                                                     <a href="#" class="btn btn-primary btn-sm"
                                                         style="background-color: green !important;">
@@ -242,11 +242,12 @@
                                                 
                                                 @if($application->print_status_count > 0 && $reprintPayment)
                                                     <br>
+                                                    <!-- Reprint Payment Receipt Button -->
                                                     <div class="sbtn">
                                                         @if($isReprintReceiptPrinted)
-                                                        <button class="btn btn-primary btn-sm" 
-                                                                    disabled
-                                                                    style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
+                                                            <button class="btn btn-primary btn-sm" 
+                                                                disabled
+                                                                style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
                                                                 <strong>{{ __('Resit Bayaran Dicetak') }}</strong>
                                                             </button>
                                                         @else
@@ -257,6 +258,16 @@
                                                                 <strong>{{ __('Cetak Resit Bayaran') }}</strong>
                                                             </a>
                                                         @endif
+                                                    </div>
+                                                    
+                                                    <br>
+                                                    <!-- Application Receipt Copy Button - NEW -->
+                                                    <div class="sbtn">
+                                                        <a href="{{ route('user_copy_receipt', ['id' => $application->id]) }}"
+                                                            class="btn btn-primary btn-sm"
+                                                            style="background:#28a745 !important; border:solid 1px #28a745; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
+                                                            <strong>{{ __('Cetak Salinan Resit') }}</strong>
+                                                        </a>
                                                     </div>
                                                 @endif
                                             </td>
