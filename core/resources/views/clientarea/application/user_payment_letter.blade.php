@@ -219,7 +219,7 @@
             </div>
              <p class="last_para  mb-0" >@lang('app.computer_printout')</p>
             <div class="col-md-12 mt-3  text-right no-print display-flex jsutify-content-end">
-                     <button type="button" class="btn btn-primary me-2 float-right mx-3" id="downloadButton">
+                     <button type="button" class="btn btn-primary me-2 float-right mx-3" id="downloadButton" style="display:none;">
                         @lang('app.download')
                     </button>
                     <a href="{{ route('payment.selection', ['application' => $application->id]) }}" 

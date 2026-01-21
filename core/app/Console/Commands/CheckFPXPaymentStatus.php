@@ -5,10 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Notifications\NewReceiptRequestSubmitted;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use App\Notifications\PaymentSuccessful;
 
 class CheckFPXPaymentStatus extends Command
 {
@@ -65,6 +61,7 @@ class CheckFPXPaymentStatus extends Command
         try {
             $this->line("Checking order: {$paymentRecord->seller_order_no}");
             
+            // Get original request data from gateway_response
             $originalRequest = null;
             if (!empty($paymentRecord->gateway_response)) {
                 $gatewayData = json_decode($paymentRecord->gateway_response, true);
@@ -83,6 +80,7 @@ class CheckFPXPaymentStatus extends Command
             
             // If we have original request data, verify and use it
             if ($originalRequest) {
+                // Check for mismatches and use the correct values
                 if (!empty($originalRequest['fpx_sellerExOrderNo'])) {
                     if ($originalRequest['fpx_sellerExOrderNo'] !== $fpx_sellerExOrderNo) {
                         $this->warn("⚠ Order number mismatch!");
@@ -108,6 +106,7 @@ class CheckFPXPaymentStatus extends Command
             }
             
             $this->line("Query params: OrderNo={$fpx_sellerOrderNo}, ExOrderNo={$fpx_sellerExOrderNo}, TxnTime={$fpx_sellerTxnTime}");
+            // ============================================
 
             $fpx_msgType = "AE";
             $fpx_msgToken = "02"; 
@@ -229,17 +228,22 @@ class CheckFPXPaymentStatus extends Command
                 $newStatusMessage = 'Payment completed successfully';
                 $this->info("✓ Order {$paymentRecord->seller_order_no}: Payment APPROVED");
             } elseif ($fpx_debitAuthCode === '99') {
+                // Still pending
                 $newPaymentStatus = 'pending_authorization';
                 $newStatusMessage = 'Payment is pending for authorizer approval';
                 $this->line("⏳ Order {$paymentRecord->seller_order_no}: Still pending");
             } elseif ($fpx_debitAuthCode === '76') {
+                // Transaction not found - but we have a transaction ID from before!
                 if (!empty($originalRequest['fpx_fpxTxnId'])) {
                     $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Code 76 but transaction ID exists ({$originalRequest['fpx_fpxTxnId']})");
                     $this->warn("   This might be a completed transaction. Manual verification recommended.");
+                    
+                    // Don't mark as failed - keep pending for manual review
                     return;
                 }
                 
                 $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Transaction not found in FPX (Code 76)");
+                // Don't update status - manual verification needed
                 return;
                 
             } elseif (in_array($fpx_debitAuthCode, ['09', 'A0', 'U7'])) {
@@ -294,13 +298,6 @@ class CheckFPXPaymentStatus extends Command
                     ->where('seller_order_no', $paymentRecord->seller_order_no)
                     ->update($updateData);
                 
-                // ============================================
-                // 🆕 AUTO-SUBMIT FOR THIRD-PARTY B2B PAYMENTS
-                // ============================================
-                if ($newPaymentStatus === 'completed' && $paymentRecord->payment_type === 'third_party') {
-                    $this->autoSubmitThirdPartyRequest($paymentRecord);
-                }
-                
                 // Send email notification if completed
                 if ($newPaymentStatus === 'completed') {
                     $this->sendPaymentSuccessEmail($paymentRecord, $response_value);
@@ -309,101 +306,6 @@ class CheckFPXPaymentStatus extends Command
             
         } catch (\Exception $e) {
             $this->error("Error checking {$paymentRecord->seller_order_no}: {$e->getMessage()}");
-        }
-    }
-
-
-
-    private function autoSubmitThirdPartyRequest($paymentRecord)
-    {
-        try {
-            if (!$paymentRecord->application_id) {
-                $this->warn("⚠ Payment {$paymentRecord->seller_order_no} has no application_id - skipping auto-submit");
-                return;
-            }
-            
-            $application = DB::table('applications')
-                ->where('id', $paymentRecord->application_id)
-                ->first();
-            
-            if (!$application) {
-                $this->warn("⚠ Application ID {$paymentRecord->application_id} not found - skipping auto-submit");
-                return;
-            }
-            
-            $isLegacy = \Carbon\Carbon::parse($application->created_at)->lt('2025-11-16');
-            
-            if (!$isLegacy) {
-                $this->line("ℹ Application ID {$application->id} is not legacy (created after 16 Nov 2024) - skipping auto-submit");
-                return;
-            }
-            
-            $existingRequest = DB::table('receipt_requests')
-                ->where('application_id', $paymentRecord->application_id)
-                ->where('third_party_id', $paymentRecord->third_party_id)
-                ->first();
-            
-            if ($existingRequest) {
-                $this->line("ℹ Receipt request for Application ID {$application->id} already exists - skipping");
-                return;
-            }
-            
-            $receiptRequestId = DB::table('receipt_requests')->insertGetId([
-                'application_id' => $paymentRecord->application_id,
-                'third_party_id' => $paymentRecord->third_party_id,
-                'status' => 'pending',
-                'created_at' => \Carbon\Carbon::now(),
-                'updated_at' => \Carbon\Carbon::now()
-            ]);
-            
-            $this->info("✅ AUTO-SUBMITTED receipt request (ID: {$receiptRequestId}) for Application ID: {$application->id} (B2B Payment: {$paymentRecord->seller_order_no})");
-            
-            $this->sendFinanceAdminNotifications($receiptRequestId, $paymentRecord);
-            
-        } catch (\Exception $e) {
-            $this->error("❌ Auto-submit failed for payment {$paymentRecord->seller_order_no}: {$e->getMessage()}");
-        }
-    }
-
-
-    private function sendFinanceAdminNotifications($receiptRequestId, $paymentRecord)
-    {
-        try {
-            $financeRoleId = '9e032970-5f48-4d2b-b88e-abb9da79140f';
-            
-            $financeAdmins = DB::table('users')
-                ->where('role_id', $financeRoleId)
-                ->get();
-            
-            if ($financeAdmins->count() === 0) {
-                $this->warn("⚠ No Finance Admin found for notifications (role_id: {$financeRoleId})");
-                return;
-            }
-            
-            $receiptRequest = \App\Models\ReceiptRequest::find($receiptRequestId);
-            
-            if (!$receiptRequest) {
-                $this->warn("⚠ Receipt request {$receiptRequestId} not found for notifications");
-                return;
-            }
-            
-            foreach ($financeAdmins as $admin) {
-                try {
-                    $adminUser = \App\Models\User::find($admin->uuid);
-                    
-                    if ($adminUser) {
-                        $adminUser->notify(new \App\Notifications\NewReceiptRequestSubmitted($receiptRequest));
-                        $this->line("📧 Notification sent to Finance Admin: {$admin->email}");
-                    }
-                } catch (\Exception $e) {
-                    $this->warn("⚠ Failed to notify admin {$admin->email}: {$e->getMessage()}");
-                }
-            }
-            
-            $this->info("✅ Sent notifications to {$financeAdmins->count()} Finance Admin(s)");
-            
-        } catch (\Exception $e) {
-            $this->error("❌ Failed to send notifications: {$e->getMessage()}");
         }
     }
     
