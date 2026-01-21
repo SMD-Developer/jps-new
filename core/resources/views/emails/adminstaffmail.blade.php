@@ -78,13 +78,14 @@
         </tr>
         <tr>
             <td class="title">
-                Permohonan Diterima Untuk Semakan
+                Permohonan Diterima untuk Semakan
             </td>
         </tr>
         <tr>
             <td class="content">
                 <p>Kepada Adminastaff,</p>
-                <p><strong>Permohonan baharu diterima untuk semakan!</strong></p>
+                <p>Dimaklumkan bahawa satu permohonan baharu telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
+                <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
             </td>
         </tr>
         <tr>
