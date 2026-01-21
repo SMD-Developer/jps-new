@@ -138,20 +138,27 @@
 
                                     @forelse ($notifications as $notification)
                                         @php
-                                            // Determine the correct route based on notification type
-                                            if (isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_finance') {
-                                                $redirectUrl = route('claim.list');
-                                                // Optionally add query parameters if needed
-                                                if (isset($notification->data['claim_id'])) {
-                                                    $redirectUrl .= '?id=' . $notification->data['claim_id'];
-                                                }
-                                            } else {
-                                                $redirectUrl = isset($notification->data['application_id'])
-                                                ? route('application_status', ['id' => $notification->data['application_id']])
-                                                : '#';
+                                            $redirectUrl = '#';
 
+                                            switch ($notification->type) {
+
+                                                case 'App\Notifications\AdminNewClaimNotification':
+                                                    $redirectUrl = route('claim.list', [
+                                                        'id' => $notification->data['claim_id'] ?? null
+                                                    ]);
+                                                    break;
+
+                                                case 'App\Notifications\AdminNewApplicationNotification':
+                                                    $redirectUrl = route('application_status', [
+                                                        'id' => $notification->data['application_id'] ?? null
+                                                    ]);
+                                                    break;
+
+                                                default:
+                                                    $redirectUrl = '#';
                                             }
                                         @endphp
+
 
                                         {{-- Debug: Check notification data --}}
                                         {{-- {{ dd($notification->data) }} --}}
