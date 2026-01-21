@@ -759,89 +759,86 @@
     </script>
 
     <script>
-        if (performance.navigation.type === 1 && window.location.search) {
-            console.log('Query string on refresh:', window.location.search);
-            const cleanUrl = window.location.pathname;
-
-            if (window.history && window.history.replaceState) {
-                window.history.replaceState({}, document.title, cleanUrl);
-            }
-            console.log('Reloading with clean URL:', cleanUrl);
-            window.location.href = cleanUrl;
-        }
-
-        function changePerPage() {
-            let perPage = document.getElementById('perPageSelect').value;
-            let url = new URL(window.location.href);
-            url.searchParams.set('page', 1);
-            url.searchParams.set('per_page', perPage);
-            window.location.href = url.toString();
-        }
-
         $(document).ready(function() {
-            if (performance.navigation.type === 1) {
-                setTimeout(function() {
-                    if ($('#district').length) {
-                        $('#district').val('').prop('selectedIndex', 0);
-                    }
-                    if ($('#division').length) {
-                        $('#division').empty().html(
-                            '<option value="" selected disabled>{{ trans('app.select_division') }}</option>'
-                        );
-                    }
-                    if ($('#lot').length) {
-                        $('#lot').val('');
-                    }
-                    $('#district').off('change.divisionLoader').on('change.divisionLoader', function() {
-                        // Your existing change handler if needed
-                    });
-                }, 50);
-                return;
+            function performSearch() {
+                let params = new URLSearchParams();
+                
+                let search = $('#search').val().trim();
+                let district = $('#district').val();
+                let division = $('#division').val();
+                let lot = $('#lot').val().trim();
+                let status = $('#status').val();
+                let perPage = $('#perPageSelect').val();
+
+                if (search) params.append('search', search);
+                if (district) params.append('district', district);
+                if (division) params.append('division', division);
+                if (lot) params.append('lot', lot);
+                if (status && status !== 'all') params.append('status', status);
+                if (perPage) params.append('per_page', perPage);
+
+                window.location.href = '{{ url()->current() }}?' + params.toString();
             }
 
-            // Handle selected values for search
-            var selectedDistrict = "{{ request('district') }}";
-            var selectedDivision = "{{ request('division') }}";
-
-            if (selectedDistrict) {
-                $('#district').trigger('change');
-                var checkExist = setInterval(function() {
-                    if ($('#division option').length > 1) {
-                        $('#division').val(selectedDivision);
-                        clearInterval(checkExist);
-                    }
-                }, 100);
-            }
-
-            $('.btn-primary.search-btn').click(function(e) {
+            $('.search-btn').on('click', function(e) {
                 e.preventDefault();
-
-                var district = $('#district').val();
-                var division = $('#division').val();
-                var lot = $('#lot').val();
-                var per_page = "{{ $perPage }}";
-                var queryParams = [];
-                if (district) queryParams.push('district=' + district);
-                if (division) queryParams.push('division=' + division);
-                if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
-                if (per_page) queryParams.push('per_page=' + per_page);
-                window.location.href = window.location.pathname + '?' + queryParams.join('&');
+                performSearch();
             });
+
+
+            $('#search, #lot').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    performSearch();
+                }
+            });
+
+
+            $('#status, #perPageSelect, #division').on('change', function() {
+                performSearch();
+            });
+
+            $('#district').on('change', function() {
+                const distId = $(this).val();
+                $('#division').html('<option value="">Loading...</option>');
+
+                if (distId) {
+                    $.ajax({
+                        url: `/division/${distId}`,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">{{ trans('app.select_division') }}</option>';
+                            data.forEach(mukin => {
+                                options += `<option value="${mukin.idmukim}">${mukin.mukim_code + ' - ' + mukin.mukim}</option>`;
+                            });
+                            $('#division').html(options);
+                            
+                            // Restore selected division if it exists
+                            var selectedDivision = "{{ request('division') }}";
+                            if (selectedDivision) {
+                                $('#division').val(selectedDivision);
+                            }
+                        },
+                        error: function() {
+                            $('#division').html('<option value="">Error loading mukim</option>');
+                        }
+                    });
+                } else {
+                    $('#division').html('<option value="">{{ trans('app.select_division') }}</option>');
+                }
+            });
+
+
+            var selectedDistrict = "{{ request('district') }}";
+            if (selectedDistrict) {
+                $('#district').val(selectedDistrict).trigger('change');
+            }
+
             $('.sbtn a.btn-primary').on('click', function(e) {
                 var href = $(this).attr('href');
                 if (href) {
                     window.location.href = href;
                 }
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("#search").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $(".table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
             });
         });
     </script>

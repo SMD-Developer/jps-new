@@ -309,6 +309,15 @@ class HomeController extends Controller {
         // Build the query WITHOUT ->get()
         $query = ClaimContribution::with(['state', 'landDistrict', 'landDivision', 'client'])
             ->where('status', '!=', 'approve_paid');
+
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->get('search');
+            $query->where(function($q) use ($searchTerm) {
+                $q->Where('applicant', 'like', '%' . $searchTerm . '%')
+                ->orWhere('land_lot', 'like', '%' . $searchTerm . '%');
+            });
+        }
         
         if ($financeStaff) {
             $query->where('send_to_finance', 1);
