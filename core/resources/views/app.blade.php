@@ -139,26 +139,76 @@
                                     @forelse ($notifications as $notification)
                                         @php
                                             $redirectUrl = '#';
+                                            
+                                            $data = $notification->data ?? [];
+                                            $notificationType = $data['type'] ?? null;
+                                            
+                                            // Handle redirection based on notification type or data
+                                            if ($notificationType) {
+                                                switch ($notificationType) {
+                                                    case 'forward_claim_to_finance':
+                                                    case 'forward_claim_to_Approver':
+                                                    case 'claim_created':
+                                                    case 'claim_updated':
+                                                    case 'AdminNewClaimNotification':
+                                                        // Redirect to claim details
+                                                        $redirectUrl = route('claim.list', [
+                                                            'id' => $data['claim_id'] ?? ($data['id'] ?? null)
+                                                        ]);
+                                                        break;
+                                                        
+                                                    case 'application_created':
+                                                    case 'application_updated':
+                                                    case 'AdminNewApplicationNotification':
+                                                        // Redirect to application details
+                                                        $redirectUrl = route('application_status', [
+                                                            'id' => $data['application_id'] ?? ($data['id'] ?? null)
+                                                        ]);
+                                                        break;
+                                                        
+                                                    case 'user_registered':
+                                                    case 'profile_updated':
+                                                        $redirectUrl = route('user.profile', [
+                                                            'id' => $data['user_id'] ?? ($data['id'] ?? null)
+                                                        ]);
+                                                        break;
+                                                        
+                                                    default:
+                                                        // Check if there's a generic route based on data
+                                                        if (isset($data['claim_id'])) {
+                                                            $redirectUrl = route('claim.list', ['id' => $data['claim_id']]);
+                                                        } elseif (isset($data['application_id'])) {
+                                                            $redirectUrl = route('application_status', ['id' => $data['application_id']]);
+                                                        } else {
+                                                            $redirectUrl = '#';
+                                                        }
+                                                }
+                                            } else {
+                                                switch ($notification->type) {
+                                                    case 'App\Notifications\AdminNewClaimNotification':
+                                                        $redirectUrl = route('claim.list', [
+                                                            'id' => $data['claim_id'] ?? ($data['id'] ?? null)
+                                                        ]);
+                                                        break;
 
-                                            switch ($notification->type) {
-
-                                                case 'App\Notifications\AdminNewClaimNotification':
-                                                    $redirectUrl = route('claim.list', [
-                                                        'id' => $notification->data['claim_id'] ?? null
-                                                    ]);
-                                                    break;
-
-                                                case 'App\Notifications\AdminNewApplicationNotification':
-                                                    $redirectUrl = route('application_status', [
-                                                        'id' => $notification->data['application_id'] ?? null
-                                                    ]);
-                                                    break;
-
-                                                default:
-                                                    $redirectUrl = '#';
+                                                    case 'App\Notifications\AdminNewApplicationNotification':
+                                                        $redirectUrl = route('application_status', [
+                                                            'id' => $data['application_id'] ?? ($data['id'] ?? null)
+                                                        ]);
+                                                        break;
+                                                        
+                                                    default:
+                                                        // Try to guess from data
+                                                        if (isset($data['claim_id'])) {
+                                                            $redirectUrl = route('claim.list', ['id' => $data['claim_id']]);
+                                                        } elseif (isset($data['application_id'])) {
+                                                            $redirectUrl = route('application_status', ['id' => $data['application_id']]);
+                                                        } else {
+                                                            $redirectUrl = '#';
+                                                        }
+                                                }
                                             }
                                         @endphp
-
 
                                         {{-- Debug: Check notification data --}}
                                         {{-- {{ dd($notification->data) }} --}}
@@ -169,17 +219,17 @@
 
                                             <a href="{{ $redirectUrl }}"
                                                 style="text-decoration: none; color: inherit;">
-                                                <strong>{{ $notification->data['message'] ?? 'No message' }}</strong>
+                                                <strong>{{ $data['message'] ?? ($data['title'] ?? 'No message') }}</strong>
                                                 
-                                               <p style="font-size: 12px; margin: 5px 0;">
+                                            <p style="font-size: 12px; margin: 5px 0;">
                                                     @if(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_finance')
-                                                        <span style="color: #666;">Dihantar oleh:</span> {{ $notification->data['sent_by'] ?? 'Unknown' }}
+                                                        <span style="color: #666;">Dihantar oleh:</span> {{ $data['sent_by'] ?? 'Unknown' }}
                                                         <br>
-                                                        <span style="color: #666;">Pemohon:</span> {{ $notification->data['applicant'] ?? 'N/A' }}
+                                                        <span style="color: #666;">Pemohon:</span> {{ $data['applicant'] ?? 'N/A' }}
                                                     @elseif(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_Approver')
-                                                        <span style="color: #666;">Dihantar oleh:</span> {{ $notification->data['sent_by'] ?? 'Unknown' }}
+                                                        <span style="color: #666;">Dihantar oleh:</span> {{ $data['sent_by'] ?? 'Unknown' }}
                                                     @else
-                                                        {{ $notification->data['applicant'] ?? 'Unknown Applicant' }}
+                                                        {{ $data['applicant'] ?? ($data['user_name'] ?? 'Unknown') }}
                                                     @endif
                                                 </p>
                                                 
