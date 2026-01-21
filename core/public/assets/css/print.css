@@ -22,11 +22,10 @@ body {
     height: 100%;
   }
 
-  .row, .head-row {
-            display: table !important;
-            width: 100% !important;
-           
-        }
+  .font-print {
+      display: table !important;
+      width: 100% !important;
+  }
 
   .font-print {
     font-size: 15pt !important;
