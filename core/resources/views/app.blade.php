@@ -146,10 +146,10 @@
                                                     $redirectUrl .= '?id=' . $notification->data['claim_id'];
                                                 }
                                             } else {
-                                                // Default route for other notifications
-                                                $redirectUrl = isset($notification->data['application_id']) 
-                                                    ? route('application_list') . '?id=' . $notification->data['application_id'] 
-                                                    : '#';
+                                                $redirectUrl = isset($notification->data['application_id'])
+                                                ? route('application_status', ['id' => $notification->data['application_id']])
+                                                : '#';
+
                                             }
                                         @endphp
 
