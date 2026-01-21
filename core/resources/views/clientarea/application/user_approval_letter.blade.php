@@ -1,141 +1,14 @@
 @extends('clientarea.app')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<meta name="csrf-token" content="{{ csrf_token() }}">
-<style>
-    /* General Styles */
-    body {
-        line-height: 1.5;
-        margin: 20px;
-        color: #333;
-        font-weight: 700;
-        background-color: white !important;
-    }
-    .content-wrapper{
-            background-color: #fff !important;
-    }
-
-    .address-wrap {
-        white-space: normal !important;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-
-
-    /* Print-specific styles */
-    @media print {
-         html, body {
-            height: 100%;
-        }
-
-        .row, .head-row {
-            display: table !important;
-            width: 100% !important;
-            
-        }
-
-        body, p, span, div, h6 {
-            font-size: 15pt !important;
-            line-height: 1.4 !important;
-        }
-
-        .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-8 {
-            display: table-cell !important;
-            float: none !important;
-            vertical-align: top !important;
-        }
-
-        .last_para {
-            position: absolute !important;
-            bottom: 20px !important;
-            left: 0;
-            right: 0;
-            text-align: center !important;
-            width: 100%;
-            font-size: 16pt;
-            margin-left: 25px !important;
-        }
-
-            @media print {
-            .img3 {
-                float: left !important;
-                margin-right: auto !important;
-                margin-left: -15px !important;
-            }
-        }
-
-    
-    }
-
-    
-    /* Screen styles to maintain normal layout */
-    @media screen {
-        .head-row, .row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-right: -15px;
-            margin-left: -15px;
-        }
-        
-        .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-8 {
-            position: relative;
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-        }
-        
-        .col-md-2 {
-            flex: 0 0 16.666667%;
-            max-width: 16.666667%;
-        }
-        
-        .col-md-3 {
-            flex: 0 0 25%;
-            max-width: 25%;
-        }
-        
-        .col-md-4 {
-            flex: 0 0 33.333333%;
-            max-width: 33.333333%;
-        }
-        
-        .col-md-5 {
-            flex: 0 0 41.666667%;
-            max-width: 41.666667%;
-        }
-        
-        .col-md-6 {
-            flex: 0 0 50%;
-            max-width: 50%;
-        }
-        
-        .col-md-8 {
-            flex: 0 0 66.666667%;
-            max-width: 66.666667%;
-        }
-    }
-
-    .row.mt-3.head-row {
-        border-bottom: none !important;
-    }
-
-    .col-md-4.ruj.text-left {
-        padding-left: 250px !important;
-    }
-    .last_para {
-        margin-left: 83px;
-        color: grey; 
-        white-space: nowrap;
-    }
-</style>
-<title>@lang('app.trench_contribution_bill') | JPS</title>
+@section('title')
+    @lang('app.trench_contribution_bill') | {{ get_company_name() }}
+@endsection
 @section('content')
     <div class="col-md-12 content-header">
         <h5><i class="fa fa-list"></i> @lang('app.trench_contribution_bill')</h5>
     </div>
 
-
-    <section class="content">
-       <div class="row mt-3 head-row">
+    <section class="content trench-contribution-bill">
+        <div class="row mt-3 head-row">
             <div class="col-md-12 text-center">
                 <img src="{{ asset('assets/images/letterhead.jpg') }}" 
                     class="img-fluid" 
@@ -218,21 +91,19 @@
                 <div class="col-md-6">
                 </div>
             </div>
-             <p class="last_para  mb-0" >@lang('app.computer_printout')</p>
-            <div class="col-md-12 mt-3  text-right no-print display-flex jsutify-content-end">
-                    <button type="button" class="btn btn-success mx-2" onclick="window.location.href='{{ url()->previous() }}'">
-                        @lang('app.back')
-                    </button>
-                    <button type="button" class="btn btn-secondary mr-2" onclick="window.print()">
-                        <i class="bi bi-printer"></i> @lang('app.print')
-                    </button>
-                </div>
-               
+            <p class="last_para mb-0">@lang('app.computer_printout')</p>
+            <div class="col-md-12 mt-3 text-right no-print display-flex jsutify-content-end">
+                <button type="button" class="btn btn-success mx-2" onclick="window.location.href='{{ url()->previous() }}'">
+                    @lang('app.back')
+                </button>
+                <button type="button" class="btn btn-secondary mr-2" onclick="window.print()">
+                    <i class="bi bi-printer"></i> @lang('app.print')
+                </button>
             </div>
+        </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
     <script>
         document.getElementById('approveButton').addEventListener('click', function() {

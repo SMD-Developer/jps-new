@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ get_company_name() }}</title>
+    <title>
+        @yield('title', get_company_name())
+    </title>
     @if (get_setting_value('favicon') != '')
         <link rel="icon" type="image/png" sizes="16x16" href="{{ image_url(get_setting_value('favicon')) }}">
     @endif
@@ -17,6 +19,7 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/userPrint.css') }}">
     <script src="{{ asset('assets/js/all.min.js') }}"></script>
     <script src="{{ asset('assets/js/jquery-3.6.4.min.js') }}"></script>
     <style>

@@ -1,0 +1,267 @@
+    @import url(https://fonts.googleapis.com/css?family=Denk+One);
+    @import url(https://fonts.googleapis.com/css?family=Arimo);
+    body {
+        background-color: white !important;
+        }
+    .content-wrapper {
+        background-color: #fff !important;
+    }
+    .rotingtxt {
+        -webkit-transform: rotate(331deg);
+        -moz-transform: rotate(331deg);
+        -o-transform: rotate(331deg);
+        transform: rotate(331deg);
+        font-size: 10em;
+        color: #cccccc;
+        position: absolute;
+        font-family: 'Denk One', sans-serif;
+        text-transform: uppercase;
+        /*padding-left: 10%;*/
+        /*display: flex;*/
+        /*text-align: center;*/
+        font-weight: 700;
+        top: 26rem;
+        left: 25%;
+        opacity: 0.5;
+
+    }
+    
+      .receipt-table th {
+        font-size: 14px; 
+    }
+
+    .custome-text{
+        font-size:14px;
+    }
+    
+    
+    .receipt-footer .info-row {
+        display: flex;
+        margin-bottom: 5px;
+        align-items: flex-start;
+    }
+
+    .receipt-footer .label {
+        width: 150px;
+        flex-shrink: 0;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .receipt-footer .label::after {
+        content: ":";
+        margin-left: 5px;
+    }
+
+    .receipt-footer .value {
+        flex-grow: 1;
+        margin-left: 10px;
+        align-self: flex-start;
+    }
+    
+    .receipt-header .info-row {
+        display: flex;
+        margin-bottom: 5px;
+        align-items: flex-start;
+    }
+
+    .receipt-header .label {
+        width: 202px;
+        flex-shrink: 0;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .receipt-header .label::after {
+        content: ":";
+        margin-left: 5px;
+    }
+
+    .receipt-header .value {
+        flex-grow: 1;
+        margin-left: 10px;
+        align-self: flex-start;
+    }
+
+    .contents {
+        background-color: #ffffff;
+        margin-bottom: 50px;
+    }
+
+    .containers {
+        padding-inline: 120px !important;
+
+    }
+
+    .row1 {
+        display: flex;
+        justify-content: center;
+    }
+
+    .receipt-table,
+    .receipt-table th,
+    .receipt-table td {
+        border: 1px solid black !important;
+        border-collapse: collapse;
+    }
+
+    .btnprint {
+        border-radius: 20px !important;
+        padding: 7px 50px !important;
+    }
+
+    .btnprint {
+        width: max-content;
+    }
+    
+        @media print {
+        .no-print, .containerr.pb-5 {
+            display: none !important;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        .contents {
+            background-color: white;
+            margin-bottom: 0;
+        }
+    }
+
+    /* user approval letter */
+    /* General Styles */
+    .trench-contribution-bill .content-wrapper {
+        background-color: #fff !important;
+    }
+
+    .trench-contribution-bill .address-wrap {
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Print-specific styles */
+    @media print {
+        .trench-contribution-bill html,
+        .trench-contribution-bill body {
+            height: 100%;
+        }
+
+        .trench-contribution-bill .row,
+        .trench-contribution-bill .head-row {
+            display: table !important;
+            width: 100% !important;
+        }
+
+        .trench-contribution-bill body,
+        .trench-contribution-bill p,
+        .trench-contribution-bill span,
+        .trench-contribution-bill div,
+        .trench-contribution-bill h6 {
+            font-size: 15pt !important;
+            line-height: 1.4 !important;
+        }
+
+        .trench-contribution-bill .col-md-2,
+        .trench-contribution-bill .col-md-3,
+        .trench-contribution-bill .col-md-4,
+        .trench-contribution-bill .col-md-5,
+        .trench-contribution-bill .col-md-6,
+        .trench-contribution-bill .col-md-8 {
+            display: table-cell !important;
+            float: none !important;
+            vertical-align: top !important;
+        }
+
+        .trench-contribution-bill .last_para {
+            position: absolute !important;
+            top: 120% !important;
+            left: 0;
+            right: 0;
+            text-align: center !important;
+            width: 100%;
+            font-size: 16pt;
+            margin-left: 25px !important;
+        }
+
+        @media print {
+            .trench-contribution-bill .img3 {
+                float: left !important;
+                margin-right: auto !important;
+                margin-left: -15px !important;
+            }
+        }
+    }
+
+    /* Screen styles to maintain normal layout */
+    @media screen {
+        .trench-contribution-bill .head-row,
+        .trench-contribution-bill .row {
+            display: flex;
+            flex-wrap: wrap;
+
+        }
+
+        .trench-contribution-bill .col-md-2,
+        .trench-contribution-bill .col-md-3,
+        .trench-contribution-bill .col-md-4,
+        .trench-contribution-bill .col-md-5,
+        .trench-contribution-bill .col-md-6,
+        .trench-contribution-bill .col-md-8 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .trench-contribution-bill .col-md-2 {
+            flex: 0 0 16.666667%;
+            max-width: 16.666667%;
+        }
+
+        .trench-contribution-bill .col-md-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
+
+        .trench-contribution-bill .col-md-4 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+
+        .trench-contribution-bill .col-md-5 {
+            flex: 0 0 41.666667%;
+            max-width: 41.666667%;
+        }
+
+        .trench-contribution-bill .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+
+        .trench-contribution-bill .col-md-8 {
+            flex: 0 0 66.666667%;
+            max-width: 66.666667%;
+        }
+    }
+
+    .trench-contribution-bill .row.mt-3.head-row {
+        border-bottom: none !important;
+    }
+
+    .trench-contribution-bill .col-md-4.ruj.text-left {
+        padding-left: 250px !important;
+    }
+
+    .trench-contribution-bill .last_para {
+        margin-left: 83px;
+        color: grey;
+        white-space: nowrap;
+    }
