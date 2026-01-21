@@ -1892,14 +1892,11 @@ class HomeController extends Controller {
         ->orderBy('updated_at', 'desc');    
         
         
-         if ($searchTerm) {
+        if ($searchTerm) {
             $query->where(function($q) use ($searchTerm) {
                 $q->where('refference_no', 'like', "%{$searchTerm}%")
-                  ->orWhere('applicant', 'like', "%{$searchTerm}%")
-                  ->orWhere('land_lot', 'like', "%{$searchTerm}%")
-                  ->orWhereHas('client', function($q) use ($searchTerm) {
-                      $q->where('userName', 'like', "%{$searchTerm}%");
-                  });
+                ->orWhere('applicant', 'like', "%{$searchTerm}%")
+                ->orWhere('land_lot', 'like', "%{$searchTerm}%");
             });
         }
         
@@ -1956,11 +1953,8 @@ class HomeController extends Controller {
         if ($searchTerm) {
             $countQuery->where(function($q) use ($searchTerm) {
                 $q->where('refference_no', 'like', "%{$searchTerm}%")
-                  ->orWhere('applicant', 'like', "%{$searchTerm}%")
-                  ->orWhere('land_lot', 'like', "%{$searchTerm}%")
-                  ->orWhereHas('client', function($q) use ($searchTerm) {
-                      $q->where('userName', 'like', "%{$searchTerm}%");
-                  });
+                ->orWhere('applicant', 'like', "%{$searchTerm}%")
+                ->orWhere('land_lot', 'like', "%{$searchTerm}%");
             });
         }
         

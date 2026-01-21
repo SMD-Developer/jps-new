@@ -1131,17 +1131,7 @@
                 });
             });
 
-            // function changePerPage() {
-            //     const perPage = document.getElementById('perPageSelect').value;
-            //     const url = new URL(window.location.href);
-            //     const statusFilter = url.searchParams.get('status') || '';
-            //     url.searchParams.set('page', 1);
-            //     url.searchParams.set('per_page', perPage);
-            //     if (statusFilter) {
-            //         url.searchParams.set('status', statusFilter);
-            //     }
-            //     window.location.href = url.toString();
-            // }
+
             function changePerPage() {
                 const perPage = document.getElementById('perPageSelect').value;
                 const url = new URL(window.location.href);
@@ -1299,12 +1289,6 @@
                             remarksDisplay = `<div class="mt-2"><strong>Nota:</strong> ${translatedRemark}</div>`;
                         }
 
-                        // Format remarks with special handling for empty remarks
-                        // let remarksDisplay = '';
-                        // if (log.remarks && log.remarks.trim() !== '') {
-                        //     remarksDisplay = `<div class="mt-2"><strong>Remarks:</strong> ${log.remarks}</div>`;
-                        // }
-
                         html += `
             <div class="log-entry">
                 <div class="log-header">
@@ -1342,14 +1326,14 @@
                 // Track view clicks
                 $(document).on('click', '.view-application', function(e) {
                     const applicationId = $(this).data('id');
-                    const $button = $(this); // Store reference to the clicked button
+                    const $button = $(this); 
                     trackAction(applicationId, 'view', $button);
                 });
             
                 // Track edit clicks
                 $(document).on('click', '.edit-application', function(e) {
                     const applicationId = $(this).data('id');
-                    const $button = $(this); // Store reference to the clicked button
+                    const $button = $(this); 
                     trackAction(applicationId, 'edit', $button);
                 });
             
@@ -1380,7 +1364,6 @@
                 var appId = $(this).data('app-id');
                 var button = $(this);
                 
-                // Only track if it has an app-id (it's a view button)
                 if (appId) {
                     // Make AJAX call to track the view
                     $.ajax({
@@ -1399,131 +1382,80 @@
                         }
                     });
                 }
-                
-                // Let the normal click proceed (will navigate to view page)
+            
             });
         });
         </script>
         <script>
-            $(document).ready(function() {
-            // Search button click handler
-                $('.search-btn').on('click', function(e) {
-                    e.preventDefault();
-                    
-                    var searchTerm = $('#search').val();
-                    var district = $('#district').val();
-                    var division = $('#division').val();
-                    var lot = $('#lot').val();
-                    
-                    var queryParams = [];
-                    
-                    if (searchTerm) queryParams.push('search=' + encodeURIComponent(searchTerm));
-                    if (district) queryParams.push('district=' + district);
-                    if (division) queryParams.push('division=' + division);
-                    if (lot) queryParams.push('lot=' + encodeURIComponent(lot));
-                    
-                    // Redirect with all filters
-                    window.location.href = window.location.pathname + '?' + queryParams.join('&');
-                });
-
-                // Status filter
-                $('#status').on('change', function() {
-                    var status = $(this).val();
-                    var url = new URL(window.location.href);
-                    url.searchParams.set('status', status);
-                    window.location.href = url.toString();
-                });
-                
-            });
-        </script>
-        <script>
-                $(document).ready(function() {
-
-                        // District change handler for loading divisions
-                        $('#district').on('change', function() {
-                            const distId = $(this).val();
-                            $('#division').html('<option value="">Loading...</option>');
-
-                            if (distId) {
-                                $.ajax({
-                                    url: `/division/${distId}`,
-                                    type: 'GET',
-                                    success: function(data) {
-                                        let options = '<option value="">Sila Pilih</option>';
-                                        data.forEach(mukin => {
-                                            options +=
-                                                `<option value="${mukin.idmukim}">${ mukin.mukim_code +' - '+mukin.mukim}</option>`;
-                                        });
-                                        $('#division').html(options);
-                                    },
-                                    error: function() {
-                                        $('#division').html(
-                                            '<option value="">Error loading mukin</option>');
-                                    }
-                                });
-                            } else {
-                                $('#division').html('<option value="">Sila Pilih</option>');
-                            }
-                        });
-
-                        // Auto-filter for status dropdown
-                        $('#status').on('change', function() {
-                            var status = $(this).val();
-                            var queryParams = [];
-
-                            if (status) queryParams.push('status=' + status);
-
-                            // Redirect with status filter
-                            window.location.href = window.location.pathname + '?' + queryParams.join('&');
-                        });
-
-                });
-        </script>
-    <script>
         $(document).ready(function() {
-            $('#search').on('input', function() {
-                var searchTerm = $(this).val();
-                if (searchTerm === '') {
-                    $('tbody tr').show();
-                    return;
-                }
+            // UNIFIED SEARCH FUNCTION
+            function performSearch() {
+                let params = new URLSearchParams();
                 
-                // Filter table rows based on search term
-                $('tbody tr').each(function() {
-                    var row = $(this);
-                    var found = false;
-                    
-                    // Search in specific columns (reference no, applicant name, account type)
-                    var refNo = row.find('td:nth-child(3)').text().toLowerCase();
-                    var applicantName = row.find('td:nth-child(6)').text().toLowerCase();
-                    var accountType = row.find('td:nth-child(4)').text().toLowerCase();
-                    
-                    searchTerm = searchTerm.toLowerCase();
-                    
-                    // Check if search term matches any of the columns
-                    if (refNo.includes(searchTerm) || 
-                        applicantName.includes(searchTerm) || 
-                        accountType.includes(searchTerm)) {
-                        found = true;
-                    }
-                    
-                    // Show/hide row based on search result
-                    if (found) {
-                        row.show();
-                    } else {
-                        row.hide();
-                    }
-                });
+                let searchTerm = $('#search').val().trim();
+                let district = $('#district').val();
+                let division = $('#division').val();
+                let lot = $('#lot').val().trim();
+                let status = $('#status').val();
+                let adminStaffStatus = $('#admin_staff_status').val();
+                let approverStatus = $('#approver_status').val();
+                let perPage = $('#perPageSelect').val();
+
+                if (searchTerm) params.append('search', searchTerm);
+                if (district) params.append('district', district);
+                if (division) params.append('division', division);
+                if (lot) params.append('lot', lot);
+                if (status && status !== 'all') params.append('status', status);
+                if (adminStaffStatus && adminStaffStatus !== 'all') params.append('admin_staff_status', adminStaffStatus);
+                if (approverStatus && approverStatus !== 'all') params.append('approver_status', approverStatus);
+                if (perPage) params.append('per_page', perPage);
+
+                window.location.href = '{{ url()->current() }}?' + params.toString();
+            }
+
+            // Search button click
+            $('.search-btn').on('click', function(e) {
+                e.preventDefault();
+                performSearch();
+            });
+
+            // Enter key in search inputs
+            $('#search, #lot').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    performSearch();
+                }
+            });
+
+            // Dropdown changes
+            $('#status, #admin_staff_status, #approver_status, #perPageSelect, #division').on('change', function() {
+                performSearch();
+            });
+
+            // District change - load divisions first, don't auto-search
+            $('#district').on('change', function() {
+                const distId = $(this).val();
+                $('#division').html('<option value="">Loading...</option>');
+
+                if (distId) {
+                    $.ajax({
+                        url: `/division/${distId}`,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Sila Pilih</option>';
+                            data.forEach(mukin => {
+                                options += `<option value="${mukin.idmukim}">${mukin.mukim_code +' - '+mukin.mukim}</option>`;
+                            });
+                            $('#division').html(options);
+                        },
+                        error: function() {
+                            $('#division').html('<option value="">Error loading mukim</option>');
+                        }
+                    });
+                } else {
+                    $('#division').html('<option value="">Sila Pilih</option>');
+                }
             });
         });
-    </script>
-    <script>
-        document.getElementById('perPageSelect').addEventListener('change', function() {
-            const perPage = this.value;
-            const url = new URL(window.location.href);
-            url.searchParams.set('perPage', perPage);
-            url.searchParams.set('page', '1'); 
-            window.location.href = url.toString();
-        });
-    </script>
+        </script>
     @endsection
