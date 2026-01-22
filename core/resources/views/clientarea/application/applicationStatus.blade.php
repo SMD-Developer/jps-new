@@ -362,9 +362,20 @@
                                             <td>
                                                 @if ($application->status == 'approved')
                                                     @php
-                                                        // Get the latest ORIGINAL payment only (B2B or B2C payments)
                                                         $latestPayment = $application->payments
-                                                            ->whereIn('payment_type', ['B2B', 'B2C', 'FPX_B2B', 'FPX_B2C'])
+                                                            ->filter(function($payment) {
+                                                                $originalTypes = ['B2B', 'B2C', 'FPX_B2B', 'FPX_B2C', 'cheque', 'credit', 'bank_draf', 'manual'];
+                                                                if (!is_null($payment->payment_type)) {
+                                                                    return in_array($payment->payment_type, $originalTypes);
+                                                                }
+                                                                
+                                                                if (!is_null($payment->method)) {
+                                                                    return !in_array($payment->method, ['reprint', 'third_party']);
+                                                                }
+                                                                
+                                                                // If both are null, consider it original (for very old data)
+                                                                return true;
+                                                            })
                                                             ->sortByDesc('created_at')
                                                             ->first();
                                                     @endphp

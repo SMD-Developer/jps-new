@@ -419,7 +419,7 @@
                                             <td>
                                                 @if($payment && in_array($payment->payment_type, ['reprint', 'third_party']))
                                                     <span class="badge bg-warning text-dark">Salinan Resit</span>
-                                                @elseif($payment && $payment->payment_type && in_array($payment->payment_type, ['B2B', 'B2C']))
+                                                @elseif($payment && $payment->payment_type && in_array($payment->payment_type, ['B2B', 'B2C', 'bank_draf']))
                                                     Caruman Parit
                                                 @elseif($payment && $payment->payment_type)
                                                     <span class="badge bg-info text-dark">{{ ucfirst($payment->payment_type) }}</span>
