@@ -62,7 +62,9 @@
                             </div>
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
-                                <div class="value">{{ $application->fpx_payment_time ?? $application->payment_date }}</div>
+                                <div class="value">
+                                    {{ \Carbon\Carbon::parse($application->fpx_payment_time ?? $application->payment_date)->format('d/m/Y') }}
+                                </div>
                             </div>
                             <div class="info-row" style="margin-bottom: 20px;">
                                 <div class="label">PERIHAL TERIMAAN</div>
