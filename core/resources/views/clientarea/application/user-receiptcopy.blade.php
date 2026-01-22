@@ -1,154 +1,13 @@
 @extends('clientarea.app')
-<style>
-    /* General Styles */
-    body {
-        font-family: sans-serif;
-        line-height: 1.5;
-        margin: 20px;
-        color: #333;
-        font-weight: 700;
-        /*background-color: #f4f6f9;*/
-    }
-
-    @import url(https://fonts.googleapis.com/css?family=Denk+One);
-    @import url(https://fonts.googleapis.com/css?family=Arimo);
-
-    .rotingtxt {
-        -webkit-transform: rotate(331deg);
-        -moz-transform: rotate(331deg);
-        -o-transform: rotate(331deg);
-        transform: rotate(331deg);
-        font-size: 10em;
-        color: #cccccc;
-        position: absolute;
-        font-family: 'Denk One', sans-serif;
-        text-transform: uppercase;
-        /*padding-left: 10%;*/
-        /*display: flex;*/
-        /*text-align: center;*/
-        font-weight: 700;
-        top: 26rem;
-        left: 25%;
-        opacity: 0.5;
-
-    }
-    
-      .receipt-table th {
-        font-size: 14px; 
-    }
-
-    .custome-text{
-        font-size:14px;
-    }
-    
-    
-     .receipt-footer .info-row {
-        display: flex;
-        margin-bottom: 5px;
-        align-items: flex-start;
-    }
-
-    .receipt-footer .label {
-        width: 150px;
-        flex-shrink: 0;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .receipt-footer .label::after {
-        content: ":";
-        margin-left: 5px;
-    }
-
-    .receipt-footer .value {
-        flex-grow: 1;
-        margin-left: 10px;
-        align-self: flex-start;
-    }
-    
-    .receipt-header .info-row {
-        display: flex;
-        margin-bottom: 5px;
-        align-items: flex-start;
-    }
-
-    .receipt-header .label {
-        width: 202px;
-        flex-shrink: 0;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .receipt-header .label::after {
-        content: ":";
-        margin-left: 5px;
-    }
-
-    .receipt-header .value {
-        flex-grow: 1;
-        margin-left: 10px;
-        align-self: flex-start;
-    }
-
-    .content {
-        background-color: #f4f6f9;
-        margin-bottom: 50px;
-    }
-
-    .container {
-        padding-inline: 120px !important;
-
-    }
-
-    .row1 {
-        display: flex;
-        justify-content: center;
-    }
-
-    table,
-    th,
-    td {
-        border: 1px solid black !important;
-        border-collapse: collapse;
-    }
-
-    button {
-        border-radius: 20px !important;
-        padding: 7px 50px !important;
-    }
-
-    button.btn.btn-primary.float-right {
-        width: max-content;
-    }
-    
-        @media print {
-        .no-print, .container.pb-5 {
-            display: none !important;
-        }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: white;
-        }
-        
-        .content {
-            background-color: white;
-            margin-bottom: 0;
-        }
-    }
-</style>
-<title>@lang('app.receipt') | JPS</title>
+@section('title')
+    @lang('app.receipt') | {{ get_company_name() }}
+@endsection
 @section('content')
     <div class="col-md-12 content-header no-print">
         <h5><i class="fa fa-file"></i> @lang('app.receipt')</h5>
     </div>
-    <section class="content">
-        <div class="container" id="receipt-content">
+    <section class="content contents">
+        <div class="container containers" id="receipt-content">
             <div class="row">
                 <div class="col-4 mt-4 ml-auto text-right pr-0">
                     <p class="mb-0">(Kew.38E 03-2021)</p>
@@ -172,9 +31,6 @@
                             </p>
                             <!--<p class="text-center"><strong>ASAL</strong></p>-->
                         </div>
-                        <!--<div class="col-4 text-right">-->
-                        <!--    <p class="mb-0">(Kew.38E 03-2021)</p>-->
-                        <!--</div>-->
                     </div>
                     <div class="receipt-container"
                         style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
@@ -284,38 +140,6 @@
                                 </td>
                             </tr>
                         </table>
-
-                        <!--<div class="receipt-footer">-->
-                        <!--    <p><strong>Ringgit Malaysia:</strong> <span-->
-                        <!--            style="margin-left: 10px;">{{ \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount) }}-->
-                        <!--            Sahaja</span></p>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 90px;"><strong>Jabatan:</strong></div>-->
-                        <!--        <div>JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>-->
-                        <!--    </div>-->
-
-                        <!--    <div class="info-row" style="display: flex; margin-bottom: 5px;">-->
-                        <!--        <div style="width: 90px;"><strong>PTJ:</strong></div>-->
-                        <!--        <div>PENGARAH PENGAIRAN & SALIRAN</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
-                        <!--<div class="receipt-footer">-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">Ringgit Malaysia:</div>-->
-                        <!--        <div class="value">-->
-                        <!--            {{ \App\Helpers\NumberHelper::numberToMalayWords($application->final_amount) }} Sahaja-->
-                        <!--        </div>-->
-                        <!--    </div>-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">Jabatan:</div>-->
-                        <!--        <div class="value">JABATAN PENGAIRAN & SALIRAN SELANGOR PTJ</div>-->
-                        <!--    </div>-->
-                        <!--    <div class="info-row">-->
-                        <!--        <div class="label">PTJ:</div>-->
-                        <!--        <div class="value">PENGARAH PENGAIRAN & SALIRAN</div>-->
-                        <!--    </div>-->
-                        <!--</div>-->
                          <div class="receipt-footer">
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
@@ -364,19 +188,19 @@
                 </div>
             </div>
         </div>
-        <div class="container pb-5 no-print">
+        <div class="container containerr pb-5 no-print">
             <div class="row mb-3 justify-content-end">
                 <div class="col-auto">
-                    <button type="button" class="btn btn-success mx-2" onclick="window.history.back();">
+                    <button type="button" class="btn btn-success mx-2 btnprint" onclick="window.history.back();">
                         Kembali
                     </button>
-                    <button type="button" id="downloadButton" class="btn btn-danger mx-2" style="display:none;">
+                    <button type="button" id="downloadButton" class="btn btn-danger mx-2 btnprint" style="display:none;">
                         @lang('app.download')
                     </button>
                     <button 
                         type="button" 
                         id="printButton" 
-                        class="btn btn-primary mx-2" 
+                        class="btn btn-primary mx-2 btnprint" 
                         style="white-space: nowrap;"
                     >
                         @lang('app.print_receipt')
