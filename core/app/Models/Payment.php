@@ -21,6 +21,7 @@ class Payment extends Model
         'amount',
         'method',
         'payment_status',
+        'payment_type',
         'transaction_id',
         'receipt_number',
         'payment_rejection_reason',

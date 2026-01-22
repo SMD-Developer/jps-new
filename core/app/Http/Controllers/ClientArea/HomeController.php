@@ -615,17 +615,16 @@ class HomeController extends Controller {
             $clientId = auth('user')->id();
             $perPage = $request->input('per_page', 10);
             
-               $query = Application::with([
-                    'client', 
-                    'logs', 
-                    'payments' => function($query) {
-                        $query->where('payment_type', '!=', 'reprint');
-                    },
-                    'landDistrict', 
-                    'landDivision'
-                ])
-                ->where('user_id', $clientId)
-                ->orderBy('created_at', 'desc');
+            // Modified query to get latest payment
+            $query = Application::with([
+                'client', 
+                'logs', 
+                'payments',
+                'landDistrict', 
+                'landDivision'
+            ])
+            ->where('user_id', $clientId)
+            ->orderBy('created_at', 'desc');
             
             $applications = $query->paginate($perPage)
                 ->through(function ($application) {

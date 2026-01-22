@@ -2072,11 +2072,6 @@ class HomeController extends Controller {
                 $receiptNumber = $year . 'JPSSEL' . $month . $day . $sequentialNumber;
         }
 
-        // Handle file upload for bank transfer
-        // $bankTransferReceiptPath = null;
-        // if ($request->hasFile('receipt_upload') && $request->payment_method === 'bank_transfer') {
-        //     $bankTransferReceiptPath = $request->file('receipt_upload')->store('bank_receipts', 'public');
-        // }
 
         // Generate transaction ID based on payment method
         $transactionId = null;
@@ -2135,42 +2130,40 @@ class HomeController extends Controller {
             $paymentAmount = $request->amount;
         }
 
-        $payment = Payment::updateOrCreate(
-            ['application_id' => $application->id],
-            [
-                'uuid' => Uuid::uuid4()->toString(),
-                'application_id' => $application->id,
-                'payment_date' => $paymentDate,
-                'amount' => $paymentAmount,
-                'method' => $validated['payment_method'],
-                'payment_status' => $validated['payment_status'],
-                'transaction_id' => $transactionId,
-                'receipt_number' => $receiptNumber,
-                'payment_rejection_reason' => $validated['payment_status'] === 'failed' ? 
-                    ($request->admin_notes ?? 'Payment failed') : null,
-                'receipt_path' => $bankTransferReceiptPath ?? null,
-                
-                // Cheque specific fields
-                'cheque_number' => $request->cheque_number ?? null,
-                'cheque_date' => $request->cheque_date ?? null,
-                'cheque_bank_name' => $request->bank_name ?? null,
-                
-                // Bank Darf specific fields
-                'bank_transfer_transaction_id' => $request->transaction_id ?? null,
-                'transfer_date' => $request->transfer_date ?? null,
-                'bank_name' => $request->bank_name ?? null,
-                'account_number' => $request->account_number ?? null,
-                'bank_transfer_receipt_path' => $bankTransferReceiptPath ?? null,
-                
-                // Online payment specific fields
-                'gateway_transaction_id' => $transactionId,
-                'payment_gateway' => $request->payment_gateway ?? null,
-                'gateway_response' => $request->gateway_response ?? null,
-                
-                // Common fields
-                'admin_notes' => $request->admin_notes ?? null,
-            ]
-        );
+         $payment = Payment::create([
+            'uuid' => Uuid::uuid4()->toString(),
+            'application_id' => $application->id,
+            'payment_date' => $paymentDate,
+            'amount' => $paymentAmount,
+            'payment_type' => $validated['payment_method'],
+            'method' => $validated['payment_method'],
+            'payment_status' => $validated['payment_status'],
+            'transaction_id' => $transactionId,
+            'receipt_number' => $receiptNumber,
+            'payment_rejection_reason' => $validated['payment_status'] === 'failed' ? 
+                ($request->admin_notes ?? 'Payment failed') : null,
+            'receipt_path' => $bankTransferReceiptPath ?? null,
+            
+            // Cheque specific fields
+            'cheque_number' => $request->cheque_number ?? null,
+            'cheque_date' => $request->cheque_date ?? null,
+            'cheque_bank_name' => $request->bank_name ?? null,
+            
+            // Bank Draf specific fields
+            'bank_transfer_transaction_id' => $request->transaction_id ?? null,
+            'transfer_date' => $request->transfer_date ?? null,
+            'bank_name' => $request->bank_name ?? null,
+            'account_number' => $request->account_number ?? null,
+            'bank_transfer_receipt_path' => $bankTransferReceiptPath ?? null,
+            
+            // Online payment specific fields
+            'gateway_transaction_id' => $transactionId,
+            'payment_gateway' => $request->payment_gateway ?? null,
+            'gateway_response' => $request->gateway_response ?? null,
+            
+            // Common fields
+            'admin_notes' => $request->admin_notes ?? null,
+        ]);
 
         return response()->json([
             'success' => true,
