@@ -362,8 +362,9 @@
                                             <td>
                                                 @if ($application->status == 'approved')
                                                     @php
+                                                        // Get the latest ORIGINAL payment only (B2B or B2C payments)
                                                         $latestPayment = $application->payments
-                                                            ->where('payment_type', '!=', 'reprint')
+                                                            ->whereIn('payment_type', ['B2B', 'B2C', 'FPX_B2B', 'FPX_B2C'])
                                                             ->sortByDesc('created_at')
                                                             ->first();
                                                     @endphp
