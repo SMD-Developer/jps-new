@@ -161,7 +161,7 @@
         <div class="container pb-5 no-print">
             <div class="row mb-3 justify-content-end">
                 <div class="col-auto">
-                    <button type="button" class="btn btn-success mx-2 btnprint" onclick="window.history.back();">
+                    <button type="button" class="btn btn-success mx-2 btnprint" onclick="goBackAndRefresh();">
                         Kembali
                     </button>
                     <button type="button" id="downloadButton" class="btn btn-danger mx-2 btnprint" style="display:none;">
@@ -221,6 +221,15 @@
             this.innerHTML = '<i class="fa fa-check"></i> Telah Dicetak';
             this.style.cursor = 'not-allowed';
         });
+    </script>
+    <script>
+        function goBackAndRefresh() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.history.back();
+            }
+        }
     </script>
     
 @endsection
