@@ -362,8 +362,10 @@
                                             <td>
                                                 @if ($application->status == 'approved')
                                                     @php
-                                                        // Get the latest payment from the payments collection
-                                                        $latestPayment = $application->payments->sortByDesc('created_at')->first();
+                                                        $latestPayment = $application->payments
+                                                            ->where('payment_type', '!=', 'reprint')
+                                                            ->sortByDesc('created_at')
+                                                            ->first();
                                                     @endphp
                                                     
                                                     @if ($latestPayment && $latestPayment->payment_status === 'completed')

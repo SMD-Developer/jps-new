@@ -102,6 +102,7 @@
                                             $methodLabel = match($application->payment_method) {
                                                 'FPX_B2C' => 'EFT_B2C',
                                                 'FPX_B2B' => 'EFT_B2B',
+                                                'bank_draf' => 'BANK DRAF',
                                                 default => $application->payment_method,
                                             };
                                         @endphp
