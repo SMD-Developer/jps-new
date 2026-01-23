@@ -62,7 +62,6 @@ class CheckFPXPaymentStatus extends Command
         try {
             $this->line("Checking order: {$paymentRecord->seller_order_no}");
             
-            // Get original request data from gateway_response
             $originalRequest = null;
             if (!empty($paymentRecord->gateway_response)) {
                 $gatewayData = json_decode($paymentRecord->gateway_response, true);
@@ -299,6 +298,11 @@ class CheckFPXPaymentStatus extends Command
                     ->where('seller_order_no', $paymentRecord->seller_order_no)
                     ->update($updateData);
                 
+                // ✅ NEW: Auto-submit for legacy third party applications
+                if ($newPaymentStatus === 'completed' && $paymentRecord->application_id) {
+                    $this->autoSubmitLegacyThirdParty($paymentRecord);
+                }
+                
                 // Send email notification if completed
                 if ($newPaymentStatus === 'completed') {
                     $this->sendPaymentSuccessEmail($paymentRecord, $response_value);
@@ -430,6 +434,51 @@ class CheckFPXPaymentStatus extends Command
         
                 
         } catch (\Exception $e) {
+        }
+    }
+
+
+        /**
+     * Auto-submit legacy third party applications
+     */
+    private function autoSubmitLegacyThirdParty($paymentRecord)
+    {
+        try {
+            $application = DB::table('applications')
+                ->where('id', $paymentRecord->application_id)
+                ->first();
+            
+            if (!$application || empty($application->third_party_id)) {
+                return;
+            }
+            
+            $isLegacy = \Carbon\Carbon::parse($application->created_at)->lt('2025-11-16');
+            
+            if (!$isLegacy) {
+                return;
+            }
+            
+            $exists = DB::table('receipt_requests')
+                ->where('application_id', $application->id)
+                ->where('third_party_id', $application->third_party_id)
+                ->exists();
+            
+            if ($exists) {
+                return;
+            }
+            
+            DB::table('receipt_requests')->insert([
+                'application_id' => $application->id,
+                'third_party_id' => $application->third_party_id,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            
+            $this->info("  ✓ Auto-submitted legacy third party request for application {$application->id}");
+            
+        } catch (\Exception $e) {
+            $this->error("  Error auto-submitting: {$e->getMessage()}");
         }
     }
 }
