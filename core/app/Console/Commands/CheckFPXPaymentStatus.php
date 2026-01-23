@@ -6,57 +6,44 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Application;
+use App\Models\Payment;
+use App\Models\ReceiptRequest;
+use App\Models\User;
+use App\Models\ThirdPartyUser;
+use App\Notifications\NewReceiptRequestSubmitted;
 
 class CheckFPXPaymentStatus extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'fpx:check-status';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Check FPX payment status for pending B2B transactions';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
         $this->info('Starting FPX payment status check...');
         
-   
         $pendingPayments = DB::table('payments')
             ->where('payment_status', 'pending_authorization')
             ->where('method', 'FPX_B2B')
+            ->where('payment_type', 'third_party') 
             ->where('created_at', '>=', now()->subHours(4))
             ->get();
         
         if ($pendingPayments->isEmpty()) {
-            $this->info('No pending B2B payments found.');
+            $this->info('No pending third party B2B payments found.');
             return 0;
         }
         
-        $this->info("Found {$pendingPayments->count()} pending payment(s) to check.");
+        $this->info("Found {$pendingPayments->count()} pending third party B2B payment(s) to check.");
         
         foreach ($pendingPayments as $payment) {
             $this->checkPaymentStatus($payment);
         }
         
-        $this->info('FPX payment status check completed.');
+        $this->info('FPX third party B2B payment status check completed.');
         return 0;
     }
     
-    /**
-     * Check status for a single payment
-     */
     private function checkPaymentStatus($paymentRecord)
     {
         try {
@@ -71,16 +58,11 @@ class CheckFPXPaymentStatus extends Command
                                 ?? null;
             }
             
-            // ============================================
-            // CRITICAL FIX: Use seller_ex_order_no first!
-            // ============================================
             $fpx_sellerExOrderNo = $paymentRecord->seller_ex_order_no ?? $paymentRecord->seller_order_no;
             $fpx_sellerOrderNo = $paymentRecord->seller_order_no;
             $fpx_sellerTxnTime = $paymentRecord->seller_txn_time ?? date('YmdHis', strtotime($paymentRecord->created_at));
             
-            // If we have original request data, verify and use it
             if ($originalRequest) {
-                // Check for mismatches and use the correct values
                 if (!empty($originalRequest['fpx_sellerExOrderNo'])) {
                     if ($originalRequest['fpx_sellerExOrderNo'] !== $fpx_sellerExOrderNo) {
                         $this->warn("⚠ Order number mismatch!");
@@ -106,7 +88,6 @@ class CheckFPXPaymentStatus extends Command
             }
             
             $this->line("Query params: OrderNo={$fpx_sellerOrderNo}, ExOrderNo={$fpx_sellerExOrderNo}, TxnTime={$fpx_sellerTxnTime}");
-            // ============================================
 
             $fpx_msgType = "AE";
             $fpx_msgToken = "02"; 
@@ -116,13 +97,11 @@ class CheckFPXPaymentStatus extends Command
             $fpx_txnCurrency = $paymentRecord->currency ?? "MYR";
             $fpx_txnAmount = number_format((float)$paymentRecord->amount, 2, '.', '');
             
-            // Use EXACT buyer details from original transaction
             $fpx_buyerEmail = $paymentRecord->buyer_email ?? "";
             $fpx_buyerName = $paymentRecord->buyer_name ?? "";
             $fpx_buyerBankId = $paymentRecord->buyer_bank_id ?? "";
             $fpx_buyerBankBranch = $paymentRecord->buyer_bank_branch ?? "";
             
-            // If we have original request, use those exact values
             if ($originalRequest) {
                 if (!empty($originalRequest['fpx_buyerEmail'])) {
                     $fpx_buyerEmail = $originalRequest['fpx_buyerEmail'];
@@ -214,36 +193,27 @@ class CheckFPXPaymentStatus extends Command
                 $token = strtok("&");
             }
             
-            $fpx_debitAuthCode = $response_value['fpx_debitAuthCode'] ?? '';
+            $fpx_debitAuthCode = trim((string)($response_value['fpx_debitAuthCode'] ?? ''));
             
-            // Update payment status based on response
             $newPaymentStatus = '';
             $newStatusMessage = '';
-            
-            // Clean the auth code (remove spaces, ensure string)
-            $fpx_debitAuthCode = trim((string)$fpx_debitAuthCode);
             
             if ($fpx_debitAuthCode === '00') {
                 $newPaymentStatus = 'completed';
                 $newStatusMessage = 'Payment completed successfully';
                 $this->info("✓ Order {$paymentRecord->seller_order_no}: Payment APPROVED");
             } elseif ($fpx_debitAuthCode === '99') {
-                // Still pending
                 $newPaymentStatus = 'pending_authorization';
                 $newStatusMessage = 'Payment is pending for authorizer approval';
                 $this->line("⏳ Order {$paymentRecord->seller_order_no}: Still pending");
             } elseif ($fpx_debitAuthCode === '76') {
-                // Transaction not found - but we have a transaction ID from before!
                 if (!empty($originalRequest['fpx_fpxTxnId'])) {
                     $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Code 76 but transaction ID exists ({$originalRequest['fpx_fpxTxnId']})");
                     $this->warn("   This might be a completed transaction. Manual verification recommended.");
-                    
-                    // Don't mark as failed - keep pending for manual review
                     return;
                 }
                 
                 $this->warn("⚠ Order {$paymentRecord->seller_order_no}: Transaction not found in FPX (Code 76)");
-                // Don't update status - manual verification needed
                 return;
                 
             } elseif (in_array($fpx_debitAuthCode, ['09', 'A0', 'U7'])) {
@@ -256,7 +226,6 @@ class CheckFPXPaymentStatus extends Command
                 $this->warn("✗ Order {$paymentRecord->seller_order_no}: Payment FAILED (Code: {$fpx_debitAuthCode})");
             }
             
-            // Only update if we have a definitive status
             if (empty($newPaymentStatus)) {
                 return;
             }
@@ -275,13 +244,11 @@ class CheckFPXPaymentStatus extends Command
                     $updateData['transaction_id'] = $response_value['fpx_fpxTxnId'];
                 }
                 
-                // Generate receipt number for completed B2B transactions
                 if ($newPaymentStatus === 'completed' && empty($paymentRecord->receipt_number)) {
                     $receiptNumber = $this->generateReceiptNumber();
                     $updateData['receipt_number'] = $receiptNumber;
                 }
                 
-                // Preserve original request data in gateway_response
                 $updateData['gateway_response'] = json_encode([
                     'latest_status_inquiry' => $response_value,
                     'status_checked_at' => now(),
@@ -298,7 +265,7 @@ class CheckFPXPaymentStatus extends Command
                     ->where('seller_order_no', $paymentRecord->seller_order_no)
                     ->update($updateData);
                 
-                // ✅ NEW: Auto-submit for legacy third party applications
+                // ✅ Auto-submit legacy third party request (BEFORE email)
                 if ($newPaymentStatus === 'completed' && $paymentRecord->application_id) {
                     $this->autoSubmitLegacyThirdParty($paymentRecord);
                 }
@@ -311,12 +278,153 @@ class CheckFPXPaymentStatus extends Command
             
         } catch (\Exception $e) {
             $this->error("Error checking {$paymentRecord->seller_order_no}: {$e->getMessage()}");
+            Log::error("FPX Status Check Error", [
+                'order' => $paymentRecord->seller_order_no ?? 'unknown',
+                'error' => $e->getMessage()
+            ]);
         }
     }
     
     /**
-     * Generate receipt number
+     * ✅ Auto-submit legacy third party request - EXACT same logic as submitRequest controller
      */
+    private function autoSubmitLegacyThirdParty($paymentRecord)
+    {
+        try {
+            if (empty($paymentRecord->application_id)) {
+                $this->line("  ⚠ No application_id in payment record");
+                return;
+            }
+            
+            // ========================================
+            // STEP 1: Get Application (same as controller)
+            // ========================================
+            $application = Application::find($paymentRecord->application_id);
+            
+            if (!$application) {
+                $this->line("  ⚠ Application #{$paymentRecord->application_id} not found");
+                return;
+            }
+            
+            $this->line("  📋 Found application #{$application->id}");
+            
+            // ========================================
+            // STEP 2: Check if legacy (same as controller - before 2025-11-16)
+            // ========================================
+            if ($application->created_at >= '2025-11-16') {
+                $this->line("  ℹ Application uses automatic system (created after 2025-11-16), skipping");
+                return;
+            }
+            
+            $this->line("  📅 Legacy application (created: {$application->created_at})");
+            
+            // ========================================
+            // STEP 3: Verify payment (same as controller)
+            // ========================================
+            $payment = Payment::where('application_id', $paymentRecord->application_id)
+                ->where('third_party_id', $paymentRecord->third_party_id)
+                ->where('payment_type', 'third_party')
+                ->where('payment_status', 'completed')
+                ->first();
+            
+            if (!$payment) {
+                $this->line("  ⚠ Payment validation failed - no completed payment found");
+                return;
+            }
+            
+            $this->line("  💰 Payment verified (Order: {$payment->seller_order_no})");
+            
+            // ========================================
+            // STEP 4: Check if request already exists (same as controller)
+            // ========================================
+            $existingRequest = ReceiptRequest::where('application_id', $application->id)
+                ->where('third_party_id', $paymentRecord->third_party_id)
+                ->first();
+            
+            if ($existingRequest) {
+                $this->line("  ℹ Receipt request already exists (ID: {$existingRequest->id})");
+                return;
+            }
+            
+            // ========================================
+            // STEP 5: Create receipt request (EXACT same as controller)
+            // ========================================
+            $receiptRequest = ReceiptRequest::create([
+                'application_id' => $application->id,
+                'third_party_id' => $paymentRecord->third_party_id,
+                'status' => 'pending'
+            ]);
+            
+            $this->info("  ✅ Created receipt request #{$receiptRequest->id}");
+            
+            // ========================================
+            // STEP 6: Notify finance admins (EXACT same as controller)
+            // ========================================
+            $financeRoleId = '9e032970-5f48-4d2b-b88e-abb9da79140f';
+            $financeAdmins = User::where('role_id', $financeRoleId)->get();
+            
+            if ($financeAdmins->count() === 0) {
+                $this->warn("  ⚠ No finance admins found");
+                Log::warning('No Finance Admin found', ['role_id' => $financeRoleId]);
+            } else {
+                foreach ($financeAdmins as $admin) {
+                    $admin->notify(new NewReceiptRequestSubmitted($receiptRequest));
+                }
+                $this->info("  🔔 Notified {$financeAdmins->count()} finance admin(s)");
+            }
+            
+            $this->info("  ✅ AUTO-SUBMIT COMPLETED SUCCESSFULLY!");
+            
+            // TODO: Send confirmation email to third party user (to be integrated later)
+            // $this->sendThirdPartySubmissionEmail($application, $paymentRecord);
+            
+        } catch (\Exception $e) {
+            $this->error("  ❌ Auto-submit failed: {$e->getMessage()}");
+            Log::error("Auto-submit third party request failed", [
+                'application_id' => $paymentRecord->application_id ?? 'unknown',
+                'third_party_id' => $paymentRecord->third_party_id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+    
+    /**
+     * Send submission confirmation email to third party
+     */
+    private function sendThirdPartySubmissionEmail($application, $paymentRecord)
+    {
+        try {
+            // Get third party user email
+            $thirdParty = DB::table('third_party_users')
+                ->where('id', $application->third_party_id)
+                ->first();
+            
+            if (!$thirdParty || !$thirdParty->email) {
+                return;
+            }
+            
+            $emailData = [
+                'company_name' => $thirdParty->company_name ?? $thirdParty->name ?? 'Dear User',
+                'application_ref' => $application->reference_no ?? $application->id,
+                'payment_amount' => 'RM ' . number_format($paymentRecord->amount, 2),
+                'order_number' => $paymentRecord->seller_order_no,
+                'submission_date' => now()->format('d M Y h:i A')
+            ];
+            
+            Mail::send('emails.third-party-auto-submission', $emailData, function($message) use ($thirdParty, $emailData) {
+                $message->to($thirdParty->email)
+                        ->subject('Receipt Request Submitted - ' . $emailData['application_ref'])
+                        ->from(config('mail.from.address'), config('mail.from.name'));
+            });
+            
+            $this->line("  ✓ Submission email sent to {$thirdParty->email}");
+            
+        } catch (\Exception $e) {
+            $this->line("  ⚠ Could not send submission email: {$e->getMessage()}");
+        }
+    }
+    
     private function generateReceiptNumber()
     {
         $year = date('y');
@@ -324,32 +432,25 @@ class CheckFPXPaymentStatus extends Command
         $day = date('d');
         $prefix = 'JPSSEL';
         
-        // Get the last receipt number regardless of date
         $lastReceipt = DB::table('payments')
             ->whereNotNull('receipt_number')
             ->orderBy('created_at', 'desc')
             ->first();
         
-        $sequenceNumber = 1; // Default starting number
+        $sequenceNumber = 1;
         
         if ($lastReceipt && $lastReceipt->receipt_number) {
-            // Extract the numeric portion (last 6 digits)
             $lastSequence = (int) substr($lastReceipt->receipt_number, -6);
             $sequenceNumber = $lastSequence + 1;
         }
         
-        // Format sequence with leading zeros (6 digits)
         $formattedSequence = str_pad($sequenceNumber, 6, '0', STR_PAD_LEFT);
         
         return "{$year}{$prefix}{$month}{$day}{$formattedSequence}";
     }
     
-    /**
-     * Get FPX error message
-     */
     private function getFPXErrorMessage($code, $isB2B = false) 
     {
-      
         if ($isB2B) {
             $b2bMessages = [
                 '00' => 'Payment completed successfully',
@@ -385,20 +486,15 @@ class CheckFPXPaymentStatus extends Command
         return $b2cMessages[$code] ?? "Transaction error (Code: {$code})";
     }
     
-    /**
-     * Send payment success email
-     */
     private function sendPaymentSuccessEmail($paymentRecord, $fpxResponse)
     {
         try {
-            // Get user email
             $userEmail = $paymentRecord->buyer_email;
             
             if (!$userEmail || !filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
                 return;
             }
             
-            // Prepare email data
             $emailData = [
                 'buyer_name' => $paymentRecord->buyer_name ?? 'Dear Customer',
                 'transaction_id' => $fpxResponse['fpx_fpxTxnId'] ?? $paymentRecord->transaction_id,
@@ -411,8 +507,6 @@ class CheckFPXPaymentStatus extends Command
                 'application_id' => $paymentRecord->application_id
             ];
             
-            // Get application details if available
-            $application = null;
             if ($paymentRecord->application_id) {
                 $application = DB::table('applications')
                     ->where('id', $paymentRecord->application_id)
@@ -420,65 +514,17 @@ class CheckFPXPaymentStatus extends Command
                 
                 if ($application) {
                     $emailData['application_ref'] = $application->reference_no ?? '';
-                    // $emailData['service_type'] = $application->service_type ?? '';
                 }
             }
-        
             
-            // Send email using Laravel Mail
             Mail::send('emails.payment-success', $emailData, function($message) use ($userEmail, $emailData) {
                 $message->to($userEmail)
                         ->subject('Payment Confirmation - Order #' . $emailData['seller_order_no'])
                         ->from(config('mail.from.address'), config('mail.from.name'));
             });
-        
                 
         } catch (\Exception $e) {
-        }
-    }
-
-
-        /**
-     * Auto-submit legacy third party applications
-     */
-    private function autoSubmitLegacyThirdParty($paymentRecord)
-    {
-        try {
-            $application = DB::table('applications')
-                ->where('id', $paymentRecord->application_id)
-                ->first();
-            
-            if (!$application || empty($application->third_party_id)) {
-                return;
-            }
-            
-            $isLegacy = \Carbon\Carbon::parse($application->created_at)->lt('2025-11-16');
-            
-            if (!$isLegacy) {
-                return;
-            }
-            
-            $exists = DB::table('receipt_requests')
-                ->where('application_id', $application->id)
-                ->where('third_party_id', $application->third_party_id)
-                ->exists();
-            
-            if ($exists) {
-                return;
-            }
-            
-            DB::table('receipt_requests')->insert([
-                'application_id' => $application->id,
-                'third_party_id' => $application->third_party_id,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-            
-            $this->info("  ✓ Auto-submitted legacy third party request for application {$application->id}");
-            
-        } catch (\Exception $e) {
-            $this->error("  Error auto-submitting: {$e->getMessage()}");
+            // Silent fail
         }
     }
 }
