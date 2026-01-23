@@ -254,6 +254,7 @@
                                                             <a href="{{ route('reprint.payment.receipt', $application->id) }}"
                                                                 class="btn btn-primary btn-sm print-reprint-receipt"
                                                                 data-application-id="{{ $application->id }}"
+                                                                target="_self"
                                                                 style="background:#f39c12 !important; border:solid 1px #f39c12; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
                                                                 <strong>{{ __('Cetak Resit Bayaran') }}</strong>
                                                             </a>
@@ -458,7 +459,7 @@
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
-                window.open(url, '_blank');
+                window.location.href = url;
                 button.replaceWith(
                     '<button class="btn btn-primary btn-sm" disabled ' +
                     'style="background:#6c757d !important; border:solid 1px #6c757d; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">' +

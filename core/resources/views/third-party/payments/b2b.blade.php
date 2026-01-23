@@ -65,7 +65,7 @@
                                     
                                     <!-- Payment Button -->
                                     <div class="text-center mb-4">
-                                        <button type="submit" class="btn btn-payment btn-lg">
+                                        <button type="submit" class="btn btn-primary btn-lg">
                                             <i class="fas fa-lock me-2"></i>Proceed to Corporate FPX Payment 
                                         </button>
                                     </div>
