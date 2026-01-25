@@ -147,7 +147,7 @@ class SettingsController extends CrudController {
     public function updateBanner(Request $request)
     {
         $request->validate([
-            'banner_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:3072',
+            'banner_images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:3072',
             'banner_title' => 'nullable|string|max:255',
             'banner_link' => 'nullable|url|max:500',
             'banner_position' => 'nullable|in:top,middle,bottom',
@@ -156,33 +156,43 @@ class SettingsController extends CrudController {
         ]);
 
         $setting = Setting::firstOrCreate([]);
-        
-        // Handle banner image upload
-        if ($request->hasFile('banner_image')) {
-            // Delete old banner if exists
-            if ($setting->banner_image) {
-                $oldImagePath = public_path('assets/images/uploads/settings/' . $setting->banner_image);
+    
+        $existingBanners = $setting->banner_images ?? [];
+    
+        if ($request->has('removed_banners') && !empty($request->removed_banners)) {
+            $removedBanners = json_decode($request->removed_banners, true);
+            
+            foreach ($removedBanners as $removedBanner) {
+                $oldImagePath = public_path('assets/images/uploads/settings/' . $removedBanner);
                 if (file_exists($oldImagePath)) {
                     @unlink($oldImagePath);
                 }
+                
+                $existingBanners = array_values(array_filter($existingBanners, function($banner) use ($removedBanner) {
+                    return $banner !== $removedBanner;
+                }));
             }
-            
-            // Upload new banner image with timestamp
-            $image = $request->file('banner_image');
-            $timestamp = time();
-            $extension = $image->getClientOriginalExtension();
-            $imageName = $timestamp . '.' . $extension;
-            
-            // Move to the settings directory
+        }
+        
+        // Handle new banner image uploads
+        if ($request->hasFile('banner_images')) {
             $destinationPath = public_path('assets/images/uploads/settings');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
             
-            $image->move($destinationPath, $imageName);
-            $setting->banner_image = $imageName;
+            foreach ($request->file('banner_images') as $image) {
+                $timestamp = time();
+                $randomString = uniqid();
+                $extension = $image->getClientOriginalExtension();
+                $imageName = $timestamp . '_' . $randomString . '.' . $extension;
+                
+                $image->move($destinationPath, $imageName);
+                $existingBanners[] = $imageName;
+            }
         }
-
+        
+        $setting->banner_images = !empty($existingBanners) ? array_values($existingBanners) : null;
         $setting->banner_enabled = $request->has('banner_enabled') ? 1 : 0;
         $setting->banner_title = $request->banner_title;
         $setting->banner_link = $request->banner_link;
