@@ -929,7 +929,6 @@ class HomeController extends Controller {
         }
 
 
-        // In your ApplicationController or relevant controller
         public function markReprintReceiptViewed($id)
         {
             try {
@@ -937,6 +936,7 @@ class HomeController extends Controller {
                 
                 $reprintPayment = $application->payments()
                     ->where('payment_type', 'reprint')
+                    ->where('payment_status', 'completed')
                     ->first();
                 
                 if ($reprintPayment && $reprintPayment->receipt_viewed_at === null) {
@@ -954,6 +954,35 @@ class HomeController extends Controller {
                 return response()->json([
                     'success' => false,
                     'message' => 'Error updating receipt status'
+                ], 500);
+            }
+        }
+
+        public function markCopyReceiptViewed($id)
+        {
+            try {
+                $application = Application::findOrFail($id);
+                
+                $reprintPayment = $application->payments()
+                    ->where('payment_type', 'reprint')
+                    ->where('payment_status', 'completed')
+                    ->first();
+                
+                if ($reprintPayment && $reprintPayment->copy_receipt_viewed_at === null) {
+                    $reprintPayment->update([
+                        'copy_receipt_viewed_at' => now()
+                    ]);
+                }
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Copy receipt marked as viewed'
+                ]);
+                
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating copy receipt status'
                 ], 500);
             }
         }
@@ -1100,16 +1129,10 @@ class HomeController extends Controller {
                 $admins = User::where('role_id', '9e032984-8ef0-4e00-b7b9-439679a4d1aa')->get();
     
                 if ($admins->isEmpty()) {
-                    Log::warning('No admin staff found to notify', ['application_id' => $application->id]);
                     return response()->json(['success' => false, 'message' => 'No admin staff found'], 404);
                 }
     
                 Notification::send($admins, new AdminNewApplicationNotification($application));
-    
-                Log::info('Admin staff notified of new application', [
-                    'application_id' => $application->id,
-                    'admin_count' => $admins->count()
-                ]);
     
                 return response()->json(['success' => true, 'message' => 'Admin staff notified successfully']);
             } catch (\Exception $e) {
@@ -1128,14 +1151,12 @@ class HomeController extends Controller {
                     $user = auth::guard('user')->user();
 
                     if (!$user) {
-                        \Log::info('No user found in guard user');
                         return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
                     }
 
                     $notification = $user->notifications()->where('id', $id)->first();
 
                     if (!$notification) {
-                        \Log::info('Notification not found: ' . $id);
                         return response()->json(['success' => false, 'message' => 'Notification not found'], 404);
                     }
 
@@ -1291,7 +1312,6 @@ class HomeController extends Controller {
             $admins = User::whereIn('role_id', $roleIds)->get();
             
             if ($admins->isEmpty()) {
-                \Log::warning('No approvers found for roles: ' . implode(', ', $roleIds));
                 return response()->json(['success' => false, 'message' => 'No approver found'], 404);
             }
     

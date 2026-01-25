@@ -52,7 +52,8 @@ class Payment extends Model
         'status_message',
         'user_id',
         'voucher_number',
-        'receipt_viewed_at'
+        'receipt_viewed_at',
+        'copy_receipt_viewed_at'
     ];
     
     
