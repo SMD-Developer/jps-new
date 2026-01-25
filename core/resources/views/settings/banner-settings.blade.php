@@ -25,23 +25,57 @@
                             </div>
                             <small class="form-text text-muted">Enable or disable the banner display on user dashboard</small>
                         </div>
-
-                        <!-- Banner Image Upload -->
+                         <!-- Multiple Banner Images Upload -->
                         <div class="form-group">
-                            <label for="banner_image">Banner Image</label>
-                            @if(isset($setting) && $setting->banner_image)
-                                <div class="mb-2">
-                                    <img src="{{ asset('assets/images/uploads/settings/' . $setting->banner_image) }}" alt="Current Banner" 
-                                         style="max-width: 100%; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;">
-                                    <p class="text-muted small">Current Banner</p>
+                            <label for="banner_images">Banner Images (Multiple Upload)</label>
+                            
+                            <!-- Show existing banners -->
+                            @if(isset($setting) && $setting->banner_images && is_array($setting->banner_images))
+                                <div class="mb-3">
+                                    <label class="d-block mb-2"><strong>Current Banners:</strong></label>
+                                    <div class="row" id="existing-banners">
+                                        @foreach($setting->banner_images as $index => $image)
+                                            <div class="col-md-3 mb-3 existing-banner-item" data-index="{{ $index }}">
+                                                <div class="card">
+                                                    <img src="{{ asset('assets/images/uploads/settings/' . $image) }}" 
+                                                        class="card-img-top" 
+                                                        alt="Banner {{ $index + 1 }}"
+                                                        style="height: 150px; object-fit: cover;">
+                                                    <div class="card-body p-2 text-center">
+                                                        <button type="button" class="btn btn-danger btn-sm remove-existing-banner" 
+                                                                data-image="{{ $image }}">
+                                                            <i class="fa fa-trash"></i> Remove
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <!-- Hidden input to track removed banners -->
+                                    <input type="hidden" name="removed_banners" id="removed_banners" value="">
                                 </div>
                             @endif
-                            <input type="file" class="form-control @error('banner_image') is-invalid @enderror" 
-                                   id="banner_image" name="banner_image" accept="image/*">
-                            @error('banner_image')
+                            
+                            <!-- Upload new banners -->
+                            <input type="file" 
+                                class="form-control @error('banner_images') is-invalid @enderror" 
+                                id="banner_images" 
+                                name="banner_images[]" 
+                                accept="image/*" 
+                                multiple>
+                            @error('banner_images')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
-                            <small class="form-text text-muted">Recommended size: 1200x300px. Formats: JPG, PNG, GIF (Max: 3MB)</small>
+                            @error('banner_images.*')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                            <small class="form-text text-muted">
+                                Recommended size: 1200x300px. Formats: JPG, PNG, GIF (Max: 3MB per image). 
+                                <strong>You can select multiple images at once.</strong>
+                            </small>
+                            
+                            <!-- Preview new uploads -->
+                            <div class="row mt-3" id="preview-container"></div>
                         </div>
 
                         <!-- Banner Title -->
@@ -142,4 +176,55 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        var removedBanners = [];
+        
+        // Preview selected images
+        $('#banner_images').on('change', function(e) {
+            var files = e.target.files;
+            var previewContainer = $('#preview-container');
+            previewContainer.html('');
+            
+            if (files.length > 0) {
+                $.each(files, function(index, file) {
+                    if (file.type.match('image.*')) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var preview = `
+                                <div class="col-md-3 mb-3">
+                                    <div class="card">
+                                        <img src="${e.target.result}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Preview ${index + 1}">
+                                        <div class="card-body p-2 text-center">
+                                            <small class="text-muted">New Banner ${index + 1}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            previewContainer.append(preview);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+        
+        // Remove existing banner
+        $('.remove-existing-banner').on('click', function() {
+            var imageName = $(this).data('image');
+            var bannerItem = $(this).closest('.existing-banner-item');
+            
+            if (confirm('Are you sure you want to remove this banner?')) {
+                removedBanners.push(imageName);
+                $('#removed_banners').val(JSON.stringify(removedBanners));
+                bannerItem.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }
+        });
+    });
+</script>
+@endpush
 @endsection

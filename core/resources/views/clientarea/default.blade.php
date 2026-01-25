@@ -742,15 +742,17 @@ body {
 </nav>
 
 
-{{-- Banner Modal/Popup - Fetched directly from DB --}}
+{{-- Banner Modal/Popup - Multiple Banners Sequential Display --}}
 @php
     $banner = DB::table('settings')
-                ->select('banner_image', 'banner_enabled', 'banner_title', 'banner_link', 
+                ->select('banner_images', 'banner_enabled', 'banner_title', 'banner_link', 
                         'banner_new_tab', 'banner_position', 'banner_start_date', 'banner_end_date')
                 ->first();
     
     $showBanner = false;
-    if ($banner && $banner->banner_enabled && $banner->banner_image) {
+    $bannerImages = [];
+    
+    if ($banner && $banner->banner_enabled && $banner->banner_images) {
         $now = \Carbon\Carbon::now();
         $showBanner = true;
         
@@ -761,65 +763,89 @@ body {
         if ($banner->banner_end_date && $now->gt(\Carbon\Carbon::parse($banner->banner_end_date))) {
             $showBanner = false;
         }
+        
+        // Decode JSON string to array
+        if ($showBanner) {
+            $decoded = json_decode($banner->banner_images, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $bannerImages = array_filter($decoded); // Remove empty values
+            }
+            
+            if (empty($bannerImages)) {
+                $showBanner = false;
+            }
+        }
     }
 @endphp
 
-@if($showBanner)
-    <!-- Banner Overlay -->
-    <div id="bannerOverlay" class="banner-overlay" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    ">
-        <!-- Banner Modal Container -->
-        <div class="banner-modal" style="
-            position: relative;
-            max-width: 90%;
-            max-height: 90vh;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            z-index: 9999999;
+@if($showBanner && !empty($bannerImages))
+    @foreach($bannerImages as $index => $image)
+        <!-- Banner Overlay {{ $index + 1 }} -->
+        <div id="bannerOverlay{{ $index }}" class="banner-overlay" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: {{ 999999 - $index }};
+            display: {{ $index === 0 ? 'flex' : 'none' }};
+            align-items: center;
+            justify-content: center;
         ">
-            <!-- Close Button -->
-            <button onclick="closeBanner()" style="
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: rgba(255, 255, 255, 0.9);
-                border: none;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                font-size: 24px;
-                color: #e74c3c;
-                cursor: pointer;
-                z-index: 99999999;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                transition: all 0.3s ease;
-            " 
-            onmouseover="this.style.background='#e74c3c'; this.style.color='white'; this.style.transform='scale(1.1)';"
-            onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#e74c3c'; this.style.transform='scale(1)';">
-                ×
-            </button>
+            <!-- Banner Modal Container -->
+            <div class="banner-modal" style="
+                position: relative;
+                max-width: 90%;
+                max-height: 90vh;
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                z-index: 9999999;
+            ">
+                <!-- Close Button -->
+                <button onclick="closeBanner({{ $index }})" style="
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: none;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 24px;
+                    color: #e74c3c;
+                    cursor: pointer;
+                    z-index: 99999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                    transition: all 0.3s ease;
+                " 
+                onmouseover="this.style.background='#e74c3c'; this.style.color='white'; this.style.transform='scale(1.1)';"
+                onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#e74c3c'; this.style.transform='scale(1)';">
+                    ×
+                </button>
 
-            <!-- Banner Image -->
-            @if($banner->banner_link)
-                <a href="{{ $banner->banner_link }}" 
-                   {!! $banner->banner_new_tab ? 'target="_blank" rel="noopener noreferrer"' : '' !!}>
-                    <img src="{{ asset('assets/images/uploads/settings/' . $banner->banner_image) }}" 
-                         alt="{{ $banner->banner_title ?? 'Banner' }}" 
+                <!-- Banner Image -->
+                @if($banner->banner_link)
+                    <a href="{{ $banner->banner_link }}" 
+                       {!! $banner->banner_new_tab ? 'target="_blank" rel="noopener noreferrer"' : '' !!}>
+                        <img src="{{ asset('assets/images/uploads/settings/' . $image) }}" 
+                             alt="{{ $banner->banner_title ?? 'Banner ' . ($index + 1) }}" 
+                             style="
+                                display: block;
+                                width: 100%;
+                                height: auto;
+                                max-height: 85vh;
+                                object-fit: contain;
+                             ">
+                    </a>
+                @else
+                    <img src="{{ asset('assets/images/uploads/settings/' . $image) }}" 
+                         alt="{{ $banner->banner_title ?? 'Banner ' . ($index + 1) }}" 
                          style="
                             display: block;
                             width: 100%;
@@ -827,37 +853,56 @@ body {
                             max-height: 85vh;
                             object-fit: contain;
                          ">
-                </a>
-            @else
-                <img src="{{ asset('assets/images/uploads/settings/' . $banner->banner_image) }}" 
-                     alt="{{ $banner->banner_title ?? 'Banner' }}" 
-                     style="
-                        display: block;
-                        width: 100%;
-                        height: auto;
-                        max-height: 85vh;
-                        object-fit: contain;
-                     ">
-            @endif
+                @endif
+            </div>
         </div>
-    </div>
+    @endforeach
 
     <script>
-        function closeBanner() {
-            document.getElementById('bannerOverlay').style.display = 'none';
+        const totalBanners = {{ count($bannerImages) }};
+        
+        function closeBanner(currentIndex) {
+            // Hide current banner
+            const currentOverlay = document.getElementById('bannerOverlay' + currentIndex);
+            if (currentOverlay) {
+                currentOverlay.style.display = 'none';
+            }
+            
+            // Show next banner if exists
+            const nextIndex = currentIndex + 1;
+            if (nextIndex < totalBanners) {
+                const nextOverlay = document.getElementById('bannerOverlay' + nextIndex);
+                if (nextOverlay) {
+                    nextOverlay.style.display = 'flex';
+                }
+            }
         }
 
+        // Close current banner on ESC key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                closeBanner();
+                // Find which banner is currently visible
+                for (let i = 0; i < totalBanners; i++) {
+                    const overlay = document.getElementById('bannerOverlay' + i);
+                    if (overlay && overlay.style.display !== 'none') {
+                        closeBanner(i);
+                        break;
+                    }
+                }
             }
         });
 
-        document.getElementById('bannerOverlay').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeBanner();
+        // Click outside to close current banner
+        for (let i = 0; i < totalBanners; i++) {
+            const overlay = document.getElementById('bannerOverlay' + i);
+            if (overlay) {
+                overlay.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeBanner(i);
+                    }
+                });
             }
-        });
+        }
     </script>
 
 @endif
