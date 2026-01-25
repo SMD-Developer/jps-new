@@ -238,8 +238,9 @@
                                                         ->where('payment_status', 'completed') 
                                                         ->first();
                                                     $isReprintReceiptPrinted = $reprintPayment && $reprintPayment->receipt_viewed_at !== null;
+                                                    $isFPXB2BPayment = $reprintPayment && $reprintPayment->method === 'FPX_B2B';
+                                                    $isCopyReceiptPrinted = $reprintPayment && $reprintPayment->copy_receipt_viewed_at !== null;
                                                 @endphp
-                                                
                                                 @if($application->print_status_count > 0 && $reprintPayment)
                                                     <br>
                                                     <!-- Reprint Payment Receipt Button -->
@@ -248,7 +249,7 @@
                                                             <button class="btn btn-primary btn-sm" 
                                                                 disabled
                                                                 style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
-                                                                <strong style="font-size: 12px;">{{ __('Resit Bayaran Dicetak') }}</strong>
+                                                                <strong style="font-size: 12px;">{{ __('Cetak Resit Bayaran') }}</strong>
                                                             </button>
                                                         @else
                                                             <a href="{{ route('reprint.payment.receipt', $application->id) }}"
@@ -261,15 +262,28 @@
                                                         @endif
                                                     </div>
                                                     
-                                                    <br>
-                                                    <!-- Application Receipt Copy Button - NEW -->
-                                                    <div class="sbtn">
-                                                        <a href="{{ route('user_copy_receipt', ['id' => $application->id]) }}"
-                                                            class="btn btn-primary btn-sm"
-                                                            style="background:#28a745 !important; border:solid 1px #28a745; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
-                                                            <strong>{{ __('Cetak Salinan Resit') }}</strong>
-                                                        </a>
-                                                    </div>
+                                                    <!-- Application Copy Receipt Button - Only for FPX_B2B -->
+                                                    @if($isFPXB2BPayment)
+                                                        <br>
+                                                        <div class="sbtn">
+                                                            @if($isCopyReceiptPrinted)
+                                                                <button class="btn btn-primary btn-sm" 
+                                                                    disabled
+                                                                    style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">
+                                                                    <strong style="font-size: 12px;">{{ __('Cetak Salinan Resit') }}</strong>
+                                                                </button>
+                                                            @else
+                                                                <a href="{{ route('user_copy_receipt', ['id' => $application->id]) }}"
+                                                                    class="btn btn-primary btn-sm print-copy-receipt"
+                                                                    data-application-id="{{ $application->id }}"
+                                                                    data-payment-id="{{ $reprintPayment->id }}"
+                                                                    target="_self"
+                                                                    style="background:#28a745 !important; border:solid 1px #28a745; white-space: normal; display: inline-block; min-width: 150px; text-align: center;">
+                                                                    <strong>{{ __('Cetak Salinan Resit') }}</strong>
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>
@@ -358,119 +372,152 @@
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize buttons based on session storage
-        document.querySelectorAll('[data-application-id]').forEach(button => {
-            const appId = button.getAttribute('data-application-id');
-            if (sessionStorage.getItem(`printed_${appId}`)) {
-                button.classList.remove('print-receipt');
-                button.classList.add('reprint-receipt');
-                button.querySelector('strong').textContent = '@lang("app.reprint_receipt")';
-            }
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize buttons based on session storage
+            document.querySelectorAll('[data-application-id]').forEach(button => {
+                const appId = button.getAttribute('data-application-id');
+                if (sessionStorage.getItem(`printed_${appId}`)) {
+                    button.classList.remove('print-receipt');
+                    button.classList.add('reprint-receipt');
+                    button.querySelector('strong').textContent = '@lang("app.reprint_receipt")';
+                }
+            });
 
-        // Handle reprint receipt clicks
-        document.querySelectorAll('.reprint-receipt').forEach(button => {
-            button.addEventListener('click', function() {
-                const applicationId = this.getAttribute('data-application-id');
+            // Handle reprint receipt clicks
+            document.querySelectorAll('.reprint-receipt').forEach(button => {
+                button.addEventListener('click', function() {
+                    const applicationId = this.getAttribute('data-application-id');
 
-                Swal.fire({
-                    title: '@lang('app.Are_you_sure_you_want_to_reprint')',
-                    text: '@lang('app.Note_:_Receipt_reprints_are_subject_to_a_charge_RM_10.00')',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: '@lang("app.yes")',
-                    cancelButtonText: '@lang("app.no")'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Redirect to payment selection page for reprint payment
-                        window.location.href = '{{ route('payment.selection', '__ID__') }}'.replace('__ID__', applicationId) + '?type=reprint';
-                    }
+                    Swal.fire({
+                        title: '@lang('app.Are_you_sure_you_want_to_reprint')',
+                        text: '@lang('app.Note_:_Receipt_reprints_are_subject_to_a_charge_RM_10.00')',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '@lang("app.yes")',
+                        cancelButtonText: '@lang("app.no")'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to payment selection page for reprint payment
+                            window.location.href = '{{ route('payment.selection', '__ID__') }}'.replace('__ID__', applicationId) + '?type=reprint';
+                        }
+                    });
                 });
             });
-        });
 
-        // Handle print receipt clicks
-        document.querySelectorAll('.print-receipt').forEach(button => {
-            button.addEventListener('click', function() {
-                const applicationId = this.getAttribute('data-application-id');
-                
-                // Update button state
-                button.classList.remove('print-receipt');
-                button.classList.add('reprint-receipt');
-                button.querySelector('strong').textContent = '@lang("app.reprint_receipt")';
-                sessionStorage.setItem(`printed_${applicationId}`, 'true');
+            // Handle print receipt clicks
+            document.querySelectorAll('.print-receipt').forEach(button => {
+                button.addEventListener('click', function() {
+                    const applicationId = this.getAttribute('data-application-id');
+                    
+                    // Update button state
+                    button.classList.remove('print-receipt');
+                    button.classList.add('reprint-receipt');
+                    button.querySelector('strong').textContent = '@lang("app.reprint_receipt")';
+                    sessionStorage.setItem(`printed_${applicationId}`, 'true');
 
-                fetch('{{ route('update.print.status', '__ID__') }}'.replace('__ID__', applicationId), {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector(
-                                'meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({})
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success) {
-                            // Revert if failed
+                    fetch('{{ route('update.print.status', '__ID__') }}'.replace('__ID__', applicationId), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({})
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                // Revert if failed
+                                button.classList.add('print-receipt');
+                                button.classList.remove('reprint-receipt');
+                                button.querySelector('strong').textContent = '@lang("app.print_receipt")';
+                                sessionStorage.removeItem(`printed_${applicationId}`);
+                            }
+                            window.location.href = '{{ route('original_receipts', '__ID__') }}'
+                                .replace('__ID__', applicationId);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Revert on error
                             button.classList.add('print-receipt');
                             button.classList.remove('reprint-receipt');
                             button.querySelector('strong').textContent = '@lang("app.print_receipt")';
                             sessionStorage.removeItem(`printed_${applicationId}`);
-                        }
-                        window.location.href = '{{ route('original_receipts', '__ID__') }}'
-                            .replace('__ID__', applicationId);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        // Revert on error
-                        button.classList.add('print-receipt');
-                        button.classList.remove('reprint-receipt');
-                        button.querySelector('strong').textContent = '@lang("app.print_receipt")';
-                        sessionStorage.removeItem(`printed_${applicationId}`);
-                    });
+                        });
+                });
             });
         });
-    });
-</script>
-<script>
-    document.getElementById('perPageSelect').addEventListener('change', function() {
-        const perPage = this.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('per_page', perPage);
-        window.location.href = url.toString();
-    });
+    </script>
+   <script>
+        document.getElementById('perPageSelect').addEventListener('change', function() {
+            const perPage = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', perPage);
+            window.location.href = url.toString();
+        });
     </script>
     <script>
-    $(document).on('click', '.print-reprint-receipt', function(e) {
-        e.preventDefault();
-        
-        var button = $(this);
-        var applicationId = button.data('application-id');
-        var url = button.attr('href');
-        button.prop('disabled', true).css('opacity', '0.6');
-        $.ajax({
-            url: '/clientarea/applications/' + applicationId + '/mark-reprint-receipt-viewed',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                window.location.href = url;
-                button.replaceWith(
-                    '<button class="btn btn-primary btn-sm" disabled ' +
-                    'style="background:#6c757d !important; border:solid 1px #6c757d; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">' +
-                    '<strong>{{ __("Telah Dicetak") }}</strong></button>'
-                );
-            },
-            error: function(xhr) {
-                alert('{{ __("Ralat berlaku. Sila cuba lagi.") }}');
-                button.prop('disabled', false).css('opacity', '1');
-            }
+        // Reprint Payment Receipt Handler
+        $(document).on('click', '.print-reprint-receipt', function(e) {
+            e.preventDefault();
+            
+            var button = $(this);
+            var applicationId = button.data('application-id');
+            var url = button.attr('href');
+            
+            button.prop('disabled', true).css('opacity', '0.6');
+            
+            $.ajax({
+                url: '/clientarea/applications/' + applicationId + '/mark-reprint-receipt-viewed',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    window.location.href = url;
+                    button.replaceWith(
+                        '<button class="btn btn-primary btn-sm" disabled ' +
+                        'style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">' +
+                        '<strong style="font-size: 12px;">{{ __("Resit Bayaran Dicetak") }}</strong></button>'
+                    );
+                },
+                error: function(xhr) {
+                    alert('{{ __("Ralat berlaku. Sila cuba lagi.") }}');
+                    button.prop('disabled', false).css('opacity', '1');
+                }
+            });
         });
-    });
-</script>
+
+        $(document).on('click', '.print-copy-receipt', function(e) {
+            e.preventDefault();
+            
+            var button = $(this);
+            var applicationId = button.data('application-id');
+            var url = button.attr('href');
+            
+            button.prop('disabled', true).css('opacity', '0.6');
+            
+            $.ajax({
+                url: '/clientarea/applications/' + applicationId + '/mark-copy-receipt-viewed',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    window.location.href = url;
+                    button.replaceWith(
+                        '<button class="btn btn-primary btn-sm" disabled ' +
+                        'style="background:#6c757d !important; border:solid 1px #6c757d; border-radius: 20px; white-space: nowrap; display: inline-block; min-width: 150px; text-align: center; opacity: 0.6; cursor: not-allowed;">' +
+                        '<strong style="font-size: 12px;">{{ __(" Cetak Salinan Resit ") }}</strong></button>'
+                    );
+                },
+                error: function(xhr) {
+                    alert('{{ __("Ralat berlaku. Sila cuba lagi.") }}');
+                    button.prop('disabled', false).css('opacity', '1');
+                }
+            });
+        });
+    </script>
 @endsection

@@ -151,6 +151,8 @@ Route::group(['middleware' => 'install'], function(){
             Route::get('contribution-history','ClientArea\HomeController@contribution_history')->name('contribution_history');
             Route::post('applications/{id}/mark-reprint-receipt-viewed', 'ClientArea\HomeController@markReprintReceiptViewed')
             ->name('applications.mark-reprint-receipt-viewed');
+            Route::post('applications/{id}/mark-copy-receipt-viewed', 'ClientArea\HomeController@markCopyReceiptViewed')
+            ->name('applications.mark-copy-receipt-viewed');
             Route::get('contribution-claim','ClientArea\HomeController@contributionClaim')->name('contribution_claim');
             Route::get('claim-contribution-list','ClientArea\HomeController@userClaimList')->name('claim.contribution.list');
             Route::get('claim-application-reapply/{id}', 'ClientArea\HomeController@claimReapply')->name('claim.application.reapply');

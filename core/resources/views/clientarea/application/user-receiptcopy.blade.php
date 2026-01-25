@@ -175,9 +175,6 @@
                         </div>
                     </div>
                     <div class="row">
-                        <!--<div class="col-12">-->
-                        <!--    <p class="text-center">RESIT INI DIJANA OLEH SISTEM e-CARUMAN PARIT </p>-->
-                        <!--</div>-->
                     </div>
                      <div class="row mb-5 mt-5">
                         <div class="col-9">
@@ -185,7 +182,6 @@
                             <p class="">NO KELULUSAN PERBENDAHARAAN : PWN.SEL.600-5/1/1 JLD.1 (49)</p>
                         </div>
                         <div class="col-3 ml-auto text-right pr-0">
-                            <!--<p class="">JANM 11 </p>-->
                         </div>
                     </div>
                 </div>
@@ -194,7 +190,7 @@
         <div class="container containerr pb-5 no-print">
             <div class="row mb-3 justify-content-end">
                 <div class="col-auto">
-                    <button type="button" class="btn btn-success mx-2 btnprint" onclick="window.history.back();">
+                    <button type="button" class="btn btn-success mx-2 btnprint" onclick="goBackAndRefresh();">
                         Kembali
                     </button>
                     <button type="button" id="downloadButton" class="btn btn-danger mx-2 btnprint" style="display:none;">
@@ -260,9 +256,6 @@
             const paymentUuid = '{{ $currentPayment->uuid ?? $payment->uuid }}';
             const storageKey = `payment_printed_${paymentUuid}`;
             
-            console.log('Payment UUID:', paymentUuid); 
-            console.log('Payment Type:', '{{ $currentPayment->payment_type ?? $payment->payment_type }}');
-            
             function checkPrintStatus() {
                 const isPrinted = localStorage.getItem(storageKey);
                 
@@ -292,38 +285,24 @@
                 printButton.classList.remove('btn-secondary');
                 printButton.classList.add('btn-primary');
             }
-            
-            // Check status on page load
             checkPrintStatus();
-            
-            // Handle print button click
             printButton.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevent any default behavior
+                e.preventDefault();
                 
                 if (this.disabled) {
                     console.log('Button is disabled, cannot print');
                     return;
                 }
-                
-                console.log('Print button clicked');
-                
-                // Save print status
+            
                 localStorage.setItem(storageKey, 'true');
                 localStorage.setItem(storageKey + '_timestamp', Date.now().toString());
                 localStorage.setItem(storageKey + '_date', new Date().toISOString());
-                
-                console.log('Marked payment UUID', paymentUuid, 'as printed');
-                
-                // Trigger print dialog FIRST, then disable button
                 window.print();
-                
-                // Disable button after print dialog opens
                 setTimeout(function() {
                     disablePrintButton();
                 }, 500);
             });
             
-            // Optional: Clean up very old payment records (older than 90 days)
             function cleanupOldRecords() {
                 const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
                 let cleanedCount = 0;
@@ -365,9 +344,16 @@
             if (date) {
                 console.log('Printed date:', new Date(date).toLocaleString());
             }
-            console.log('========================');
             
             return status === 'true';
+        }
+
+        function goBackAndRefresh() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.history.back();
+            }
         }
     </script>
      
