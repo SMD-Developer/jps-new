@@ -105,6 +105,7 @@
                         <div class="card-body">
                             <form action="{{ route('search-filter') }}" method="POST" id="searchForm">
                                 @csrf
+                                
                                 <!-- District Dropdown -->
                                 <div class="form-group">
                                     <label>Daerah</label>
@@ -135,173 +136,139 @@
                                     </select>
                                 </div>
 
-                                <!-- Hidden Input to Store Selected Lot/PT -->
-                                <input type="hidden" id="lot_pt_grant" name="lot_pt_grant"
-                                    value="{{ old('lot_pt_grant') }}">
-
-                                <!-- Applicant Dropdown -->
+                                <!-- Applicant Name Input (Simple Text Box) -->
                                 <div class="form-group">
                                     <label>Nama Pemohon</label>
-                                    <div class="dropdown-container">
-                                        <button type="button" class="dropdown-btn form-control text-left applicant-dropdown-trigger" data-target="applicantDropdown">
-                                            <span id="selectedApplicantText">{{ __('app.select_applicant_list') }}</span>
-                                        </button>
-
-                                        <div id="applicantDropdown" class="dropdown-content">
-                                            <!-- Search Input -->
-                                            <input type="text" class="dropdown-search"
-                                                placeholder="{{ __('app.search_applicant') }}" id="applicantSearchInput"
-                                                onkeyup="filterApplicants()">
-
-                                            <!-- List of Applicants -->
-                                            <div id="applicantsList">
-                                                @foreach ($applicants as $applicant)
-                                                    <a href="#"
-                                                        onclick="selectApplicant('{{ $applicant->userName }}', '{{ $applicant->client_id }}')">
-                                                        {{ $applicant->userName }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Hidden Input to Store Selected Applicant -->
-                                    <input type="hidden" id="applicant_id" name="applicant_id"
-                                        value="{{ old('applicant_id') }}">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="applicant_name" 
+                                           id="applicant_name"
+                                           placeholder="{{ __('') }}"
+                                           value="{{ old('applicant_name', $request->applicant_name ?? '') }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label>{{ __('app.date_of_application') }}</label>
-                                    <input type="date" class="form-control" name="application_date" id="application_date"
-                                        value="{{ old('application_date') }}">
+                                    <input type="date" 
+                                           class="form-control" 
+                                           name="application_date" 
+                                           id="application_date"
+                                           value="{{ old('application_date', $request->application_date ?? '') }}">
                                 </div>
-                                 <!-- Lot/PT Dropdown -->
+                                
+                                <!-- Lot/PT Input (Simple Text Box) -->
                                 <div class="form-group">
                                     <label>{{ __('app.lot_pt') }}</label>
-                                    <div class="dropdown-container">
-                                        <!-- Button to open dropdown -->
-                                        <button type="button" class="dropdown-btn form-control text-left lot-dropdown-trigger" data-target="lotPtDropdown">
-                                            <span id="selectedLotPtText">{{ __('app.select_lot_pt') }}</span>
-                                        </button>
-
-                                        <!-- Lot/PT Dropdown -->
-                                        <div id="lotPtDropdown" class="dropdown-content">
-                                            <!-- Search Input -->
-                                            <input type="text" class="dropdown-search"
-                                                placeholder="{{ __('app.search_lot_pt') }}" id="lotPtSearchInput"
-                                                onkeyup="filterLotPt()">
-
-                                            <!-- List of Lot/PT options -->
-                                            <div id="lotPtList">
-                                                @foreach ($lotPts ?? [] as $lotPt)
-                                                    <a href="#" onclick="selectLotPt('{{ $lotPt->lot_number }}')">
-                                                        {{ $lotPt->lot_number }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="lot_pt_grant" 
+                                           id="lot_pt_grant"
+                                           placeholder="{{ __('app.enter_lot_pt') }}"
+                                           value="{{ old('lot_pt_grant', $request->lot_pt_grant ?? '') }}">
                                 </div>
 
                                 <!-- Reference Number Field -->
                                 <div class="form-group">
                                     <label>{{ __('app.reference_number') }}</label>
-                                    <input type="text" class="form-control" name="reference_number" id="reference_number"
-                                         value="{{ old('reference_number') }}">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="reference_number" 
+                                           id="reference_number"
+                                           value="{{ old('reference_number', $request->reference_number ?? '') }}">
                                 </div>
 
                                 <button type="submit" class="btn btn-primary float-right">Cari</button>
                                 <button type="button" class="btn btn-secondary float-right mr-2" onclick="resetSearchForm()">{{ __('app.reset') }}</button>
                             </form>
                         </div>
+                        <div class="table-responsive">
+                             <table class="table table-bordered mt-4" style="font-size: 14px;">
+                                <thead class="table-header">
+                                    <tr>
+                                        <th>Bil</th>
+                                        <th>Nama Pemohon</th>
+                                        <th>Lot/PT</th>
+                                        <th>Daerah</th>
+                                        <th>Mukim</th>
+                                        <th>Tarikh Permohonan</th>
+                                        <th>{{ __('app.reference_number') }}</th>
+                                        <th>Status</th>
+                                        <th>Untuk Tindakan</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (isset($results) && $results->count() > 0)
+                                        @foreach ($results as $key => $result)
+                                            <tr>
+                                                <td>{{ $results->firstItem() + $key }}</td>
+                                                <td>{{ $result->applicant ?? 'N/A' }}</td>
+                                                <td>{{ $result->land_lot ?? 'N/A' }}, {{ $result->division->mukim ?? 'N/A' }}, DAERAH {{ $result->districts->daerah ?? 'N/A' }}</td>
+                                                <td>{{ $result->districts->daerah ?? 'N/A' }}</td>
+                                                <td>{{ $result->division->mukim ?? 'N/A' }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
+                                                <td>
+                                                    <a href="{{ route('apporver_view_letter', $result->id) }}">{{ $result->refference_no }}</a>
+                                                </td>
+                                                <td>
+                                                    @switch($result->status)
+                                                        @case('approved')
+                                                            Diluluskan
+                                                            @break
 
-                        <table class="table table-bordered mt-4 table-responsive" style="font-size: 14px;">
-                            <thead class="table-header">
-                                <tr>
-                                    <th>Bil</th>
-                                    <th>Nama Pemohon</th>
-                                    <th>Lot/PT</th>
-                                    <th>Daerah</th>
-                                    <th>Mukim</th>
-                                    <th>Tarikh Permohonan</th>
-                                    <th>{{ __('app.reference_number') }}</th>
-                                    <th>Status</th>
-                                    <th>Untuk Tindakan</th> 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (isset($results) && $results->count() > 0)
-                                    @foreach ($results as $key => $result)
-                                        <tr>
-                                            {{-- ✅ FIX: Use pagination first item index --}}
-                                            <td>{{ $results->firstItem() + $key }}</td>
-                                            <td>{{ $result->applicant ?? 'N/A' }}</td>
-                                            <td>{{ $result->land_lot ?? 'N/A' }}, {{ $result->division->mukim ?? 'N/A' }}, DAERAH {{ $result->districts->daerah ?? 'N/A' }}</td>
-                                            <td>{{ $result->districts->daerah ?? 'N/A' }}</td>
-                                            <td>{{ $result->division->mukim ?? 'N/A' }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}</td>
-                                            <td>
-                                                <a href="{{ route('apporver_view_letter', $result->id) }}">{{ $result->refference_no }}</a>
-                                            </td>
-                                            <td>
-                                                @switch($result->status)
-                                                    @case('approved')
-                                                        Diluluskan
-                                                        @break
+                                                        @case('rejected')
+                                                            Tolak
+                                                            @break
 
-                                                    @case('rejected')
-                                                        Tolak
-                                                        @break
+                                                        @case('pending')
+                                                            Belum selesai
+                                                            @break
 
-                                                    @case('pending')
-                                                        Belum selesai
-                                                        @break
+                                                        @default
+                                                            N/A
+                                                    @endswitch
+                                                </td>
 
-                                                    @default
-                                                        N/A
-                                                @endswitch
-                                            </td>
-
-                                            <td>
-                                                @if($result->payment && $result->payment->payment_status === 'completed')
-                                                    <a href="{{ route('user_original_receipts', ['application_id' => $result->id, 'payment_uuid' => $result->payment->uuid]) }}" 
-                                                        class="btn btn-sm"
-                                                        style="
-                                                            background-color: #f4a100;
-                                                            color: #fff;
-                                                            border-radius: 20px;
-                                                            padding: 6px 16px;
-                                                            font-weight: 600;
-                                                            white-space: nowrap;
-                                                            font-size: 13px;
-                                                            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                                                            text-decoration: none;
-                                                            border: none;
-                                                            display: inline-block;
-                                                            transition: background-color 0.3s ease;
-                                                        "
-                                                        onmouseover="this.style.backgroundColor='#d88f00';"
-                                                        onmouseout="this.style.backgroundColor='#f4a100';">
-                                                        <strong>{{ trans('app.view_receipt') }}</strong>
-                                                    </a>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    @if (isset($request) && $request->isMethod('post'))
-                                        <tr>
-                                            <td colspan="9" class="text-center">{{ __('Tiada Permohonan Ditemui') }}</td>
-                                        </tr>
+                                                <td>
+                                                    @if($result->payment && $result->payment->payment_status === 'completed')
+                                                        <a href="{{ route('user_original_receipts', ['application_id' => $result->id, 'payment_uuid' => $result->payment->uuid]) }}" 
+                                                            class="btn btn-sm"
+                                                            style="
+                                                                background-color: #f4a100;
+                                                                color: #fff;
+                                                                border-radius: 20px;
+                                                                padding: 6px 16px;
+                                                                font-weight: 600;
+                                                                white-space: nowrap;
+                                                                font-size: 13px;
+                                                                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                                                                text-decoration: none;
+                                                                border: none;
+                                                                display: inline-block;
+                                                                transition: background-color 0.3s ease;
+                                                            "
+                                                            onmouseover="this.style.backgroundColor='#d88f00';"
+                                                            onmouseout="this.style.backgroundColor='#f4a100';">
+                                                            <strong>{{ trans('app.view_receipt') }}</strong>
+                                                        </a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     @else
-                                        <tr>
-                                            <td colspan="9" class="text-center text-muted">{{ __('Sila gunakan borang carian di atas') }}</td>
-                                        </tr>
+                                        @if (isset($request) && $request->isMethod('post'))
+                                            <tr>
+                                                <td colspan="9" class="text-center">{{ __('Tiada Permohonan Ditemui') }}</td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td colspan="9" class="text-center text-muted">{{ __('Sila gunakan borang carian di atas') }}</td>
+                                            </tr>
+                                        @endif
                                     @endif
-                                @endif
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
 
-                        {{-- ✅ ADD PAGINATION LINKS --}}
                         @if(isset($results) && $results->count() > 0)
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div>
@@ -318,35 +285,16 @@
                 </div>
             </div>
         </div>
-        </div>
     </section>
 
     <script>
         const allDivisions = @json($divisions ?? []);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const applicantLinks = document.querySelectorAll('#applicantsList a');
-            applicantLinks.forEach(link => {
-                const userName = link.textContent.trim();
-                const clientId = link.getAttribute('onclick').match(/selectApplicant\('([^']+)',\s*(\d+)/);
-                if (clientId && clientId.length >= 3) {
-                    link.setAttribute('data-name', clientId[1]);
-                    link.setAttribute('data-id', clientId[2]);
-                }
-            });
-            const lotPtLinks = document.querySelectorAll('#lotPtList a');
-            lotPtLinks.forEach(link => {
-                const lotName = link.textContent.trim();
-                link.setAttribute('data-name', lotName);
-            });
-        });
 
         function loadDivisions() {
             const districtSelect = document.getElementById('district');
             const divisionSelect = document.getElementById('division');
             const selectedDistrictId = districtSelect.value;
 
-            // Clear current division options
             divisionSelect.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
 
             if (selectedDistrictId) {
@@ -354,7 +302,6 @@
                     return division.daerah_id == selectedDistrictId;
                 });
 
-                // Add filtered divisions to the division dropdown
                 filteredDivisions.forEach(division => {
                     const option = document.createElement('option');
                     option.value = division.idmukim || '';
@@ -364,117 +311,12 @@
             }
         }
 
-        
-
-        function toggleDropdown(dropdownId) {
-            const dropdowns = document.getElementsByClassName("dropdown-content");
-            for (let i = 0; i < dropdowns.length; i++) {
-                if (dropdowns[i].id !== dropdownId) {
-                    dropdowns[i].classList.remove("show");
-                }
-            }
-
-            const dropdown = document.getElementById(dropdownId);
-            if (dropdown) {
-                dropdown.classList.toggle("show");
-            } else {
-                console.error("Dropdown element not found:", dropdownId);
-            }
-        }
-
-        function filterDropdown(dropdownId) {
-            const input = document.querySelector(`#${dropdownId} .dropdown-search`);
-            if (!input) return;
-
-            const filter = input.value.toUpperCase();
-            const links = document.querySelectorAll(`#${dropdownId} a`);
-
-            links.forEach(link => {
-                const txtValue = link.textContent || link.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    link.style.display = "";
-                } else {
-                    link.style.display = "none";
-                }
-            });
-        }
-
-        function filterApplicants() {
-            const input = document.getElementById("applicantSearchInput");
-            if (!input) return;
-
-            const filter = input.value.toUpperCase();
-            const links = document.querySelectorAll("#applicantsList a");
-
-            links.forEach(link => {
-                const txtValue = link.textContent || link.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    link.style.display = "";
-                } else {
-                    link.style.display = "none";
-                }
-            });
-        }
-
-        function filterLotPt() {
-            const input = document.getElementById("lotPtSearchInput");
-            if (!input) return;
-
-            const filter = input.value.toUpperCase();
-            const links = document.querySelectorAll("#lotPtList a");
-
-            links.forEach(link => {
-                const txtValue = link.textContent || link.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    link.style.display = "";
-                } else {
-                    link.style.display = "none";
-                }
-            });
-        }
-
-        function selectApplicant(name, id) {
-            const textElement = document.getElementById("selectedApplicantText");
-            const idField = document.getElementById("applicant_id");
-            const dropdown = document.getElementById("applicantDropdown");
-
-            if (textElement) textElement.innerText = name;
-            if (idField) idField.value = id;
-            if (dropdown) dropdown.classList.remove("show");
-        }
-
-        function selectLotPt(name) {
-            const textElement = document.getElementById("selectedLotPtText");
-            const idField = document.getElementById("lot_pt_grant");
-            const dropdown = document.getElementById("lotPtDropdown");
-
-            if (textElement) textElement.innerText = name;
-            if (idField) idField.value = name;
-            if (dropdown) dropdown.classList.remove("show");
-        }
-
-
         function resetSearchForm() {
-            const lotPtText = document.getElementById("selectedLotPtText");
-            if (lotPtText) lotPtText.innerText = "{{ __('app.select_lot_pt') }}";
-
-            const applicantText = document.getElementById("selectedApplicantText");
-            if (applicantText) applicantText.innerText = "{{ __('app.select_applicant_list') }}";
-
-            // Reset hidden fields
-            const lotPtField = document.getElementById("lot_pt_grant");
-            if (lotPtField) lotPtField.value = "";
-
-            const applicantIdField = document.getElementById("applicant_id");
-            if (applicantIdField) applicantIdField.value = "";
-
-            // Reset date and text inputs
-            const dateField = document.getElementById("application_date");
-            if (dateField) dateField.value = "";
-
-            const refField = document.getElementById("reference_number");
-            if (refField) refField.value = "";
-
+            document.getElementById("applicant_name").value = "";
+            document.getElementById("lot_pt_grant").value = "";
+            document.getElementById("application_date").value = "";
+            document.getElementById("reference_number").value = "";
+            
             const districtField = document.getElementById("district");
             if (districtField) districtField.selectedIndex = 0;
 
@@ -483,54 +325,7 @@
                 divisionField.innerHTML = '<option value="">{{ __('app.select_division') }}</option>';
             }
 
-            const dropdowns = document.getElementsByClassName("dropdown-content");
-            for (let i = 0; i < dropdowns.length; i++) {
-                dropdowns[i].classList.remove('show');
-            }
-
             window.location.href = "{{ route('search-filter') }}";
-        }
-
-
-        
-
-        document.addEventListener('click', function(event) {
-            if (!event.target.matches('.dropdown-btn') &&
-                !event.target.matches('.dropdown-content') &&
-                !event.target.closest('.dropdown-content')) {
-
-                const dropdowns = document.getElementsByClassName("dropdown-content");
-                for (let i = 0; i < dropdowns.length; i++) {
-                    if (dropdowns[i].classList.contains('show')) {
-                        dropdowns[i].classList.remove('show');
-                    }
-                }
-            }
-        });
-
-        // Better event handling using addEventListener
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.dropdown-btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const dropdownId = this.getAttribute('data-target');
-                    toggleDropdown(dropdownId);
-                });
-            });
-        });
-
-        function toggleDropdown(dropdownId) {
-            document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-                if (dropdown.id !== dropdownId) {
-                    dropdown.classList.remove('show');
-                }
-            });
-            
-            const dropdown = document.getElementById(dropdownId);
-            if (dropdown) {
-                dropdown.classList.toggle('show');
-            }
         }
     </script>
 @endsection

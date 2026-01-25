@@ -296,9 +296,6 @@ class CheckFPXPaymentStatus extends Command
                 return;
             }
             
-            // ========================================
-            // STEP 1: Get Application (same as controller)
-            // ========================================
             $application = Application::find($paymentRecord->application_id);
             
             if (!$application) {
@@ -308,19 +305,8 @@ class CheckFPXPaymentStatus extends Command
             
             $this->line("  📋 Found application #{$application->id}");
             
-            // ========================================
-            // STEP 2: Check if legacy (same as controller - before 2025-11-16)
-            // ========================================
-            if ($application->created_at >= '2025-11-16') {
-                $this->line("  ℹ Application uses automatic system (created after 2025-11-16), skipping");
-                return;
-            }
-            
-            $this->line("  📅 Legacy application (created: {$application->created_at})");
-            
-            // ========================================
-            // STEP 3: Verify payment (same as controller)
-            // ========================================
+            $this->line("  📅 Processing application (created: {$application->created_at})");
+        
             $payment = Payment::where('application_id', $paymentRecord->application_id)
                 ->where('third_party_id', $paymentRecord->third_party_id)
                 ->where('payment_type', 'third_party')
@@ -333,10 +319,7 @@ class CheckFPXPaymentStatus extends Command
             }
             
             $this->line("  💰 Payment verified (Order: {$payment->seller_order_no})");
-            
-            // ========================================
-            // STEP 4: Check if request already exists (same as controller)
-            // ========================================
+        
             $existingRequest = ReceiptRequest::where('application_id', $application->id)
                 ->where('third_party_id', $paymentRecord->third_party_id)
                 ->first();
@@ -345,10 +328,7 @@ class CheckFPXPaymentStatus extends Command
                 $this->line("  ℹ Receipt request already exists (ID: {$existingRequest->id})");
                 return;
             }
-            
-            // ========================================
-            // STEP 5: Create receipt request (EXACT same as controller)
-            // ========================================
+        
             $receiptRequest = ReceiptRequest::create([
                 'application_id' => $application->id,
                 'third_party_id' => $paymentRecord->third_party_id,
@@ -357,9 +337,6 @@ class CheckFPXPaymentStatus extends Command
             
             $this->info("  ✅ Created receipt request #{$receiptRequest->id}");
             
-            // ========================================
-            // STEP 6: Notify finance admins (EXACT same as controller)
-            // ========================================
             $financeRoleId = '9e032970-5f48-4d2b-b88e-abb9da79140f';
             $financeAdmins = User::where('role_id', $financeRoleId)->get();
             

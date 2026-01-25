@@ -26,12 +26,16 @@ class NewReceiptRequestSubmitted extends Notification
 
     public function toMail($notifiable)
     {
+        $application = $this->receiptRequest->application;
+        $thirdParty = $this->receiptRequest->thirdParty;
+        
         return (new MailMessage)
-            ->subject('Receipt Request Submitted')
-            ->line('A new receipt request has been submitted by a third party.')
-            ->line('Application ID: ' . $this->receiptRequest->application_id)
-            ->line('Third Party ID: ' . $this->receiptRequest->third_party_id)
-            ->line('Please review it as soon as possible.');
+            ->subject('Resit Permintaan Diserahkan')
+            ->view('emails.receipt-request-submitted', [
+                'receiptRequest' => $this->receiptRequest,
+                'application' => $application,
+                'thirdParty' => $thirdParty
+            ]);
     }
 
     public function toArray($notifiable)

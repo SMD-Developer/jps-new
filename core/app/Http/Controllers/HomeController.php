@@ -2724,26 +2724,12 @@ class HomeController extends Controller {
             ->orderBy('daerah_code', 'asc')
             ->get();
             
-        $applicants = ClientRegisterModel::select('client_id', 'userName')->get();
-        
-        // ✅ FIX: Remove duplicate lot numbers efficiently
-        $lotPts = Application::select('land_lot')
-            ->whereNotNull('land_lot')
-            ->where('land_lot', '!=', '')
-            ->groupBy('land_lot')
-            ->orderBy('land_lot', 'asc')
-            ->get()
-            ->map(function($item) {
-                return (object)[
-                    'lot_number' => $item->land_lot
-                ];
-            });
-            
         $results = collect();  
         
         if ($request->isMethod('post')) {
             $query = Application::query();
 
+            // Search by lot number (text input)
             if ($request->filled('lot_pt_grant')) {
                 $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
             }
@@ -2756,8 +2742,9 @@ class HomeController extends Controller {
                 $query->where('land_district', $request->district);
             }
             
-            if ($request->filled('applicant_id')) {
-                $query->where('user_id', $request->applicant_id);
+            // Search by applicant name (text input)
+            if ($request->filled('applicant_name')) {
+                $query->where('applicant', 'like', '%' . $request->applicant_name . '%');
             }
             
             if ($request->filled('reference_number')) {
@@ -2768,19 +2755,25 @@ class HomeController extends Controller {
                 $query->whereDate('created_at', $request->application_date);
             }
             
-            // ✅ FIX: Add pagination to prevent memory exhaustion
-            $results = $query->with(['applicant', 'division', 'districts', 'payment'])
-                ->orderBy('created_at', 'desc')
-                ->paginate(50);  // Show 50 results per page
+            // Only fetch results if at least one search criteria is provided
+            $hasSearchCriteria = $request->filled('lot_pt_grant') || 
+                                $request->filled('division') || 
+                                $request->filled('district') || 
+                                $request->filled('applicant_name') || 
+                                $request->filled('reference_number') || 
+                                $request->filled('application_date');
             
+            if ($hasSearchCriteria) {
+                $results = $query->with(['applicant', 'division', 'districts', 'payment'])
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(50);
+            }
         }
         
         return view('search-filter', [
             'title' => $title,
             'divisions' => $divisions,
             'districts' => $districts,
-            'applicants' => $applicants,
-            'lotPts' => $lotPts,
             'results' => $results,
             'request' => $request
         ]);
