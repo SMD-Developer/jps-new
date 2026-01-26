@@ -742,33 +742,33 @@ class financeController extends Controller {
         }
         
         $query = DB::table('payments')
-            ->join('applications', 'payments.application_id', '=', 'applications.id')
-            ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
-            ->join('district', 'applications.district', '=', 'district.iddaerah')
-            ->join('division', 'applications.land_state', '=', 'division.idmukim')
-            ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
-            ->select(
-                'applications.id as application_id',
-                'applications.refference_no',
-                'applications.applicant',
-                'applications.land_lot',
-                'applications.district',
-                'applications.land_state',
-                'client_register.userName as client_name',
-                'client_register.accountType as applicant_type',
-                'district.daerah as district_name',
-                'division.mukim as division_name',
-                'account_types.name as account_type_name',
-                'payments.uuid as payment_id',
-                'payments.payment_status',
-                'payments.method as payment_method',
-                'payments.amount as payment_amount',
-                'payments.transaction_id',
-                'payments.receipt_number',
-                'payments.seller_order_no',
-                'payments.payment_type',
-                'payments.created_at as payment_created_at'
-            );
+        ->leftJoin('applications', 'payments.application_id', '=', 'applications.id') 
+        ->leftJoin('client_register', 'applications.user_id', '=', 'client_register.client_id') 
+        ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')  
+        ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')  
+        ->leftJoin('account_types', 'client_register.accountType', '=', 'account_types.id')  
+        ->select(
+            'applications.id as application_id',
+            'applications.refference_no',
+            'applications.applicant',
+            'applications.land_lot',
+            'applications.district',
+            'applications.land_state',
+            'client_register.userName as client_name',
+            'client_register.accountType as applicant_type',
+            'district.daerah as district_name',
+            'division.mukim as division_name',
+            'account_types.name as account_type_name',
+            'payments.uuid as payment_id',
+            'payments.payment_status',
+            'payments.method as payment_method',
+            'payments.amount as payment_amount',
+            'payments.transaction_id',
+            'payments.receipt_number',
+            'payments.seller_order_no',
+            'payments.payment_type',
+            'payments.created_at as payment_created_at'
+        );
         
         // Filter by payment method if selected
         if ($paymentMethod && $paymentMethod != '') {
