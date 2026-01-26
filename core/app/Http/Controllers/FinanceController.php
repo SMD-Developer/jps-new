@@ -615,12 +615,12 @@ class financeController extends Controller {
             'end_date' => 'required|date_format:Y-m-d|after_or_equal:start_date',
             'print_type' => 'nullable|string',
         ]);
-    
+
         $accountTypeId = $request->input('account_type_id'); 
         $startDate = $request->input('start_date');       
         $endDate = $request->input('end_date');             
         $printType = $request->input('print_type');         
-    
+
         $query = DB::table('applications')
             ->join('client_register', 'applications.user_id', '=', 'client_register.client_id')
             ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
@@ -636,18 +636,22 @@ class financeController extends Controller {
                 'district.daerah as district_name',
                 'division.mukim as division_name',
                 'payments.payment_status',
-                'payments.created_at as payment_created_at'
+                'payments.created_at as payment_created_at',
+                'payments.amount as payment_amount'  
             );
-    
+
         if ($accountTypeId && $accountTypeId != '') {
             $query->where('client_register.accountType', $accountTypeId);
         }
-    
+
         if ($startDate && $endDate) {
             try {
                 $startDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay()->toDateTimeString();
                 $endDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()->toDateTimeString();
-                $query->whereBetween('applications.created_at', [$startDateParsed, $endDateParsed]);
+                
+                // ✅ Changed to filter by payments.created_at instead of applications.created_at
+                $query->whereBetween('payments.created_at', [$startDateParsed, $endDateParsed]);
+                
             } catch (\Exception $e) {
                 \Log::error('Invalid date format: ' . $e->getMessage());
                 return back()->withErrors(['date' => 'Invalid date format. Use YYYY-MM-DD.']);
@@ -655,21 +659,11 @@ class financeController extends Controller {
         }
 
         $applications = $query->get();
-        \Log::info('Applications Count: ' . $applications->count());
-        \Log::info('Applications created_at: ' . json_encode($applications->pluck('created_at')->toArray()));
-        if ($startDate && $endDate) {
-            $outOfRange = $applications->filter(function ($app) use ($startDateParsed, $endDateParsed) {
-                return \Carbon\Carbon::parse($app->created_at)->lt($startDateParsed) || \Carbon\Carbon::parse($app->created_at)->gt($endDateParsed);
-            });
-            if ($outOfRange->isNotEmpty()) {
-                \Log::warning('Out-of-range records: ' . json_encode($outOfRange->toArray()));
-            }
-        }
         
         $currentDateTime = \Carbon\Carbon::now();
         $currentDate = $currentDateTime->format('d/m/Y');
         $currentTime = $currentDateTime->format('h:i:s A');
-    
+
         return view('finance.report-list-all-application-contribution-ditch', [
             'title' => __("app.report_list_application_ditch_contributions"),
             'applications' => $applications,
