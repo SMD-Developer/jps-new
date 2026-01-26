@@ -25,8 +25,7 @@ class CheckFPXPaymentStatus extends Command
         $pendingPayments = DB::table('payments')
             ->where('payment_status', 'pending_authorization')
             ->where('method', 'FPX_B2B')
-            ->where('payment_type', 'third_party') 
-            ->where('created_at', '>=', now()->subHours(4))
+            ->where('created_at', '>=', now()->subHours(7))
             ->get();
         
         if ($pendingPayments->isEmpty()) {
@@ -266,7 +265,7 @@ class CheckFPXPaymentStatus extends Command
                     ->update($updateData);
                 
                 // ✅ Auto-submit legacy third party request (BEFORE email)
-                if ($newPaymentStatus === 'completed' && $paymentRecord->application_id) {
+                if ($newPaymentStatus === 'completed' && $paymentRecord->payment_type === 'third_party') {
                     $this->autoSubmitLegacyThirdParty($paymentRecord);
                 }
                 
