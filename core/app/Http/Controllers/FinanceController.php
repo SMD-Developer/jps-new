@@ -344,12 +344,6 @@ class financeController extends Controller {
     
                     if ($user_client) {
                         $user_client->notify(new PaymentApprovedNotification($application));
-    
-                        \Log::info('Payment approval notification sent', [
-                            'application_id' => $application->id,
-                            'client_id' => $application->user_id,
-                            'payment_id' => $payment->id
-                        ]);
                     } else {
                         \Log::warning('No client user record found for notification', [
                             'application_id' => $application->id,
@@ -357,10 +351,7 @@ class financeController extends Controller {
                         ]);
                     }
                 } else {
-                    \Log::warning('No client found for application', [
-                        'application_id' => $application->id,
-                        'user_id' => $application->user_id
-                    ]);
+
                 }
     
                 return response()->json([
@@ -414,21 +405,9 @@ class financeController extends Controller {
                     if ($user_client) {
                         $user_client->notify(new PaymentRejectedNotification($application));
                         
-                        \Log::info('Payment reject notification sent', [
-                            'application_id' => $application->id,
-                            'client_id' => $application->user_id
-                        ]);
                     } else {
-                        \Log::warning('No client user record found for notification', [
-                            'application_id' => $application->id,
-                            'user_id' => $application->user_id
-                        ]);
                     }
                 } else {
-                    \Log::warning('No client found for application', [
-                        'application_id' => $application->id,
-                        'user_id' => $application->user_id
-                    ]);
                 }
         
                 return response()->json([
@@ -628,7 +607,7 @@ class financeController extends Controller {
             ->join('district', 'applications.district', '=', 'district.iddaerah')
             ->join('state', 'applications.state', '=', 'state.idnegeri')
             ->join('division', 'applications.land_state', '=', 'division.idmukim')
-            ->where('payments.payment_status', 'completed')
+            ->where('payments.payment_status', 'completed')  // ✅ Only completed payments
             ->select(
                 'applications.*',
                 'client_register.userName as client_name', 
@@ -636,8 +615,8 @@ class financeController extends Controller {
                 'district.daerah as district_name',
                 'division.mukim as division_name',
                 'payments.payment_status',
-                'payments.created_at as payment_created_at',
-                'payments.amount as payment_amount'  
+                'payments.amount as payment_amount',
+                'payments.created_at as payment_created_at'
             );
 
         if ($accountTypeId && $accountTypeId != '') {
@@ -649,7 +628,7 @@ class financeController extends Controller {
                 $startDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay()->toDateTimeString();
                 $endDateParsed = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()->toDateTimeString();
                 
-                // ✅ Changed to filter by payments.created_at instead of applications.created_at
+                // ✅ Filter by PAYMENT date (when payment was completed)
                 $query->whereBetween('payments.created_at', [$startDateParsed, $endDateParsed]);
                 
             } catch (\Exception $e) {
@@ -913,15 +892,12 @@ class financeController extends Controller {
         
         $applications = $query->get();
         
-        \Log::info('Applications Count: ' . $applications->count());
-        \Log::info('Applications created_at: ' . json_encode($applications->pluck('created_at')->toArray()));
-        
         if ($startDate && $endDate) {
             $outOfRange = $applications->filter(function ($app) use ($startDateParsed, $endDateParsed) {
                 return \Carbon\Carbon::parse($app->created_at)->lt($startDateParsed) || \Carbon\Carbon::parse($app->created_at)->gt($endDateParsed);
             });
             if ($outOfRange->isNotEmpty()) {
-                \Log::warning('Out-of-range records: ' . json_encode($outOfRange->toArray()));
+    
             }
         }
         
@@ -984,7 +960,6 @@ class financeController extends Controller {
                 $voidedReceipts = DB::table('applications')
                     ->whereBetween('created_at', [$startDateParsed, $endDateParsed])
                     ->get();
-                \Log::info('Filtered receipts count: ' . $voidedReceipts->count());
                 
                 // Handle different output formats
                 if ($printType === 'Excel') {
