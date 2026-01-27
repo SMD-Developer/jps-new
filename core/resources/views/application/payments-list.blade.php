@@ -213,8 +213,8 @@
                                         <option value="Cheque" {{ ($methodFilter ?? 'all') == 'Cheque' ? 'selected' : '' }}>
                                             @lang('app.cheque')
                                         </option>
-                                        <option value="Bank Transfer" {{ ($methodFilter ?? 'all') == 'Bank Transfer' ? 'selected' : '' }}>
-                                            Bank Transfer
+                                        <option value="Bank Draf" {{ ($methodFilter ?? 'all') == 'Bank Draf' ? 'selected' : '' }}>
+                                            Bank DRAF
                                         </option>
                                         <option value="BAUCAR BAYARAN" {{ ($methodFilter ?? 'all') == 'BAUCAR BAYARAN' ? 'selected' : '' }}>
                                             BAUCAR BAYARAN

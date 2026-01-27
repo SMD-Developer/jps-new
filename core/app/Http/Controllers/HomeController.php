@@ -2302,7 +2302,7 @@ class HomeController extends Controller {
                 'B2C' => 'FPX_B2C',
                 'EFT' => 'EFT',
                 'Cheque' => 'cheque',
-                'Bank Transfer' => 'bank_transfer',
+                'Bank Draf' => 'bank_draf',
             ];
 
             if ($methodFilter === 'BAUCAR BAYARAN') {
