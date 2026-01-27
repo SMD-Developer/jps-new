@@ -230,26 +230,21 @@
 
                                                 <td>
                                                     @if($result->payment && $result->payment->payment_status === 'completed')
-                                                        <a href="{{ route('user_original_receipts', ['application_id' => $result->id, 'payment_uuid' => $result->payment->uuid]) }}" 
-                                                            class="btn btn-sm"
+                                                        <span class="badge" 
                                                             style="
-                                                                background-color: #f4a100;
+                                                                background-color: #28a745;
                                                                 color: #fff;
                                                                 border-radius: 20px;
-                                                                padding: 6px 16px;
+                                                                padding: 8px 20px;
                                                                 font-weight: 600;
                                                                 white-space: nowrap;
-                                                                font-size: 13px;
-                                                                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                                                                text-decoration: none;
-                                                                border: none;
+                                                                font-size: 14px;
+                                                                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
                                                                 display: inline-block;
-                                                                transition: background-color 0.3s ease;
-                                                            "
-                                                            onmouseover="this.style.backgroundColor='#d88f00';"
-                                                            onmouseout="this.style.backgroundColor='#f4a100';">
-                                                            <strong>{{ trans('app.view_receipt') }}</strong>
-                                                        </a>
+                                                            ">
+                                                            <i class="fas fa-check-circle me-1"></i>
+                                                            <strong>Selesai</strong>
+                                                        </span>
                                                     @endif
                                                 </td>
                                             </tr>
