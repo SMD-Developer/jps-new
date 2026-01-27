@@ -740,6 +740,7 @@ class financeController extends Controller {
             'payments.receipt_number',
             'payments.seller_order_no',
             'payments.payment_type',
+            'payments.buyer_name',
             'payments.created_at as payment_created_at'
         );
         
