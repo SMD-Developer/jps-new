@@ -6,8 +6,7 @@
 </div>
 
 <section class="content">
-    <div class="row">
-        
+    <div class="row">       
         <div class="col-md-12">
             <div class="card border-top-primary">
                 <div class="card-body">
@@ -136,13 +135,13 @@
                         </div>
 
                         <!-- Banner Display Duration -->
-                        <div class="form-group">
+                         <div class="form-group">
                             <label for="banner_start_date">Display Period (Optional)</label>
                             <div class="row">
                                 <div class="col-md-6">
                                     <input type="date" class="form-control @error('banner_start_date') is-invalid @enderror" 
-                                           id="banner_start_date" name="banner_start_date" 
-                                           value="{{ old('banner_start_date', $setting->banner_start_date ?? '') }}">
+                                        id="banner_start_date" name="banner_start_date" 
+                                        value="{{ old('banner_start_date', $setting->banner_start_date?->format('Y-m-d') ?? '') }}">
                                     @error('banner_start_date')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -150,8 +149,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <input type="date" class="form-control @error('banner_end_date') is-invalid @enderror" 
-                                           id="banner_end_date" name="banner_end_date" 
-                                           value="{{ old('banner_end_date', $setting->banner_end_date ?? '') }}">
+                                        id="banner_end_date" name="banner_end_date" 
+                                        value="{{ old('banner_end_date', $setting->banner_end_date?->format('Y-m-d') ?? '') }}">
                                     @error('banner_end_date')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror

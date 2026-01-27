@@ -89,28 +89,23 @@
         </tr>
         <tr>
             <td class="title">
-               <strong>Resit Permintaan Diserahkan</strong>
+               <strong>Status Permohonan Salinan Resit</strong>
             </td>
         </tr>
         <tr>
-            <td class="content">
-                <p>Penyedia Kewangan,</p>
-                
+            <td class="content">  
                 <div class="details">
-                    <p><strong>Butiran Permohonan:</strong></p>
-                    <p><strong>ID Permohonan:</strong> {{ $application->id ?? 'N/A' }}</p>
-                    <p><strong>Nama Pemohon:</strong> {{ $application->applicant ?? 'N/A' }}</p>
-                    <p><strong>Lot/PT:</strong> {{ $application->land_lot ?? 'N/A' }}</p>
-                    <p><strong>Nombor Rujukan:</strong> {{ $application->refference_no ?? 'N/A' }}</p>
-                    <p><strong>Pihak Ketiga:</strong> {{ $thirdParty->name ?? 'N/A' }}</p>
+                    <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,</p>
+                    <p>Dimaklumkan bahawa status permohonan Salinan Resit telah diluluskan</p>
+                    <p>Sila klik menu carian di Portal Caruman Parit (e-CP) untuk mencetak resit SALINAN anda</p>
+                    <p>👉 <a href="https://ecp-jps.selangor.gov.my/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
+                    <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
                 </div>
-                
-                <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                <p>Yang Benar,</p>
+                <p>Terima kasih,</p>
                 <p><strong>Portal e-CP Caruman Parit</strong></p>
             </td>
         </tr>

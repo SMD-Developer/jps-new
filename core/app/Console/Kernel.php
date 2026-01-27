@@ -31,7 +31,6 @@ class Kernel extends ConsoleKernel {
         $schedule->command('invoicer:recurring-invoices')->dailyAt('00:00');
 		$schedule->command('fpx:check-status')
              ->everyFiveMinutes()
-             ->withoutOverlapping()
              ->runInBackground();
 
 	    $schedule->command('applications:delete-expired')->everyMinute();
