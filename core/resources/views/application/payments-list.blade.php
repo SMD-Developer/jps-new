@@ -214,7 +214,7 @@
                                             @lang('app.cheque')
                                         </option>
                                         <option value="Bank Draf" {{ ($methodFilter ?? 'all') == 'Bank Draf' ? 'selected' : '' }}>
-                                            Bank DRAF
+                                            BANK DRAF
                                         </option>
                                         <option value="BAUCAR BAYARAN" {{ ($methodFilter ?? 'all') == 'BAUCAR BAYARAN' ? 'selected' : '' }}>
                                             BAUCAR BAYARAN

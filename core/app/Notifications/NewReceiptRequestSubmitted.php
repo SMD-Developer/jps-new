@@ -30,7 +30,7 @@ class NewReceiptRequestSubmitted extends Notification
         $thirdParty = $this->receiptRequest->thirdParty;
         
         return (new MailMessage)
-            ->subject('Resit Permintaan Diserahkan')
+            ->subject('Status Permohonan Salinan Resit')
             ->view('emails.receipt-request-submitted', [
                 'receiptRequest' => $this->receiptRequest,
                 'application' => $application,

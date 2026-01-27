@@ -25,7 +25,7 @@ class PaymentSuccessful extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Payment Successful - transactionId #' . $this->paymentData['transaction_id'])
+            ->subject('Pengesahan Pembayaran - ID Transaksi' . $this->paymentData['transaction_id'])
             ->view('emails.fpx-payment-success', [
                 'buyerName' => $this->paymentData['buyer_name'],
                 'orderNo' => $this->paymentData['order_no'],
@@ -34,7 +34,7 @@ class PaymentSuccessful extends Notification
                 'currency' => $this->paymentData['currency'],
                 'bankName' => $this->paymentData['bank_name'],
                 'paymentDate' => $this->paymentData['payment_date'],
-                'dashboardUrl' => url('/dashboard') // or your dashboard route
+                'dashboardUrl' => url('/dashboard') 
             ]);
     }
 }
