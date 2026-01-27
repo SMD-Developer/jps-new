@@ -4,7 +4,7 @@
     /* Excel-like styling with larger fonts */
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 13px; /* Increased from 11px */
+        font-size: 13px;
         background-color: #f8f9fa;
         margin: 0;
         padding: 0;
@@ -35,7 +35,7 @@
     }
 
     .date-time-info {
-        font-size: 12px; /* Increased from 10px */
+        font-size: 12px;
         line-height: 1.4;
     }
 
@@ -51,7 +51,7 @@
     }
 
     .main-title h1 {
-        font-size: 15px; /* Increased from 13px */
+        font-size: 15px;
         font-weight: 600;
         color: #24292f !important;
         text-transform: uppercase;
@@ -60,14 +60,12 @@
     }
 
     .main-title p {
-        font-size: 14px; /* Increased from 12px */
-        /*font-weight: 500;*/
-        /*color: #656d76;*/
+        font-size: 14px;
         text-transform: uppercase;
     }
 
     .page-info {
-        font-size: 12px; /* Increased from 10px */
+        font-size: 12px;
         color: #656d76;
         text-align: right;
     }
@@ -82,7 +80,7 @@
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        font-size: 13px; /* Increased from 11px */
+        font-size: 13px;
     }
 
     .department-info-table th {
@@ -92,7 +90,7 @@
         text-align: center;
         font-weight: 600;
         border: 1px solid #ccc;
-        font-size: 13px; /* Increased from 11px */
+        font-size: 13px;
         text-transform: uppercase;
     }
 
@@ -102,33 +100,12 @@
         vertical-align: middle;
     }
 
-    .department-info-table .label-cell {
-        background: #f9f9f9;
-        font-weight: 600;
-        color: #333;
-        width: 15%;
-        text-align: center;
-    }
-
-    .department-info-table .code-cell {
-        background: #ffffff;
-        width: 20%;
-        color: #333;
-        font-weight: 500;
-    }
-
-    .department-info-table .description-cell {
-        background: #ffffff;
-        width: 65%;
-        color: #333;
-    }
-
     /* Main Data Table - Excel Style */
     .main-data-table {
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        font-size: 12px; /* Increased from 10px */
+        font-size: 12px;
     }
 
     .main-data-table th {
@@ -138,7 +115,7 @@
         text-align: center;
         font-weight: 600;
         border: 1px solid #ccc;
-        font-size: 12px; /* Increased from 10px */
+        font-size: 12px;
         text-transform: uppercase;
         line-height: 1.2;
         vertical-align: middle;
@@ -160,93 +137,6 @@
         background: #e8f4f8;
     }
 
-    /* Column specific styling */
-    .main-data-table .col-bil {
-        width: 4%;
-        text-align: center;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .main-data-table .col-resit {
-        width: 10%;
-        text-align: center;
-        /*font-family: 'Courier New', monospace;*/
-        color: #333;
-    }
-
-    .main-data-table .col-perihal {
-        width: 20%;
-        text-align: left;
-        color: #333;
-    }
-
-    .main-data-table .col-nama {
-        width: 15%;
-        text-align: left;
-        color: #333;
-        /*font-weight: 500;*/
-    }
-
-    .main-data-table .col-kategori {
-        width: 10%;
-        text-align: center;
-        color: #333;
-        /*font-weight: 500;*/
-    }
-
-    .main-data-table .col-vot {
-        width: 6%;
-        text-align: center;
-        /*font-family: 'Courier New', monospace;*/
-        color: #333;
-    }
-
-    .main-data-table .col-kod {
-        width: 8%;
-        text-align: center;
-        /*font-family: 'Courier New', monospace;*/
-        color: #333;
-    }
-
-    .main-data-table .col-tarikh {
-        width: 8%;
-        text-align: center;
-        color: #333;
-    }
-
-    .main-data-table .col-masa {
-        width: 7%;
-        text-align: center;
-        color: #333;
-    }
-
-    .main-data-table .col-mod {
-        width: 8%;
-        text-align: center;
-        color: #333;
-    }
-
-    .main-data-table .col-jenis {
-        width: 7%;
-        text-align: center;
-        color: #333;
-    }
-
-    .main-data-table .col-kategori-bank {
-        width: 12%;
-        text-align: center;
-        color: #333;
-        font-size: 11px; /* Increased from 9px */
-    }
-
-    .main-data-table .col-jumlah {
-        width: 8%;
-        text-align: right;
-        color: #333;
-        font-size: 11px; /* Increased from 9px */
-    }
-
     /* Action Buttons */
     .action-section {
         padding: 20px;
@@ -261,7 +151,7 @@
         border: none;
         padding: 10px 20px;
         border-radius: 6px;
-        font-size: 13px; /* Increased from 11px */
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
@@ -274,77 +164,11 @@
         transform: translateY(-1px);
     }
 
-    /* Print Styles */
-    @media print {
-        
-        .header-row {
-            border: none !important;  /* remove outer border */
-            margin-bottom: 10px;
-            padding: 5px 0;
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr; /* left, center, right */
-            align-items: center;
-            width: 100%;
-        }
-
-        .header-row .date-time-info {
-            text-align: left !important;
-        }
-    
-        .header-row .main-title {
-            text-align: center !important;
-        }
-    
-        .header-row .page-info {
-            text-align: right !important;
-        }
-    
-          .department-info-table {
-            border: 1px solid #000 !important; 
-            border-collapse: collapse !important;
-            width: 100% !important;
-            table-layout: fixed !important;
-        }
-    
-        .department-info-table th,
-        .department-info-table td {
-            border: 1px solid #000 !important; 
-            padding: 4px !important;
-            word-wrap: break-word !important;
-        }
-        
-        #btn-section {
-            display: none !important;
-        }
-
-         .report-wrapper {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .report-wrapper thead {
-            display: table-header-group; /* Repeat header on each page */
-        }
-
-        .report-wrapper tbody {
-            display: table-row-group;
-        }
-
-        .main-data-table thead {
-            display: table-header-group; /* Repeat column headings */
-        }
-
-        .main-data-table tbody {
-            display: table-row-group;
-        }
-    }
-
-
     .summary-table {
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        font-size: 12px; /* Increased from 10px */
+        font-size: 12px;
     }
 
     .summary-table th {
@@ -354,7 +178,7 @@
         text-align: center;
         font-weight: 600;
         border: 1px solid #ccc;
-        font-size: 12px; /* Increased from 10px */
+        font-size: 12px;
         text-transform: uppercase;
     }
 
@@ -373,14 +197,12 @@
         background: #e8f4f8;
     }
     
-    /* Section headers */
     h6 {
-        font-size: 14px; /* Added explicit size for section headers */
+        font-size: 14px;
         font-weight: 600;
         margin: 15px 0 10px 0;
         color: #333;
     }
-
 
     .btn-prints {
         background: linear-gradient(135deg, #e6e33eff 0%, #bbb121ff 100%);
@@ -396,7 +218,81 @@
     }
 
 
-   @media print {
+    .report-wrapper {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .report-container {
+            max-width: 100%;
+            margin: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        .report-wrapper {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-wrapper thead {
+            display: table-header-group;
+        }
+
+        .report-wrapper tbody {
+            display: table-row-group;
+        }
+
+        .report-wrapper thead td {
+            padding: 0 !important;
+        }
+
+        .header-row {
+            border: none !important;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-row .date-time-info {
+            text-align: left !important;
+        }
+    
+        .header-row .main-title {
+            text-align: center !important;
+        }
+    
+        .header-row .page-info {
+            text-align: right !important;
+        }
+    
+        .department-info-table {
+            border: 1px solid #000 !important; 
+            border-collapse: collapse !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+    
+        .department-info-table th,
+        .department-info-table td {
+            border: 1px solid #000 !important; 
+            padding: 4px !important;
+            word-wrap: break-word !important;
+        }
+        
+        #btn-section {
+            display: none !important;
+        }
+
         .main-data-table,
         .main-data-table th,
         .main-data-table td {
@@ -408,31 +304,37 @@
 
         .main-data-table {
             width: 100% !important;
-            table-layout: auto !important; /* Allow browser to calculate widths */
+            table-layout: auto !important;
         }
 
         .main-data-table th,
         .main-data-table td {
             padding: 6px 4px !important;
-            font-size: 11px !important;
+            font-size: 10px !important;
         }
 
-        .header-row {
-            display: flex !important;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100% !important;
+        .main-data-table thead {
+            display: table-header-group; 
         }
 
-        /* Remove fixed layout from department table too */
-        .department-info-table {
-            width: 100% !important;
-            table-layout: auto !important;
+        .summary-table,
+        .summary-table th,
+        .summary-table td {
+            border: 1px solid #000 !important;
+        }
+
+        .main-data-table tr,
+        .summary-table tr,
+        .department-info-table tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        .report-header {
+            background: white !important;
+            border-bottom: 2px solid #000 !important;
         }
     }
-
-    
 </style>
 
 <title>{{ trans('app.daily_payment_receipt_report') }} | JPS</title>
@@ -444,11 +346,10 @@
 
     <section>
         <div class="report-container">
-           <table class="main-data-table" style="width: 100%; border-collapse: collapse; text-align: center;">
+            <table class="report-wrapper">
                 <thead>
                     <tr>
                         <td>
-                            <!-- Header Section -->
                             <div class="report-header">
                                 <div class="header-row">
                                     <div class="date-time-info">
@@ -464,7 +365,7 @@
                                         </strong></p>
                                     </div>
                                     <div class="page-info">
-                                        <p><strong>MUKA SURAT : 1/1</strong></p>
+                                        <p><strong></strong></p>
                                     </div>
                                 </div>
 
@@ -497,7 +398,7 @@
 
                 <tbody>
                     <tr>
-                        <td>
+                        <td style="padding: 0;">
                             <!-- Main Data Section -->
                             <div style="padding: 0 20px;">
                                 <table class="main-data-table">
@@ -514,9 +415,7 @@
                                             <th>KOD HASIL</th>
                                             <th>Amaun (RM)</th>
                                             <th>MOD TERIMAAN</th>
-                                            <!-- <th>JENIS KAD</th> -->
                                             <th>KATEGORI TRANSAKSI PERBANKAN</th>
-                                            <!-- <th>JUMLAH CAJ KOMISYEN (RM)</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -530,14 +429,13 @@
                                                 $isReprint = strtolower(trim($application->payment_type ?? '')) === 'reprint';
                                                 $isThirdParty = strtolower(trim($application->payment_type ?? '')) === 'third_party';
                                                 
-                                                // For reprint, use full amount; otherwise split
-                                                 if ($isReprint || $isThirdParty) {
-                                                        $amount = $application->payment_amount;
-                                                    } else {
-                                                        $firstHalf = floor($application->payment_amount * 100 / 2) / 100;
-                                                        $secondHalf = $application->payment_amount - $firstHalf;
-                                                        $amount = $firstHalf; 
-                                                    }
+                                                if ($isReprint || $isThirdParty) {
+                                                    $amount = $application->payment_amount;
+                                                } else {
+                                                    $firstHalf = floor($application->payment_amount * 100 / 2) / 100;
+                                                    $secondHalf = $application->payment_amount - $firstHalf;
+                                                    $amount = $firstHalf; 
+                                                }
                                                 
                                                 $method = $application->methods ?? '';
                                                 if (stripos($method, 'FPX_B2B') !== false) {
@@ -565,10 +463,7 @@
                                                 }
                                                 $totalCharges += $charge;
                                                 
-                                                // Determine KOD HASIL based on payment type
-                                                 $kodHasil = ($isReprint || $isThirdParty) ? 'H0272499' : 'H0161304';
-                                                
-                                                // Determine rowspan based on payment type
+                                                $kodHasil = ($isReprint || $isThirdParty) ? 'H0272499' : 'H0161304';
                                                 $rowspan = ($isReprint || $isThirdParty) ? '1' : '2';
                                             @endphp
                                             
@@ -602,13 +497,10 @@
                                                         EFT
                                                     @endif
                                                 </td>
-                                                <!-- <td rowspan="{{ $rowspan }}">N/A</td> -->
                                                 <td rowspan="{{ $rowspan }}">{{ $transactionCategory }}</td>
-                                                <!-- <td rowspan="{{ $rowspan }}">{{ $transactionCategory != 'N/A' ? number_format($charge, 2) : 'N/A' }}</td> -->
                                             </tr>
                                             
                                             @if (!$isReprint && !$isThirdParty)
-                                                {{-- Only show second row if NOT reprint AND NOT third_party --}}
                                                 <tr>
                                                     <td>L453</td>
                                                     <td>{{ $kodHasil }}</td>
@@ -621,7 +513,205 @@
                                         <tr style="background-color: #f0f0f0; font-weight: bold;">
                                             <td colspan="9" style="text-align: right;">JUMLAH :</td>
                                             <td>{{ number_format($grandTotal, 2) }}</td>
-                                            <td colspan="3" style="text-align: right;"></td>
+                                            <td colspan="2" style="text-align: right;"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Summary Section 1: Ringkasan Terimaan Mengikut Kod Hasil -->
+                            <div style="padding: 0 20px; margin-top: 10px;">
+                                <h6>Ringkasan Terimaan Mengikut Kod Hasil</h6>
+                                <table class="summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Kod Hasil</th>
+                                            <th>Vot Dana</th>
+                                            <th>Amaun(RM)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $nonReprintAmount = $grandTotal - $totalReprintAmount;
+                                            $firstHalf = floor($nonReprintAmount * 100 / 2) / 100;
+                                            $secondHalf = $nonReprintAmount - $firstHalf;
+                                        @endphp
+                                        
+                                        <tr>
+                                            <td>1</td>
+                                            <td>H0161304</td>
+                                            <td>G001</td>
+                                            <td>{{ number_format($firstHalf, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>L453</td>
+                                            <td>{{ number_format($secondHalf, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>H0272499</td>
+                                            <td>G001</td>
+                                            <td>{{ number_format($totalReprintAmount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                                            <td><strong>{{ number_format($grandTotal, 2) }}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Summary Section 2: Ringkasan Terimaan Mengikut Mod Terimaan -->
+                            <div style="padding: 0 20px;">
+                                <h6>Ringkasan Terimaan Mengikut Mod Terimaan</h6>
+                                <table class="summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Ringkasan Terimaan</th>
+                                            <th>Bil Rekod</th>
+                                            <th>Amaun(RM)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $eftCount = 0;
+                                            $eftAmount = 0;
+                                            $chequeCount = 0;
+                                            $chequeAmount = 0;
+                                            $bankDraftCount = 0;
+                                            $bankDraftAmount = 0;
+
+                                            foreach ($applications as $application) {
+                                                $method = $application->methods ?? '';
+                                                $amount = $application->payment_amount ?? 0;
+
+                                                if (
+                                                    stripos($method, 'EFT') !== false || 
+                                                    stripos($method, 'transfer') !== false || 
+                                                    stripos($method, 'FPX_B2B') !== false || 
+                                                    stripos($method, 'FPX_B2C') !== false
+                                                ) {
+                                                    $eftCount++;
+                                                    $eftAmount += $amount;
+                                                }
+
+                                                if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
+                                                    $chequeCount++;
+                                                    $chequeAmount += $amount;
+                                                }
+
+                                                if (stripos($method, 'bank_draf') !== false) {
+                                                    $bankDraftCount++;
+                                                    $bankDraftAmount += $amount;
+                                                }
+                                            }
+                                        @endphp
+
+                                        <tr>
+                                            <td>1</td>
+                                            <td>EFT</td>
+                                            <td>{{ $eftCount }}</td>
+                                            <td>{{ number_format($eftAmount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>CEK/BANK DRAF</td>
+                                            <td>{{ $chequeCount + $bankDraftCount }}</td>
+                                            <td>{{ number_format($chequeAmount + $bankDraftAmount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                                            <td><strong>{{ $eftCount + $chequeCount + $bankDraftCount }}</strong></td>
+                                            <td><strong>{{ number_format($eftAmount + $chequeAmount + $bankDraftAmount, 2) }}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Summary Section 3: Ringkasan Terimaan Mengikut Mod Transaksi Perbankan -->
+                            <div style="padding: 0 20px;">
+                                <h6>Ringkasan Terimaan Mengikut Mod Transaksi Perbankan</h6>
+                                <table class="summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Ringkasan Mod Transaksi Perbankan</th>
+                                            <th>Bil Rekod</th>
+                                            <th>Amaun(RM)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $b2bCount = 0;
+                                            $b2bAmount = 0;
+                                            $b2cCount = 0;
+                                            $b2cAmount = 0;
+                                            $baucarCount = 0;
+                                            $baucarAmount = 0;
+                                            $manualPaymentCount = 0;
+                                            $manualPaymentAmount = 0;
+
+                                            foreach ($applications as $application) {
+                                                $method = $application->methods ?? '';
+                                                $amount = $application->payment_amount ?? 0;
+                                                $accountTypeName = isset($application->account_type_name) 
+                                                    ? strtoupper(trim($application->account_type_name)) 
+                                                    : '';
+
+                                                if (stripos($method, 'FPX_B2B') !== false) {
+                                                    $b2bCount++;
+                                                    $b2bAmount += $amount;
+                                                }
+                                                elseif (stripos($method, 'FPX_B2C') !== false) {
+                                                    $b2cCount++;
+                                                    $b2cAmount += $amount;
+                                                }
+                                                elseif (stripos($method, 'bank_draf') !== false || stripos($method, 'cheque') !== false) {
+                                                    $manualPaymentCount++;
+                                                    $manualPaymentAmount += $amount;
+                                                }
+                                                elseif ($accountTypeName === 'AGENSI KERAJAAN') {
+                                                    $baucarCount++;
+                                                    $baucarAmount += $amount;
+                                                }
+                                            }
+
+                                            $totalCount = $b2bCount + $b2cCount + $baucarCount + $manualPaymentCount;
+                                            $totalAmount = $b2bAmount + $b2cAmount + $baucarAmount + $manualPaymentAmount;
+                                        @endphp
+
+                                        <tr>
+                                            <td>1</td>
+                                            <td>B2B</td>
+                                            <td>{{ $b2bCount }}</td>
+                                            <td>{{ number_format($b2bAmount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>B2C</td>
+                                            <td>{{ $b2cCount }}</td>
+                                            <td>{{ number_format($b2cAmount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>BAUCAR BAYARAN AGENSI KERAJAAN</td>
+                                            <td>{{ $baucarCount }}</td>
+                                            <td>{{ number_format($baucarAmount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4</td>
+                                            <td>PEMBAYARAN MANUAL</td>
+                                            <td>{{ $manualPaymentCount }}</td>
+                                            <td>{{ number_format($manualPaymentAmount, 2) }}</td>
+                                        </tr>
+                                        <tr style="background-color: #f0f0f0;">
+                                            <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
+                                            <td><strong>{{ $totalCount }}</strong></td>
+                                            <td><strong>{{ number_format($totalAmount, 2) }}</strong></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -631,219 +721,6 @@
                 </tbody>
             </table>
 
-            <!-- Static Summary Section 2: Ringkasan Terimaan Mengikut Kod Hasil -->
-            <div style="padding: 0 20px; margin-top: 10px;" >
-                <h6>Ringkasan Terimaan Mengikut Kod Hasil</h6>
-                <table class="summary-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Kod Hasil</th>
-                            <th>Vot Dana</th>
-                            <th>Amaun(RM)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @php
-                        // Calculate the accurate split for non-reprint amount
-                        $nonReprintAmount = $grandTotal - $totalReprintAmount;
-                        $firstHalf = floor($nonReprintAmount * 100 / 2) / 100;
-                        $secondHalf = $nonReprintAmount - $firstHalf;
-                    @endphp
-                    
-                    <tr>
-                        <td>1</td>
-                        <td>H0161304</td>
-                        <td>G001</td>
-                        <td>{{ number_format($firstHalf, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td>L453</td>
-                        <td>{{ number_format($secondHalf, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>H0272499</td>
-                        <td>G001</td>
-                        <td>{{ number_format($totalReprintAmount, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="text-align:end;"><strong>JUMLAH :</strong></td>
-                        <td><strong>{{ number_format($grandTotal, 2) }}</strong></td>
-                    </tr>
-                </tbody>
-                </table>
-            </div>
-
-            <div style="padding: 0 20px;">
-                <h6>Ringkasan Terimaan Mengikut Mod Terimaan</h6>
-                <table class="summary-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Ringkasan Terimaan</th>
-                            <th>Bil Rekod</th>
-                            <th>Amaun(RM)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        @php
-                            // Initialize EFT payment statistics
-                            $eftCount = 0;
-                            $eftAmount = 0;
-
-                            // Initialize Cheque payment statistics
-                            $chequeCount = 0;
-                            $chequeAmount = 0;
-
-                            $bankDraftCount= 0;
-                            $bankDraftAmount=0;
-
-                            foreach ($applications as $application) {
-                                $method = $application->methods ?? '';
-                                $amount = $application->payment_amount ?? 0;
-
-                                // Count all EFT (including FPX_B2B, FPX_B2C, and normal EFT)
-                                if (
-                                    stripos($method, 'EFT') !== false || 
-                                    stripos($method, 'transfer') !== false || 
-                                    stripos($method, 'FPX_B2B') !== false || 
-                                    stripos($method, 'FPX_B2C') !== false
-                                ) {
-                                    $eftCount++;
-                                    $eftAmount += $amount;
-                                }
-
-                                // Count all Cheque payments
-                                if (stripos($method, 'cheque') !== false || stripos($method, 'cek') !== false) {
-                                    $chequeCount++;
-                                    $chequeAmount += $amount;
-                                }
-
-                                if (stripos($method, 'bank_draf') !== false || stripos($method, 'bank_draf') !== false) {
-                                    $bankDraftCount++;
-                                    $bankDraftAmount += $amount;
-                                }
-                            }
-                        @endphp
-
-                        <tr>
-                            <td>1</td>
-                            <td>EFT</td>
-                            <td>{{ $eftCount }}</td>
-                            <td>{{ number_format($eftAmount, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>CEK/BANK DRAF</td>
-                            <td>{{ $chequeCount + $bankDraftCount }}</td>
-                            <td>{{ number_format($chequeAmount + $bankDraftAmount, 2) }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
-                            <td><strong>{{ $eftCount + $chequeCount + $bankDraftCount }}</strong></td>
-                            <td><strong>{{ number_format($eftAmount + $chequeAmount + $bankDraftAmount, 2) }}</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Static Summary Section 2: Ringkasan Terimaan Mengikut Mod Transaksi Perbankan -->
-            <div style="padding: 0 20px;">
-                <h6>Ringkasan Terimaan Mengikut Mod Transaksi Perbankan</h6>
-                <table class="summary-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Ringkasan Mod Transaksi Perbankan</th>
-                            <th>Bil Rekod</th>
-                            <th>Amaun(RM)</th>
-                        </tr>
-                    </thead>
-                     <tbody>
-                            @php
-                                // Initialize counters and totals
-                                $b2bCount = 0;
-                                $b2bAmount = 0;
-                                $b2cCount = 0;
-                                $b2cAmount = 0;
-                                $baucarCount = 0;
-                                $baucarAmount = 0;
-                                $manualPaymentCount = 0;
-                                $manualPaymentAmount = 0;
-
-                                foreach ($applications as $application) {
-                                    $method = $application->methods ?? '';
-                                    $amount = $application->payment_amount ?? 0;
-                                    $accountTypeName = isset($application->account_type_name) 
-                                        ? strtoupper(trim($application->account_type_name)) 
-                                        : '';
-
-                                    // ✅ B2B
-                                    if (stripos($method, 'FPX_B2B') !== false) {
-                                        $b2bCount++;
-                                        $b2bAmount += $amount;
-                                    }
-                                    // ✅ B2C
-                                    elseif (stripos($method, 'FPX_B2C') !== false) {
-                                        $b2cCount++;
-                                        $b2cAmount += $amount;
-                                    }
-                                    // ✅ MANUAL PAYMENT (Cheque + Bank Draft)
-                                    elseif (stripos($method, 'bank_draf') !== false || stripos($method, 'cheque') !== false) {
-                                        $manualPaymentCount++;
-                                        $manualPaymentAmount += $amount;
-                                    }
-                                    // ✅ BAUCAR BAYARAN (for agency users)
-                                    elseif ($accountTypeName === 'AGENSI KERAJAAN') {
-                                        $baucarCount++;
-                                        $baucarAmount += $amount;
-                                    }
-                                }
-
-                                // Grand total (B2B + B2C + Baucar + Manual Payment)
-                                $totalCount = $b2bCount + $b2cCount + $baucarCount + $manualPaymentCount;
-                                $totalAmount = $b2bAmount + $b2cAmount + $baucarAmount + $manualPaymentAmount;
-                            @endphp
-
-                            <tr>
-                                <td>1</td>
-                                <td>B2B</td>
-                                <td>{{ $b2bCount }}</td>
-                                <td>{{ number_format($b2bAmount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>B2C</td>
-                                <td>{{ $b2cCount }}</td>
-                                <td>{{ number_format($b2cAmount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>BAUCAR BAYARAN AGENSI KERAJAAN</td>
-                                <td>{{ $baucarCount }}</td>
-                                <td>{{ number_format($baucarAmount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>PEMBAYARAN MANUAL</td>
-                                <td>{{ $manualPaymentCount }}</td>
-                                <td>{{ number_format($manualPaymentAmount, 2) }}</td>
-                            </tr>
-                            <tr style="background-color: #f0f0f0;">
-                                <td colspan="2" style="text-align:end;"><strong>JUMLAH :</strong></td>
-                                <td><strong>{{ $totalCount }}</strong></td>
-                                <td><strong>{{ number_format($totalAmount, 2) }}</strong></td>
-                            </tr>
-                        </tbody>
-
-                </table>
-            </div>
-
-            <!-- Print Button -->
             <div class="action-section" id="btn-section">
                 <button class="btn-prints" onclick="window.location.href='{{ route('daily_receipt_report_type_finance') }}'">
                     Kembali
@@ -851,6 +728,5 @@
                 <button onclick="window.print()" class="btn-print">{{ trans('app.print') }}</button>
             </div>
         </div>
-
     </section>
 @endsection
