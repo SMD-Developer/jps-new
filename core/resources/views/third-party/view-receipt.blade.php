@@ -1,146 +1,14 @@
 @extends('third-party.layouts.app')
-
-<style>
-    /* Keep all existing styles from document 14 */
-    body {
-        font-family: sans-serif;
-        line-height: 1.5;
-        margin: 20px;
-        color: #333;
-        font-weight: 700;
-    }
-
-    @import url(https://fonts.googleapis.com/css?family=Denk+One);
-    @import url(https://fonts.googleapis.com/css?family=Arimo);
-
-     .rotingtxt {
-        -webkit-transform: rotate(331deg);
-        -moz-transform: rotate(331deg);
-        -o-transform: rotate(331deg);
-        transform: rotate(331deg);
-        font-size: 10em;
-        color: #cccccc;
-        position: absolute;
-        font-family: 'Denk One', sans-serif;
-        text-transform: uppercase;
-        /*padding-left: 10%;*/
-        /*display: flex;*/
-        /*text-align: center;*/
-        font-weight: 700;
-        top: 26rem;
-        left: 25%;
-        opacity: 0.5;
-
-    }
-    
-      .receipt-table th {
-        font-size: 14px; 
-    }
-    
-    
-     .receipt-footer .info-row {
-        display: flex;
-        margin-bottom: 5px;
-        align-items: flex-start;
-    }
-
-    .receipt-footer .label {
-        width: 150px;
-        flex-shrink: 0;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .receipt-footer .label::after {
-        content: ":";
-        margin-left: 5px;
-    }
-
-    .receipt-footer .value {
-        flex-grow: 1;
-        margin-left: 10px;
-        align-self: flex-start;
-    }
-    
-    .receipt-header .info-row {
-        display: flex;
-        margin-bottom: 5px;
-        align-items: flex-start;
-    }
-
-    .receipt-header .label {
-        width: 202px;
-        flex-shrink: 0;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .receipt-header .label::after {
-        content: ":";
-        margin-left: 5px;
-    }
-
-    .receipt-header .value {
-        flex-grow: 1;
-        margin-left: 10px;
-        align-self: flex-start;
-    }
-
-    .content {
-        background-color: #f4f6f9;
-        margin-bottom: 50px;
-    }
-
-    .container {
-        padding-inline: 120px !important;
-
-    }
-
-    .row1 {
-        display: flex;
-        justify-content: center;
-    }
-
-    table,
-    th,
-    td {
-        border: 1px solid black !important;
-        border-collapse: collapse;
-    }
-
-    button {
-        border-radius: 20px !important;
-        padding: 7px 50px !important;
-    }
-
-    button.btn.btn-primary.float-right {
-        width: max-content;
-    }
-
-    .custome-text{
-        font-size:14px;
-    }
-    
-    @media print {
-        #printButton, #downloadButton, #backButton {
-            display: none !important;
-        }
-    }
-</style>
-
-<title>@lang('app.receipt') | JPS - Third Party</title>
-
+@section('title')
+    @lang('app.receipt')
+@endsection
 @section('content')
     <div class="col-md-12 content-header">
         <h5><i class="fa fa-file"></i> @lang('app.receipt')</h5>
     </div>
     
-    <section class="content">
-        <div class="container" id="receipt-content">
+    <section class="content contents">
+        <div class="container containers" id="receipt-content">
             <div class="row">
                 <div class="col-4 mt-4 ml-auto text-right pr-0">
                     <p class="mb-0">(Kew.38E 03-2021)</p>
@@ -319,19 +187,20 @@
             </div>
         </div>
         
-        <div class="container pb-5">
+        <div class="container containers pb-5">
             <div class="row mb-5 justify-content-end">
-                <div class="col-auto">
-                    <a href="{{ url()->previous() }}" class="btn btn-success" style="border-radius: 20px;
-                      padding: 8px 50px 6px 50px;">
+                <div class="col-auto no-print">
+                    <a href="{{ url()->previous() }}" 
+                    class="btn btn-success" 
+                    style="border-radius: 20px !important; width: 155px;">
                         Kembali
                     </a>
                 </div>
                 <div class="col-auto" style="display:none;">
-                    <button type="button" id="downloadButton" class="btn btn-danger">@lang('app.download')</button>
+                    <button type="button" id="downloadButton" class="btn btn-danger btnprints no-print">@lang('app.download')</button>
                 </div>
                 <div class="col-auto">
-                    <button type="button" id="printButton" class="btn btn-primary">@lang('app.print_receipt')</button>
+                    <button type="button" id="printButton" class="btn btn-primary btnprints" >@lang('app.print_receipt')</button>
                 </div>
             </div>
         </div>
