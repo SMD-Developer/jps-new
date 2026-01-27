@@ -642,7 +642,7 @@ background-color: red;
                                 <div class="col-md-4 col-6">
                                     <div class="form-group inlin">
                                         <span class="pe-3"><b> : </b></span>
-                                        <input type="tel" class="form-control" name="mobileNumber" value="{{old('mobileNumber')}}">                                            
+                                        <input type="tel" class="form-control" name="mobileNumber" value="{{old('mobileNumber')}}" maxlength="12">                                               
                                     </div>
                                     <span id="mobileNumber-error" class="text-dangerr text-end"></span>
                                 </div>
@@ -1111,15 +1111,15 @@ $(document).ready(function () {
     // Mobile Number Validation (Real-time)
     $('input[name="mobileNumber"]').on('input', function(e) {
         let value = $(this).val().replace(/[^0-9]/g, '');
-        if (value.length > 10) value = value.substring(0, 10);
+        if (value.length > 12) value = value.substring(0, 12);
         $(this).val(value);
         
         $('#mobileNumber-error').removeClass('text-info text-success').addClass('text-dangerr');
         $(this).removeClass('border-danger border-success');
         
         if (value.length > 0 && value.length < 10) {
-            $('#mobileNumber-error').text(`${value.length}/10 digits entered`).removeClass('text-dangerr').addClass('text-info').show();
-        } else if (value.length === 10) {
+            $('#mobileNumber-error').text(`${value.length}/10 digits minimum`).removeClass('text-dangerr').addClass('text-info').show();
+        } else if (value.length >= 10 && value.length <= 12) {
             $('#mobileNumber-error').text('✓ Valid mobile number').removeClass('text-dangerr text-info').addClass('text-success').show();
             $(this).addClass('border-success');
         } else if (value.length === 0) {
@@ -1138,15 +1138,15 @@ $(document).ready(function () {
         if (!mobileValue) {
             errorElement.text('Nombor Telefon Bimbit diperlukan').show();
             $(this).addClass('border-danger');
-        } else if (!/^[0-9]{10}$/.test(mobileValue)) {
-            errorElement.text('Nombor telefon bimbit mesti tepat 10 digit').show();
+        } else if (!/^[0-9]{10,12}$/.test(mobileValue)) {
+            errorElement.text('Nombor telefon bimbit mesti antara 10 hingga 12 digit').show();
             $(this).addClass('border-danger');
         } else {
             errorElement.text('').hide();
             $(this).removeClass('border-danger').addClass('border-success');
         }
     });
-    
+
     $('input[name="mobileNumber"]').on('focus', function() {
         $(this).removeClass('border-danger');
         const errorElement = $('#mobileNumber-error');
@@ -1154,9 +1154,11 @@ $(document).ready(function () {
             errorElement.text('').hide();
         }
     });
-    
+
     $('input[name="mobileNumber"]').on('keypress', function(e) {
+        // Allow: backspace, delete, tab, escape, enter
         if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+            // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
             (e.keyCode === 65 && e.ctrlKey === true) ||
             (e.keyCode === 67 && e.ctrlKey === true) ||
             (e.keyCode === 86 && e.ctrlKey === true) ||
@@ -1164,11 +1166,13 @@ $(document).ready(function () {
             return;
         }
         
+        // Ensure that it is a number and stop the keypress if not
         if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
             e.preventDefault();
         }
         
-        if ($(this).val().length >= 10) {
+        // Stop input if length is already 12
+        if ($(this).val().length >= 12) {
             e.preventDefault();
         }
     });
@@ -1318,10 +1322,14 @@ $(document).ready(function () {
             $('#mobileNumber-error').text('Nombor Telefon Bimbit diperlukan').removeClass('text-info text-success').addClass('text-dangerr').show();
             $('input[name="mobileNumber"]').addClass('border-danger');
             isValid = false;
-        } else if (!/^[0-9]{10}$/.test(mobileNumber)) {
-            $('#mobileNumber-error').text('Nombor telefon bimbit mesti tepat 10 digit').removeClass('text-info text-success').addClass('text-dangerr').show();
+        } else if (!/^[0-9]{10,12}$/.test(mobileNumber)) {
+            $('#mobileNumber-error').text('Nombor telefon bimbit mesti antara 10 hingga 12 digit').removeClass('text-info text-success').addClass('text-dangerr').show();
             $('input[name="mobileNumber"]').addClass('border-danger');
             isValid = false;
+        } else {
+            // Clear error if valid
+            $('#mobileNumber-error').text('').hide();
+            $('input[name="mobileNumber"]').removeClass('border-danger');
         }
         
         if (!$('#terms').is(':checked')) {
