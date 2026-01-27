@@ -1,0 +1,120 @@
+.rotingtxt {
+        -webkit-transform: rotate(331deg);
+        -moz-transform: rotate(331deg);
+        -o-transform: rotate(331deg);
+        transform: rotate(331deg);
+        font-size: 10em;
+        color: #cccccc;
+        position: absolute;
+        font-family: 'Denk One', sans-serif;
+        text-transform: uppercase;
+        /*padding-left: 10%;*/
+        /*display: flex;*/
+        /*text-align: center;*/
+        font-weight: 700;
+        top: 26rem;
+        left: 25%;
+        opacity: 0.5;
+
+    }
+    
+      .receipt-table th {
+        font-size: 14px; 
+    }
+    
+    
+     .receipt-footer .info-row {
+        display: flex;
+        margin-bottom: 5px;
+        align-items: flex-start;
+    }
+
+    .receipt-footer .label {
+        width: 150px;
+        flex-shrink: 0;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .receipt-footer .label::after {
+        content: ":";
+        margin-left: 5px;
+    }
+
+    .receipt-footer .value {
+        flex-grow: 1;
+        margin-left: 10px;
+        align-self: flex-start;
+    }
+    
+    .receipt-header .info-row {
+        display: flex;
+        margin-bottom: 5px;
+        align-items: flex-start;
+    }
+
+    .receipt-header .label {
+        width: 202px;
+        flex-shrink: 0;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .receipt-header .label::after {
+        content: ":";
+        margin-left: 5px;
+    }
+
+    .receipt-header .value {
+        flex-grow: 1;
+        margin-left: 10px;
+        align-self: flex-start;
+    }
+
+    .contents {
+        background-color: #f4f6f9;
+        margin-bottom: 50px;
+    }
+
+    .containers {
+        padding-inline: 120px !important;
+
+    }
+
+    .row1 {
+        display: flex;
+        justify-content: center;
+    }
+
+    .receipt-table,
+    .receipt-table th,
+    .receipt-table td {
+        border: 1px solid black !important;
+        border-collapse: collapse;
+    }
+
+    .btnprints {
+        border-radius: 20px !important;
+        padding: 7px 50px !important;
+    }
+
+    .btnprints {
+        width: max-content;
+    }
+
+    .custome-text{
+        font-size:14px;
+    }
+    
+    @media print {
+        #printButton, #downloadButton, #backButton {
+            display: none !important;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
