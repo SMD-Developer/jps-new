@@ -742,7 +742,6 @@ body {
 </nav>
 
 
-{{-- Banner Modal/Popup - Multiple Banners Sequential Display --}}
 @php
     $banner = DB::table('settings')
                 ->select('banner_images', 'banner_enabled', 'banner_title', 'banner_link', 
@@ -755,13 +754,27 @@ body {
     if ($banner && $banner->banner_enabled && $banner->banner_images) {
         $now = \Carbon\Carbon::now();
         $showBanner = true;
-        
-        // Check date range if set
-        if ($banner->banner_start_date && $now->lt(\Carbon\Carbon::parse($banner->banner_start_date))) {
-            $showBanner = false;
+    
+        if (!empty($banner->banner_start_date) && $banner->banner_start_date !== '0000-00-00' && $banner->banner_start_date !== '0000-00-00 00:00:00') {
+            try {
+                $startDate = \Carbon\Carbon::parse($banner->banner_start_date);
+                if ($now->lt($startDate)) {
+                    $showBanner = false;
+                }
+            } catch (\Exception $e) {
+                // Invalid date format, ignore it
+            }
         }
-        if ($banner->banner_end_date && $now->gt(\Carbon\Carbon::parse($banner->banner_end_date))) {
-            $showBanner = false;
+        
+        if (!empty($banner->banner_end_date) && $banner->banner_end_date !== '0000-00-00' && $banner->banner_end_date !== '0000-00-00 00:00:00') {
+            try {
+                $endDate = \Carbon\Carbon::parse($banner->banner_end_date);
+                if ($now->gt($endDate)) {
+                    $showBanner = false;
+                }
+            } catch (\Exception $e) {
+                // Invalid date format, ignore it
+            }
         }
         
         // Decode JSON string to array
