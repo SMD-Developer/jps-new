@@ -506,7 +506,6 @@
                                         </strong></p>
                                     </div>
                                     <div class="page-info">
-                                        <p><strong>MUKA SURAT : 1/1</strong></p>
                                     </div>
                                 </div>
 
@@ -559,6 +558,10 @@
                                     </thead>
                                     <tbody>
                                          @foreach ($applications as $index => $application)
+                                            @php
+                                                $isThirdParty = strtolower(trim($application->payment_type ?? '')) === 'third_party';
+                                            @endphp
+
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>
@@ -576,7 +579,13 @@
 
                                                 <td>{{ strtoupper($application->refference_no ?? 'N/A') }}</td>
                                                 <td>{{ strtoupper($application->account_type_name) }}</td>
-                                                <td>{{ strtoupper($application->applicant ?? 'N/A') }}</td>
+                                                <td>
+                                                    @if($isThirdParty && !empty($application->buyer_name))
+                                                        {{ strtoupper($application->buyer_name) }}
+                                                    @else
+                                                        {{ strtoupper($application->applicant ?? 'N/A') }}
+                                                    @endif
+                                                </td>
                                                 <td>{{ $application->land_lot ?? 'N/A' }},{{ strtoupper($application->division_name) }}, DAERAH {{ strtoupper($application->district_name) }}, SELANGOR</td>
                                                 <td>
                                                     @php
