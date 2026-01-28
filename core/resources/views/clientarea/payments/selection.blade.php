@@ -223,7 +223,7 @@
 <section class="content">
     <div class="payment-form-container">
         @if(request()->get('type') === 'reprint')
-        <div class="reprint-notice">
+        <div class="reprint-notice" style="display:none;">
         </div>
         @endif
         
@@ -309,7 +309,7 @@
                 <button type="submit" class="btn-proceed" id="proceedBtn" disabled>
                     <span id="btnText">
                         @if(request()->get('type') === 'reprint')
-                            Pay RM 1.00 for Reprint
+                            Teruskan
                         @else
                             Teruskan
                         @endif
@@ -319,18 +319,30 @@
                     Batal
                 </button>
             </div>
-            <!-- Payment Instructions -->
+             <!-- Payment Instructions -->
             <div class="payment-instructions mt-2">
                 <h6 class="instructions-title">
                     <i class="bi bi-info-circle-fill"></i> PANDUAN PEMBAYARAN
                 </h6>
-                <ol class="instructions-list">
-                    <li>Pastikan anda tidak menutup laman web semasa pembayaran sedang dilakukan.</li>
-                    <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang ”Lihat Resit” untuk mencetak resit ASAL. (Resit Asal akan dikeluarkan sekali sahaja).</li>
-                    <li>Cetakan Salinan Resit boleh dibuat di Menu Sejarah Caruman.</li>
-                    <li>Untuk Pembayaran B2B, resit ASAL boleh didapati di Menu Sejarah Caruman setelah mendapat pengesahan.</li>
-                    <li>Sila emel kepada  <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a> sekiranya memerlukan bantuan dan maklumat lanjut.</li>
-                </ol>
+                
+                @if(request()->get('type') === 'reprint')
+                    <ol class="instructions-list">
+                        <li>Pastikan anda tidak menutup laman web semasa pembayaran sedang dilakukan.</li>
+                        <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang ”Lihat Resit” untuk mencetak resit SALINAN.</li>
+                        <li>Bagi Resit Bayaran RM10.00, boleh didapati di Menu Sejarah Caruman. Sila pastikan resit bayaran dicetak.</li>
+                        <li>Untuk Pembayaran B2B, resit SALINAN boleh didapati di Menu Sejarah Caruman setelah mendapat pengesahan.</li>
+                        <li>Sila emel kepada  <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a> sekiranya memerlukan bantuan dan maklumat lanjut.</li>
+                    </ol>
+                @else
+                    <!-- Instructions for ORIGINAL PAYMENT -->
+                    <ol class="instructions-list">
+                        <li>Pastikan anda tidak menutup laman web semasa pembayaran sedang dilakukan.</li>
+                        <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang "Lihat Resit" untuk mencetak resit ASAL. (Resit Asal akan dikeluarkan sekali sahaja).</li>
+                        <li>Cetakan Salinan Resit boleh dibuat di Menu Sejarah Caruman.</li>
+                        <li>Untuk Pembayaran B2B, resit ASAL boleh didapati di Menu Sejarah Caruman setelah mendapat pengesahan.</li>
+                        <li>Sila emel kepada <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a> sekiranya memerlukan bantuan dan maklumat lanjut.</li>
+                    </ol>
+                @endif
             </div>
         </form>
     </div>
@@ -389,7 +401,7 @@ $(document).ready(function() {
         .then(data => {
             console.log('API Response:', data); 
             console.log('Banks:', data.banks);
-            let bankOptions = '<option value="">Select Bank</option>';
+            let bankOptions = '<option value="">Pilih Bank</option>';
             
             if (data.success && data.banks) {
                 const banksArray = Array.isArray(data.banks) ? data.banks : Object.entries(data.banks).map(([code, name]) => ({bank_code: code, bank_name: name}));
