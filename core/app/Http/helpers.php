@@ -246,13 +246,14 @@ if(! function_exists('getMenus')){
                             'route' => url('settings/banner'),
                             'menu_active' => FormFacade::menu_active('settings')
                             ],
+
+                            [
+                            'icon' => 'cogs',
+                            'text' => trans('Maintenance'),
+                            'route' => url('settings/maintenance'),
+                            'menu_active' => FormFacade::menu_active('maintenance')
+                            ],
         
-                            //  [
-                            //     'icon' => 'question',
-                            //     'text' => trans('app.question_management'),
-                            //     'route' => route('manage.question'),
-                            //     'menu_active' => Request::is('products/list') ? 'active' : null
-                            // ],
                         ]
                     ],
                     // [
@@ -1808,14 +1809,6 @@ if(! function_exists('getMenus')){
                 ]
             ]
         ];
-        // if(hasPermission('setting.view')){
-        //     $menus['main_menu']['menus'][] = [
-        //         'icon' => 'cogs',
-        //         'text' => trans('app.settings'),
-        //         'route' => url('settings/company'),
-        //         'menu_active' => FormFacade::menu_active('settings')
-        //     ];
-        // }
         
         $menus['account_menu'] = [
             'title' => trans('app.account_menu'),
@@ -1827,37 +1820,6 @@ if(! function_exists('getMenus')){
                     'menu_active' => request()->is('search') || request()->is('search/*') ? 'active' : '',
                     'permission' => 'filter-search'
                 ],
-               
-                // [
-                //         'icon' => 'credit-card',
-                //         'text' => trans('app.helpdesk'),
-                //         'route' => url('#'),
-                //         'active_dropdown' => active_dropdown_menu('expenses') ? 'menu-is-opening menu-open' : '',
-                //         'active_dropdown_menu' => active_dropdown_menu('expenses') ? 'block' : 'none',
-                //         'menu_active' => FormFacade::menu_active('expenses').' '.FormFacade::menu_active('expenses/category'),
-                //         'is_dropdown' => true,
-                //         'submenus' => [
-                //             [
-                //                 'icon' => 'user',
-                //                 'text' => trans('app.manual'),
-                //                 'route' =>  url('#'),
-                //                 'menu_active' => Request::is('expenses/list') ? 'active' : null
-                //             ],
-                //             [
-                //                 'icon' => 'support',
-                //                 'text' => trans('app.support'),
-                //                 'route' =>  url('#'),
-                //                 'menu_active' => Request::is('expenses/category') ? 'active' : null
-                //             ]
-                //         ]
-                //     ],
-                    
-                    // [
-                    //     'icon' => 'line-chart',
-                    //     'text' => trans('app.reports'),
-                    //     'route' => url('reports'),
-                    //     'menu_active' => FormFacade::menu_active('reports')
-                    // ],
                 [
                     'icon' => 'power-off',
                     'text' => trans('app.logout'),
@@ -2125,14 +2087,6 @@ if(! function_exists('getMenus')){
                 ]
             ]
         ];
-        // if(hasPermission('setting.view')){
-        //     $menus['main_menu']['menus'][] = [
-        //         'icon' => 'cogs',
-        //         'text' => trans('app.settings'),
-        //         'route' => url('settings/company'),
-        //         'menu_active' => FormFacade::menu_active('settings')
-        //     ];
-        // }
         
         $menus['account_menu'] = [
             'title' => trans('app.account_menu'),
@@ -2143,37 +2097,6 @@ if(! function_exists('getMenus')){
                     'route' => url('/search'),
                     'menu_active' => request()->is('search') || request()->is('search/*') ? 'active' : '',
                 ],
-               
-                // [
-                //         'icon' => 'credit-card',
-                //         'text' => trans('app.helpdesk'),
-                //         'route' => url('#'),
-                //         'active_dropdown' => active_dropdown_menu('expenses') ? 'menu-is-opening menu-open' : '',
-                //         'active_dropdown_menu' => active_dropdown_menu('expenses') ? 'block' : 'none',
-                //         'menu_active' => FormFacade::menu_active('expenses').' '.FormFacade::menu_active('expenses/category'),
-                //         'is_dropdown' => true,
-                //         'submenus' => [
-                //             [
-                //                 'icon' => 'user',
-                //                 'text' => trans('app.manual'),
-                //                 'route' =>  url('#'),
-                //                 'menu_active' => Request::is('expenses/list') ? 'active' : null
-                //             ],
-                //             [
-                //                 'icon' => 'support',
-                //                 'text' => trans('app.support'),
-                //                 'route' =>  url('#'),
-                //                 'menu_active' => Request::is('expenses/category') ? 'active' : null
-                //             ]
-                //         ]
-                //     ],
-                    
-                    // [
-                    //     'icon' => 'line-chart',
-                    //     'text' => trans('app.reports'),
-                    //     'route' => url('reports'),
-                    //     'menu_active' => FormFacade::menu_active('reports')
-                    // ],
                 [
                     'icon' => 'power-off',
                     'text' => trans('app.logout'),
@@ -2182,6 +2105,104 @@ if(! function_exists('getMenus')){
                 ]
             ]
         ];
+    }
+            // Report
+         else if($user->HasRole('Bendahari')){     
+         $menus = [
+            'main_menu' => [
+                'title' => trans('app.main_menu'),
+                'menus' => [  
+                    
+                    [
+                            'icon' => 'line-chart',
+                            'text' => trans('app.reports'),
+                            'route' => url('#'),
+                            'active_dropdown' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'menu-is-opening menu-open' : '',
+                            'active_dropdown_menu' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('daily-receipt-report-type-finance') || request()->is('receipt-void-report-search' , 'receipt-void-report') || request()->is('cash-book-report-finance') || request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'block' : 'none',
+                            'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') || request()->is('report-collection-contribution-ditch-by-district-search') || request()->is('report-collection-method-search') || request()->is('payment-summary-report-search') || request()->is('claim-contribution-report-search') ? 'active' : '',
+                            'is_dropdown' => true,
+                            'submenus' => [
+                                
+                                [
+                                'icon' => 'money',
+                                'text' => trans('app.report_list_application_ditch_contribution'),
+                                'route' =>  url('report-list-all-application-contribution-ditch-search'),
+                                'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
+                                'permission' => 'report.account.view-list',
+                                ],
+                                [
+                                'icon' => 'money',
+                                'text' => trans('app.report_collection_contribution_ditch_by_district'),
+                                'route' =>  url('report-collection-contribution-ditch-by-district-search'),
+                                'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
+                                'permission' => 'report.district.view-list'
+                                ],
+                                [
+                                'icon' => 'money',
+                                'text' => 'Laporan Status Pembayaran Caruman Parit',
+                                'route' =>  url('report-collection-method-search'),
+                                'menu_active' => request()->is('report-collection-method-search','report-collection-method-search') ? 'active' : '',
+                                'permission' => 'payment.status.report.list'
+                                ],
+                                [
+                                'icon' => 'money',
+                                'text' => trans('app.collection_payment_report'),
+                                'route' =>  url('#'),
+                                'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'menu-is-opening menu-open' : '',
+                                'active_dropdown_menu' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance')  ? 'block' : 'none',
+                                'menu_active' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('task-not-completed-finance') ? 'active' : '',
+                                'permission' => 'collection-payment.view-list',
+                                'is_dropdown' => true,
+                                'submenus' => [
+                                                [
+                                                    'icon' => 'file-text',
+                                                    'text' => trans('app.generate_a_collectors_statement'),
+                                                    'route' =>  url('collectors-statement-report'),
+                                                    'menu_active' => request()->is('collectors-statement-report') ? 'active' : '',
+                                                    'permission' => 'collection-payment.view-list'
+                                                ],
+                                                [
+                                                    'icon' => 'file-text',
+                                                    'text' => trans('app.assignments_not_taken'),
+                                                    'route' =>  url('approved-statement'),
+                                                    'menu_active' => request()->is('approved-statement') ? 'active' : '',
+                                                    'permission' => 'approved_statement'
+                                                ],
+                                                
+                                            ],
+                                
+                            ],
+                            
+                            [
+                                'icon' => 'money',
+                                'text' => trans('Laporan Terimaan Harian Mengikut Jenis'),
+                                'route' =>  url('daily-receipt-report-type-finance'),
+                                'menu_active' => request()->is('daily-receipt-report-type-finance') ? 'active' : '',
+                                'permission' => 'daily-payment-receipt.view-list',
+                            ],
+                            
+                            [
+                                'icon' => 'money',
+                                'text' => trans('app.summary_of_overall_receipt_report'),
+                                'route' =>  url('payment-summary-report-search'),
+                                'menu_active' => request()->is('payment-summary-report-search' ,'payment-summary-report-search') ? 'active' : '',
+                                'permission' => 'payment.summary.list'
+
+                            ],
+                            [
+                                'icon' => 'money',
+                                'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
+                                'route' =>  url('claim-contribution-report-search'),
+                                'menu_active' => request()->is('claim-contribution-report-search', 'claim-contribution-report-search') ? 'active' : '',
+                                'permission' => 'contribution-payment.view-list',
+                            ],
+                            
+                        ]
+                    ],
+                ]
+            ]
+        ];
+        
     }
     else{
         
