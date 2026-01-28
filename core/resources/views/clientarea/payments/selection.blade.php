@@ -208,7 +208,7 @@
 
             <!-- Payment Mode Dropdown -->
             <div class="form-row">
-                <label class="form-label">Mode Pembayaran:</label>
+                <label class="form-label">Mod Pembayaran:</label>
                 <select name="payment_mode" id="paymentModeSelect" class="form-select" required>
                     <option value="">Pilih Mod Pembayaran</option>
                     <option value="b2c">B2C (Business to Consumer)</option>
