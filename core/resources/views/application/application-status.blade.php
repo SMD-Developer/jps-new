@@ -1020,7 +1020,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="11" class="text-center">{{ trans('app.no_records_found') }}</td>
+                                            <td colspan="11" class="text-center">{{ trans('Tiada rekod permohonan') }}</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

@@ -38,7 +38,6 @@
                                        {{ (isset($setting) && $setting->banner_enabled) ? 'checked' : '' }}>
                                 <label class="custom-control-label" for="banner_enabled">Aktifkan Banner </label>
                             </div>
-                            <small class="form-text text-muted">Dayakan atau lumpuhkan paparan sepanduk pada papan pemuka pengguna</small>
                         </div>
                          <!-- Multiple Banner Images Upload -->
                         <div class="form-group">

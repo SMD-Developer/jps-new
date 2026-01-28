@@ -191,7 +191,7 @@ use Illuminate\Support\Str;
                     
                     <div class="form-group row mb-3">
                         <label for="question" class="col-sm-3 col-form-label">
-                            Solan<span class="text-danger">*</span>
+                            Soalan<span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-9">
                             <textarea class="form-control" id="question" name="question" rows="2" required></textarea>
