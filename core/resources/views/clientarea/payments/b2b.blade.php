@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="col-md-12 content-header">
-        <h5><i class="fa fa-credit-card" aria-hidden="true"></i> @lang('app.trench_contribution_bill')</h5>
+        <h5><i class="fa fa-credit-card" aria-hidden="true"></i> @lang('Maklumat Bayaran ')</h5>
     </div>
 
     <section class="content">
@@ -16,18 +16,18 @@
                     
                     <div class="card-body p-0">
                         <div class="bg-light p-3 border-bottom">
-                            <h6 class="text-center mb-0 text-dark">Payment Details</h6>
+                            <h6 class="text-center mb-0 text-dark">Butiran Pembayaran</h6>
                         </div>
                         
                         <div class="p-4">
                             <!-- Payment Information -->
                             <div class="row mb-4">
                                 <div class="col-md-8">
-                                    <h6 class="font-weight-bold">Bayaran Caruman</h6>
+                                    <h6 class="font-weight-bold">Keterangan</h6>
                                     <p class="text-muted mb-0">No Rujukan : {{ $referenceNo ?? 'Trench Contribution Payment' }}</p>
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <h6 class="font-weight-bold">Total Amount</h6>
+                                    <h6 class="font-weight-bold">Jumlah</h6>
                                     <p class="h5 text-primary mb-0">MYR {{ number_format($fpx_txnAmount, 2) }}</p>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                 <!-- Payment Button -->
                                 <div class="text-center mb-4">
                                     <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
-                                        <i class="fa fa-lock mr-2"></i>Proceed to FPX Payment
+                                        <i class="fa fa-lock mr-2"></i>Teruskan ke Pembayaran FPX
                                     </button>
                                 </div>
 

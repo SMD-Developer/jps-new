@@ -1,27 +1,64 @@
 @extends('third-party.layouts.app')
+<style>
+.payment-instructions {
+    background-color: #e7f3ff;
+    border-left: 4px solid #0066cc;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
 
+.instructions-title {
+    color: #0066cc;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instructions-title i {
+    font-size: 18px;
+}
+
+.instructions-list {
+    margin: 0;
+    padding-left: 20px;
+    color: #333;
+}
+
+.instructions-list li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.instructions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.instructions-list a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.instructions-list a:hover {
+    text-decoration: underline;
+}
+</style>
 @section('title', 'Third Party Payment Selection | JPS')
 
 @section('content')
 <div class="page-wrapper">
     <div class="payment-form-container">
         <!-- Header -->
-        <div class="text-center mb-4">
-            <p class="text-black mb-0 fw-bold">Document Print Payment Selection</p>
-        </div>
-
-        <!-- Third Party Notice -->
-        <div class="third-party-notice">
-            <i class="bi bi-info-circle-fill"></i>
-            <strong>Third Party Document Print Service</strong><br>
-            You are about to pay RM 1.00 for printing documents as a third party. 
-            This is a fixed service charge for document printing.
-        </div>
 
         <!-- FPX Header -->
         <div class="text-center mb-4">
             <h5 style="color: #0066cc;">
-                Pay with 
+                Pembayaran Dengan
                 <img src="{{ asset('assets/images/Logo-FPX.png') }}" 
                      alt="FPX Logo" 
                      class="fpx-logo-inline">
@@ -35,7 +72,7 @@
             
             <!-- Email Address -->
             <div class="form-row">
-                <label class="form-label">Email Address:</label>
+                <label class="form-label">Emel:</label>
                 <input type="email" name="email" class="form-control" 
                        value="{{ auth('third_party')->user()->email ?? '' }}" 
                        placeholder="Enter your email address" required>
@@ -43,9 +80,9 @@
 
             <!-- Payment Mode Dropdown -->
             <div class="form-row">
-                <label class="form-label">Payment Mode:</label>
+                <label class="form-label">Mod Pembayaran:</label>
                 <select name="payment_mode" id="paymentModeSelect" class="form-select" required>
-                    <option value="">Select Payment Mode</option>
+                    <option value="">Pilih Mod Pembayaran</option>
                     <option value="b2c">B2C (Business to Consumer)</option>
                     <option value="b2b">B2B (Business to Business)</option>
                 </select>
@@ -53,10 +90,10 @@
 
             <!-- Bank Selection Dropdown -->
             <div class="form-row" id="bankSelectionRow" style="display: none;">
-                <label class="form-label">Select Bank:</label>
+                <label class="form-label">Pilih Bank:</label>
                 <div style="flex: 1;">
                     <select name="selected_bank" id="bankSelect" class="form-select" style="width: 100%;">
-                        <option value="">Select Bank</option>
+                        <option value="">Pilih Bank</option>
                     </select>
                     <div class="bank-list-note">
                         <i class="bi bi-info-circle"></i> 
@@ -68,7 +105,7 @@
 
             <!-- Payment Amount -->
             <div class="form-row">
-                <label class="form-label">Amount:</label>
+                <label class="form-label">Jumlah:</label>
                 <input type="text" class="form-control" 
                        value="RM {{ number_format($amount, 2) }}" id="displayAmount"
                        readonly style="background-color: #f8f9fa; font-weight: bold;">
@@ -79,12 +116,12 @@
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="agreeTerms" required>
                     <label class="form-check-label" for="agreeTerms">
-                        By clicking on "Proceed" button, you hereby agree with 
+                        Dengan Klik butang "Teruskan", anda bersetuju dengan
                         <strong>
                             <a href="https://www.mepsfpx.com.my/FPXMain/termsAndConditions.jsp" 
                                target="_blank" 
                                rel="noopener noreferrer">
-                               FPX's Terms & Condition
+                               Terma dan Syarat FPX
                             </a>
                         </strong>
                     </label>
@@ -94,11 +131,25 @@
             <!-- Action Buttons -->
             <div class="btn-section">
                 <button type="submit" class="btn-proceed" id="proceedBtn" disabled>
-                    Proceed to Pay RM 1.00
+                    Teruskan
                 </button>
                 <button type="button" class="btn-cancel" onclick="window.history.back()">
-                    Cancel
+                    Batal
                 </button>
+            </div>
+
+            <!-- Payment Instructions -->
+            <div class="payment-instructions mt-2">
+                <h6 class="instructions-title">
+                    <i class="bi bi-info-circle-fill"></i> PANDUAN PEMBAYARAN
+                </h6>
+                <ol class="instructions-list">
+                    <li>Pastikan anda tidak menutup laman web semasa pembayaran sedang dilakukan.</li>
+                    <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang ”Lihat Resit” untuk mencetak resit ASAL. (Resit Asal akan dikeluarkan sekali sahaja).</li>
+                    <li>Cetakan Salinan Resit boleh dibuat di Menu Sejarah Caruman.</li>
+                    <li>Untuk Pembayaran B2B, resit ASAL boleh didapati di Menu Sejarah Caruman setelah mendapat pengesahan.</li>
+                    <li>Sila emel kepada  <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a> sekiranya memerlukan bantuan dan maklumat lanjut.</li>
+                </ol>
             </div>
         </form>
 
