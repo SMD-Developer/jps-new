@@ -247,12 +247,12 @@ if(! function_exists('getMenus')){
                             'menu_active' => FormFacade::menu_active('settings')
                             ],
 
-                            [
-                            'icon' => 'cogs',
-                            'text' => trans('Maintenance'),
-                            'route' => url('settings/maintenance'),
-                            'menu_active' => FormFacade::menu_active('maintenance')
-                            ],
+                            // [
+                            // 'icon' => 'cogs',
+                            // 'text' => trans('Maintenance'),
+                            // 'route' => url('settings/maintenance'),
+                            // 'menu_active' => FormFacade::menu_active('maintenance')
+                            // ],
         
                         ]
                     ],
