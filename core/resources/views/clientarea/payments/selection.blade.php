@@ -164,6 +164,53 @@
     margin-bottom: 20px;
     color: #0066cc;
 }
+.payment-instructions {
+    background-color: #e7f3ff;
+    border-left: 4px solid #0066cc;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.instructions-title {
+    color: #0066cc;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instructions-title i {
+    font-size: 18px;
+}
+
+.instructions-list {
+    margin: 0;
+    padding-left: 20px;
+    color: #333;
+}
+
+.instructions-list li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.instructions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.instructions-list a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.instructions-list a:hover {
+    text-decoration: underline;
+}
 </style>
 
 <title>Payment Selection | JPS</title>
@@ -271,6 +318,19 @@
                 <button type="button" class="btn-cancel" onclick="window.history.back()">
                     Batal
                 </button>
+            </div>
+            <!-- Payment Instructions -->
+            <div class="payment-instructions mt-2">
+                <h6 class="instructions-title">
+                    <i class="bi bi-info-circle-fill"></i> PANDUAN PEMBAYARAN
+                </h6>
+                <ol class="instructions-list">
+                    <li>Pastikan anda tidak menutup laman web semasa pembayaran sedang dilakukan.</li>
+                    <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang "Lihat Resit" untuk mencetak resit SALINAN.</li>
+                    <li>Bagi Resit bayaran RM10.00, boleh didapati di Menu Pembayaran. Sila pastikan resit bayaran dicetak.</li>
+                    <li>Untuk Pembayaran B2B, resit SALINAN boleh didapati di Menu Pemohonan dalam tempoh 7-14 hari bekerja.</li>
+                    <li>Sila emel kepada <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a> sekiranya memerlukan bantuan dan maklumat lanjut.</li>
+                </ol>
             </div>
         </form>
     </div>
