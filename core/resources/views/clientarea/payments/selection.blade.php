@@ -170,16 +170,13 @@
 
 @section('content')
 <div class="col-md-12 content-header">
-    <h5><i class="fa fa-credit-card" aria-hidden="true"></i> Pilihan Pembayaran</h5>
+    <h5><i class="fa fa-credit-card" aria-hidden="true"></i> Maklumat Bayaran </h5>
 </div>
 
 <section class="content">
     <div class="payment-form-container">
         @if(request()->get('type') === 'reprint')
         <div class="reprint-notice">
-            <i class="bi bi-info-circle-fill"></i>
-            <strong>Receipt Reprint Payment</strong><br>
-            You are about to pay RM 10.00 for reprinting your receipt. This is a service charge for generating a duplicate copy of your receipt.
         </div>
         @endif
         
@@ -187,7 +184,7 @@
         <div class="fpx-header">
             <div>
                 <h5 style="margin: 0; color: #0066cc;">
-                    Pay with 
+                    Pembayaran Dengan
                     <img src="{{ asset('assets/images/Logo-FPX.png') }}" 
                          alt="FPX Logo" 
                          class="fpx-logo-inline">
@@ -203,7 +200,7 @@
             
             <!-- Email Address -->
             <div class="form-row">
-                <label class="form-label">Email Address:</label>
+                <label class="form-label">Emel:</label>
                 <input type="email" name="email" class="form-control" 
                        value="{{ $application->email ?? '' }}" 
                        placeholder="Enter your email address" required>
@@ -211,9 +208,9 @@
 
             <!-- Payment Mode Dropdown -->
             <div class="form-row">
-                <label class="form-label">Payment Mode:</label>
+                <label class="form-label">Mode Pembayaran:</label>
                 <select name="payment_mode" id="paymentModeSelect" class="form-select" required>
-                    <option value="">Select Payment Mode</option>
+                    <option value="">Pilih Mod Pembayaran</option>
                     <option value="b2c">B2C (Business to Consumer)</option>
                     <option value="b2b">B2B (Business to Business)</option>
                 </select>
@@ -221,10 +218,10 @@
 
             <!-- Bank Selection Dropdown -->
             <div class="form-row" id="bankSelectionRow" style="display: none;">
-                <label class="form-label">Select Bank:</label>
+                <label class="form-label">Pilih Bank:</label>
                 <div style="flex: 1;">
                     <select name="selected_bank" id="bankSelect" class="form-select" style="width: 385px;">
-                        <option value="">Select Bank</option>
+                        <option value="">Pilih Bank</option>
                     </select>
                     <div class="bank-list-note">
                         <i class="bi bi-info-circle"></i> 
@@ -237,7 +234,7 @@
         
             <!-- Payment Amount -->
             <div class="form-row">
-                <label class="form-label">Amount:</label>
+                <label class="form-label">Jumlah:</label>
                 <input type="text" class="form-control" id="amountDisplay"
                     value="RM {{ request()->get('type') === 'reprint' ? '1.00' : number_format($application->final_amount, 2) }}" 
                     readonly style="background-color: #f8f9fa;">
@@ -248,12 +245,12 @@
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="agreeTerms" required>
                     <label class="form-check-label" for="agreeTerms">
-                        By clicking on "Proceed" button, you hereby agree with 
+                        Dengan Klik butang "Teruskan", anda bersetuju dengan  
                         <strong>
                             <a href="https://www.mepsfpx.com.my/FPXMain/termsAndConditions.jsp" 
                                target="_blank" 
                                rel="noopener noreferrer">
-                               FPX's Terms & Condition
+                               Terma dan Syarat FPX
                             </a>
                         </strong>
                     </label>
@@ -267,12 +264,12 @@
                         @if(request()->get('type') === 'reprint')
                             Pay RM 1.00 for Reprint
                         @else
-                            Proceed
+                            Teruskan
                         @endif
                     </span>
                 </button>
                 <button type="button" class="btn-cancel" onclick="window.history.back()">
-                    Cancel
+                    Batal
                 </button>
             </div>
         </form>
