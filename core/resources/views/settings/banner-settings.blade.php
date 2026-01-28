@@ -1,8 +1,24 @@
 @extends('app')
+<style>
+.custom-file-input-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
 
+.custom-file-input-wrapper label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+#file-chosen {
+    color: #6c757d;
+    font-size: 14px;
+}
+</style>
 @section('content')
 <div class="col-md-12 content-header">
-    <h6 class="text-uppercase"><i class="fa fa-bullhorn"></i> Dashboard Banner Settings</h6>
+    <h6 class="text-uppercase"><i class="fa fa-bullhorn"></i> Tetapan Banner Dashboard</h6>
 </div>
 
 <section class="content">
@@ -15,23 +31,23 @@
                         
                         <!-- Banner Status -->
                         <div class="form-group">
-                            <label for="banner_enabled">Banner Status</label>
+                            <label for="banner_enabled">Status Banner</label>
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" id="banner_enabled" 
                                        name="banner_enabled" value="1" 
                                        {{ (isset($setting) && $setting->banner_enabled) ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="banner_enabled">Enable Dashboard Banner</label>
+                                <label class="custom-control-label" for="banner_enabled">Aktifkan Banner </label>
                             </div>
-                            <small class="form-text text-muted">Enable or disable the banner display on user dashboard</small>
+                            <small class="form-text text-muted">Dayakan atau lumpuhkan paparan sepanduk pada papan pemuka pengguna</small>
                         </div>
                          <!-- Multiple Banner Images Upload -->
                         <div class="form-group">
-                            <label for="banner_images">Banner Images (Multiple Upload)</label>
+                            <label for="banner_images">Imej Banner</label>
                             
                             <!-- Show existing banners -->
                             @if(isset($setting) && $setting->banner_images && is_array($setting->banner_images))
                                 <div class="mb-3">
-                                    <label class="d-block mb-2"><strong>Current Banners:</strong></label>
+                                    <label class="d-block mb-2"><strong>Banner Semasa:</strong></label>
                                     <div class="row" id="existing-banners">
                                         @foreach($setting->banner_images as $index => $image)
                                             <div class="col-md-3 mb-3 existing-banner-item" data-index="{{ $index }}">
@@ -43,7 +59,7 @@
                                                     <div class="card-body p-2 text-center">
                                                         <button type="button" class="btn btn-danger btn-sm remove-existing-banner" 
                                                                 data-image="{{ $image }}">
-                                                            <i class="fa fa-trash"></i> Remove
+                                                            <i class="fa fa-trash"></i> Padam
                                                         </button>
                                                     </div>
                                                 </div>
@@ -55,22 +71,29 @@
                                 </div>
                             @endif
                             
-                            <!-- Upload new banners -->
-                            <input type="file" 
-                                class="form-control @error('banner_images') is-invalid @enderror" 
-                                id="banner_images" 
-                                name="banner_images[]" 
-                                accept="image/*" 
-                                multiple>
+                            <!-- Custom file input wrapper -->
+                            <div class="custom-file-input-wrapper">
+                                <label for="banner_images" class="btn btn-primary">
+                                    <i class="fa fa-upload"></i> Pilih Fail
+                                </label>
+                                <span id="file-chosen" class="ml-2">Tiada Fail Dipilih</span>
+                                <input type="file" 
+                                    class="form-control d-none @error('banner_images') is-invalid @enderror" 
+                                    id="banner_images" 
+                                    name="banner_images[]" 
+                                    accept="image/*" 
+                                    multiple>
+                            </div>
+                            
                             @error('banner_images')
-                                <span class="invalid-feedback">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                             @enderror
                             @error('banner_images.*')
                                 <span class="invalid-feedback d-block">{{ $message }}</span>
                             @enderror
                             <small class="form-text text-muted">
-                                Recommended size: 1200x300px. Formats: JPG, PNG, GIF (Max: 3MB per image). 
-                                <strong>You can select multiple images at once.</strong>
+                                Spesifikasi yang disyorkan : saiz imej: 1200x300 piksel Format fail: JPG, PNG, GIF. Saiz maksimum: 3MB bagi setiap imej. 
+                                <strong>Sistem membenarkan pemilihan dan muat naik lebih daripada satu masa</strong>
                             </small>
                             
                             <!-- Preview new uploads -->
@@ -79,32 +102,31 @@
 
                         <!-- Banner Title -->
                         <div class="form-group">
-                            <label for="banner_title">Banner Title (Optional)</label>
+                            <label for="banner_title">Tajuk Banner(Pilihan)</label>
                             <input type="text" class="form-control @error('banner_title') is-invalid @enderror" 
                                    id="banner_title" name="banner_title" 
                                    value="{{ old('banner_title', $setting->banner_title ?? '') }}" 
-                                   placeholder="Enter banner title">
+                                   placeholder="Massukkan tajuk banner">
                             @error('banner_title')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
-                            <small class="form-text text-muted">This will be used as the alt text and tooltip</small>
                         </div>
 
                         <!-- Banner Link -->
                         <div class="form-group">
-                            <label for="banner_link">Banner Link URL (Optional)</label>
+                            <label for="banner_link">URL Pautan Banner (Pilihan) </label>
                             <input type="url" class="form-control @error('banner_link') is-invalid @enderror" 
                                    id="banner_link" name="banner_link" 
                                    value="{{ old('banner_link', $setting->banner_link ?? '') }}" 
-                                   placeholder="https://example.com/promotion">
+                                   placeholder="Masukkan alamat URL sasaran">
                             @error('banner_link')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
-                            <small class="form-text text-muted">When clicked, the banner will redirect to this URL</small>
+                            <small class="form-text text-muted">Apablla banner diklik, pengguna akan diarahkan ke URL yang ditetapkan.</small>
                         </div>
 
                         <!-- Open in New Tab -->
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="banner_new_tab" 
                                        name="banner_new_tab" value="1" 
@@ -115,7 +137,7 @@
 
                         <!-- Banner Position -->
                         <div class="form-group">
-                            <label for="banner_position">Banner Position</label>
+                            <label for="banner_position">Kedudukan Banner</label>
                             <select class="form-control @error('banner_position') is-invalid @enderror" 
                                     id="banner_position" name="banner_position">
                                 <option value="top" {{ (isset($setting) && $setting->banner_position == 'top') ? 'selected' : '' }}>
@@ -131,12 +153,11 @@
                             @error('banner_position')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
-                            <small class="form-text text-muted">Choose where to display the banner on user dashboard</small>
                         </div>
 
                         <!-- Banner Display Duration -->
                          <div class="form-group">
-                            <label for="banner_start_date">Display Period (Optional)</label>
+                            <label for="banner_start_date">Tempoh Paparan (Pilihan)</label>
                             <div class="row">
                                 <div class="col-md-6">
                                     <input type="date" class="form-control @error('banner_start_date') is-invalid @enderror" 
@@ -145,7 +166,7 @@
                                     @error('banner_start_date')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
-                                    <small class="form-text text-muted">Start Date</small>
+                                    <small class="form-text text-muted">Tarikh Mula</small>
                                 </div>
                                 <div class="col-md-6">
                                     <input type="date" class="form-control @error('banner_end_date') is-invalid @enderror" 
@@ -154,19 +175,18 @@
                                     @error('banner_end_date')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
-                                    <small class="form-text text-muted">End Date</small>
+                                    <small class="form-text text-muted">Tarikh Akhir</small>
                                 </div>
                             </div>
-                            <small class="form-text text-muted">Leave blank to display indefinitely</small>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fa fa-save"></i> Update Banner Settings
+                                <i class="fa fa-save"></i> Kemaskini Tetapan Banner
                             </button>
                             <a href="{{ route('settings.company.index') }}" class="btn btn-secondary">
-                                <i class="fa fa-times"></i> Cancel
+                                <i class="fa fa-times"></i> Batal
                             </a>
                         </div>
                     </form>
@@ -224,6 +244,23 @@
             }
         });
     });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('banner_images');
+    const fileChosen = document.getElementById('file-chosen');
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files.length === 0) {
+            fileChosen.textContent = 'Tiada Fail Dipilih';
+        } else if (this.files.length === 1) {
+            fileChosen.textContent = this.files[0].name;
+        } else {
+            fileChosen.textContent = this.files.length + ' fail dipilih';
+        }
+    });
+});
 </script>
 @endpush
 @endsection
