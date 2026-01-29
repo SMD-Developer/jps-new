@@ -357,7 +357,7 @@ input.btn.btn-primary.login-button.btn-sm.form-control {
     background: #3649B8;
 }
 body {
-    background-image: url("https://ecp-jps.selangor.gov.my/assets/images/background eCP-thirdPary.jpg");
+    background-image: url("https://ecp-jps.selangor.gov.my/assets/images/background-eCP-thirdParty.jpg");
     background-size: cover; 
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
