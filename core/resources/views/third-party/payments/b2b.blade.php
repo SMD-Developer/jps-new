@@ -3,20 +3,18 @@
 @section('title', 'Third Party Payment | JPS')
 
 @section('content')
-
+     <div class="col-md-12 content-header">
+        <h5><i class="fa fa-credit-card" aria-hidden="true"></i> @lang('Maklumat Bayaran ')</h5>
+    </div>
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <!-- Header -->
                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-warning text-dark text-center py-3">
-                        <h6 class="mb-0"><strong>FPX PAYMENT GATEWAY</strong></h6>
-                    </div>
-
                     <!-- Payment Card -->
                     <div class="card-body p-0">
                         <div class="bg-light p-3 border-bottom">
-                            <h6 class="text-center mb-0 text-dark">Payment Details</h6>
+                            <h6 class="text-center mb-0 text-dark">Butiran Pembayaran</h6>
                         </div>
                         
                         <div class="card-body p-0">
@@ -28,12 +26,12 @@
                                 <!-- Payment Information -->
                                 <div class="row mb-4">
                                     <div class="col-md-8">
-                                        <h6 class="font-weight-bold">Description</h6>
+                                        <h6 class="font-weight-bold">Keterangan</h6>
                                         <p class="text-muted mb-1">Permohonan Salinan Resit Caruman Parit</p>
                                         <p class="text-muted mb-0">No Rujukan: {{ $referenceNo ?? 'Third Party Document Reprint' }}</p>
                                     </div>
                                     <div class="col-md-4 text-right">
-                                        <h6 class="font-weight-bold">Total Amount</h6>
+                                        <h6 class="font-weight-bold">Jumlah</h6>
                                         <p class="h5 text-primary mb-0">MYR {{ number_format($fpx_txnAmount, 2) }}</p>
                                     </div>
                                 </div>
@@ -66,7 +64,7 @@
                                     <!-- Payment Button -->
                                     <div class="text-center mb-4">
                                         <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="fas fa-lock me-2"></i>Proceed to Corporate FPX Payment 
+                                            <i class="fas fa-lock me-2"></i>Teruskan ke Pembayaran FPX
                                         </button>
                                     </div>
 
