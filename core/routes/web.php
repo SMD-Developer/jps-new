@@ -42,7 +42,7 @@ Route::group(array('prefix'=>'install','middleware'=>'install'),function() {
 
 
     // Add these to your existing routes
-    Route::prefix('third-party')->name('third.party.')->group(function () {
+    Route::prefix('carian')->name('third.party.')->group(function () {
     
         // ===== NEW: Authentication Routes (No Middleware) =====
         Route::get('/register', 'ThirdPartyController@showRegisterForm')->name('register');
