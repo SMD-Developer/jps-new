@@ -601,7 +601,6 @@ body {
     .toggle-password {
         cursor: pointer !important;
         right: 20px !important;
-        top: 50% !important;
         transform: translateY(-50%) !important;
         z-index: 10;
     }
