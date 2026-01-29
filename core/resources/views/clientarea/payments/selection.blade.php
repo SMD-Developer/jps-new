@@ -369,7 +369,7 @@ $(document).ready(function() {
             if (isReprint) {
                 const newAmount = selectedMode === 'b2b' ? '2.00' : '1.00';
                 $('#amountDisplay').val('RM ' + newAmount);
-                $('#btnText').text('Pay RM ' + newAmount + ' for Reprint');
+                $('#btnText').text('Teruskan');
                 window.currentPaymentAmount = parseFloat(newAmount);
             }
         } else {

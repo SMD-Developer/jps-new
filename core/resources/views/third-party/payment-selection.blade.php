@@ -147,8 +147,8 @@
                     <li>Pastikan anda tidak menutup laman web semasa pembayaran sedang dilakukan.</li>
                     <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang ”Lihat Resit” untuk mencetak resit SALINAN</li>
                     <li>Bagi Resit bayaran RM10.00, boleh didapati di Menu Pembayaran. Sila pastikan resit bayaran dicetak.</li>
-                    <li>Untuk Pembayaran B2B, resit SALINAN boleh didapati di Menu Pemohonan dalam tempoh 7-14 hari bekerja.</li>
-                    <li>ila emel kepada <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a>sekiranya memerlukan bantuan dan maklumat lanjut.</li>
+                    <li>Untuk Mohon resit dan mod pembayaran B2B, resit SALINAN boleh didapati di Menu Pemohonan dalam tempoh 7-14 hari bekerja.</li>
+                    <li>Sila emel kepada  <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a> sekiranya memerlukan bantuan dan maklumat lanjut.</li>
                 </ol>
             </div>
         </form>
