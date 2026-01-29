@@ -1613,7 +1613,7 @@ class ThirdPartyController extends Controller
             $request->session()->regenerateToken();
             
             return redirect()->route('third.party.login')
-                ->with('success', 'You have been logged out successfully.');
+                ->with('success', 'Anda telah berjaya log keluar.');
         } catch (\Exception $e) {
             \Log::error('Third party logout error: ' . $e->getMessage());
             
