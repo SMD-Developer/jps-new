@@ -50,14 +50,11 @@ class ForgotPasswordController extends Controller
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-        \Log::info('Sending reset link for: ' . $request->email);
-
         // Explicitly use the 'clients' broker
         $status = Password::broker('clients')->sendResetLink(
             $request->only('email')
         );
 
-        \Log::info('Reset link status: ' . $status);
         return $status === Password::RESET_LINK_SENT
             ? back()->with(['status' => 'Kami telah menghantar e-mel pautan tetapan semula kata laluan anda!'])
             : back()->withErrors(['email' => 'Alamat emel tidak wujud. Sila masukkan emel yang betul .']);
@@ -70,19 +67,8 @@ class ForgotPasswordController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'telephone' => 'required|string|max:20',
-            'comment' => 'required|string',
-            'g-recaptcha-response' => 'required'
+            'comment' => 'required|string'
         ]);
-
-        $recaptcha = $request->input('g-recaptcha-response');
-        $secret = env('RECAPTCHA_SECRET_KEY');
-        
-        $verify = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$recaptcha);
-        $response = json_decode($verify);
-        
-        if (!$response->success) {
-            return back()->with('error', 'reCAPTCHA verification failed. Please try again.');
-        }
 
         $data = [
             'name' => $validated['name'],
@@ -92,7 +78,7 @@ class ForgotPasswordController extends Controller
             'submitted_at' => now()->format('d-m-Y H:i:s')
         ];
 
-        // Send email
+
         try {
             Mail::send('emails.feedback', $data, function($message) use ($data) {
                 $message->to('ecp@selangor.gov.my')
