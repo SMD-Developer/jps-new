@@ -380,7 +380,6 @@
                                 </tbody>
                             </table>
 
-                            <!-- Pagination -->
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div>
                                     <span class="me-2">
