@@ -598,9 +598,12 @@ body {
         
     } 
 
-    i.bi.bi-eye-slash.toggle-password.position-absolute.end-0.top-50.translate-middle-y.me-3.pe-4.text-muted.cursor-pointer{
+    .toggle-password {
         cursor: pointer !important;
-        padding-bottom: 35px !important;
+        right: 20px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        z-index: 10;
     }
 
 
@@ -916,76 +919,24 @@ $bg = get_setting_value('login_bg') != '' ? image_url(get_setting_value('login_b
 
     tick();
 </script>
+
 <script>
     $(document).ready(function() {
-        $('.toggle-password').on('click', function() {
-            const targetId = $(this).data('target');
-            const input = $('#' + targetId);
-            const type = input.attr('type') === 'password' ? 'text' : 'password';
-            
+            $('.toggle-password').on('click', function() {
+                const targetId = $(this).data('target');
+                const input = $('#' + targetId);
+                const type = input.attr('type') === 'password' ? 'text' : 'password';
             input.attr('type', type);
             $(this).toggleClass('bi-eye-slash bi-eye');
         });
     });
-    
+
     function resetLoginForm(el) {
-        // find the nearest form inside same column
         let form = el.closest('.col-lg-4').querySelector('form');
         if(form){
-            form.reset(); // clears inputs
+            form.reset(); 
         }
     }
-</script>
-<script>
-document.querySelectorAll('.toggle-password').forEach(icon => {
-    icon.addEventListener('click', function() {
-        const target = document.getElementById(this.dataset.target);
-        if (target.type === 'password') {
-            target.type = 'text';
-            this.classList.remove('bi-eye-slash');
-            this.classList.add('bi-eye');
-        } else {
-            target.type = 'password';
-            this.classList.remove('bi-eye');
-            this.classList.add('bi-eye-slash');
-        }
-    });
-});
-</script>
-</script>
-<script>
-    $(document).ready(function() {
-        $('.toggle-password').on('click', function() {
-            const targetId = $(this).data('target');
-            const input = $('#' + targetId);
-            const type = input.attr('type') === 'password' ? 'text' : 'password';
-        input.attr('type', type);
-        $(this).toggleClass('bi-eye-slash bi-eye');
-    });
-});
-
-function resetLoginForm(el) {
-    let form = el.closest('.col-lg-4').querySelector('form');
-    if(form){
-        form.reset(); 
-    }
-}
-</script>
-<script>
-document.querySelectorAll('.toggle-password').forEach(icon => {
-    icon.addEventListener('click', function() {
-        const target = document.getElementById(this.dataset.target);
-        if (target.type === 'password') {
-            target.type = 'text';
-            this.classList.remove('bi-eye-slash');
-            this.classList.add('bi-eye');
-        } else {
-            target.type = 'password';
-            this.classList.remove('bi-eye');
-            this.classList.add('bi-eye-slash');
-        }
-    });
-});
 </script>
 </body>
 </html>
