@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html: `
                     <div class="text-center">
                         <p><strong>Bayaran: RM 10.00</strong></p>
-                        <p>Selepas pembayaran berjaya, salinan resit boleh dicetak serta-merta.</p>
+                        <p>Resit SALINAN boleh dicetak selepas pembayaran berjaya.</p>
                     </div>
                 `,
                 icon: 'info',
