@@ -495,7 +495,7 @@ class CheckFPXPaymentStatus extends Command
             
             Mail::send('emails.payment-success', $emailData, function($message) use ($userEmail, $emailData) {
                 $message->to($userEmail)
-                        ->subject('Payment Confirmation - Order #' . $emailData['seller_order_no'])
+                        ->subject('Pembayaran Berjaya- ID Transaksi#' . $emailData['transaction_id'])
                         ->from(config('mail.from.address'), config('mail.from.name'));
             });
                 

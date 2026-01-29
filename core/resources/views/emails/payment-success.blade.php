@@ -105,8 +105,6 @@
             <h1>Pembayaran Berjaya</h1>
         </div>
         
-        <div class="success-icon">✅</div>
-        
         <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,{{ $buyer_name }},</p>
         <p>Terima kasih kerana menggunakan Portal e-CP.</p>
         
