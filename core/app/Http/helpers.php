@@ -893,40 +893,6 @@ if(! function_exists('getMenus')){
                             ],
                         ]
                     ],
-                    
-            //          [
-            //             'icon' => 'line-chart',
-            //             'text' => trans('app.reports'),
-            //             'route' => url('#'),
-            //             'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('daily-receipt-payment-report') || request()->is('contribution-payment-report') ? 'menu-is-opening menu-open' : '',
-            //             'active_dropdown_menu' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('daily-receipt-payment-report') || request()->is('contribution-payment-report') ? 'block' : 'none',
-            //             'menu_active' => '',
-            //             'permission' => 'reports.view-list',
-            //             'is_dropdown' => true,
-            //             'submenus' => [
-            //                 [
-            //                     'icon' => 'money',
-            //                     'text' => trans('app.report_list_application_ditch_contribution'),
-            //                     'route' =>  url('report-list-all-application-contribution-ditch-search'),
-            //                     'menu_active' => request()->is('report-list-all-application-contribution-ditch-search' ,'report-list-all-application-contribution-ditch') ? 'active' : '',
-            //                 ],
-                            
-            //                 [
-            //                         'icon' => 'money',
-            //                         'text' => trans('app.report_collection_contribution_ditch_by_district'),
-            //                         'route' =>  url('report-collection-contribution-ditch-by-district-search'),
-            //                         'menu_active' => request()->is('report-collection-contribution-ditch-by-district-search','report-collection-contribution-ditch-by-district') ? 'active' : '',
-            //                 ],
-                           
-            //                 [
-            //             'icon' => 'money',
-            //             'text' => trans('app.contribution_payment_report'),
-            //             'route' => url('contribution-payment-report'),
-            //             'menu_active' => request()->is('contribution-payment-report') ? 'active' : '',
-            //             'permission' => 'contribution-payment.view-list',
-            //         ],
-            //     ]
-            // ]
             
                         [
                             'icon' => 'line-chart',
@@ -1038,6 +1004,32 @@ if(! function_exists('getMenus')){
                             //     'menu_active' => Request::is('treasury-receipts') ? 'active' : null
                             // ],
                             
+                        ]
+                    ],
+
+
+                    [
+                        'icon' => 'book',
+                        'text' => trans('app.user_manual'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('clientarea/user-manual*') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('clientarea/user-manual*') ? 'block' : 'none',
+                        'menu_active' => request()->is('clientarea/user-manual*') ? 'active' : '',
+                        'is_dropdown' => true,
+                        'submenus' => [
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Menyemak Permohonan Bil Caruman',
+                                'route' => "javascript:window.open('" . asset('assets/admin-staff-manual.pdf') . "', '_blank')",
+                                'menu_active' => '',
+                            ],
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Menyemak Permohonan Pulang Balik (Refund)',
+                                'route' => "javascript:window.open('" . asset('assets/admin-staff-manual-1.pdf') . "', '_blank')",
+                                'target' => '_blank',
+                                'menu_active' => '',
+                            ],
                         ]
                     ],
         ]
