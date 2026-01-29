@@ -373,7 +373,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="9" class="text-center">
-                                                <em>No approved applications found</em>
+                                                <em>Tiada permohonan yang diluluskan ditemui</em>
                                             </td>
                                         </tr>
                                     @endforelse
@@ -386,9 +386,6 @@
                                     <span class="me-2">
                                         @lang('app.page') <strong>{{ $list->currentPage() }}</strong>
                                         @lang('app.of') <strong>{{ $list->lastPage() }}</strong>
-                                    </span>
-                                    <span class="text-muted">
-                                        (@lang('app.total'): {{ $list->total() }} applications)
                                     </span>
                                 </div>
 
