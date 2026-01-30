@@ -418,6 +418,23 @@ if(! function_exists('getMenus')){
                     'route' => url('profile'),
                     'menu_active' => request()->is('profile') || request()->is('profile/*') ? 'active' : ''
                 ],
+                 [
+                        'icon' => 'book',
+                        'text' => trans('app.user_manual'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('clientarea/user-manual*') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('clientarea/user-manual*') ? 'block' : 'none',
+                        'menu_active' => request()->is('clientarea/user-manual*') ? 'active' : '',
+                        'is_dropdown' => true,
+                        'submenus' => [
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Pengurusan Utiliti (ICT)',
+                                'route' => "javascript:window.open('" . asset('assets/Manual-Pengurusan-Utiliti.pdf') . "', '_blank')",
+                                'menu_active' => '',
+                            ],
+                        ]
+                    ],
                 [
                     'icon' => 'cogs',
                     'text' => trans('FAQ'),
@@ -703,6 +720,30 @@ if(! function_exists('getMenus')){
                                 'route' => url('change-password/' . auth('admin')->user()->uuid),
                                 'menu_active' => ''
                            ],
+                        ]
+                    ],
+                    [
+                        'icon' => 'book',
+                        'text' => trans('app.user_manual'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('clientarea/user-manual*') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('clientarea/user-manual*') ? 'block' : 'none',
+                        'menu_active' => request()->is('clientarea/user-manual*') ? 'active' : '',
+                        'is_dropdown' => true,
+                        'submenus' => [
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Meluluskan Pembayaran Bil Laporan',
+                                'route' => "javascript:window.open('" . asset('assets/Manual-meluluskan-pembayaran-bil-caruman-agensi-kerajaan.pdf') . "', '_blank')",
+                                'menu_active' => '',
+                            ],
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Laporan',
+                                'route' => "javascript:window.open('" . asset('assets/manual-laporan-approver.pdf') . "', '_blank')",
+                                'target' => '_blank',
+                                'menu_active' => '',
+                            ],
                         ]
                     ],
                     [
