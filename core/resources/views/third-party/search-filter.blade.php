@@ -176,6 +176,22 @@
                 </div>
             </div>
         </div>
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="border-0">
+                        <h6 class="mb-3"><strong>Nota:</strong></h6>
+                        <ol class="mb-0" style="line-height: 1.8;">
+                            <li>Carian resit adalah bagi semakan status bayaran caruman parit.</li>
+                            <li>Caj cetakan salinan resit: RM10.00 setiap salinan.</li>
+                            <li>Carian boleh dibuat berdasarkan Nama Pemohon atau No. Lot/PT.</li>
+                            <li>Masukkan nama pemohon atau No. Lot/PT. Maklumat daerah dan mukim adalah pilihan.</li>
+                            <li>Permohonan salinan resit atau bayaran melalui B2B akan diproses dalam tempoh 7–14 hari bekerja.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <script>

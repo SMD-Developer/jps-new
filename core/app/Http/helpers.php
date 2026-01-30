@@ -1007,31 +1007,6 @@ if(! function_exists('getMenus')){
                         ]
                     ],
 
-
-                    [
-                        'icon' => 'book',
-                        'text' => trans('app.user_manual'),
-                        'route' => url('#'),
-                        'active_dropdown' => request()->is('clientarea/user-manual*') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('clientarea/user-manual*') ? 'block' : 'none',
-                        'menu_active' => request()->is('clientarea/user-manual*') ? 'active' : '',
-                        'is_dropdown' => true,
-                        'submenus' => [
-                            [
-                                'icon' => 'circle',
-                                'text' => 'Manual Menyemak Permohonan Bil Caruman',
-                                'route' => "javascript:window.open('" . asset('assets/admin-staff-manual.pdf') . "', '_blank')",
-                                'menu_active' => '',
-                            ],
-                            [
-                                'icon' => 'circle',
-                                'text' => 'Manual Menyemak Permohonan Pulang Balik (Refund)',
-                                'route' => "javascript:window.open('" . asset('assets/admin-staff-manual-1.pdf') . "', '_blank')",
-                                'target' => '_blank',
-                                'menu_active' => '',
-                            ],
-                        ]
-                    ],
         ]
     ]
 ];
@@ -1088,6 +1063,30 @@ if(! function_exists('getMenus')){
                 ],
             ]
         ],
+          [
+                        'icon' => 'book',
+                        'text' => trans('app.user_manual'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('clientarea/user-manual*') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('clientarea/user-manual*') ? 'block' : 'none',
+                        'menu_active' => request()->is('clientarea/user-manual*') ? 'active' : '',
+                        'is_dropdown' => true,
+                        'submenus' => [
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Menyemak Permohonan Bil Caruman',
+                                'route' => "javascript:window.open('" . asset('assets/admin-staff-manual.pdf') . "', '_blank')",
+                                'menu_active' => '',
+                            ],
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Menyemak Permohonan Pulang Balik (Refund)',
+                                'route' => "javascript:window.open('" . asset('assets/admin-staff-manual-1.pdf') . "', '_blank')",
+                                'target' => '_blank',
+                                'menu_active' => '',
+                            ],
+                        ]
+                    ],
         [
             'icon' => 'credit-card',
             'text' => trans('app.helpdesk'),
