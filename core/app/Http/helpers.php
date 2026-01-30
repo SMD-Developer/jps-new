@@ -1464,7 +1464,7 @@ if(! function_exists('getMenus')){
                     ]
                 ],
 
-                   [
+                    [
                         'icon' => 'book',
                         'text' => trans('app.user_manual'),
                         'route' => url('#'),
@@ -1794,6 +1794,37 @@ if(! function_exists('getMenus')){
                                 'route' => url('change-password/' . auth('admin')->user()->uuid),
                                 'menu_active' => ''
                           ],
+                        ]
+                    ],
+                     [
+                        'icon' => 'book',
+                        'text' => trans('app.user_manual'),
+                        'route' => url('#'),
+                        'active_dropdown' => request()->is('clientarea/user-manual*') ? 'menu-is-opening menu-open' : '',
+                        'active_dropdown_menu' => request()->is('clientarea/user-manual*') ? 'block' : 'none',
+                        'menu_active' => request()->is('clientarea/user-manual*') ? 'active' : '',
+                        'is_dropdown' => true,
+                        'submenus' => [
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Mengemaskini Status Bayaran Pulang Balik',
+                                'route' => "javascript:window.open('" . asset('assets/Manual-Mengemaskini-Status-Bayaran-Pulang-Balik.pdf') . "', '_blank')",
+                                'menu_active' => '',
+                            ],
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Menual Laporan',
+                                'route' => "javascript:window.open('" . asset('assets/Manual-Laporan.pdf') . "', '_blank')",
+                                'target' => '_blank',
+                                'menu_active' => '',
+                            ],
+                            [
+                                'icon' => 'circle',
+                                'text' => 'Manual Permohonan Salinan Resit',
+                                'route' => "javascript:window.open('" . asset('assets/Permohonan-salinan-resit.pdf') . "', '_blank')",
+                                'target' => '_blank',
+                                'menu_active' => '',
+                            ],
                         ]
                     ],
                     [
