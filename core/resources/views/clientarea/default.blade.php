@@ -44,6 +44,8 @@
         background-color: #80A5D0 !important; /* Semi-transparent background */
         width: 100%; /* Ensure it spans full width */
         height: 25px;
+        position: absolute;
+        top: 0;
     }
 }
 li.nav-item {
@@ -706,7 +708,7 @@ body {
                 <!-- Add this button where you want (in navbar or main page) -->
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#thirdPartyRegisterModal">
-                        <i class="fa fa-search"></i> @lang('app.search_c')
+                        <i class="fa fa-receipt"></i> @lang('app.search_c')
                     </a>
                 </li>
                 <!-- <li class="nav-item">
@@ -740,8 +742,6 @@ body {
         </div>
     </div>
 </nav>
-
-
 @php
     $banner = DB::table('settings')
                 ->select('banner_images', 'banner_enabled', 'banner_title', 'banner_link', 
