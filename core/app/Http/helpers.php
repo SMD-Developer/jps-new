@@ -441,36 +441,31 @@ if(! function_exists('getMenus')){
                     'route' => url('manage-faq'),
                     'menu_active' => FormFacade::menu_active('settings')
                 ],
-                [
-                        'icon' => 'credit-card',
-                        'text' => trans('app.helpdesk'),
-                        'route' => url('#'),
-                        'active_dropdown' => request()->is('manual') || request()->is('support') ? 'menu-is-opening menu-open' : '',
-                        'active_dropdown_menu' => request()->is('manual') || request()->is('support') ? 'block' : 'none',
-                        'menu_active' => '',
-                        'is_dropdown' => true,
-                        'submenus' => [
-                            [
-                                'icon' => 'user',
-                                'text' => trans('app.manual'),
-                                'route' =>  url('#'),
-                                'menu_active' => request()->is('manual') ? 'active' : ''
-                            ],
-                            [
-                                'icon' => 'support',
-                                'text' => trans('app.support'),
-                                'route' =>  url('#'),
-                                'menu_active' => request()->is('support') ? 'active' : ''
-                            ]
-                        ]
-                    ],
+                // [
+                //         'icon' => 'credit-card',
+                //         'text' => trans('app.helpdesk'),
+                //         'route' => url('#'),
+                //         'active_dropdown' => request()->is('manual') || request()->is('support') ? 'menu-is-opening menu-open' : '',
+                //         'active_dropdown_menu' => request()->is('manual') || request()->is('support') ? 'block' : 'none',
+                //         'menu_active' => '',
+                //         'is_dropdown' => true,
+                //         'submenus' => [
+                //             [
+                //                 'icon' => 'user',
+                //                 'text' => trans('app.manual'),
+                //                 'route' =>  url('#'),
+                //                 'menu_active' => request()->is('manual') ? 'active' : ''
+                //             ],
+                //             [
+                //                 'icon' => 'support',
+                //                 'text' => trans('app.support'),
+                //                 'route' =>  url('#'),
+                //                 'menu_active' => request()->is('support') ? 'active' : ''
+                //             ]
+                //         ]
+                // ],
                     
-                    // [
-                    //     'icon' => 'line-chart',
-                    //     'text' => trans('app.reports'),
-                    //     'route' => url('reports'),
-                    //     'menu_active' => FormFacade::menu_active('reports')
-                    // ],
+                   
                 [
                     'icon' => 'power-off',
                     'text' => trans('app.logout'),
@@ -511,13 +506,6 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('application-status') ? 'active' : '',
                                 'permission' => 'permohonan.senarai.list' 
                             ],
-                            // [
-                            //     'icon' => 'list',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('user-approve'),
-                            //     'menu_active' => request()->is('user-approve') ? 'active' : '',
-                            //     'permission' => 'applications.view-list',
-                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => 'Permohonan Yang Diluluskan',
@@ -775,14 +763,7 @@ if(! function_exists('getMenus')){
                 ]
             ]
         ];
-        // if(hasPermission('setting.view')){
-        //     $menus['main_menu']['menus'][] = [
-        //         'icon' => 'cogs',
-        //         'text' => trans('app.settings'),
-        //         'route' => url('settings/company'),
-        //         'menu_active' => FormFacade::menu_active('settings')
-        //     ];
-        // }
+
         
         $menus['account_menu'] = [
             'title' => trans('app.account_menu'),
@@ -1216,13 +1197,7 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('application-status') ? 'active' : '',
                                 'permission' => 'permohonan.senarai.list'
                             ],
-                            // [
-                            //     'icon' => 'list',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('approver-application-list'),
-                            //     'menu_active' => request()->is('approver-application-list') ? 'active' : '',
-                            //     'permission' => 'applications.view-list'
-                            // ],
+
                             [
                                 'icon' => 'list',
                                 'text' => 'Permohonan Yang Diluluskan',
@@ -1290,58 +1265,6 @@ if(! function_exists('getMenus')){
                             ],
                         ]
                     ],
-                    
-                    //  [
-                    //         'icon' => 'line-chart',
-                    //         'text' => trans('app.reports'),
-                    //         'route' => url('#'),
-                    //         'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('daily-receipt-payment') || request()->is('contribution-payment-report') ? 'menu-is-opening menu-open' : '',
-                    //         'menu_active' => request()->is('collectors-statement-report') || request()->is('approved-statement') || request()->is('daily-receipt-payment') || request()->is('contribution-payment-report') ? 'active' : '',
-                    //         'permission' => 'reports.view-list',
-                    //         'is_dropdown' => true,
-                    //         'submenus' => [
-                    // [
-                    //     'icon' => 'money',
-                    //     'text' => trans('app.daily_receipt_payment_report'),
-                    //     'route' => url('#'),
-                    //     'menu_active' => request()->is('daily-receipt-payment') ? 'active' : '',
-                    //     'permission' => 'daily-payment-receipt.view-list',
-                    // ],
-                    // [
-                    //     'icon' => 'money',
-                    //     'text' => trans('app.collection_payment_report'),
-                    //     'route' => url('#'),
-                    //     'active_dropdown' => request()->is('collectors-statement-report') || request()->is('approved-statement') ? 'menu-is-opening menu-open' : '',
-                    //     'menu_active' => request()->is('collectors-statement-report') || request()->is('approved-statement') ? 'active' : '',
-                    //     'permission' => 'collection-payment.view-list',
-                    //     'is_dropdown' => true,
-                    //     'submenus' => [
-                    //         [
-                    //             'icon' => 'file-text',
-                    //             'text' => trans('app.generate_a_collectors_statement'),
-                    //             'route' => url('collectors-statement-report'),
-                    //             'menu_active' => request()->is('collectors-statement-report') ? 'active' : '',
-                    //             'permission' => 'generate_collector_statement'
-                    //         ],
-                    //         [
-                    //             'icon' => 'file-text',
-                    //             'text' => trans('app.approved_statement'),
-                    //             'route' => url('approved-statement'),
-                    //             'menu_active' => request()->is('approved-statement') ? 'active' : '',
-                    //             'permission' => 'approved_statement'
-                    //         ]
-                    //     ]
-                    // ],
-                    // [
-                    //     'icon' => 'money',
-                    //     'text' => trans('app.contribution_payment_report'),
-                    //     'route' => url('#'),
-                    //     'menu_active' => request()->is('contribution-payment-report') ? 'active' : '',
-                    //     'permission' => 'contribution-payment.view-list',
-                    // ]
-                           
-                    //     ]
-                    // ],
                     
                     
                     [
@@ -1428,19 +1351,6 @@ if(! function_exists('getMenus')){
                                 'permission' => 'payment.summary.list'
 
                             ],
-                            // [
-                            //     'icon' => 'money',
-                            //     'text' => trans('app.receipt_void_report'),
-                            //     'route' =>  url('receipt-void-report-search'),
-                            //     'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
-
-                            // ],
-                            // [
-                            //     'icon' => 'money',
-                            //     'text' => trans('app.checkbook_cash_book_report_by_date'),
-                            //     'route' =>  url('cash-book-report-finance'),
-                            //     'menu_active' => request()->is('cash-book-report-finance') ? 'active' : '',
-                            // ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
@@ -1448,12 +1358,6 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
-                            // [
-                            //     'icon' => 'money',
-                            //     'text' => trans('app.treasury_eceipts'),
-                            //     'route' =>  url('treasury-receipts'),
-                            //     'menu_active' => Request::is('treasury-receipts') ? 'active' : null
-                            // ],
                             
                         ]
                     ],
@@ -1597,14 +1501,6 @@ if(! function_exists('getMenus')){
                         // 'badge_count' => $applicationCount,
                         'is_dropdown' => true,
                         'submenus' => [
-                            // [
-                            //     'icon' => 'list',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('finance-user-approve'),
-                            //     'menu_active' => request()->is('finance-user-approve') || request()->is('finance-user-approve/*') ? 'active' : '',
-                            //     'permission' => 'applications.view-list'
-
-                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => 'Permohonan Yang Diluluskan',
@@ -1612,14 +1508,6 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('approved-application-list') ? 'active' : '',
                                 'permission' => 'permohonan.yang.list' 
                             ],
-                            // [
-                            //     'icon' => 'line-chart',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('application-status'),
-                            //     'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
-                            //     'permission' => 'application-status.view-list'
-
-                            // ],
                             
                         ]
                     ],
@@ -1751,12 +1639,6 @@ if(! function_exists('getMenus')){
                                                     'menu_active' => request()->is('approved-statement') ? 'active' : '',
                                                     'permission' => 'approved_statement'
                                                 ],
-                                                // [
-                                                //     'icon' => 'file-text',
-                                                //     'text' => trans('app.unfinished_tasks'),
-                                                //     'route' =>  url('task-not-completed-finance'),
-                                                //     'menu_active' => request()->is('task-not-completed-finance') ? 'active' : '',
-                                                // ]
                                                 
                                             ],
                                 
@@ -1778,19 +1660,6 @@ if(! function_exists('getMenus')){
                                 'permission' => 'payment.summary.list'
 
                             ],
-                            // [
-                            //     'icon' => 'money',
-                            //     'text' => trans('app.receipt_void_report'),
-                            //     'route' =>  url('receipt-void-report-search'),
-                            //     'menu_active' => request()->is('receipt-void-report' ,'receipt-void-report') ? 'active' : '',
-
-                            // ],
-                            // [
-                            //     'icon' => 'money',
-                            //     'text' => trans('app.checkbook_cash_book_report_by_date'),
-                            //     'route' =>  url('cash-book-report-finance'),
-                            //     'menu_active' => request()->is('cash-book-report-finance') ? 'active' : '',
-                            // ],
                             [
                                 'icon' => 'money',
                                 'text' => trans('Laporan Bayaran Pulang Balik Hasil Caruman Parit'),
@@ -1798,12 +1667,6 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('claim-contribution-report-search', 'claim-contribution-report-search') ? 'active' : '',
                                 'permission' => 'contribution-payment.view-list',
                             ],
-                            // [
-                            //     'icon' => 'money',
-                            //     'text' => trans('app.treasury_eceipts'),
-                            //     'route' =>  url('treasury-receipts'),
-                            //     'menu_active' => Request::is('treasury-receipts') ? 'active' : null
-                            // ],
                             
                         ]
                     ],
@@ -1946,13 +1809,6 @@ if(! function_exists('getMenus')){
                                 'menu_active' => request()->is('application-status') || request()->is('application-status/*') ? 'active' : '',
                                 'permission' => 'permohonan.senarai.list',
                             ],
-                            // [
-                            //     'icon' => 'list',
-                            //     'text' => trans('app.list_of_application'),
-                            //     'route' =>  url('user-approve'),
-                            //     'menu_active' =>  request()->is('user-approve') || request()->is('user-approve/*') ? 'active' : '',
-                            //     'permission' => 'applications.view-list',
-                            // ],
                             [
                                 'icon' => 'list',
                                 'text' => 'Permohonan Yang Diluluskan',
@@ -2294,7 +2150,6 @@ if(! function_exists('getMenus')){
     }
     else{
         
-        // dd($user);
         $menus=[];
     }
         return $menus;

@@ -211,8 +211,8 @@
                 <!-- Filter Section -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <div class="row search-row align-items-center g-2 mb-3">
-                            <div class="col-lg-12 col-md-12 g-2 mb-3 d-flex justify-content-end">
+                        <div class="row search-row align-items-center g-2 mb-3" style="display:none;">
+                            <div class="col-lg-12 col-md-12 g-2 mb-3 d-flex justify-content-end" >
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal"><i
                                         class="fa fa-plus"></i> @lang('app.add_role')</button>
                             </div>
