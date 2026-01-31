@@ -1625,7 +1625,7 @@ class ThirdPartyController extends Controller
 
     public function searchFilter(Request $request)
     {
-        $title = __("app.search");
+        $title = __("Carian Resit");
         
         $divisions = DB::table('division')
             ->where('status', 1)
