@@ -66,7 +66,7 @@ class ThirdPartyController extends Controller
     public function paymentSelection(Application $application)
     {
         if (!auth('third_party')->check()) {
-            return redirect()->route('third.party.login')->with('error', 'Please login first.');
+            return redirect()->route('third.party.login')->with('error', 'Sila log masuk dahulu.');
         }
 
         $amount = 1.00;
@@ -1596,7 +1596,7 @@ class ThirdPartyController extends Controller
     {
         if (!auth('third_party')->check()) {
             return redirect()->route('third.party.login')
-                ->with('error', 'Please login first.');
+                ->with('error', 'Sila log masuk dahulu.');
         }
 
         $user = auth('third_party')->user();

@@ -26,17 +26,15 @@ class DeleteExpiredApplications extends Command
      */
     public function handle()
     {
-        // Change this value for testing
-        $timeAgo = \Carbon\Carbon::now()->subHours(2); // For testing
-        // $timeAgo = \Carbon\Carbon::now()->subDays(2); // For production
-        
-        $deletedCount = \App\Models\Application::where('status', 'approved')
+        $timeAgo = Carbon::now()->subMonths(6);
+
+        $deletedCount = Application::where('status', 'approved')
             ->where('updated_at', '<=', $timeAgo)
             ->whereDoesntHave('payment')
             ->delete();
 
         $this->info("Deleted {$deletedCount} expired application(s).");
-        
+
         return 0;
     }
 }
