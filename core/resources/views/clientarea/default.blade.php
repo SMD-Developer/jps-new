@@ -1149,7 +1149,7 @@ body {
                         </div>
                     </div>
             
-                    <!-- District -->
+                   
                     <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="district" class="col-md-3 col-form-label">@lang('app.district'):</label>
