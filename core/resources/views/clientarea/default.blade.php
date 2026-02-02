@@ -708,7 +708,7 @@ body {
                 <!-- Add this button where you want (in navbar or main page) -->
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#thirdPartyRegisterModal">
-                        <i class="fa fa-receipt"></i> @lang('app.search_c')
+                        <i class="fa fa-receipt"></i> @lang('CARIAN RESIT')
                     </a>
                 </li>
                 <!-- <li class="nav-item">
