@@ -1754,13 +1754,9 @@ class HomeController extends Controller {
     }
         
     
-     public function developer_list(Request $request)
+    public function developer_list(Request $request)
     {
         try {
-            \Log::info('Developer List - Request Started', [
-                'user_id' => auth('admin')->id(),
-                'filters' => $request->all()
-            ]);
 
             $perPage = $request->input('per_page', 10);
             $canAdminStaffViewCustomerDetails = auth('admin')->user()->hasPermission('pemohon.view');
@@ -1775,9 +1771,6 @@ class HomeController extends Controller {
                 $isAdminOrStaff = ($roleId === '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76');
             }
 
-            \Log::info('Developer List - Building Query');
-            \DB::enableQueryLog();
-
             $query = ClientRegisterModel::with([
                 'accountType',
                 'latestApplication' => function($q) {
@@ -1791,37 +1784,31 @@ class HomeController extends Controller {
             ]);
                 
             if ($request->filled('district')) {
-                \Log::info('Developer List - Filtering by district', ['district' => $request->district]);
                 $query->whereHas('latestApplication', function($q) use ($request) {
                     $q->where('land_district', $request->district);
                 });
             }
                 
             if ($request->filled('division')) {
-                \Log::info('Developer List - Filtering by division', ['division' => $request->division]);
                 $query->whereHas('latestApplication', function($q) use ($request) {
                     $q->where('land_state', $request->division);
                 });
             }
                 
             if ($request->filled('name')) {
-                \Log::info('Developer List - Filtering by name', ['name' => $request->name]);
                 $query->where('name', 'LIKE', '%' . $request->name . '%');
             }
                 
             if ($request->filled('reg_no')) {
-                \Log::info('Developer List - Filtering by reg_no', ['reg_no' => $request->reg_no]);
                 $query->where('registration_no', 'LIKE', '%' . $request->reg_no . '%');
             }
                 
             if ($request->filled('account_type')) {
-                \Log::info('Developer List - Filtering by account_type', ['account_type' => $request->account_type]);
                 $query->where('accountType', $request->account_type);
             }
 
             if ($request->filled('search')) {
                 $searchTerm = $request->search;
-                \Log::info('Developer List - Filtering by search', ['search' => $searchTerm]);
                 $query->where(function($q) use ($searchTerm) {
                     $q->where('userName', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('registeredAddress', 'LIKE', '%' . $searchTerm . '%')
@@ -1832,10 +1819,6 @@ class HomeController extends Controller {
                 });
             }
 
-            \Log::info('Developer List - Executing Query', [
-                'page' => $request->input('page', 1),
-                'per_page' => $perPage
-            ]);
 
             $client_register = $query
                 ->latest('created_at')
@@ -1843,18 +1826,7 @@ class HomeController extends Controller {
                 ->appends($request->except('page'));
 
             $queries = \DB::getQueryLog();
-            \Log::info('Developer List - Queries Executed', [
-                'query_count' => count($queries),
-                'queries' => $queries
-            ]);
 
-            \Log::info('Developer List - Query Results', [
-                'total' => $client_register->total(),
-                'current_page' => $client_register->currentPage(),
-                'last_page' => $client_register->lastPage(),
-                'per_page' => $client_register->perPage(),
-                'count' => $client_register->count()
-            ]);
                 
             $district = DB::table('district')
                 ->where('stat', 1)
@@ -1863,11 +1835,6 @@ class HomeController extends Controller {
                 ->get();
 
             $account_types = DB::table('account_types')->get();
-
-            \Log::info('Developer List - Request Completed Successfully', [
-                'districts_count' => $district->count(),
-                'account_types_count' => $account_types->count()
-            ]);
                 
             return view('application.developer_list', compact(
                 'client_register',
@@ -1880,24 +1847,10 @@ class HomeController extends Controller {
                 'canAdminStaffDeleteCustomer'
             ));
 
-        } catch (\Illuminate\Database\QueryException $e) {
-            \Log::error('Developer List - Database Query Exception', [
-                'error' => $e->getMessage(),
-                'sql' => $e->getSql(),
-                'bindings' => $e->getBindings(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
+        } catch (\Illuminate\Database\QueryException $e) {  
             return back()->withErrors(['error' => 'Database error occurred. Please contact administrator.']);
             
         } catch (\Exception $e) {
-            \Log::error('Developer List - General Exception', [
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
             return back()->withErrors(['error' => 'An error occurred. Please try again later.']);
         }
     }
