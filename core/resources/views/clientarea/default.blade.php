@@ -1472,11 +1472,12 @@ body {
                     <!-- Already have account link -->
                     <div class="text-center mt-3">
                         <p>Sudah mempunyai akaun? 
-                            <a href="{{ route('third.party.login') }}">
+                            <a href="{{ route('third.party.login') }}" class="fw-bold">
                                 Log masuk disini
                             </a>
                         </p>
                     </div>
+
                 </form>
             </div>
         </div>
