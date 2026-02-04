@@ -1009,14 +1009,16 @@ class financeController extends Controller {
         $endDate = $request->input('end_date');
         $printType = $request->input('print_type');
 
+        $startDateTime = $startDate . ' 00:00:00';
+        $endDateTime = $endDate . ' 23:59:59';
+
         $payments = DB::table('payments')
             ->select(
                 DB::raw('DATE(created_at) as payment_date'),
                 DB::raw('COUNT(*) as transaction_count'),
                 DB::raw('SUM(amount) as total_amount')
             )
-            ->where('created_at', '>=', $startDate)
-            ->where('created_at', '<=', $endDate)
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
             ->where('payment_status', 'completed') 
             ->groupBy(DB::raw('DATE(created_at)'))
             ->orderBy(DB::raw('DATE(created_at)'), 'asc') 
@@ -1026,8 +1028,7 @@ class financeController extends Controller {
         $totalPayments = $payments->sum('transaction_count');
 
         $detailedPayments = DB::table('payments')
-            ->where('created_at', '>=', $startDate)
-            ->where('created_at', '<=', $endDate)
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
             ->where('payment_status', 'completed')
             ->get();
 
