@@ -1757,94 +1757,82 @@ class HomeController extends Controller {
     public function developer_list(Request $request)
     {
         $perPage = $request->input('per_page', 10);
-        $user = auth('admin')->user();
-        
-        $canAdminStaffViewCustomerDetails = $user->hasPermission('pemohon.view');
-        $canAdminStaffEditCustomerDetails = $user->hasPermission('pemohon.edit');
-        $canAdminStaffDeleteCustomer = $user->hasPermission('pemohon.delete');
-        $isAdminOrStaff = $user->role_id === '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76';
+        $canAdminStaffViewCustomerDetails = auth('admin')->user()->hasPermission('pemohon.view');
+        $canAdminStaffEditCustomerDetails = auth('admin')->user()->hasPermission('pemohon.edit');
+        $canAdminStaffDeleteCustomer = auth('admin')->user()->hasPermission('pemohon.delete');
 
-        // Build optimized query with minimal joins
-        $query = DB::table('client_register as cr')
-            ->select(
-                'cr.id',
-                'cr.client_id',
-                'cr.created_at',
-                'cr.userName',
-                'cr.registeredAddress',
-                'cr.accountType',
-                'at.name as account_type_name'
-            )
-            ->join('account_types as at', 'cr.accountType', '=', 'at.id');
-
-        // Apply filters
-        $this->applyFilters($query, $request);
-
-        // Use cursor pagination for better performance
-        if ($request->has('cursor')) {
-            // Cursor-based pagination
-            $client_register = $query
-                ->orderBy('cr.id', 'desc')
-                ->cursorPaginate($perPage)
-                ->appends($request->except('cursor'));
-        } else {
-            // Regular pagination with limit
-            $client_register = $query
-                ->orderBy('cr.id', 'desc')
-                ->paginate($perPage)
-                ->appends($request->except('page'));
+        $isAuthenticated = auth('admin')->check();
+        $isAdminOrStaff = false;
+            
+        if ($isAuthenticated) {
+            $roleId = auth('admin')->user()->role_id;
+            $isAdminOrStaff = ($roleId === '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76');
         }
 
-        // Load related data only for current page items
-        $clientIds = $client_register->pluck('client_id')->toArray();
-        
-        // Get latest applications for current page
-        $latestApplications = DB::table('applications as a1')
-            ->select('a1.user_id', 'a1.land_district', 'a1.land_state')
-            ->join(
-                DB::raw('(SELECT user_id, MAX(created_at) as max_created FROM applications GROUP BY user_id) as a2'),
+        $query = DB::table('client_register')
+            ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
+            ->leftJoin(DB::raw('(SELECT user_id, MAX(created_at) as latest_application
+                            FROM applications
+                            GROUP BY user_id) as latest_app'), 
                 function($join) {
-                    $join->on('a1.user_id', '=', 'a2.user_id')
-                        ->on('a1.created_at', '=', 'a2.max_created');
-                }
-            )
-            ->whereIn('a1.user_id', $clientIds)
-            ->get()
-            ->keyBy('user_id');
-
-        // Get blocked status only if admin/staff and only for current page
-        $blockedStatus = [];
-        if ($isAdminOrStaff) {
-            $blockedStatus = DB::table('password_attempts')
-                ->select('client_id', DB::raw('MAX(is_admin_locked) as is_blocked'))
-                ->whereIn('client_id', $clientIds)
-                ->groupBy('client_id')
-                ->get()
-                ->keyBy('client_id');
+                    $join->on('client_register.client_id', '=', 'latest_app.user_id');
+                })
+            ->leftJoin('applications', function($join) {
+                $join->on('latest_app.user_id', '=', 'applications.user_id')
+                    ->on('latest_app.latest_application', '=', 'applications.created_at');
+            })
+            ->leftJoin(DB::raw('(SELECT client_id, MAX(is_admin_locked) as is_blocked 
+                            FROM password_attempts 
+                            GROUP BY client_id) as pa'), 
+                    'client_register.client_id', '=', 'pa.client_id')
+            ->select(
+                'client_register.*',
+                'account_types.name as account_type_name',
+                'applications.land_district',
+                'applications.land_state',
+                'pa.is_blocked'
+            );
+            
+        if ($request->has('district') && $request->district) {
+            $query->where('applications.land_district', $request->district);
+        }
+            
+        if ($request->has('division') && $request->division) {
+            $query->where('applications.land_state', $request->division);
+        }
+            
+        if ($request->has('name') && $request->name) {
+            $query->where('client_register.name', 'LIKE', '%' . $request->name . '%');
+        }
+            
+        if ($request->has('reg_no') && $request->reg_no) {
+            $query->where('client_register.registration_no', 'LIKE', '%' . $request->reg_no . '%');
+        }
+            
+        if ($request->has('account_type') && $request->account_type) {
+            $query->where('client_register.accountType', $request->account_type);
         }
 
-        // Attach related data to collection
-        $client_register->getCollection()->transform(function ($client) use ($latestApplications, $blockedStatus, $isAdminOrStaff) {
-            $client->land_district = $latestApplications[$client->client_id]->land_district ?? null;
-            $client->land_state = $latestApplications[$client->client_id]->land_state ?? null;
-            $client->is_blocked = $isAdminOrStaff && isset($blockedStatus[$client->client_id]) 
-                ? $blockedStatus[$client->client_id]->is_blocked 
-                : 0;
-            return $client;
-        });
-
-        $district = Cache::remember('district_list', 3600, function() {
-            return DB::table('district')
-                ->where('stat', 1)
-                ->where('idnegeri', 1)
-                ->orderBy('daerah_code', 'asc')
-                ->get();
-        });
-        
-        $account_types = Cache::remember('account_types', 3600, function() {
-            return DB::table('account_types')->get();
-        });
-
+        if ($request->has('search') && $request->search) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('client_register.userName', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('client_register.registeredAddress', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('account_types.name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('client_register.registration_no', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+            
+        $client_register = $query->orderBy('client_register.created_at', 'desc')
+            ->distinct() 
+            ->paginate($perPage)
+            ->appends($request->except('page'));
+            
+        $district = DB::table('district')->where('stat', 1)
+        ->where('idnegeri', 1)
+        ->orderBy('daerah_code', 'asc')->get();
+        $account_types = DB::table('account_types')->get();
+            
         return view('application.developer_list', compact(
             'client_register',
             'district',
@@ -1855,47 +1843,6 @@ class HomeController extends Controller {
             'canAdminStaffEditCustomerDetails',
             'canAdminStaffDeleteCustomer'
         ));
-    }
-
-    private function applyFilters($query, Request $request)
-    {
-        // Only join applications table if filters are applied
-        if ($request->filled('district') || $request->filled('division')) {
-            $query->leftJoin('applications as app', function($join) {
-                $join->on('cr.client_id', '=', 'app.user_id')
-                    ->whereRaw('app.created_at = (SELECT MAX(created_at) FROM applications WHERE user_id = cr.client_id)');
-            });
-
-            if ($request->filled('district')) {
-                $query->where('app.land_district', $request->district);
-            }
-            
-            if ($request->filled('division')) {
-                $query->where('app.land_state', $request->division);
-            }
-        }
-        
-        if ($request->filled('name')) {
-            $query->where('cr.userName', 'LIKE', '%' . $request->name . '%');
-        }
-        
-        if ($request->filled('reg_no')) {
-            $query->where('cr.registration_no', 'LIKE', '%' . $request->reg_no . '%');
-        }
-        
-        if ($request->filled('account_type')) {
-            $query->where('cr.accountType', $request->account_type);
-        }
-
-        if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('cr.userName', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('cr.registeredAddress', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('at.name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('cr.registration_no', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
     }
 
     public function destroy_user($id)
