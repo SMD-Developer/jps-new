@@ -1011,23 +1011,23 @@ class financeController extends Controller {
 
         $payments = DB::table('payments')
             ->select(
-                DB::raw('DATE(payment_date) as payment_date'),
+                DB::raw('DATE(created_at) as payment_date'),
                 DB::raw('COUNT(*) as transaction_count'),
                 DB::raw('SUM(amount) as total_amount')
             )
-            ->where('payment_date', '>=', $startDate)
-            ->where('payment_date', '<=', $endDate)
+            ->where('created_at', '>=', $startDate)
+            ->where('created_at', '<=', $endDate)
             ->where('payment_status', 'completed') 
-            ->groupBy(DB::raw('DATE(payment_date)'))
-            ->orderBy('payment_date', 'asc') 
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy(DB::raw('DATE(created_at)'), 'asc') 
             ->get();
 
         $totalAmount = $payments->sum('total_amount');
         $totalPayments = $payments->sum('transaction_count');
 
         $detailedPayments = DB::table('payments')
-            ->where('payment_date', '>=', $startDate)
-            ->where('payment_date', '<=', $endDate)
+            ->where('created_at', '>=', $startDate)
+            ->where('created_at', '<=', $endDate)
             ->where('payment_status', 'completed')
             ->get();
 
