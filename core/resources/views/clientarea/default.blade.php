@@ -725,6 +725,9 @@ body {
                         <a class="dropdown-item" href="{{ url('AGENSI.pdf') }}" target="_blank">
                             <i class="fa fa-file-pdf"></i> PENDAFTARAN PENGGUNA-PEMAJU DAN AGENSI
                         </a>
+                        <a class="dropdown-item" href="{{ url('MANUAL-CARIAN-RESIT.pdf') }}" target="_blank">
+                            <i class="fa fa-file-pdf"></i> MANUAL CARIAN RESIT
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item" data-bs-toggle="modal" data-bs-target="#faqModal">
