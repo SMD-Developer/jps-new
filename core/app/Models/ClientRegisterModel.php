@@ -11,9 +11,9 @@ class ClientRegisterModel extends Model
     protected $table="client_register"; 
     use Notifiable;
     
-     public function accountType()
+    public function accountType()
     {
-        return $this->belongsTo(AccountType::class, 'accountType', 'client_id'); 
+        return $this->belongsTo(\App\Models\AccountType::class, 'accountType', 'id');
     }
 
     public function applications()
@@ -28,7 +28,7 @@ class ClientRegisterModel extends Model
     
     protected $fillable=[
                         'client_id',
-                        'accountType',  //
+                        'accountType',  
                         'id_type',
                         'email',
                         'password',
@@ -38,22 +38,36 @@ class ClientRegisterModel extends Model
                         'registeredAddress',
                         'postalCode',
                         'state', 
-                        'state_id' , //
+                        'state_id' , 
                         'district', 
-                        'district_id', //
+                        'district_id', 
                         'city',
                         'mobileNumber',
                         'landline',
-                        'securityQuestion1',//
+                        'securityQuestion1',
                         'securityAnswers1',
-                        'securityQuestions2',//
+                        'securityQuestions2',
                         'securityAnswers2',
                         'terms',
                         'email_verified_at',
                         'is_email_verified'
                                      
     ];
+
+
+    public function latestApplication()
+    {
+        return $this->hasOne(Application::class, 'user_id', 'client_id')
+                    ->latest('created_at');
+    }
     
+
+    public function passwordAttempts()
+    {
+        return $this->hasMany(PasswordAttempt::class, 'client_id', 'client_id');
+    }
+
+
 }
 
 

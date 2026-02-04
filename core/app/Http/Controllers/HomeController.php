@@ -1754,95 +1754,152 @@ class HomeController extends Controller {
     }
         
     
-    public function developer_list(Request $request)
+     public function developer_list(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $canAdminStaffViewCustomerDetails = auth('admin')->user()->hasPermission('pemohon.view');
-        $canAdminStaffEditCustomerDetails = auth('admin')->user()->hasPermission('pemohon.edit');
-        $canAdminStaffDeleteCustomer = auth('admin')->user()->hasPermission('pemohon.delete');
+        try {
+            \Log::info('Developer List - Request Started', [
+                'user_id' => auth('admin')->id(),
+                'filters' => $request->all()
+            ]);
 
-        $isAuthenticated = auth('admin')->check();
-        $isAdminOrStaff = false;
-            
-        if ($isAuthenticated) {
-            $roleId = auth('admin')->user()->role_id;
-            $isAdminOrStaff = ($roleId === '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76');
-        }
+            $perPage = $request->input('per_page', 10);
+            $canAdminStaffViewCustomerDetails = auth('admin')->user()->hasPermission('pemohon.view');
+            $canAdminStaffEditCustomerDetails = auth('admin')->user()->hasPermission('pemohon.edit');
+            $canAdminStaffDeleteCustomer = auth('admin')->user()->hasPermission('pemohon.delete');
 
-        $query = DB::table('client_register')
-            ->join('account_types', 'client_register.accountType', '=', 'account_types.id')
-            ->leftJoin(DB::raw('(SELECT user_id, MAX(created_at) as latest_application
-                            FROM applications
-                            GROUP BY user_id) as latest_app'), 
-                function($join) {
-                    $join->on('client_register.client_id', '=', 'latest_app.user_id');
-                })
-            ->leftJoin('applications', function($join) {
-                $join->on('latest_app.user_id', '=', 'applications.user_id')
-                    ->on('latest_app.latest_application', '=', 'applications.created_at');
-            })
-            ->leftJoin(DB::raw('(SELECT client_id, MAX(is_admin_locked) as is_blocked 
-                            FROM password_attempts 
-                            GROUP BY client_id) as pa'), 
-                    'client_register.client_id', '=', 'pa.client_id')
-            ->select(
-                'client_register.*',
-                'account_types.name as account_type_name',
-                'applications.land_district',
-                'applications.land_state',
-                'pa.is_blocked'
-            );
-            
-        if ($request->has('district') && $request->district) {
-            $query->where('applications.land_district', $request->district);
-        }
-            
-        if ($request->has('division') && $request->division) {
-            $query->where('applications.land_state', $request->division);
-        }
-            
-        if ($request->has('name') && $request->name) {
-            $query->where('client_register.name', 'LIKE', '%' . $request->name . '%');
-        }
-            
-        if ($request->has('reg_no') && $request->reg_no) {
-            $query->where('client_register.registration_no', 'LIKE', '%' . $request->reg_no . '%');
-        }
-            
-        if ($request->has('account_type') && $request->account_type) {
-            $query->where('client_register.accountType', $request->account_type);
-        }
+            $isAuthenticated = auth('admin')->check();
+            $isAdminOrStaff = false;
+                
+            if ($isAuthenticated) {
+                $roleId = auth('admin')->user()->role_id;
+                $isAdminOrStaff = ($roleId === '5c7f11d2-7091-4d10-aaeb-a9b4e3b76a76');
+            }
 
-        if ($request->has('search') && $request->search) {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('client_register.userName', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('client_register.registeredAddress', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('account_types.name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('client_register.registration_no', 'LIKE', '%' . $searchTerm . '%');
-            });
+            \Log::info('Developer List - Building Query');
+            \DB::enableQueryLog();
+
+            $query = ClientRegisterModel::with([
+                'accountType',
+                'latestApplication' => function($q) {
+                    $q->select('user_id', 'land_district', 'land_state', 'created_at');
+                },
+                'passwordAttempts' => function($q) {
+                    $q->select('client_id', 'is_admin_locked')
+                      ->latest('is_admin_locked')
+                      ->limit(1);
+                }
+            ]);
+                
+            if ($request->filled('district')) {
+                \Log::info('Developer List - Filtering by district', ['district' => $request->district]);
+                $query->whereHas('latestApplication', function($q) use ($request) {
+                    $q->where('land_district', $request->district);
+                });
+            }
+                
+            if ($request->filled('division')) {
+                \Log::info('Developer List - Filtering by division', ['division' => $request->division]);
+                $query->whereHas('latestApplication', function($q) use ($request) {
+                    $q->where('land_state', $request->division);
+                });
+            }
+                
+            if ($request->filled('name')) {
+                \Log::info('Developer List - Filtering by name', ['name' => $request->name]);
+                $query->where('name', 'LIKE', '%' . $request->name . '%');
+            }
+                
+            if ($request->filled('reg_no')) {
+                \Log::info('Developer List - Filtering by reg_no', ['reg_no' => $request->reg_no]);
+                $query->where('registration_no', 'LIKE', '%' . $request->reg_no . '%');
+            }
+                
+            if ($request->filled('account_type')) {
+                \Log::info('Developer List - Filtering by account_type', ['account_type' => $request->account_type]);
+                $query->where('accountType', $request->account_type);
+            }
+
+            if ($request->filled('search')) {
+                $searchTerm = $request->search;
+                \Log::info('Developer List - Filtering by search', ['search' => $searchTerm]);
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('userName', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('registeredAddress', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('registration_no', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereHas('accountType', function($q2) use ($searchTerm) {
+                        $q2->where('name', 'LIKE', '%' . $searchTerm . '%');
+                    });
+                });
+            }
+
+            \Log::info('Developer List - Executing Query', [
+                'page' => $request->input('page', 1),
+                'per_page' => $perPage
+            ]);
+
+            $client_register = $query
+                ->latest('created_at')
+                ->paginate($perPage)
+                ->appends($request->except('page'));
+
+            $queries = \DB::getQueryLog();
+            \Log::info('Developer List - Queries Executed', [
+                'query_count' => count($queries),
+                'queries' => $queries
+            ]);
+
+            \Log::info('Developer List - Query Results', [
+                'total' => $client_register->total(),
+                'current_page' => $client_register->currentPage(),
+                'last_page' => $client_register->lastPage(),
+                'per_page' => $client_register->perPage(),
+                'count' => $client_register->count()
+            ]);
+                
+            $district = DB::table('district')
+                ->where('stat', 1)
+                ->where('idnegeri', 1)
+                ->orderBy('daerah_code', 'asc')
+                ->get();
+
+            $account_types = DB::table('account_types')->get();
+
+            \Log::info('Developer List - Request Completed Successfully', [
+                'districts_count' => $district->count(),
+                'account_types_count' => $account_types->count()
+            ]);
+                
+            return view('application.developer_list', compact(
+                'client_register',
+                'district',
+                'account_types',
+                'perPage',
+                'isAdminOrStaff',
+                'canAdminStaffViewCustomerDetails',
+                'canAdminStaffEditCustomerDetails',
+                'canAdminStaffDeleteCustomer'
+            ));
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            \Log::error('Developer List - Database Query Exception', [
+                'error' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()->withErrors(['error' => 'Database error occurred. Please contact administrator.']);
+            
+        } catch (\Exception $e) {
+            \Log::error('Developer List - General Exception', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()->withErrors(['error' => 'An error occurred. Please try again later.']);
         }
-            
-        $client_register = $query->orderBy('client_register.created_at', 'desc')
-            ->distinct() 
-            ->paginate($perPage)
-            ->appends($request->except('page'));
-            
-        $district = DB::table('district')->where('stat', 1)
-        ->where('idnegeri', 1)
-        ->orderBy('daerah_code', 'asc')->get();
-        $account_types = DB::table('account_types')->get();
-            
-        return view('application.developer_list', compact(
-            'client_register',
-            'district',
-            'account_types',
-            'perPage',
-            'isAdminOrStaff',
-            'canAdminStaffViewCustomerDetails',
-            'canAdminStaffEditCustomerDetails',
-            'canAdminStaffDeleteCustomer'
-        ));
     }
 
     public function destroy_user($id)
