@@ -422,6 +422,8 @@
                                         @php 
                                         $grandTotal = 0;
                                         $totalCharges = 0;
+                                        $charge = 0;
+                                        $transactionCategory = 'N/A';
                                         @endphp
                                         @foreach ($applications as $index => $application)
                                             @php
