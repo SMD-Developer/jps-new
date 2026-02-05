@@ -129,7 +129,10 @@
     <table>
         <tr>
             <td class="header">
-                <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" alt="Company Logo" class="logo" width="50%">
+                <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" 
+                    alt="Company Logo" 
+                    class="logo" 
+                    style="max-width: 200px; height: auto; display: block;">
             </td>
         </tr>
         <tr>
