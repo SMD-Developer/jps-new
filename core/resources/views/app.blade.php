@@ -226,7 +226,7 @@
                                                         <span style="color: #666;">Dihantar oleh:</span> {{ $data['sent_by'] ?? 'Unknown' }}
                                                         <br>
                                                         <span style="color: #666;">Pemohon:</span> {{ $data['applicant'] ?? 'N/A' }}
-                                                    @elseif(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_Approver')
+                                                    @elseif(isset($notification->data['type']) && $notification->data['type'] === 'forward_claim_to_approver')
                                                         <span style="color: #666;">Dihantar oleh:</span> {{ $data['sent_by'] ?? 'Unknown' }}
                                                     @else
                                                         {{ $data['applicant'] ?? ($data['user_name'] ?? 'Unknown') }}

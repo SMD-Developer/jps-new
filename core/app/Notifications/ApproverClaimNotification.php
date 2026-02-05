@@ -30,15 +30,15 @@ class ApproverClaimNotification extends Notification
     {
         $message = $this->isResent 
             ? 'Tuntutan yang ditolak telah dihantar semula untuk kelulusan oleh '
-            : 'Tuntutan baru telah dihantar untuk kelulusan oleh';
+            : 'Permohonon Tuntutan Pulang Balik Diterima Untuk Semakan';
 
         return [
             'claim_id' => $this->claim->id,
             'type' => 'forward_claim_to_approver',
             'message' => $message,
             'sent_by' => $this->senderUsername,
-            'sent_to' => $notifiable->name ?? $notifiable->username ?? $notifiable->email, // Add recipient info
-            'sent_to_id' => $notifiable->id ?? $notifiable->uuid, // Add recipient ID
+            'sent_to' => $notifiable->name ?? $notifiable->username ?? $notifiable->email, 
+            'sent_to_id' => $notifiable->id ?? $notifiable->uuid, 
             'is_resent' => $this->isResent,
             'sent_at' => now()->toDateTimeString(),
         ];
