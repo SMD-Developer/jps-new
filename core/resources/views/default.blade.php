@@ -544,6 +544,14 @@ input#captcha {
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+
+    .stick-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
 </style>
 
 </head>
@@ -631,7 +639,7 @@ input#captcha {
     </div>
     <footer>
         <div class="row">
-            <div class="col-md-12  text-center text-light pt-3" style="margin-top:125px";>
+            <div class="col-md-12  text-center text-light pt-3 stick-bottom" style="margin-top:125px";>
                 <p>Hak Cipta Terpelihara @ 2026 , Jabatan Pengairan Dan Saliran Negeri Selangor <br>
                 Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768</p>
             </div>
