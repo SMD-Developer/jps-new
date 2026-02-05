@@ -128,11 +128,11 @@
 <body>
     <table>
         <tr>
-            <td class="header">
+            <td class="header" style="text-align: center;">
                 <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" 
                     alt="Company Logo" 
                     class="logo" 
-                    style="max-width: 200px; height: auto; display: block;">
+                    style="max-width: 200px; height: auto; display: block; margin: 0 auto;">
             </td>
         </tr>
         <tr>
