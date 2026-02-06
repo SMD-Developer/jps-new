@@ -367,7 +367,7 @@ $(document).ready(function() {
             updateBankListNote(selectedMode); 
 
             if (isReprint) {
-                const newAmount = selectedMode === 'b2b' ? '10.00' : '1.00';
+                const newAmount = selectedMode === 'b2b' ? '10.00' : '10.00';
                 $('#amountDisplay').val('RM ' + newAmount);
                 $('#btnText').text('Teruskan');
                 window.currentPaymentAmount = parseFloat(newAmount);
