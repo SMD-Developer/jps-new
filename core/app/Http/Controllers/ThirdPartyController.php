@@ -1641,11 +1641,18 @@ class ThirdPartyController extends Controller
         $results = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 50);
             
 
-        if ($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_name', 'reference_number', 'application_date'])) {
-            $query = Application::query();
+            if ($request->hasAny(['lot_pt_grant', 'division', 'district', 'applicant_name', 'reference_number', 'application_date'])) {
+                $query = Application::query();
 
             if ($request->filled('lot_pt_grant')) {
-                $query->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
+                $lotSearch = preg_replace('/\b(lot|LOT|Lot)\b[\s\/]*/i', '', trim($request->lot_pt_grant));
+                $lotSearch = trim($lotSearch); // Remove any extra spaces
+                
+                if (empty($lotSearch)) {
+                    $lotSearch = $request->lot_pt_grant;
+                }
+                
+                $query->where('land_lot', 'like', '%' . $lotSearch . '%');
             }
             
             if ($request->filled('division')) {
@@ -1706,7 +1713,14 @@ class ThirdPartyController extends Controller
             $hasCondition = false;
             
             if ($request->filled('lot_pt_grant')) {
-                $q->where('land_lot', 'like', '%' . $request->lot_pt_grant . '%');
+                $lotSearch = preg_replace('/\b(lot|LOT|Lot)\b[\s\/]*/i', '', trim($request->lot_pt_grant));
+                $lotSearch = trim($lotSearch); 
+                
+                if (empty($lotSearch)) {
+                    $lotSearch = $request->lot_pt_grant;
+                }
+                
+                $q->where('land_lot', 'like', '%' . $lotSearch . '%');
                 $hasCondition = true;
             }
             
