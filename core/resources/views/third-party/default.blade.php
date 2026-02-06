@@ -758,7 +758,7 @@ body {
 
                         <!-- Forgot password -->
                         <div class="text-end mb-3">
-                            <a href="{{ url('third-party/forgot-password') }}"
+                            <a href="{{ url('carian/forgot-password') }}"
                              style="text-decoration:none; font-size:16px; color:white !important;"> 
                                 Lupa Kata Laluan ?
                             </a>
