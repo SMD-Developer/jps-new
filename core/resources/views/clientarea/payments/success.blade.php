@@ -165,6 +165,7 @@
                               ->first();
             
             $application_id = $paymentRecord->application_id ?? null;
+            $payment_type = $paymentRecord->payment_type ?? null; 
             
             // Get the application to check print_status_count
             $application = null;
@@ -199,10 +200,15 @@
             @lang('app.dashboard')
         </a>
       @else
-        <!-- Unsuccessful - Show retry options -->
-        <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
+        @if($payment_type == 'reprint')
+        <a href="{{ route('contribution_history') }}" class="btn btn-outline-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
+        @else
+              <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
+                  @lang('app.dashboard')
+              </a>
+        @endif
       @endif
       @if($transactionStatus == 'SUCCESSFUL')
         <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">

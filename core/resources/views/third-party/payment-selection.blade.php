@@ -300,7 +300,7 @@
 <script>
     $(document).ready(function() {
         const isReprint = $('input[name="payment_type"]').val() === 'reprint';
-        const paymentAmount = isReprint ? 1.00 : {{ $application->final_amount ?? 0 }};
+        const paymentAmount = isReprint ? 10.00 : {{ $application->final_amount ?? 0 }};
     
         // Payment mode selection change
         $('#paymentModeSelect').change(function() {
