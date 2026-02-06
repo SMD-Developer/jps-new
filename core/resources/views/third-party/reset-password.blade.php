@@ -703,7 +703,7 @@ body {
                 <div class="alert alert-danger">{!! session('error') !!}</div>
             @endif
 
-            <h4 class="text-center mb-4">Tetapkan Kata Laluan Baharu</h4>
+            <h4 class="text-center mb-4" style="font-size: 1.3rem !important;">Tetapkan Kata Laluan Baharu</h4>
 
             {{-- Reset Password Form --}}
             <form method="POST" action="{{ route('third.party.password.update') }}">
@@ -712,7 +712,7 @@ body {
                 <input type="hidden" name="email" value="{{ $email }}">
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">Kata Laluan Baharu</label>
+                    <label for="password" class="form-label px-2">Kata Laluan Baharu</label>
                     <div class="position-relative">
                         <input type="password" 
                             name="password" 
@@ -728,7 +728,7 @@ body {
                 </div>
 
                 <div class="mb-3">
-                    <label for="password_confirmation" class="form-label">Sahkan Kata Laluan</label>
+                    <label for="password_confirmation" class="form-label px-2">Sahkan Kata Laluan</label>
                     <div class="position-relative">
                         <input type="password" 
                             name="password_confirmation" 
