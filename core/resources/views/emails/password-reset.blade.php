@@ -11,8 +11,13 @@
 
 <body>
     <div class="container">
-        <div class="header">
-            <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" alt="Company Logo" class="logo" width="30%">
+       <div class="header">
+            <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" 
+                alt="Company Logo" 
+                class="logo" 
+                width="30%" 
+                height="auto" 
+                style="max-height: 80px;">
             <div class="title">Tetapkan Semula Kata Laluan Anda</div>
         </div>
         <div class="content">
