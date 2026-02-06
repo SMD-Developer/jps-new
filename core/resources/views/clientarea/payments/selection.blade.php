@@ -283,7 +283,7 @@
             <div class="form-row">
                 <label class="form-label">Jumlah:</label>
                 <input type="text" class="form-control" id="amountDisplay"
-                    value="RM {{ request()->get('type') === 'reprint' ? '1.00' : number_format($application->final_amount, 2) }}" 
+                    value="RM {{ request()->get('type') === 'reprint' ? '10.00' : number_format($application->final_amount, 2) }}" 
                     readonly style="background-color: #f8f9fa;">
             </div>
 
@@ -354,7 +354,7 @@
 <script>
 $(document).ready(function() {
     const isReprint = $('input[name="payment_type"]').val() === 'reprint';
-    let paymentAmount = isReprint ? 1.00 : {{ $application->final_amount ?? 0 }};
+    let paymentAmount = isReprint ? 10.00 : {{ $application->final_amount ?? 0 }};
     window.currentPaymentAmount = paymentAmount;
 
     // Payment mode selection change
@@ -367,7 +367,7 @@ $(document).ready(function() {
             updateBankListNote(selectedMode); 
 
             if (isReprint) {
-                const newAmount = selectedMode === 'b2b' ? '2.00' : '1.00';
+                const newAmount = selectedMode === 'b2b' ? '10.00' : '1.00';
                 $('#amountDisplay').val('RM ' + newAmount);
                 $('#btnText').text('Teruskan');
                 window.currentPaymentAmount = parseFloat(newAmount);

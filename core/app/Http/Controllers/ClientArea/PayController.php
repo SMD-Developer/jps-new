@@ -21,7 +21,6 @@ class PayController extends Controller
     {
         // Ensure user is authenticated before processing payment
         if (!auth('user')->check()) {
-            Log::warning('Unauthenticated user attempted to make payment');
             return redirect()->route('login')->with('error', 'Please login to proceed with payment');
         }
         
@@ -343,9 +342,7 @@ class PayController extends Controller
             $val = $this->verifySign_fpx($response_value['fpx_checkSum'], $data);
             
             if (!$val) {
-                \Log::warning('FPX Signature Verification Failed', [
-                    'checksum' => $response_value['fpx_checkSum']
-                ]);
+                
             }
             
             // Process bank list with status from API
@@ -360,17 +357,10 @@ class PayController extends Controller
             }
             
             if (empty($bank_list)) {
-                \Log::warning('FPX No Banks Found', [
-                    'bank_list_string' => $response_value['fpx_bankList']
-                ]);
                 
                 throw new \Exception("No banks found in response");
             }
             
-            \Log::info('FPX Banks Retrieved', [
-                'bank_count' => count($bank_list),
-                'msg_token' => $msgToken
-            ]);
             
             // Format the bank list with proper bank data and status
             $enhanced_bank_list = [];
@@ -401,11 +391,6 @@ class PayController extends Controller
             ];
             
         } catch(\Exception $e) {
-            \Log::error('FPX Bank List Fetch Failed', [
-                'error' => $e->getMessage(),
-                'msg_token' => $msgToken,
-                'trace' => $e->getTraceAsString()
-            ]);
             
             return [
                 'success' => false,
@@ -773,8 +758,6 @@ class PayController extends Controller
 
     public function indirect(Request $request)
 {
-    \Log::info('=== FPX Indirect Callback Started ===');
-    \Log::info('Request Data:', $request->all());
     
     $fpx_buyerBankBranch = $request->input('fpx_buyerBankBranch');
     $fpx_buyerBankId = $request->input('fpx_buyerBankId');
@@ -799,13 +782,9 @@ class PayController extends Controller
     $fpx_txnCurrency = $request->input('fpx_txnCurrency');
     $fpx_checkSum = $request->input('fpx_checkSum');
     
-    \Log::info('Seller Order No: ' . $fpx_sellerOrderNo);
-    \Log::info('Debit Auth Code: ' . $fpx_debitAuthCode);
     
     $data = $fpx_buyerBankBranch."|".$fpx_buyerBankId."|".$fpx_buyerIban."|".$fpx_buyerId."|".$fpx_buyerName."|".$fpx_creditAuthCode."|".$fpx_creditAuthNo."|".$fpx_debitAuthCode."|".$fpx_debitAuthNo."|".$fpx_fpxTxnId."|".$fpx_fpxTxnTime."|".$fpx_makerName."|".$fpx_msgToken."|".$fpx_msgType."|".$fpx_sellerExId."|".$fpx_sellerExOrderNo."|".$fpx_sellerId."|".$fpx_sellerOrderNo."|".$fpx_sellerTxnTime."|".$fpx_txnAmount."|".$fpx_txnCurrency;
     $val = $this->verifySign_fpx($fpx_checkSum, $data);
-    
-    \Log::info('Signature Verification: ' . ($val == '00' ? 'Valid' : 'Invalid'));
     
     $paymentStatus = '';
     $errorCode = '';
@@ -813,7 +792,6 @@ class PayController extends Controller
     
     // Check if this is B2B transaction (fpx_msgToken = "02")
     $isB2B = ($fpx_msgToken === '02');
-    \Log::info('Is B2B Transaction: ' . ($isB2B ? 'Yes' : 'No'));
     
     if ($fpx_debitAuthCode === '00') {
         $paymentStatus = 'completed';
@@ -834,8 +812,6 @@ class PayController extends Controller
         $statusMessage = $this->getFPXErrorMessage($fpx_debitAuthCode, $isB2B);
     }
     
-    \Log::info('Payment Status Determined: ' . $paymentStatus);
-    \Log::info('Status Message: ' . $statusMessage);
     
     try {
         $paymentRecord = DB::table('payments') 
@@ -843,23 +819,17 @@ class PayController extends Controller
             ->first();
             
         if ($paymentRecord) {
-            \Log::info('Payment Record Found:', (array) $paymentRecord);
             
             $isThirdPartyPayment = !empty($paymentRecord->third_party_id);
-            \Log::info('Is Third Party Payment: ' . ($isThirdPartyPayment ? 'Yes' : 'No'));
             
             if ($isThirdPartyPayment) {
-                \Log::info('Processing Third Party Payment');
-                \Log::info('Third Party ID: ' . $paymentRecord->third_party_id);
                 
                 if (!auth('third_party')->check() && $paymentRecord->third_party_id) {
-                    \Log::info('Third Party not authenticated, attempting login');
                     
                     $thirdPartyUser = \App\Models\ThirdPartyUser::find($paymentRecord->third_party_id);
                     
                     if ($thirdPartyUser) {
                         auth('third_party')->login($thirdPartyUser);
-                        \Log::info('Third Party User logged in successfully');
                     } else {
                         \Log::error('Third Party User not found with ID: ' . $paymentRecord->third_party_id);
                     }
@@ -867,16 +837,13 @@ class PayController extends Controller
                     \Log::info('Third Party already authenticated or no third_party_id');
                 }
             } else {
-                \Log::info('Processing Regular User Payment');
                 
                 if (!auth('user')->check() && $paymentRecord->user_id) {
-                    \Log::info('Regular User not authenticated, attempting login');
                     
                     $client = Client::where('uuid', $paymentRecord->user_id)->first();
         
                     if ($client) {
                         auth('user')->login($client);
-                        \Log::info('Client logged in successfully');
                     } else {
                         \Log::error('Client not found with UUID: ' . $paymentRecord->user_id);
                     }
@@ -886,7 +853,6 @@ class PayController extends Controller
             }
             
             // Update payment record
-            \Log::info('Updating payment record in database');
             DB::table('payments')
                 ->where('seller_order_no', $fpx_sellerOrderNo)
                 ->update([
@@ -904,18 +870,14 @@ class PayController extends Controller
                     ]),
                     'updated_at' => now()
                 ]);
-            
-            \Log::info('Payment record updated successfully');
 
             // Send notifications only for completed payments
             if ($paymentStatus === 'completed') {
-                \Log::info('Payment completed, preparing notifications');
                 
                 // REMOVED THIRD PARTY NOTIFICATION - May cause issues
                 if ($isThirdPartyPayment && $paymentRecord->third_party_id) {
                     \Log::info('Third Party Payment - Notification skipped (not implemented yet)');
                 } elseif ($paymentRecord->user_id) {
-                    \Log::info('Sending notification to regular user');
                     
                     try {
                         $client = \App\Models\Client::where('uuid', $paymentRecord->user_id)->first();
@@ -940,11 +902,7 @@ class PayController extends Controller
             
             session(['fpx_order_no' => $fpx_sellerOrderNo]);
             
-            // Redirect to appropriate success page
-            \Log::info('Preparing to show success page');
-            
             if ($isThirdPartyPayment) {
-                \Log::info('Redirecting to Third Party success page');
                 
                 return view('third-party.payments.success', compact(
                     'val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 
@@ -952,7 +910,6 @@ class PayController extends Controller
                     'fpx_txnAmount', 'errorCode', 'fpx_buyerBankBranch'
                 ));
             } else {
-                \Log::info('Redirecting to Regular User success page');
                 
                 return view('clientarea.payments.success', compact(
                     'val', 'fpx_debitAuthCode', 'fpx_sellerTxnTime', 
@@ -962,19 +919,14 @@ class PayController extends Controller
             }
             
         } else {
-            \Log::error('Payment record not found for order: ' . $fpx_sellerOrderNo);
             return redirect()->route('home')->with('error', 'Payment record not found');
         }
         
     } catch (\Exception $e) {
-        \Log::error('Exception in indirect payment processing');
-        \Log::error('Error Message: ' . $e->getMessage());
-        \Log::error('Stack Trace: ' . $e->getTraceAsString());
         
         return redirect()->route('home')->with('error', 'Payment processing failed: ' . $e->getMessage());
     }
     
-    \Log::info('=== FPX Indirect Callback Ended ===');
 }
 	
 
@@ -1334,13 +1286,6 @@ class PayController extends Controller
                             $receiptNumber = $this->generateReceiptNumber();
                             $updateData['receipt_number'] = $receiptNumber;
                             
-                            Log::info('B2B Receipt Number Generated in Status Check', [
-                                'order_no' => $orderNo,
-                                'receipt_number' => $receiptNumber,
-                                'transaction_id' => $response_value['fpx_fpxTxnId'] ?? 'N/A',
-                                'old_status' => $paymentRecord->payment_status,
-                                'new_status' => $newPaymentStatus
-                            ]);
                         }
                     }
                     
@@ -1376,10 +1321,6 @@ class PayController extends Controller
             
             
         } catch(Exception $e) {
-            \Log::error('FPX Status Inquiry Failed', [
-                'order_no' => $orderNo,
-                'error' => $e->getMessage()
-            ]);
             $ErrorCode = 'Error: ' . $e->getMessage();
         }
         
@@ -1493,7 +1434,6 @@ class PayController extends Controller
     {
         
         if (!auth('user')->check()) {
-            Log::warning('Unauthenticated user attempted to make payment');
             return redirect()->route('login')->with('error', 'Please login to proceed with payment');
         }
 
@@ -1503,7 +1443,7 @@ class PayController extends Controller
         $paymentMode = session('payment_mode');
 
         if ($isReprint) {
-            $amount = ($paymentMode === 'b2b') ? 2.00 : 1.00;
+            $amount = ($paymentMode === 'b2b') ? 10.00 : 1.00;
         } else {
             $amount = $request->get('amount', session('payment_amount', 30.00));
         }
@@ -1623,18 +1563,16 @@ class PayController extends Controller
         
          $isReprint = $request->get('type') === 'reprint';
         if ($isReprint) {
-        $application->final_amount = 1.00;
+        $application->final_amount = 10.00;
         $application->payment_type = 'reprint';
         $application->original_application_id = $applicationId; 
         
-        // Store reprint-specific data in session
         session([
             'application_id' => $applicationId, 
-            'payment_amount' => 1.00,
+            'payment_amount' => 10.00,
             'payment_type' => 'reprint'
         ]);
     } else {
-        // Store original application data in session
         session([
             'application_id' => $applicationId, 
             'payment_amount' => $application->final_amount
