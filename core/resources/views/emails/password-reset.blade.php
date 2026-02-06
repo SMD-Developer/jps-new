@@ -15,9 +15,8 @@
             <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" 
                 alt="Company Logo" 
                 class="logo" 
-                width="25%" 
                 height="auto" 
-                style="max-height: 80px;">
+                style="max-height: 90px; width: auto;">
             <div class="title">Tetapkan Semula Kata Laluan Anda</div>
         </div>
         <div class="content">
