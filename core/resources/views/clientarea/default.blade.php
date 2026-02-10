@@ -92,7 +92,7 @@ li.nav-item {
     font-family: "Poppins", sans-serif;
     font-weight: 400;
     margin: 5px 0;
-    line-height: 20px;
+    line-height: 25px;
 }
 p{
     font-size:13px;
@@ -925,7 +925,7 @@ body {
 
 <div class="container-fluid ps-0 mt-5">
         <div class="row ">
-            <div class="col-md-2 col-4 pe-0 icon-text text-center ">
+            <div class="col-md-2 col-5 pe-0 icon-text text-center ">
                 <a href="{{url('/')}}">
                     @if(get_setting_value('logo') != '')
                     <img src="{{ image_url(get_setting_value('logo')) }}" 
@@ -939,8 +939,8 @@ body {
                 </a>
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
-                <h2 class="">PORTAL e-CP (CARUMAN PARIT)</h2>
-                <h3>JPS NEGERI SELANGOR</h3>
+                <h2 class="" style="font-size: 24px;">PORTAL e-CP (CARUMAN PARIT)</h2>
+                <h3 style="font-size: 16px;">JPS NEGERI SELANGOR</h3>
             </div>
         </div>
         <div class="row fill">
