@@ -388,15 +388,11 @@ body {
             font-size: 1.83rem;
             
         }
-        .footerForMobile{
-            display: none !important;
-        }
+       
     }
 
     @media (min-width: 600px) {
-        .footerForMobile{
-            display: none !important;
-        }
+        
     }
 
     #canvas {
@@ -576,25 +572,6 @@ body {
     }
 
     @media only screen and (max-width: 600px) {
-        .heading1{
-            font-size: 13px;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-        .heading2{
-                font-size: 12px;
-        }
-        .fill{
-            margin-top: 2px;
-        }
-        .stick-bottom{
-            display: none !important;
-        }
-        .footerForMobile{
-            text-align: center;
-            color: white;
-            margin-top: 6px;
-        }
         .ecap{
             padding-inline: 0px;
         }
@@ -808,9 +785,6 @@ body {
                                 </div>
 
                             </div>
-                            <p class="footerForMobile">Hak Cipta Terpelihara @2026 , Jabatan Pengairan Dan Saliran Negeri Selangor
-                                Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768
-                            </p>
                     </footer>       
 
                 </div>
