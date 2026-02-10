@@ -588,11 +588,7 @@ body {
         .stick-bottom{
             display: none !important;
         }
-        .footerForMobile{
-            text-align: center;
-            color: white;
-            margin-top: 25em;
-        }
+  
         .ecap{
             padding-inline: 0px;
         }
@@ -606,6 +602,31 @@ body {
         }
         .h3-style{
             font-size: 16px;
+        }
+
+        body.login-page {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+ 
+        .container-fluid {
+            flex: 1; /* push footer to bottom */
+        }
+ 
+        footer {
+            margin-top: auto;
+        }
+ 
+        .footerForMobile {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.4;
+            padding: 6px 10px;
+            color: #fff;
         }
         
     } 
