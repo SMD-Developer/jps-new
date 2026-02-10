@@ -591,7 +591,7 @@ body {
         .footerForMobile{
             text-align: center;
             color: white;
-            margin-top: 6px;
+            margin-top: 25em;
         }
         .ecap{
             padding-inline: 0px;
