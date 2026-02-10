@@ -600,6 +600,13 @@ body {
                 width: 18px;
                 height: 12px;
         }
+
+        .h2-style{
+            font-size: 24px;
+        }
+        .h3-style{
+            font-size: 16px;
+        }
         
     } 
 
@@ -938,9 +945,9 @@ body {
                     @endif
                 </a>
             </div>
-            <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
-                <h2 class="" style="font-size: 24px;">PORTAL e-CP (CARUMAN PARIT)</h2>
-                <h3 style="font-size: 16px;">JPS NEGERI SELANGOR</h3>
+            <div class="col-md-10 col-7 portal icon-text ecap px-3" style="justify-content: center;">
+                <h2 class="h2-style">PORTAL e-CP (CARUMAN PARIT)</h2>
+                <h3 class="h3-style">JPS NEGERI SELANGOR</h3>
             </div>
         </div>
         <div class="row fill">
