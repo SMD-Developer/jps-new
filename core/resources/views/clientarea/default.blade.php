@@ -622,7 +622,7 @@ body {
             position: relative;
             bottom: 0;
             width: 100%;
-            top: 334px;
+            top: 40px;
             text-align: center;
             font-size: 12px;
             line-height: 1.4;
