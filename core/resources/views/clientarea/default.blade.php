@@ -574,21 +574,7 @@ body {
     }
 
     @media only screen and (max-width: 600px) {
-        .heading1{
-            font-size: 13px;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-        .heading2{
-                font-size: 12px;
-        }
-        .fill{
-            margin-top: 2px;
-        }
-        .stick-bottom{
-            display: none !important;
-        }
-  
+         
         .ecap{
             padding-inline: 0px;
         }
@@ -602,32 +588,6 @@ body {
         }
         .h3-style{
             font-size: 16px;
-        }
-
-        body.login-page {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
- 
-        .container-fluid {
-            flex: 1; /* push footer to bottom */
-        }
- 
-        footer {
-            margin-top: auto;
-        }
- 
-        .footerForMobile {
-            position: relative;
-            bottom: 0;
-            width: 100%;
-            top: 40px;
-            text-align: center;
-            font-size: 12px;
-            line-height: 1.4;
-            padding: 6px 10px;
-            color: #fff;
         }
         
     } 
@@ -1023,9 +983,6 @@ body {
             </div>
 
         </div>
-         <p class="footerForMobile">Hak Cipta Terpelihara @ 2026 , Jabatan Pengairan Dan Saliran Negeri Selangor
-             Paparan terbaik menggunakan pelayar Google Chrome dengan resolusi skrin 1280x768
-        </p>
 </footer>       
 <!-- Contact Us Modal -->
 <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
