@@ -148,7 +148,7 @@
                     <li>Setelah pembayaran dibuat, sila pastikan anda klik pada butang ”Lihat Resit” untuk mencetak resit SALINAN</li>
                     <li>Bagi Resit bayaran RM10.00, boleh didapati di Menu Pembayaran. Sila pastikan resit bayaran dicetak.</li>
                     <li>Untuk Mohon resit dan mod pembayaran B2B, resit SALINAN boleh didapati di Menu Pemohonan dalam tempoh 7-14 hari bekerja.</li>
-                    <li>Masalah Pembayaran / Resit : Sila hubungi Unit Kewangan, Bahagian Khidmat Kewangan,  JPS Negeri Selangor di talian 03-55447376 atau <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a></li>
+                    <li>Masalah Pembayaran / Resit : Sila hubungi Unit Kewangan, Bahagian Khidmat Kewangan,  JPS Negeri Selangor di talian 03-55447376 atau emal ke <a href="mailto:ecp@selangor.gov.my">ecp@selangor.gov.my</a></li>
             </div>
         </form>
 
