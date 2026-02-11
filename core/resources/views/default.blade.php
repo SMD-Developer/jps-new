@@ -602,7 +602,7 @@ input#captcha {
                 </a>    
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap" style="justify-content: center;">
-                <h2 class="">PORTAL e-CP (CARUMAN PARIT)</h2>
+                <h2 class="">PORTAL PEMBAYARAN CARUMAN PARIT (e-CP)</h2>
                 <h3>JPS NEGERI SELANGOR</h3>
             </div>
         </div>

@@ -928,7 +928,7 @@ body {
                 </a>
             </div>
             <div class="col-md-10 col-7 portal icon-text ecap px-3" style="justify-content: center;">
-                <h2 class="h2-style">PORTAL e-CP (CARUMAN PARIT)</h2>
+                <h2 class="h2-style">PORTAL PEMBAYARAN CARUMAN PARIT (e-CP)</h2>
                 <h3 class="h3-style">JPS NEGERI SELANGOR</h3>
             </div>
         </div>
