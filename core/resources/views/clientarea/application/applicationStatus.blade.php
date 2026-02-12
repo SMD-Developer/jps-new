@@ -172,6 +172,8 @@
         display: flex;
         justify-content: center;
         gap: 0.5rem;
+        flex-direction: column;
+        align-items: anchor-center;
     }
 
     .sbtnn a {
@@ -424,6 +426,9 @@
                                                                     ? trans('app.upload_deposit_receipt')
                                                                     : trans('app.please_explain_payment') }}
                                                             </a>
+                                                             <small class="text-muted d-block mt-1">
+                                                            *Sila jelaskan pembayaran dalam masa 6 bulan
+                                                            </small>
                                                         </div>
                                                     @endif
                                                 @elseif ($application->status == 'in_process')
