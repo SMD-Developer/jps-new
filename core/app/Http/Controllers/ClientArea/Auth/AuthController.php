@@ -453,21 +453,34 @@ class AuthController extends Controller {
                 
                 // Extract state data
                 $stateData = DB::table('state')->where('idnegeri', $request->state)->where('status', 1)->first();
-                $districtData = DB::table('district')->where('iddaerah', $request->district)->where('stat', 1)->first();
+                
                 
                 if (empty($stateData)) {
                     throw new \Exception('Invalid state input format. Expected ID|Name.');
                 }
-                $state_id = $stateData->idnegeri ?? '';
-                $state_name = $stateData->negeri ?? '';
-    
-                if (empty($districtData)) {
-                    throw new \Exception('Invalid district input format. Expected ID|Name.');
+
+                $state_id   = $stateData->idnegeri ?? '';
+                $state_name = $stateData->negeri   ?? '';
+
+                $isFederalTerritory = in_array($stateData->negeri_code, ['14', '15', '16']);
+
+                $district_id   = null;
+                $district_name = null;
+
+                if (!$isFederalTerritory) {
+                    $districtData = DB::table('district')
+                        ->where('iddaerah', $request->district)
+                        ->where('stat', 1)
+                        ->first();
+
+                    if (empty($districtData)) {
+                        throw new \Exception('Invalid district input format. Expected ID|Name.');
+                    }
+
+                    $district_id   = $districtData->iddaerah ?? '';
+                    $district_name = $districtData->daerah   ?? '';
                 }
-                $district_id = $districtData->iddaerah ?? '';
-                $district_name = $districtData->daerah ?? '';
     
-                // Use database transaction to ensure data consistency
                 DB::beginTransaction();
                 
                 try {
