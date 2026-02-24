@@ -292,7 +292,7 @@
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <a href="{{ route('application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                    <a href="{{ route('application_status') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box" style="background: #FBFFE0;">
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">

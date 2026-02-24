@@ -1871,7 +1871,7 @@ class HomeController extends Controller {
             
             return response()->json([
                 'success' => true,
-                'message' => 'Client deleted successfully'
+                'message' => 'Kakitangan Berjaya dipadam'
             ]);
             
         } catch (\Exception $e) {
