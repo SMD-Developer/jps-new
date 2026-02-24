@@ -296,7 +296,7 @@
                         <div class="info-box" style="background: #FBFFE0;">
                             <i class="fa fa-file-pdf-o bg-green"></i>
                             <div class="info-box-content">
-                                <span class="info-box-text text3 text-left text2">@lang('app.new_applications')</span>
+                                <span class="info-box-text text3 text-left text2">@lang('Permohonan Baru')</span>
                                 <span class="info-box-number">{{ $newapplication }}</span>
                             </div>
                         </div>

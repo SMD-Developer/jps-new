@@ -533,6 +533,9 @@
                    <div class="form-group">
                         <div class="col-md-4">
                             <label for="geran-tanah">@lang('app.land_grant') <b class="starr">*</b></label>
+                            <small class="text-muted">
+                                (Sekiranya tiada Geran Tanah, sila muat naik surat dari Pejabat Daerah dan Tanah)
+                            </small>
                         </div>
                         <div class="col-md-8">
                             <label for="land_grant" class="submit-button is-invalid">@lang('app.choose_file')</label>
