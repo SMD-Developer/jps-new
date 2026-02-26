@@ -74,6 +74,9 @@ class HomeController extends Controller {
         $newapplication = DB::table('applications')->where('status', 'pending')
         ->whereYear('created_at', '>=', 2026)
         ->count(); 
+        $totalclient = DB::table('client_register')
+        ->whereYear('created_at', 2026)
+        ->count();
         $monthapplication = DB::table('applications')
             ->whereYear('created_at', '>=', 2026)
             ->whereMonth('created_at', date('m'))
@@ -120,7 +123,8 @@ class HomeController extends Controller {
             'passed',
             'rejected',
             'applicationsByDistrict',
-            'districts'
+            'districts',
+            'totalclient'
         ));
     }
     

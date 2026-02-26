@@ -286,7 +286,7 @@
                             <i class="fa fa-users bg-aqua"></i>
                             <div class="info-box-content">
                                 <span class="info-box-text text3 text-left text1">@lang('app.new_registrations')</span>
-                                <span class="info-box-number">{{ $totalapplication }}</span>
+                                <span class="info-box-number">{{ $totalclient }}</span>
                             </div>
                         </div>
                     </a>
@@ -303,7 +303,7 @@
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <a href="{{ route('application_list') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
+                    <a href="{{ route('application_status') }}" class="info-box-link" style="text-decoration: none; color: inherit;">
                         <div class="info-box" style="background: #EEF6FF;">
                             <i class="fa fa-list-alt bg-yellow"></i>
                             <div class="info-box-content pr-0" rowspan="2">
