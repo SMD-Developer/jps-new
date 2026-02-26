@@ -299,9 +299,12 @@
                                             </td>
                                             
                                             <!-- Lot/PT -->
-                                            <td>
-                                                {{ $item->land_lot ?? '' }}{{ $item->land_lot && $item->land_area ? ', ' : '' }}{{ $item->land_area ?? '' }}{{ ($item->land_lot || $item->land_area) && $item->landDivision ? ', ' : '' }}{{ $item->landDivision->mukim ?? '' }}{{ $item->landDivision && $item->landDistrict ? ', Daerah ' : '' }}{{ $item->landDistrict->daerah ?? '' }}
-                                            </td>
+                                            <td>{{ strtoupper(collect([
+                                                $item->land_lot ?? '',
+                                                $item->land_area ?? '',
+                                                $item->landDivision->mukim ?? '',
+                                                ($item->landDistrict->daerah ?? '') ? 'DAERAH ' . ($item->landDistrict->daerah ?? '') : ''
+                                            ])->filter()->implode(', ')) }}</td>
                                             
                                             <!-- Amount -->
                                             <td>{{ number_format($item->final_amount ?? 0, 2) }}</td>
