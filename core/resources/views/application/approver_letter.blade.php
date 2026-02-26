@@ -163,7 +163,7 @@
                     <!--<p class="mb-0">: </p>-->
                     <p class="mb-0" style="white-space: nowrap;">: {{ $application->refference_no ?? 'SF/CV/1891/24' }}</p>
                     <p class="mb-0" style="white-space: nowrap;">
-                        : {{ App\Helpers\DateHelper::formatMalayDate($application->created_at) }}
+                        : {{ $application->status === 'approved' ? App\Helpers\DateHelper::formatMalayDate($application->updated_at) : '-' }}
                     </p>
                 </div>
                 <div class="col-md-2"></div>
@@ -171,16 +171,16 @@
             <div class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
-                    <p class="mb-0">{{ ucwords(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0">{{ $application->applicant}}</p>
                     <div class="row">
                         <div class="col-6">
                             <p class="mb-0 address-wrap">
-                                {{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}
+                                {{ $application->address }}
                             </p>
                        </div>
                     </div>
                     <p class="mb-0">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}, {{ ucwords(strtolower($application->daerah ?? 'N/A')) }}</p>
-                    <p class="mb-0">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }} Darul Ehsan</p>
+                    <p class="mb-0">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }}</p>
                     {{-- <p class="mb-0">{{$application->district->name}}, {{$application->state->name}}.</p> --}}
                     {{-- <p class="mb-0">Selangor Darul Ehsan.</p> --}}
                     <br>

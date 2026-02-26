@@ -30,8 +30,8 @@
                 <div class="col-md-3 text-left p-0 font-print">
                     <p class="mb-0 font-print" style="white-space: nowrap;">: {{ $application->refference_no ?? 'SF/CV/1891/24' }}</p>
                     <!--<p class="mb-0" style="white-space: nowrap;">: {{ $application->created_at ? $application->created_at->format('d M Y') : '10 hb September 2024' }}</p>-->
-                    <p class="mb-0 font-print" style="white-space: nowrap;">
-                        : {{ App\Helpers\DateHelper::formatMalayDate($application->created_at) }}
+                    <p class="mb-0" style="white-space: nowrap;">
+                        : {{ $application->status === 'approved' ? App\Helpers\DateHelper::formatMalayDate($application->updated_at) : '-' }}
                     </p>
                 </div>
                 <div class="col-md-2 font-print"></div>
@@ -39,17 +39,17 @@
             <div class="row font-print">
                 <div class="col-md-1 font-print"></div>
                 <div class="col-md-10 font-print">
-                    <p class="mb-0 font-print">{{ ucwords(strtolower($application->applicant)) }}</p>
+                    <p class="mb-0 font-print">{{ $application->applicant }}</p>
                     <div class="row font-print">
                         <div class="col-6 font-print">
                             <p class="mb-0 address-wrap font-print">
-                                {{ ucwords(strtolower(str_replace(',', ', ', $application->address))) }}
+                                {{ $application->address }}
                             </p>
-                       </div>
+                        </div>
                     </div>
 
                     <p class="mb-0 font-print">{{ ucwords(strtolower($application->city)) }}, {{ $application->postal_code }}, {{ ucwords(strtolower($application->daerah ?? 'N/A')) }}</p>
-                    <p class="mb-0 font-print">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }} Darul Ehsan</p>
+                    <p class="mb-0 font-print">{{ ucwords(strtolower($application->negeri ?? 'N/A')) }}</p>
 
                     <br>
                     <p class="font-print">Tuan,</p>
