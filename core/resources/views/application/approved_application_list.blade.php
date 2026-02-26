@@ -434,7 +434,7 @@
                                 @foreach ($approvedApplications as $item)
                                     <tr>
                                         <td>{{ ($approvedApplications->currentPage() - 1) * $approvedApplications->perPage() + $loop->iteration }}</td>
-                                        <td>{{ $item->created_at->format('d/m/Y') }}</td>
+                                        <td>{{ $item->updated_at->format('d/m/Y') }}</td>
                                         <td>{{$item->refference_no }}</td>
                                          <td>
                                                 @php
