@@ -499,8 +499,7 @@
                                             @endswitch
                                         </td>
                                         <td>{{ strtoupper($item->applicant) }}</td>
-                                        <td>{{$item->land_lot}},{{ $item->land_area }}, {{ $item->landDivision->mukim ?? '' }},Daerah
-                                                {{ $item->landDistrict->daerah ?? '' }}</td>
+                                        <td>{{ strtoupper($item->land_lot . ', ' . $item->land_area . ', ' . ($item->landDivision->mukim ?? '') . ', DAERAH ' . ($item->landDistrict->daerah ?? '')) }}</td>
                                         <td>{{number_format($item->final_amount, 2)}}</td>
 
                                         <td>

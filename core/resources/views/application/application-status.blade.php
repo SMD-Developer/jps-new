@@ -844,9 +844,7 @@
                                                 @endswitch
                                             </td>
                                             <td>{{ strtoupper($application->applicant) }}</td>
-                                            <td>{{ $application->land_lot }}, {{ $application->land_area }}, {{ $application->landDivision->mukim ?? '' }},
-                                                Daerah {{ $application->landDistrict->daerah ?? '' }}
-                                            </td>
+                                            <td>{{ strtoupper($application->land_lot . ', ' . $application->land_area . ', ' . ($application->landDivision->mukim ?? '') . ', DAERAH ' . ($application->landDistrict->daerah ?? '')) }}</td>
                                             <td>{{ $application->client ? number_format($application->final_amount, 2) : 'N/A' }}</td>  
                                             <td class="status-column">
                                                 @if ($displayStaffStatus)
