@@ -61,17 +61,15 @@
                                 <div class="label">NOMBOR RESIT</div>
                                 <div class="value">{{ $application->receipt_number }}</div>
                             </div>
-                           <div class="info-row">
+                            <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
                                 <div class="value">
                                     @php
-                                        $dateTime = $application->fpx_payment_time ?? $application->payment_date;
+                                        $dateTime = $application->fpx_payment_time ?? null;
                                         if ($dateTime) {
-                                            try {
-                                                echo \Carbon\Carbon::parse($dateTime)->format('d/m/Y h:i:s A');
-                                            } catch (\Exception $e) {
-                                                echo $dateTime;
-                                            }
+                                            echo $dateTime; 
+                                        } elseif ($application->payment_date) {
+                                            echo \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y h:i:s A');
                                         } else {
                                             echo 'N/A';
                                         }
