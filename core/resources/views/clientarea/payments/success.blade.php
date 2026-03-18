@@ -186,8 +186,9 @@
           </a>
         @else
             <a href="{{ route('original_receipts', ['application_id' => $application_id]) }}" 
-              class="btn btn-outline-primary me-2 rounded-pill px-5">
-                @lang('app.view_receipts')
+              class="btn btn-outline-primary me-2 rounded-pill px-5" 
+              style="display:none;">
+              @lang('app.view_receipts')
             </a>
         @endif
     

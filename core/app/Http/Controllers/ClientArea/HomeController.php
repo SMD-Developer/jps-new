@@ -697,7 +697,7 @@ class HomeController extends Controller {
         
          public function userReceipt($application_id)
         {
-            $application = Application::with(['payments' => function($query) {
+            $application = Application::with(['payment' => function($query) {
                     $query->where('payment_status', 'completed')
                         ->latest('created_at');
                 }])
@@ -717,7 +717,7 @@ class HomeController extends Controller {
                 abort(403, 'Unauthorized access to this receipt.');
             }
             
-            $completedPayment = $application->payments()
+            $completedPayment = $application->payment()
                 ->where('payment_status', 'completed')
                 ->latest('created_at')
                 ->first();
