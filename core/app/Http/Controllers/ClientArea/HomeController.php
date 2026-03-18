@@ -695,20 +695,15 @@ class HomeController extends Controller {
        }
 		
         
-        public function userReceipt($application_id)
+         public function userReceipt($application_id)
         {
-            try {
-                $application = Application::with([
-                    'payments' => function($query) {
-                        $query->where('payment_status', 'completed')
-                            ->latest('created_at');
-                    },
-                    'landDivision',
-                    'landDistrict',
-                ])
+            $application = Application::with(['payments' => function($query) {
+                    $query->where('payment_status', 'completed')
+                        ->latest('created_at');
+                }])
                 ->select(
-                    'applications.*',
-                    'state.negeri',
+                    'applications.*', 
+                    'state.negeri', 
                     'district.daerah',
                     'division.mukim as land_mukim'
                 )
@@ -717,58 +712,49 @@ class HomeController extends Controller {
                 ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
                 ->where('applications.id', $application_id)
                 ->firstOrFail();
-
-                if (auth('user')->id() !== $application->user_id) {
-                    abort(403, 'Unauthorized access to this receipt.');
-                }
-
-                $completedPayment = $application->payments
-                    ->sortByDesc('created_at')
-                    ->first();
-
-                if ($completedPayment) {
-                    $application->payment_status   = $completedPayment->payment_status;
-                    $application->payment_method   = $completedPayment->method;
-                    $application->payment_amount   = $completedPayment->amount;
-                    $application->transaction_id   = $completedPayment->transaction_id;
-                    $application->receipt_number   = $completedPayment->receipt_number;
-                    $application->payment_date     = $completedPayment->created_at;
-                    $application->gateway_response = $completedPayment->gateway_response;
-
-                    if ($completedPayment->gateway_response) {
-                        $gatewayResponse = is_array($completedPayment->gateway_response)
-                            ? $completedPayment->gateway_response
-                            : json_decode($completedPayment->gateway_response, true);
-
-                        if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
-                            $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
-
-                            $application->fpx_payment_time = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
-                                ->format('d/m/Y h:i:s A');
-
-                        } elseif (isset($gatewayResponse['processed_at'])) {
-                            $application->fpx_payment_time = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
-                                ->setTimezone('Asia/Kuala_Lumpur')
-                                ->format('d/m/Y h:i:s A');
-                        }
+                
+            if (auth('user')->id() !== $application->user_id) {
+                abort(403, 'Unauthorized access to this receipt.');
+            }
+            
+            $completedPayment = $application->payments()
+                ->where('payment_status', 'completed')
+                ->latest('created_at')
+                ->first();
+            
+            if ($completedPayment) {
+                $application->payment_status = $completedPayment->payment_status;
+                $application->payment_method = $completedPayment->method;
+                $application->payment_amount = $completedPayment->amount;
+                $application->transaction_id = $completedPayment->transaction_id;
+                $application->receipt_number = $completedPayment->receipt_number;
+                $application->payment_date = $completedPayment->created_at;
+                $application->gateway_response = $completedPayment->gateway_response;
+                
+                if ($completedPayment->gateway_response) {
+                    $gatewayResponse = is_array($completedPayment->gateway_response) 
+                        ? $completedPayment->gateway_response 
+                        : json_decode($completedPayment->gateway_response, true);
+                        
+                    if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                        $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                        
+                        $formattedTime = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
+                            ->format('d/m/Y h:i:s A');
+                        
+                        $application->fpx_payment_time = $formattedTime;
+                    }
+                    elseif (isset($gatewayResponse['processed_at'])) {
+                        $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                            ->setTimezone('Asia/Kuala_Lumpur')
+                            ->format('d/m/Y h:i:s A');
+                        
+                        $application->fpx_payment_time = $formattedTime;
                     }
                 }
-
-                // Mark receipt as viewed
-                if ($completedPayment && is_null($completedPayment->receipt_viewed_at)) {
-                    $completedPayment->update(['receipt_viewed_at' => now()]);
-                }
-
-                return view('clientarea.application.user-receiptoriginal', compact('application'));
-
-            } catch (\Exception $e) {
-                return response()->json([
-                    'error'   => $e->getMessage(),
-                    'line'    => $e->getLine(),
-                    'file'    => $e->getFile(),
-                    'trace'   => $e->getTraceAsString(),
-                ], 500);
             }
+
+            return view('clientarea.application.user-receiptoriginal', compact('application'));
         }
         
     
