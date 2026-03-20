@@ -701,20 +701,23 @@ class HomeController extends Controller {
                 \Log::info('userReceipt called', ['application_id' => $application_id]);
 
                 // Step 1 - Fetch application
-                $application = Application::with(['payment' => function($query) {
-                        $query->where('payment_status', 'completed')
-                            ->latest('created_at');
-                    },
+                $application = Application::with([
+                        'payment' => function($query) {
+                            $query->where('payment_status', 'completed')
+                                ->latest('created_at');
+                        },
+                        'landDivision',  // ← ADDED: needed for landDivision->mukim in blade
+                        'landDistrict',  // ← ADDED: needed for landDistrict->daerah in blade
                     ])
                     ->select(
                         'applications.*', 
                         'state.negeri', 
-                        'district.daerah',
-                        'division.mukim as land_mukim'
+                        'district.daerah'
+                        // ← REMOVED: 'division.mukim as land_mukim' (using relationship instead)
                     )
                     ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
                     ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-                    ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+                    // ← REMOVED: leftJoin division (using relationship instead)
                     ->where('applications.id', $application_id)
                     ->firstOrFail();
 
@@ -722,13 +725,13 @@ class HomeController extends Controller {
 
                 // Step 2 - Auth check
                 \Log::info('Auth check', [
-                    'auth_user_id'  => auth('user')->id(),
+                    'auth_user_id'        => auth('user')->id(),
                     'application_user_id' => $application->user_id
                 ]);
 
                 if (auth('user')->id() !== $application->user_id) {
                     \Log::warning('Unauthorized access', [
-                        'auth_user_id' => auth('user')->id(),
+                        'auth_user_id'        => auth('user')->id(),
                         'application_user_id' => $application->user_id
                     ]);
                     abort(403, 'Unauthorized access to this receipt.');
@@ -745,12 +748,12 @@ class HomeController extends Controller {
                 ]);
 
                 if ($completedPayment) {
-                    $application->payment_status  = $completedPayment->payment_status;
-                    $application->payment_method  = $completedPayment->method;
-                    $application->payment_amount  = $completedPayment->amount;
-                    $application->transaction_id  = $completedPayment->transaction_id;
-                    $application->receipt_number  = $completedPayment->receipt_number;
-                    $application->payment_date    = $completedPayment->created_at;
+                    $application->payment_status   = $completedPayment->payment_status;
+                    $application->payment_method   = $completedPayment->method;
+                    $application->payment_amount   = $completedPayment->amount;  // ← blade uses payment_amount NOT final_amount
+                    $application->transaction_id   = $completedPayment->transaction_id;
+                    $application->receipt_number   = $completedPayment->receipt_number;
+                    $application->payment_date     = $completedPayment->created_at;
                     $application->gateway_response = $completedPayment->gateway_response;
 
                     // Step 4 - Gateway response parsing
@@ -759,8 +762,8 @@ class HomeController extends Controller {
                             'gateway_response' => $completedPayment->gateway_response
                         ]);
 
-                        $gatewayResponse = is_array($completedPayment->gateway_response) 
-                            ? $completedPayment->gateway_response 
+                        $gatewayResponse = is_array($completedPayment->gateway_response)
+                            ? $completedPayment->gateway_response
                             : json_decode($completedPayment->gateway_response, true);
 
                         \Log::info('Gateway response parsed', ['gatewayResponse' => $gatewayResponse]);
@@ -774,14 +777,15 @@ class HomeController extends Controller {
 
                             $application->fpx_payment_time = $formattedTime;
                             \Log::info('FPX time formatted', ['formattedTime' => $formattedTime]);
-                        }
-                        elseif (isset($gatewayResponse['processed_at'])) {
+
+                        } elseif (isset($gatewayResponse['processed_at'])) {
                             $formattedTime = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
                                 ->setTimezone('Asia/Kuala_Lumpur')
                                 ->format('d/m/Y h:i:s A');
 
                             $application->fpx_payment_time = $formattedTime;
                             \Log::info('Processed at time formatted', ['formattedTime' => $formattedTime]);
+
                         } else {
                             \Log::warning('No time field found in gateway response', [
                                 'keys' => array_keys($gatewayResponse ?? [])
@@ -801,17 +805,17 @@ class HomeController extends Controller {
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 \Log::error('Application not found', [
                     'application_id' => $application_id,
-                    'error' => $e->getMessage()
+                    'error'          => $e->getMessage()
                 ]);
                 abort(404, 'Application not found.');
 
             } catch (\Exception $e) {
                 \Log::error('userReceipt unexpected error', [
                     'application_id' => $application_id,
-                    'error'   => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'    => $e->getLine(),
-                    'trace'   => $e->getTraceAsString()
+                    'error'          => $e->getMessage(),
+                    'file'           => $e->getFile(),
+                    'line'           => $e->getLine(),
+                    'trace'          => $e->getTraceAsString()
                 ]);
                 abort(500, 'Something went wrong. Please try again.');
             }
