@@ -704,16 +704,17 @@ class HomeController extends Controller {
                 $application = Application::with(['payment' => function($query) {
                         $query->where('payment_status', 'completed')
                             ->latest('created_at');
-                    }])
+                    },
+                    'landDivision',    
+                    'landDistrict', 
+                    ])
                     ->select(
                         'applications.*', 
                         'state.negeri', 
                         'district.daerah',
-                        'division.mukim as land_mukim'
                     )
                     ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
                     ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-                    ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
                     ->where('applications.id', $application_id)
                     ->firstOrFail();
 
