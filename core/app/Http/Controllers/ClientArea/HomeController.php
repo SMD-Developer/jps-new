@@ -697,148 +697,60 @@ class HomeController extends Controller {
         
         public function userReceipt($application_id)
         {
-            \Log::info('userReceipt START', ['application_id' => $application_id, 'user_id' => auth('user')->id()]);
+            $application = Application::with(['payment' => function($query) {
+                    $query->where('payment_status', 'completed')
+                        ->latest('created_at');
+                }])
+                ->select(
+                    'applications.*', 
+                    'state.negeri', 
+                    'district.daerah',
+                    'division.mukim as land_mukim'
+                )
+                ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
+                ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
+                ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
+                ->where('applications.id', $application_id)
+                ->firstOrFail();
 
-            try {
-                $application = Application::with(['payment' => function($query) {
-                        $query->where('payment_status', 'completed')
-                            ->latest('created_at');
-                    }])
-                    ->select(
-                        'applications.*', 
-                        'state.negeri', 
-                        'district.daerah',
-                        'division.mukim as land_mukim'
-                    )
-                    ->leftJoin('state', 'applications.state', '=', 'state.idnegeri')
-                    ->leftJoin('district', 'applications.district', '=', 'district.iddaerah')
-                    ->leftJoin('division', 'applications.land_state', '=', 'division.idmukim')
-                    ->where('applications.id', $application_id)
-                    ->firstOrFail();
-
-                \Log::info('userReceipt STEP 1 - Application loaded', ['app_id' => $application->id]);
-
-            } catch (\Throwable $e) {
-                \Log::error('userReceipt FAILED at STEP 1 - Loading Application', [
-                    'message' => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'    => $e->getLine(),
-                    'sql'     => method_exists($e, 'getSql') ? $e->getSql() : 'N/A',
-                ]);
-                return response()->json(['error' => 'STEP 1 FAILED: ' . $e->getMessage()], 500);
+            if (auth('user')->id() !== $application->user_id) {
+                abort(403, 'Unauthorized access to this receipt.');
             }
 
-            try {
-                if (auth('user')->id() !== $application->user_id) {
-                    \Log::warning('userReceipt UNAUTHORIZED', [
-                        'auth_user_id' => auth('user')->id(),
-                        'app_user_id'  => $application->user_id,
-                    ]);
-                    abort(403, 'Unauthorized access to this receipt.');
-                }
+            $completedPayment = $application->payments()
+                ->where('payment_status', 'completed')
+                ->latest('created_at')
+                ->first();
 
-                \Log::info('userReceipt STEP 2 - Auth passed');
+            if ($completedPayment) {
+                $application->payment_status   = $completedPayment->payment_status;
+                $application->payment_method   = $completedPayment->method;
+                $application->payment_amount   = $completedPayment->amount;
+                $application->payment_type     = $completedPayment->payment_type;
+                $application->transaction_id   = $completedPayment->transaction_id;
+                $application->receipt_number   = $completedPayment->receipt_number;
+                $application->payment_date     = $completedPayment->created_at;
+                $application->gateway_response = $completedPayment->gateway_response;
 
-            } catch (\Throwable $e) {
-                \Log::error('userReceipt FAILED at STEP 2 - Auth Check', [
-                    'message' => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'    => $e->getLine(),
-                ]);
-                return response()->json(['error' => 'STEP 2 FAILED: ' . $e->getMessage()], 500);
-            }
+                if ($completedPayment->gateway_response) {
+                    $gatewayResponse = is_array($completedPayment->gateway_response)
+                        ? $completedPayment->gateway_response
+                        : json_decode($completedPayment->gateway_response, true);
 
-            try {
-                $completedPayment = $application->payments()
-                    ->where('payment_status', 'completed')
-                    ->latest('created_at')
-                    ->first();
+                    if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
+                        $application->fpx_payment_time = \Carbon\Carbon::createFromFormat(
+                            'YmdHis', 
+                            $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime']
+                        )->setTimezone('Asia/Kuala_Lumpur');
 
-                \Log::info('userReceipt STEP 3 - Payment query done', [
-                    'payment_found' => $completedPayment ? true : false,
-                    'payment_id'    => $completedPayment->id ?? null,
-                ]);
-
-            } catch (\Throwable $e) {
-                \Log::error('userReceipt FAILED at STEP 3 - Payment Query', [
-                    'message' => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'    => $e->getLine(),
-                ]);
-                return response()->json(['error' => 'STEP 3 FAILED: ' . $e->getMessage()], 500);
-            }
-
-            try {
-                if ($completedPayment) {
-                    $application->payment_status   = $completedPayment->payment_status;
-                    $application->payment_method   = $completedPayment->method;
-                    $application->payment_amount   = $completedPayment->amount;
-                    $application->payment_type     = $completedPayment->payment_type;
-                    $application->transaction_id   = $completedPayment->transaction_id;
-                    $application->receipt_number   = $completedPayment->receipt_number;
-                    $application->payment_date     = $completedPayment->created_at;
-                    $application->gateway_response = $completedPayment->gateway_response;
-
-                    \Log::info('userReceipt STEP 4 - Payment fields mapped');
-
-                    if ($completedPayment->gateway_response) {
-                        $gatewayResponse = is_array($completedPayment->gateway_response)
-                            ? $completedPayment->gateway_response
-                            : json_decode($completedPayment->gateway_response, true);
-
-                        \Log::info('userReceipt STEP 4a - Gateway response parsed', [
-                            'keys' => $gatewayResponse ? array_keys($gatewayResponse) : []
-                        ]);
-
-                        if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
-                            $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
-                            
-                            // Storing Carbon object - NOT formatted string
-                            $application->fpx_payment_time = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
-                                ->setTimezone('Asia/Kuala_Lumpur');
-
-                            \Log::info('userReceipt STEP 4b - FPX time set', [
-                                'fpx_time' => $application->fpx_payment_time->format('d/m/Y H:i')
-                            ]);
-
-                        } elseif (isset($gatewayResponse['processed_at'])) {
-                            
-                            // Storing Carbon object - NOT formatted string
-                            $application->fpx_payment_time = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
-                                ->setTimezone('Asia/Kuala_Lumpur');
-
-                            \Log::info('userReceipt STEP 4c - processed_at time set', [
-                                'fpx_time' => $application->fpx_payment_time->format('d/m/Y H:i')
-                            ]);
-                        }
+                    } elseif (isset($gatewayResponse['processed_at'])) {
+                        $application->fpx_payment_time = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
+                            ->setTimezone('Asia/Kuala_Lumpur');
                     }
-                } else {
-                    \Log::warning('userReceipt STEP 4 - No completed payment found', [
-                        'application_id' => $application_id
-                    ]);
                 }
-
-            } catch (\Throwable $e) {
-                \Log::error('userReceipt FAILED at STEP 4 - Mapping Payment Fields', [
-                    'message' => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'    => $e->getLine(),
-                ]);
-                return response()->json(['error' => 'STEP 4 FAILED: ' . $e->getMessage()], 500);
             }
 
-            try {
-                \Log::info('userReceipt STEP 5 - Rendering view');
-                return view('clientarea.application.user-receiptoriginal', compact('application'));
-
-            } catch (\Throwable $e) {
-                \Log::error('userReceipt FAILED at STEP 5 - Rendering View', [
-                    'message' => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'    => $e->getLine(),
-                ]);
-                return response()->json(['error' => 'STEP 5 FAILED: ' . $e->getMessage()], 500);
-            }
+            return view('clientarea.application.user-receiptoriginal', compact('application'));
         }
         
     

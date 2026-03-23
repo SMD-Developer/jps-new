@@ -157,64 +157,68 @@
       </table>
     </div>
     
-    <div class="mt-4">
-        @php
-            // Get the application_id from the payments table using fpx_sellerOrderNo
-            $paymentRecord = DB::table('payments')
-                              ->where('seller_order_no', $fpx_sellerOrderNo)
-                              ->first();
-            
-            $application_id = $paymentRecord->application_id ?? null;
-            $payment_type = $paymentRecord->payment_type ?? null; 
-            
-            // Get the application to check print_status_count
-            $application = null;
-            if ($application_id) {
-                $application = DB::table('applications')
-                                ->where('id', $application_id)
+     <div class="mt-4">
+          @php
+              $paymentRecord = DB::table('payments')
+                                ->where('seller_order_no', $fpx_sellerOrderNo)
                                 ->first();
-            }
-        @endphp
-        
-      @if($transactionStatus == 'SUCCESSFUL')
-    
-        @if($application && $application->print_status_count > 0)
-          <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
-            class="btn btn-outline-primary me-2 rounded-pill px-5">
-              @lang('app.view_receipts')
-          </a>
-        @else
-            <a href="{{ route('original_receipts', ['application_id' => $application_id]) }}" 
-              class="btn btn-outline-primary me-2 rounded-pill px-5" 
-              style="display:none;">
-              @lang('app.view_receipts')
-            </a>
-        @endif
-        <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
-            @lang('app.dashboard')
-        </a>
-      @elseif($transactionStatus == 'PENDING')
-        <a href="{{ route('pay.status') }}" class="btn btn-warning me-2" style="display:none;">Check Status</a>
-        <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
-            @lang('app.dashboard')
-        </a>
-      @else
-        @if($payment_type == 'reprint')
-        <a href="{{ route('contribution_history') }}" class="btn btn-outline-primary rounded-pill px-5">
-            @lang('app.dashboard')
-        </a>
-        @else
-              <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
+              
+              $application_id = $paymentRecord->application_id ?? null;
+              $payment_type   = $paymentRecord->payment_type ?? null; 
+              
+              $application = null;
+              if ($application_id) {
+                  $application = DB::table('applications')
+                                  ->where('id', $application_id)
+                                  ->first();
+              }
+          @endphp
+          
+          @if($transactionStatus == 'SUCCESSFUL')
+
+              {{-- View Receipts Button - always visible on success --}}
+              @if($application && $application->print_status_count > 0)
+                  {{-- Already printed before - go to copy receipt --}}
+                  <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
+                      class="btn btn-outline-primary me-2 rounded-pill px-5">
+                      @lang('app.view_receipts')
+                  </a>
+              @elseif($application_id)
+                  {{-- First time payment - go to original receipt - NO display:none --}}
+                  <a href="{{ route('original_receipts', ['application_id' => $application_id]) }}" 
+                      class="btn btn-outline-primary me-2 rounded-pill px-5">
+                      @lang('app.view_receipts')
+                  </a>
+              @endif
+
+              <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
                   @lang('app.dashboard')
               </a>
-        @endif
-      @endif
-      @if($transactionStatus == 'SUCCESSFUL')
-        <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
-            <strong>Nota:</strong> Sila klik ‘Lihat Resit’ untuk cetak resit.
-        </p>
-      @endif
-    </div>
+
+          @elseif($transactionStatus == 'PENDING')
+              <a href="{{ route('pay.status') }}" class="btn btn-warning me-2" style="display:none;">Check Status</a>
+              <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
+                  @lang('app.dashboard')
+              </a>
+
+          @else
+              @if($payment_type == 'reprint')
+                  <a href="{{ route('contribution_history') }}" class="btn btn-outline-primary rounded-pill px-5">
+                      @lang('app.dashboard')
+                  </a>
+              @else
+                  <a href="{{ route('client_application_status') }}" class="btn btn-outline-primary rounded-pill px-5">
+                      @lang('app.dashboard')
+                  </a>
+              @endif
+          @endif
+
+          @if($transactionStatus == 'SUCCESSFUL')
+              <p class="mt-3 text-muted fw-semibold" style="font-size: 14px;">
+                  <strong>Nota:</strong> Sila klik 'Lihat Resit' untuk cetak resit.
+              </p>
+          @endif
+      </div>
     
   </div>
 
