@@ -177,7 +177,6 @@
         @endphp
         
       @if($transactionStatus == 'SUCCESSFUL')
-          <a href="{{ route('pay.status') }}" class="btn btn-primary me-2" >Check Status</a>
     
         @if($application && $application->print_status_count > 0)
           <a href="{{ route('user_copy_receipt', ['id' => $application_id]) }}" 
@@ -191,7 +190,6 @@
               @lang('app.view_receipts')
             </a>
         @endif
-    
         <a href="{{ route('contribution_history') }}" class="btn btn-primary rounded-pill px-5">
             @lang('app.dashboard')
         </a>
