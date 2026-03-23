@@ -731,8 +731,8 @@ class HomeController extends Controller {
             try {
                 if (auth('user')->id() !== $application->user_id) {
                     \Log::warning('userReceipt UNAUTHORIZED', [
-                        'auth_user_id'   => auth('user')->id(),
-                        'app_user_id'    => $application->user_id,
+                        'auth_user_id' => auth('user')->id(),
+                        'app_user_id'  => $application->user_id,
                     ]);
                     abort(403, 'Unauthorized access to this receipt.');
                 }
@@ -792,17 +792,24 @@ class HomeController extends Controller {
 
                         if (isset($gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'])) {
                             $fpxTime = $gatewayResponse['fpx_response_data']['fpx_fpxTxnTime'];
+                            
+                            // Storing Carbon object - NOT formatted string
                             $application->fpx_payment_time = \Carbon\Carbon::createFromFormat('YmdHis', $fpxTime)
-                                ->format('d/m/Y h:i:s A');
+                                ->setTimezone('Asia/Kuala_Lumpur');
 
-                            \Log::info('userReceipt STEP 4b - FPX time set', ['fpx_time' => $application->fpx_payment_time]);
+                            \Log::info('userReceipt STEP 4b - FPX time set', [
+                                'fpx_time' => $application->fpx_payment_time->format('d/m/Y H:i')
+                            ]);
 
                         } elseif (isset($gatewayResponse['processed_at'])) {
+                            
+                            // Storing Carbon object - NOT formatted string
                             $application->fpx_payment_time = \Carbon\Carbon::parse($gatewayResponse['processed_at'])
-                                ->setTimezone('Asia/Kuala_Lumpur')
-                                ->format('d/m/Y h:i:s A');
+                                ->setTimezone('Asia/Kuala_Lumpur');
 
-                            \Log::info('userReceipt STEP 4c - processed_at time set');
+                            \Log::info('userReceipt STEP 4c - processed_at time set', [
+                                'fpx_time' => $application->fpx_payment_time->format('d/m/Y H:i')
+                            ]);
                         }
                     }
                 } else {

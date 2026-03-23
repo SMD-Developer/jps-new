@@ -66,8 +66,8 @@
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
                                 <div class="value">
-                                    @if($application->fpx_payment_time)
-                                        {{ \Carbon\Carbon::parse($application->fpx_payment_time)->format('d/m/Y H:i') }}
+                                     @if($application->fpx_payment_time)
+                                        {{ $application->fpx_payment_time->format('d/m/Y H:i') }}
                                     @elseif($application->payment_date)
                                         {{ \Carbon\Carbon::parse($application->payment_date)->format('d/m/Y H:i') }}
                                     @else
@@ -136,10 +136,11 @@
                                     H0161304<br>H0161304
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;" class="custome-text">
-                                       @php
-                                            $secondHalf = floor($application->payment_amount * 100 / 2) / 100;
-                                            $firstHalf = $application->payment_amount - $secondHalf;
-                                        @endphp
+                                     @php
+                                        $paymentAmount = $application->payment_amount ?? 0;
+                                        $secondHalf = floor($paymentAmount * 100 / 2) / 100;
+                                        $firstHalf = $paymentAmount - $secondHalf;
+                                    @endphp
                                         {{ number_format($firstHalf, 2) }}<br>
                                         {{ number_format($secondHalf, 2) }}
                                 </td>
@@ -189,7 +190,7 @@
                             <div class="info-row">
                                 <div class="label">RINGGIT MALAYSIA</div>
                                 <div class="value">
-                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->payment_amount)) }} SAHAJA
+                                    {{ strtoupper(\App\Helpers\NumberHelper::numberToMalayWords($application->payment_amount ?? 0)) }} SAHAJA
                                 </div>
                             </div>
                             <div class="info-row">
