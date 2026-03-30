@@ -25,7 +25,7 @@ class CheckFPXPaymentStatus extends Command
         $pendingPayments = DB::table('payments')
             ->where('payment_status', 'pending_authorization')
             ->where('method', 'FPX_B2B')
-            ->where('created_at', '>=', now()->subHours(7))
+            ->where('created_at', '>=', now()->subDays(7))
             ->get();
         
         if ($pendingPayments->isEmpty()) {
