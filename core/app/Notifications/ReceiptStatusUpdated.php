@@ -26,12 +26,11 @@ class ReceiptStatusUpdated extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Receipt Request Status Updated')
-            ->greeting('Hello ' . $notifiable->name . ',')
-            ->line('Your receipt request status has been updated.')
-            ->line('Status: ' . ucfirst($this->receipt->status))
-            ->line($this->receipt->admin_notes ? 'Notes: ' . $this->receipt->admin_notes : '')
-            ->line('Thank you.');
+            ->subject('Status Permohonan Salinan Resit')
+            ->view('emails.receipt_status', [
+                'notifiable' => $notifiable,
+                'receipt'    => $this->receipt,
+            ]);
     }
 
     public function toArray($notifiable)

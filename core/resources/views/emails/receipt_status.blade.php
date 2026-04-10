@@ -89,21 +89,23 @@
         </tr>
         <tr>
             <td class="title">
-               <strong>Permohonan Salinan Resit Diterima untuk Semakan</strong>
+               <strong>Status Permohonan Salinan Resit</strong>
             </td>
         </tr>
         <tr>
             <td class="content">  
                 <div class="details">
-                    <p>Kepada  Penyedia Kewangan,</p>
-                    <p>Dimaklumkan bahawa satu permohonan salinan resit telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
-                    <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
+                    <p>Assalamualaikum / Salam Sejahtera Pengguna yang Dihargai,</p>
+                    <p>Dimaklumkan bahawa status permohonan Salinan Resit telah diluluskan</p>
+                    <p>Sila klik menu carian di Portal Caruman Parit (e-CP) untuk mencetak resit SALINAN anda</p>
+                    <p>👉 <a href="https://ecp-jps.selangor.gov.my/login" style="color: blue;">Klik di sini untuk log masuk.</a></p>
+                    <p>Sekiranya anda memerlukan bantuan atau mempunyai sebarang pertanyaan, sila emel kepada  kami di ecp@selangor.gov.my.</p>
                 </div>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                <p>Yang benar,</p>
+                <p>Terima kasih,</p>
                 <p><strong>Portal e-CP Caruman Parit</strong></p>
             </td>
         </tr>
