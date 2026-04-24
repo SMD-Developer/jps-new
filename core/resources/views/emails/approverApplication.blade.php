@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td class="content">
-                <p>Kepada Approver</p>
+                <p>Kepada Pelulus</p>
                 <p>Dimaklumkan bahawa satu permohonan baharu telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
                 <p>Kerjasama dan perhatian tuan/puan dalam memproses permohonan ini amat dihargai.</p>
             </td>

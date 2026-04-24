@@ -55,7 +55,6 @@ class ApplicationApproverController extends Controller
         ->where('forwarded_by_admin_staff', 1)
         ->count();
         $rejected = DB::table('applications')->where('status', 'rejected')
-        ->where('forwarded_by_admin_staff', 1)
         ->count();
         
         $applicationsByDistrict = DB::table('applications')
