@@ -600,12 +600,12 @@ class AuthController extends Controller {
                             },
                         ],
             'userName' => 'string|max:255|unique:client_register,userName',
-            'mobileNumber' => 'string|max:15|unique:client_register,mobileNumber',
+            'mobileNumber' => 'string|max:15',
             'landline' => 'string|max:15|unique:client_register,landline',
         ];
 
         $messages = [
-            'mobileNumber.unique' => 'Nombor telefon bimbit ini telah berdaftar dalam sistem.',
+            // 'mobileNumber.unique' => 'Nombor telefon bimbit ini telah berdaftar dalam sistem.',
         ];
         
 
