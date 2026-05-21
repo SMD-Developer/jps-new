@@ -263,7 +263,7 @@
                                 <label for="application_reference">@lang('app.no_application_ref')</label>
                                 <input type="text" id="application_reference" name="refference_no" class="form-control"
                                     value="{{ $application->refference_no ?? '' }}" placeholder="@lang('app.no_application_ref')"
-                                    required>
+                                    required readonly>
                                 @error('refference_no')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -281,7 +281,7 @@
                                 <label for="pemohon">@lang('app.applicant') @lang('app.individual') / @lang('app.company')</label>
                                 <input type="text" id="pemohon" name="applicant" class="form-control"
                                     placeholder="@lang('app.applicant')  @lang('app.individual') / @lang('app.company')"
-                                    value="{{ $application->applicant }}">
+                                    value="{{ $application->applicant }}" readonly>
                                 @error('applicant')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -290,7 +290,7 @@
                             <div class="form-group">
                                 <label for="ssm">@lang('app.identification_card_no')</label>
                                 <input type="text" name="identities" id="ssm" class="form-control"
-                                    placeholder="@lang('app.identification_card_no')" value="{{ $application->identities }}">
+                                    placeholder="@lang('app.identification_card_no')" value="{{ $application->identities }}" readonly>
                                 @error('identities')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -298,7 +298,7 @@
 
                             <div class="form-group">
                                 <label for="alamat">@lang('app.address_of_applicant')</label>
-                                <textarea id="alamat" name="address" class="form-control" rows="4" placeholder="@lang('app.address_of_applicant')">{{ $application->address }}</textarea>
+                                <textarea id="alamat" name="address" class="form-control" rows="4" placeholder="@lang('app.address_of_applicant')" readonly>{{ $application->address }}</textarea>
                                 @error('address')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -308,7 +308,7 @@
                                 <label for="poskod">@lang('app.postal_code')</label>
                                 <input type="text" id="poskod" name="postal_code" class="form-control"
                                     placeholder="@lang('app.postal_code')" value="{{ $application->postal_code }}"
-                                    pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" readonly>
                                 @error('postal_code')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -317,7 +317,7 @@
                             <div class="form-group">
                                 <label for="bandar">@lang('app.city')</label>
                                 <input type="text" id="bandar" name="city" class="form-control"
-                                    placeholder="@lang('app.city')" value="{{ $application->city }}">
+                                    placeholder="@lang('app.city')" value="{{ $application->city }}" readonly>
                                 @error('phone')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -356,7 +356,7 @@
                             <div class="form-group">
                                 <label for="emel">@lang('app.email_address')</label>
                                 <input type="email" id="emel" name="email" class="form-control"
-                                    placeholder="@lang('app.email_address')" value="{{ $application->email }}">
+                                    placeholder="@lang('app.email_address')" value="{{ $application->email }}" readonly>
                                 @error('email')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -366,7 +366,7 @@
                                 <label for="telefon">@lang('app.telephone_no')</label>
                                 <input type="tel" id="telefon" name="phone" class="form-control"
                                     placeholder="@lang('app.telephone_no')" value="{{ $application->phone }}" pattern="[0-9]*"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" readonly>
                                 @error('phone')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -377,7 +377,7 @@
                         <h4>@lang('Maklumat Projek')</h4>
                             <div class="form-group">
                                 <label for="project_name">@lang('Nama Projek')</label>
-                                <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek">{{ $application->project_name }}</textarea>
+                                <textarea id="project_name" name="project_name" class="form-control" rows="4" placeholder="Nama Projek" readonly>{{ $application->project_name }}</textarea>
                             </div>
                     </div>
 
@@ -402,7 +402,7 @@
                         <div class="form-group">
                             <label for="lot-tanah">@lang('app.land_lot')</label>
                             <input type="text" id="lot-tanah" name="land_lot" class="form-control"
-                                placeholder="@lang('app.land_lot')" value="{{ $application->land_lot }}">
+                                placeholder="@lang('app.land_lot')" value="{{ $application->land_lot }}" readonly>
                             @error('land_lot')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -423,7 +423,7 @@
                                 </select>
                                 <input type="text" id="keluasan" name="land_area" class="form-control"
                                     placeholder="Land area" value="{{ $application->land_area }}"
-                                    oninput="validateInput(this); convertToHectare();">
+                                    oninput="validateInput(this); convertToHectare();" readonly>
                                 <span class="mx-2">=</span>
                                 <input type="text" id="hectare-display" class="form-control"
                                     placeholder="@lang('app.hectare')" readonly>
@@ -608,7 +608,7 @@
                                     <label for="land_category"
                                         class="form-label px-1"style="font-weight: bold; margin-bottom: 0;">@lang('app.land_category')</label>
                                     <select id="land_category" class="form-control form-select" name="land_category"
-                                        required>
+                                        required disabled>
                                         <option value="" disabled selected>@lang('app.please_select')</option>
                                         @foreach ($landCategories as $category)
                                             <option value="{{ $category->id }}">{{ $category->category }}</option>
