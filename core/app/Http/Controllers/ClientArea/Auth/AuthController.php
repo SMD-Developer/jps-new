@@ -372,7 +372,7 @@ class AuthController extends Controller {
                     'state'             => 'required',  
                     'district'          => $isDistrictRequired ? 'required' : 'nullable',  
                     'city'              => 'required|string|max:255',
-                    'mobileNumber'      => 'required|string|size:10|regex:/^[0-9]{10}$/|unique:client_register,mobileNumber',
+                    'mobileNumber'      => 'required|string|size:10|regex:/^[0-9]{10}$/',
                     'landline'          => 'string|min:10|unique:client_register,landline',
                     'securityQuestion1' => '',  
                     'securityAnswers1'  => 'string|max:255',
