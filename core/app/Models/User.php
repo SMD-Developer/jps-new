@@ -144,7 +144,7 @@ class User extends Authenticatable {
             public function toMail($notifiable)
             {
                 return (new MailMessage)
-                    ->subject('Reset Password Notification')
+                    ->subject('Notifikasi Tetapan Semula Kata Laluan')
                     ->view('emails.admin-password-reset', [
                         'actionUrl' => $this->url,
                         'notifiable' => $notifiable,
