@@ -12,11 +12,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" alt="Company Logo" class="logo" width="30%">
+            <img src="{{ asset('assets/images/uploads/settings/1765011938.png') }}" alt="Company Logo" class="logo" width="10%">
             <div class="title">Tetapkan Semula Kata Laluan Anda</div>
         </div>
         <div class="content">
-            <p>sayang {{ $notifiable->name ?? 'User' }},</p>
+            <p>Kepada Pengguna,</p>
             <p>Anda menerima e-mel ini kerana kami menerima permintaan tetapan semula kata laluan untuk akaun anda.</p>            <p>
                 <a href="{{ $actionUrl }}"
                     style="background-color: #3490dc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
@@ -26,8 +26,8 @@
             <p>Pautan tetapan semula kata laluan ini akan tamat tempoh {{ config('auth.passwords.users.expire') }} minit.</p>
             <p>Jika anda tidak meminta tetapan semula kata laluan, sila abaikan e-mel ini atau hubungi sokongan.</p>        </div>
         <div class="footer">
-            salam hormat,<br>
-            <strong>JPS</strong>
+            Yang benar,<br>
+            <strong>Portal e-CP Caruman Parit</strong>
         </div>
     </div>
 </body>
