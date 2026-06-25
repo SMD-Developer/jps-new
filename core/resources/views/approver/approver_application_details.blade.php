@@ -980,16 +980,8 @@
             let hectare = parseFloat(hectareInput.value) || 0;
             let discountValue = parseFloat(discountInput.value) || 0;
             let adjustmentType = adjustmentTypeSelect.value;
-            let marginPercentage = parseFloat(marginInput?.value) || 0;
-        
-            let baseAmount = rate * hectare;
-            let marginAmount = baseAmount * (marginPercentage / 100);
-            let discountAmount = adjustmentType === "percentage" ?
-                baseAmount * (discountValue / 100) : discountValue;
-            let finalAmount = Math.max(0, baseAmount + marginAmount - discountAmount);
-            let secondHalf = Math.floor(finalAmount * 100 / 2) / 100;
-            let firstHalf = finalAmount - secondHalf;
-        
+            let marginPercentage = parseFloat(marginInput?.value) || 0;       
+            
             // Get the actual calculated hectare value from the conversion
             let displayHectare = hectare;
             const inputValue = document.getElementById('keluasan').value;
@@ -1008,6 +1000,14 @@
                         break;
                 }
             }
+
+            let baseAmount = rate * displayHectare.toFixed(2);
+            let marginAmount = baseAmount * (marginPercentage / 100);
+            let discountAmount = adjustmentType === "percentage" ?
+                baseAmount * (discountValue / 100) : discountValue;
+            let finalAmount = Math.max(0, baseAmount + marginAmount - discountAmount);
+            let secondHalf = Math.floor(finalAmount * 100 / 2) / 100;
+            let firstHalf = finalAmount - secondHalf;
         
             let firstRow = document.querySelector("tbody tr:first-child");
             if (firstRow) {
