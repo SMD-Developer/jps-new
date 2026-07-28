@@ -430,8 +430,7 @@
     <div class="col-md-12 content-header">
         <h5><i class="fa fa-list"></i> {{ trans('Permohonan Baru') }}</h5>
     </div>
-    <section class="content">
-        
+    <section class="content">      
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-3">
@@ -524,6 +523,9 @@
                                 </a>
                                 <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
                                     <strong>{{ trans('app.reset') }}</strong>
+                                </a>
+                                <a href="{{ route('applications.export') }}?{{ http_build_query(request()->query()) }}" class="btn btn-success btn-sm">
+                                    Export
                                 </a>
                             </div>
                         </div>

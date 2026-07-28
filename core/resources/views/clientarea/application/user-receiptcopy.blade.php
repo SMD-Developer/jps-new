@@ -63,7 +63,15 @@
                             <div class="info-row">
                                 <div class="label">TARIKH / MASA</div>
                                 <div class="value">
-                                    {{ \Carbon\Carbon::parse($application->fpx_payment_time ?? $application->payment_date)->format('d/m/Y') }}
+                                    @php
+                                        $paymentDate = $application->fpx_payment_time ?? $application->payment_date;
+                                    @endphp
+
+                                    @if(!empty($paymentDate))
+                                        {{ \Carbon\Carbon::createFromFormat('d/m/Y h:i:s A', $paymentDate)->format('d/m/Y') }}
+                                    @else
+                                        -
+                                    @endif
                                 </div>
                             </div>
                             <div class="info-row" style="margin-bottom: 20px;">

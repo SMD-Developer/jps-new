@@ -41,6 +41,8 @@ use App\Traits\TracksApplicationViews;
 use App\Traits\LogsActivity;
 use App\Models\ActivityLog;
 use Illuminate\Validation\Rule;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class HomeController extends Controller {
     use TracksApplicationViews;
@@ -1062,7 +1064,9 @@ class HomeController extends Controller {
         return view('listapplication', compact('list', 'district', 'noResults'));
     }
     
-     public function newApplication($id,Request $request){
+    
+    public function newApplication($id,Request $request)
+    {
         $application = DB::table('applications')->where('id', $id)->first();
 
         if (!$application) {
@@ -1168,11 +1172,13 @@ class HomeController extends Controller {
             'applications' => $applications
         ]);
     }
-    public function updateApplication($id, Request $request){
-         $application = DB::table('applications')->where('id',$id)->first();
+
+    public function updateApplication($id, Request $request)
+    {
+        $application = DB::table('applications')->where('id',$id)->first();
          
-	     if (!$application) {
-        abort(404, __('app.application_not_found')); // Handle if the application doesn't exist
+	    if (!$application) {
+            abort(404, __('app.application_not_found')); // Handle if the application doesn't exist
         }
         
          $this->trackApplicationAction($id, 'edit', $request);
@@ -2034,6 +2040,89 @@ class HomeController extends Controller {
         ));     
     }
 
+    public function applicationExport(Request $request)
+    {
+        // Load outer vendor autoload
+        if (!class_exists(\Dompdf\Dompdf::class)) {
+            require_once base_path('../vendor/autoload.php');
+        }
+
+
+        $query = Application::with([
+            'client',
+            'landDistrict',
+            'landDivision',
+            'logs' => function($query) {
+                $query->orderBy('action_at', 'desc');
+            }
+        ])
+        ->whereIn('status', ['pending', 'rejected', 'returned_to_staff'])
+        ->orderBy('updated_at', 'desc');
+
+
+        // Search filter
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('refference_no', 'like', "%{$searchTerm}%")
+                ->orWhere('applicant', 'like', "%{$searchTerm}%")
+                ->orWhere('land_lot', 'like', "%{$searchTerm}%");
+            });
+        }
+
+
+        // Status filter
+        if ($request->filled('status') && $request->status != 'all') {
+            $query->where('status', $request->status);
+        }
+
+
+        // District filter
+        if ($request->filled('district')) {
+            $query->where('land_district', $request->district);
+        }
+
+
+        // Division filter
+        if ($request->filled('division')) {
+            $query->where('land_state', $request->division);
+        }
+
+
+        // Lot/PT filter
+        if ($request->filled('lot')) {
+            $query->where('land_lot', 'like', '%' . $request->lot . '%');
+        }
+
+
+        $applications = $query->get();
+
+
+        $html = view('export.applications', compact('applications'))->render();
+
+
+        $options = new \Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+
+
+        $dompdf = new \Dompdf\Dompdf($options);
+
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'landscape');
+
+        $dompdf->render();
+
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="applications.pdf"'
+            );
+    }
+
     
     
     public function paymentUpdate(Request $request, $application_id)
@@ -2451,12 +2540,12 @@ class HomeController extends Controller {
         
         return view('application.user-receiptoriginal', compact('application'));
     }
-
     
     public function adminuserReceiptCopy(){
         return view('application.user-receiptcopy');
     }
-        public function payment_report(){
+
+    public function payment_report(){
         return view('application.payment_report');
     }
     

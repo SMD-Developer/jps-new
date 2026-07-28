@@ -314,15 +314,17 @@
                                         @if (is_array($landGrantFiles) && count($landGrantFiles) > 0)
                                             <div style="display: flex; flex-direction: column; gap: 8px;">
                                                 @foreach ($landGrantFiles as $index => $filePath)
-                                                    <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
-                                                        <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
-                                                        <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
-                                                            {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
-                                                        </a>
-                                                        <span style="color: #666; font-size: 12px; margin-left: 8px;">
-                                                            ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
-                                                        </span>
-                                                    </div>
+                                                    @if(!empty($filePath))
+                                                        <div style="display: flex; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                                                            <i class="fa fa-file-pdf-o" style="color: #d32f2f; margin-right: 8px;"></i>
+                                                            <a href="{{ url($filePath) }}" target="_blank" style="flex: 1; color: #007bff; text-decoration: none;">
+                                                                {{ preg_replace('/^\d+_[a-f0-9]+_/', '', basename($filePath)) }}
+                                                            </a>                                                        
+                                                            <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                                                ({{ number_format(file_exists(public_path($filePath)) ? filesize(public_path($filePath)) / 1024 / 1024 : 0, 2) }} MB)
+                                                            </span>
+                                                        </div>
+                                                    @endif
                                                 @endforeach
                                             </div>
                                             <small style="color: #007bff; margin-top: 8px; display: block;">
