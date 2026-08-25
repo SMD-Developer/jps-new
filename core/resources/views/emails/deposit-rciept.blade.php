@@ -41,16 +41,20 @@
         }
 
         .content {
-            padding: 20px;
+            padding: 20px 20px 10px;
             font-size: 14px;
             color: #333;
         }
 
         .footer {
             text-align: left;
-            padding: 20px;
-            font-size: 12px;
-            color: #777;
+            padding: 0px 20px 20px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .footer p{
+            margin: 0px;
         }
 
         .footer-container {
@@ -78,45 +82,24 @@
         </tr>
         <tr>
             <td class="title">
-                Permohonan Diterima Untuk Semakan
+                Maklumat Pembayaran Agensi Kerajaan Diterima Untuk Semakan
             </td>
         </tr>
         <tr>
             <td class="content">
-                <p>Sayang FinanceApprover,</p>
-                <p><strong>A new deposit receipt has been submitted for review!</strong></p>
-                <p><strong>Application ID: {{ $application->id }}</strong></p>
-                <p><strong>Transaction Reference: {{ $application->transaction }}</strong></p>
-                <p><strong>Deposit Date: {{ $application->deposit_date }}</strong></p>
-                <p><strong>Applicant: {{ $application->applicant }}</strong></p>
-                <p>Please review this deposit receipt at your earliest convenience.</p>
-                <p>Payment Status: <span style="color: #FF9900; font-weight: bold;">{{ $application->payment_status }}</span></p>
-                
-                @if($application->note)
-                <p>{{ $application->note }}</p>
-                @endif
-                
-                <p style="margin-top: 20px;">
-                    <a href="{{ url('/admin/applications/' . $application->id) }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">Review Application</a>
-                </p>
+                <p>Kepada Pelulus Kewangan,</p>
+                <p>Dimaklumkan bahawa satu maklumat pembayaran dari agensi kerajaan seperti maklumat di bawah telah diterima dan sedia untuk tindakan semakan oleh pihak tuan/puan.</p>
+                <p><strong>Nama Pemohon: {{ $application->applicant }}</strong></p>
+                <p><strong>ID Permohonan: {{ $application->id }}</strong></p>
+                <p><strong>ID Transaksi: {{ $application->transaction }}</strong></p>
+                <p><strong>Tarikh Pembayaran: {{ $application->deposit_date }}</strong></p>
+                <p>Kerjasama dan perhatian tuan/puan dalam memproses pembayaran ini amat dihargai.</p>
             </td>
         </tr>
         <tr>
             <td class="footer">
-                Salam Hormat,<br>
-                <strong>JPS</strong>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer-container">
-                <h3>JOM BERHUBUNG                </h3>
-                <p>Jika anda mempunyai sebarang soalan, lawati tapak sokongan kami di <a href="https://www.jps.com">https://www.jps.com</a>,<br>
-                    hubungi kami di <a href="mailto:support@jps.com">support@jps.com</a>
-                </p>
-                <p>E-mel ini adalah sulit. Ia juga mungkin mendapat keistimewaan dari segi undang-undang. Jika anda bukan penerima, anda tidak boleh menyalin, memajukan, mendedahkan atau menggunakan mana-mana bahagian daripadanya. Jika anda tersilap menerima mesej ini, sila padamkannya dan maklumkan kepada penghantar dengan segera melalui e-mel balasan. Komunikasi Internet tidak boleh dijamin tepat pada masanya, selamat, bebas ralat atau bebas virus. Pengirim tidak menerima liabiliti untuk sebarang kesilapan atau ketinggalan.
-                </p>
-                <p>"JIMAT KERTAS - FIKIRKAN SEBELUM ANDA CETAK"</p>
-                <p>© Hak Cipta 2025. Hak Cipta Terpelihara</p>
+                <p>Yang benar,<br>
+                Portal e-CP Caruman Parit</p>
             </td>
         </tr>
     </table>

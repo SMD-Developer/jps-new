@@ -47,7 +47,7 @@ class DepositReceiptSubmitted extends Notification
     public function toMail($notifiable)
     {
             return (new MailMessage)
-            ->subject('Resit Deposit Baru Dihantar')
+            ->subject('Maklumat Pembayaran Agensi Kerajaan Diterima Untuk Semakan')
                 ->view('emails.deposit-rciept', [
                     'application' => $this->application,
                     'notifiable' => $notifiable
