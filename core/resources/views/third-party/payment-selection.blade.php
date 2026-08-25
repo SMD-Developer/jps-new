@@ -434,7 +434,7 @@
         
             if (validation.testCase.includes('2.1')) {
                 message = currentPaymentMode === 'b2c' ?
-                    'Maximum Transaction Limit Exceeded RM30000' :
+                    'Maximum Transaction Limit Exceeded RM3000000' :
                     'Maximum Transaction Limit Exceeded RM1000000';
             } else if (validation.testCase.includes('2.2')) {
                 message = currentPaymentMode === 'b2c' ?
