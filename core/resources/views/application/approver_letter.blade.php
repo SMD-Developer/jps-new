@@ -420,7 +420,8 @@
                             'Accept': 'application/json',
                         },
                         body: JSON.stringify({
-                            reason: rejectionReason
+                            reason: rejectionReason,
+                            flag: 'approver-reject',
                         })
                     })
                     .then(response => {

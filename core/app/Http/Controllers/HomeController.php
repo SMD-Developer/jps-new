@@ -1487,6 +1487,7 @@ class HomeController extends Controller {
             $application->status = 'pending';
             $application->forwarded_at = now();
             $application->forwarded_by_admin_staff = true;
+            $application->reject_flag = $request->flag;
             
             
             // Update resubmission tracking if applicable (new code)

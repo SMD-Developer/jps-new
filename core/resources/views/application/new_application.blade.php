@@ -427,7 +427,7 @@
                                 id="rejectButton"
                                 data-id="{{ $application->id }}"
                                 style="background-color: red; border-color: red; color: #fff;"
-                                @if ($application->status === 'approved') disabled @endif>
+                                @if ($application->status === 'approved' || ($application->status == 'pending' && $application->reject_flag == 'send-approver')) disabled @endif>
                                 @lang('app.reject')
                             </button>
 
@@ -435,7 +435,7 @@
                                 class="btn btn-primary btn2" 
                                 id="approveButton"
                                 data-id="{{ $application->id }}"
-                                @if ($application->status === 'approved') disabled @endif>
+                                @if ($application->status === 'approved' || ($application->status == 'pending' && $application->reject_flag == 'send-approver')) disabled @endif>
                                 @lang('app.next')
                             </button>
 

@@ -139,6 +139,7 @@
                             },
                             body: JSON.stringify({
                                 application_id: '{{ $application->id }}',
+                                flag: 'send-approver',
                             }),
                         })
                         .then(response => response.json())

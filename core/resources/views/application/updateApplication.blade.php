@@ -810,15 +810,19 @@
                     <div class="form-actions">
                         <!--<button type="submit" class="btn btn-secondary btn1" id="rejectButton">@lang('app.reject')</button>-->
                         <button class="btn btn-success btn1" onClick="window.history.back()">Kembali</button>
-                        <button type="submit" class="btn btn-primary btn2"
-                            id="updatetButton">@lang('app.update')</button>
-                        <a href="javascript:void(0);" class="btn btn-secondary btn3"
-                            onclick="confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
-                            id="generateLetterButton">
-                            @lang('app.generate_letter')
-                        </a>
+                        <button type="submit" class="btn btn-primary btn2" id="updatetButton" @if ($application->status == 'pending' && $application->reject_flag == 'send-approver') disabled @endif>@lang('app.update')</button>
+                        @if ($application->status == 'pending' && $application->reject_flag == 'send-approver')
+                            <button type="button" class="btn btn-secondary btn3" disabled>
+                                @lang('app.generate_letter')
+                            </button>
+                        @else
+                            <a href="javascript:void(0);" class="btn btn-secondary btn3"
+                                onclick="confirmNavigation('{{ route('user_letter', ['application_id' => $application->id]) }}')"
+                                id="generateLetterButton">
+                                @lang('app.generate_letter')
+                            </a>
+                        @endif
                     </div>
-
                 </div>
             </div>
         </div>

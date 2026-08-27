@@ -186,6 +186,7 @@ class ApplicationController extends Controller
             $application->rejected_at = null; 
             $application->resubmitted_at = null;
             $application->forwarded_by_admin_staff = null;
+            $application->reject_flag = $request->flag;
             
             $action = 'returned_to_staff';
             $statusTo = 'returned_to_staff';

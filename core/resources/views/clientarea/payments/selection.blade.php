@@ -597,7 +597,7 @@ $(document).ready(function() {
     function validateB2CPayment(amount, bankCode) {
         const validationRules = {
             minAmount: 1.00,
-            maxAmount: 30000.00,
+            maxAmount: 3000000.00,
             currency: 'RM'
         };
 
