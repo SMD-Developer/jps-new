@@ -36,6 +36,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use App\Models\ApplicationLog;
+use App\Services\ReceiptNumberGenerator;
 use Illuminate\Support\Facades\Log;
 use App\Traits\TracksApplicationViews;
 use App\Traits\LogsActivity;
@@ -1801,8 +1802,31 @@ class HomeController extends Controller {
             }
                 
             if ($request->filled('division')) {
-                $query->whereHas('latestApplication', function($q) use ($request) {
-                    $q->where('land_state', $request->division);
+                $divisionId = $request->division;
+                $divisionRow = DB::table('division')->where('idmukim', $divisionId)->first();
+                $divisionNames = [];
+                if ($divisionRow && $divisionRow->mukim !== null && $divisionRow->mukim !== '') {
+                    $divisionNames[] = $divisionRow->mukim;
+                    $withoutPrefix = preg_replace('/^Mukim\s+/i', '', $divisionRow->mukim);
+                    if ($withoutPrefix !== '' && strcasecmp($withoutPrefix, $divisionRow->mukim) !== 0) {
+                        $divisionNames[] = $withoutPrefix;
+                    }
+                }
+
+                $query->whereHas('latestApplication', function($q) use ($divisionId, $divisionNames) {
+                    $q->where(function ($inner) use ($divisionId, $divisionNames) {
+                        $inner->where('land_state', (string) $divisionId);
+                        foreach ($divisionNames as $divisionName) {
+                            $inner->orWhere('land_state', $divisionName);
+                        }
+                    });
+                });
+            }
+
+            if ($request->filled('lot')) {
+                $lot = $request->lot;
+                $query->whereHas('latestApplication', function($q) use ($lot) {
+                    $q->where('land_lot', 'LIKE', '%' . $lot . '%');
                 });
             }
                 
@@ -1823,7 +1847,6 @@ class HomeController extends Controller {
                 $query->where(function($q) use ($searchTerm) {
                     $q->where('userName', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('registeredAddress', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('registration_no', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhereHas('accountType', function($q2) use ($searchTerm) {
                         $q2->where('name', 'LIKE', '%' . $searchTerm . '%');
                     });
@@ -2154,26 +2177,8 @@ class HomeController extends Controller {
             $receiptNumber = trim($request->receipt_number);
             \Log::info('Using manually entered receipt number: ' . $receiptNumber);
         } else {
-            $currentDate = Carbon::now();
-            $year = $currentDate->format('y');
-            $month = $currentDate->format('m');
-            $day = $currentDate->format('d');
-
-            // UPDATED: Find the maximum sequential number from payments table globally
-            $maxSequence = \DB::select("
-                SELECT MAX(CAST(RIGHT(receipt_number, 6) AS UNSIGNED)) as max_seq 
-                FROM payments 
-                WHERE receipt_number LIKE ? 
-                AND receipt_number IS NOT NULL
-            ", [$year . 'JPSSEL%']);
-
-             $nextSequence = 1;
-                if (!empty($maxSequence) && $maxSequence[0]->max_seq) {
-                    $nextSequence = $maxSequence[0]->max_seq + 1;
-                }
-        
-                $sequentialNumber = str_pad($nextSequence, 6, '0', STR_PAD_LEFT);
-                $receiptNumber = $year . 'JPSSEL' . $month . $day . $sequentialNumber;
+            $receiptGuard = ReceiptNumberGenerator::reserve();
+            $receiptNumber = $receiptGuard->number;
         }
 
 
@@ -2268,6 +2273,10 @@ class HomeController extends Controller {
             // Common fields
             'admin_notes' => $request->admin_notes ?? null,
         ]);
+
+        if (isset($receiptGuard)) {
+            $receiptGuard->release();
+        }
 
         return response()->json([
             'success' => true,
