@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\PaymentSuccessful;
+use App\Services\ReceiptNumberGenerator;
 
 class PayController extends Controller 
 {
@@ -82,7 +83,8 @@ class PayController extends Controller
         
         $actionUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
         
-        $receiptNumber = $this->generateReceiptNumber();
+        $receiptGuard = $this->generateReceiptNumber();
+        $receiptNumber = $receiptGuard->number;
         
         // Store payment with user_id
         $this->storePaymentData([
@@ -113,6 +115,7 @@ class PayController extends Controller
             ]),
             'payment_date' => now()->toDateString()
         ]);
+        $receiptGuard->release();
         
         // Also store user_id in transaction details if needed
         $this->storeTransactionDetails([
@@ -132,29 +135,7 @@ class PayController extends Controller
     
     private function generateReceiptNumber()
     {
-        $year = date('y');
-        $month = date('m'); 
-        $day = date('d');
-        $prefix = 'JPSSEL';
-        
-        // Get the last receipt number regardless of date
-        $lastReceipt = DB::table('payments')
-            ->whereNotNull('receipt_number')
-            ->orderBy('created_at', 'desc')
-            ->first();
-        
-        $sequenceNumber = 1; // Default starting number
-        
-        if ($lastReceipt && $lastReceipt->receipt_number) {
-            // Extract the numeric portion (last 6 digits)
-            $lastSequence = (int) substr($lastReceipt->receipt_number, -6);
-            $sequenceNumber = $lastSequence + 1;
-        }
-        
-        // Format sequence with leading zeros (6 digits)
-        $formattedSequence = str_pad($sequenceNumber, 6, '0', STR_PAD_LEFT);
-        
-        return "{$year}{$prefix}{$month}{$day}{$formattedSequence}";
+        return ReceiptNumberGenerator::reserve();
     }
     
     
@@ -1280,12 +1261,13 @@ class PayController extends Controller
                     }
                     
                     // Generate receipt number for B2B transactions when completed
+                    $receiptGuard = null;
                     if ($isB2B && $newPaymentStatus === 'completed' && $statusChanged) {
                         // Check if receipt number is not already generated
                         if (empty($paymentRecord->receipt_number)) {
-                            $receiptNumber = $this->generateReceiptNumber();
+                            $receiptGuard = $this->generateReceiptNumber();
+                            $receiptNumber = $receiptGuard->number;
                             $updateData['receipt_number'] = $receiptNumber;
-                            
                         }
                     }
                     
@@ -1300,6 +1282,10 @@ class PayController extends Controller
                     DB::table('payments')
                         ->where('seller_order_no', $orderNo)
                         ->update($updateData);
+
+                    if ($receiptGuard) {
+                        $receiptGuard->release();
+                    }
                     
                     // Send email if payment is completed and status changed
                     if ($newPaymentStatus === 'completed' && $statusChanged) {

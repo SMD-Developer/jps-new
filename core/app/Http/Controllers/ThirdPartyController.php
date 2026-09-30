@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\NewReceiptRequestSubmitted;
+use App\Services\ReceiptNumberGenerator;
 
 
 
@@ -201,7 +202,8 @@ class ThirdPartyController extends Controller
         
         $actionUrl = 'https://www.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp';
         
-        $receiptNumber = $this->generateReceiptNumber('');
+        $receiptGuard = $this->generateReceiptNumber();
+        $receiptNumber = $receiptGuard->number;
         
         // Store payment data for third party
         $this->storePaymentData([
@@ -239,6 +241,7 @@ class ThirdPartyController extends Controller
             ]),
             'payment_date' => now()->toDateString()
         ]);
+        $receiptGuard->release();
         
         // Store transaction details
         $this->storeTransactionDetails([
@@ -258,29 +261,7 @@ class ThirdPartyController extends Controller
 
     private function generateReceiptNumber()
     {
-        $year = date('y');
-        $month = date('m'); 
-        $day = date('d');
-        $prefix = 'JPSSEL';
-        
-        // Get the last receipt number regardless of date
-        $lastReceipt = DB::table('payments')
-            ->whereNotNull('receipt_number')
-            ->orderBy('created_at', 'desc')
-            ->first();
-        
-        $sequenceNumber = 1; // Default starting number
-        
-        if ($lastReceipt && $lastReceipt->receipt_number) {
-            // Extract the numeric portion (last 6 digits)
-            $lastSequence = (int) substr($lastReceipt->receipt_number, -6);
-            $sequenceNumber = $lastSequence + 1;
-        }
-        
-        // Format sequence with leading zeros (6 digits)
-        $formattedSequence = str_pad($sequenceNumber, 6, '0', STR_PAD_LEFT);
-        
-        return "{$year}{$prefix}{$month}{$day}{$formattedSequence}";
+        return ReceiptNumberGenerator::reserve();
     }
     
     
@@ -1237,10 +1218,12 @@ class ThirdPartyController extends Controller
                     }
                     
                     // Generate receipt number for B2B transactions when completed
+                    $receiptGuard = null;
                     if ($isB2B && $newPaymentStatus === 'completed' && $statusChanged) {
                         // Check if receipt number is not already generated
                         if (empty($paymentRecord->receipt_number)) {
-                            $receiptNumber = $this->generateReceiptNumber();
+                            $receiptGuard = $this->generateReceiptNumber();
+                            $receiptNumber = $receiptGuard->number;
                             $updateData['receipt_number'] = $receiptNumber;
                             
                             Log::info('B2B Receipt Number Generated in Status Check', [
@@ -1264,6 +1247,10 @@ class ThirdPartyController extends Controller
                     DB::table('payments')
                         ->where('seller_order_no', $orderNo)
                         ->update($updateData);
+
+                    if ($receiptGuard) {
+                        $receiptGuard->release();
+                    }
                     
                     // Send email if payment is completed and status changed
                     if ($newPaymentStatus === 'completed' && $statusChanged) {
@@ -1365,7 +1352,8 @@ class ThirdPartyController extends Controller
         $fpx_callbackUrl = route('third.party.fpx.callback');
         $fpx_returnUrl = route('third.party.fpx.return');
         
-        $receiptNumber = $this->generateReceiptNumber();
+        $receiptGuard = $this->generateReceiptNumber();
+        $receiptNumber = $receiptGuard->number;
         
         // Store B2B payment with third_party_id - THIS IS THE FIX
         $paymentId = $this->storePaymentData([
@@ -1404,6 +1392,7 @@ class ThirdPartyController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ]);
+        $receiptGuard->release();
 
         session([
             'current_payment_id' => $paymentId,

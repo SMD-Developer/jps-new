@@ -15,6 +15,7 @@ use App\Notifications\PaymentRejectedNotification;
 use App\Models\ClientRegisterModel;
 use App\Models\Client as ClientUser ;
 use App\Models\Payment;
+use App\Services\ReceiptNumberGenerator;
 use App\Models\ReportReview;
 use Carbon\Carbon;
 
@@ -294,25 +295,8 @@ class financeController extends Controller {
             }
     
             try {
-                $currentDate = \Carbon\Carbon::now();
-                $year = $currentDate->format('y');
-                $month = $currentDate->format('m');
-                $day = $currentDate->format('d');
-    
-                  $maxSequence = \DB::select("
-                    SELECT MAX(CAST(RIGHT(receipt_number, 6) AS UNSIGNED)) as max_seq 
-                    FROM payments 
-                    WHERE receipt_number LIKE ? 
-                    AND receipt_number IS NOT NULL
-                ", [$year . 'JPSSEL%']);
-                
-                $nextSequence = 1;
-                if (!empty($maxSequence) && $maxSequence[0]->max_seq) {
-                    $nextSequence = $maxSequence[0]->max_seq + 1;
-                }
-                
-                $sequentialNumber = str_pad($nextSequence, 6, '0', STR_PAD_LEFT);
-                $receiptNumber = $year . 'JPSSEL' . $month . $day . $sequentialNumber;
+                $receiptGuard = ReceiptNumberGenerator::reserve();
+                $receiptNumber = $receiptGuard->number;
 
                   $transactionId = $application->transaction;
     
@@ -337,6 +321,7 @@ class financeController extends Controller {
                     'gateway_transaction_id' => $transactionId,
                     'payment_gateway' => 'Bank Transfer',
                 ]);
+                $receiptGuard->release();
     
                 $client = ClientRegisterModel::where('client_id', $application->user_id)->first();
                 if ($client) {

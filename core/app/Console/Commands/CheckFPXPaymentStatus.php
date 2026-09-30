@@ -12,6 +12,7 @@ use App\Models\ReceiptRequest;
 use App\Models\User;
 use App\Models\ThirdPartyUser;
 use App\Notifications\NewReceiptRequestSubmitted;
+use App\Services\ReceiptNumberGenerator;
 
 class CheckFPXPaymentStatus extends Command
 {
@@ -243,8 +244,10 @@ class CheckFPXPaymentStatus extends Command
                     $updateData['transaction_id'] = $response_value['fpx_fpxTxnId'];
                 }
                 
+                $receiptGuard = null;
                 if ($newPaymentStatus === 'completed' && empty($paymentRecord->receipt_number)) {
-                    $receiptNumber = $this->generateReceiptNumber();
+                    $receiptGuard = $this->generateReceiptNumber();
+                    $receiptNumber = $receiptGuard->number;
                     $updateData['receipt_number'] = $receiptNumber;
                 }
                 
@@ -263,6 +266,10 @@ class CheckFPXPaymentStatus extends Command
                 DB::table('payments')
                     ->where('seller_order_no', $paymentRecord->seller_order_no)
                     ->update($updateData);
+
+                if ($receiptGuard) {
+                    $receiptGuard->release();
+                }
                 
                 // ✅ Auto-submit legacy third party request (BEFORE email)
                 if ($newPaymentStatus === 'completed' && $paymentRecord->payment_type === 'third_party') {
@@ -403,26 +410,7 @@ class CheckFPXPaymentStatus extends Command
     
     private function generateReceiptNumber()
     {
-        $year = date('y');
-        $month = date('m'); 
-        $day = date('d');
-        $prefix = 'JPSSEL';
-        
-        $lastReceipt = DB::table('payments')
-            ->whereNotNull('receipt_number')
-            ->orderBy('created_at', 'desc')
-            ->first();
-        
-        $sequenceNumber = 1;
-        
-        if ($lastReceipt && $lastReceipt->receipt_number) {
-            $lastSequence = (int) substr($lastReceipt->receipt_number, -6);
-            $sequenceNumber = $lastSequence + 1;
-        }
-        
-        $formattedSequence = str_pad($sequenceNumber, 6, '0', STR_PAD_LEFT);
-        
-        return "{$year}{$prefix}{$month}{$day}{$formattedSequence}";
+        return ReceiptNumberGenerator::reserve();
     }
     
     private function getFPXErrorMessage($code, $isB2B = false) 
