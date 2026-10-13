@@ -1781,7 +1781,10 @@ class ThirdPartyController extends Controller
     {
         $application = Application::with(['payment' => function($query) {
                 $query->where('payment_status', 'completed')
-                    ->whereNull('payment_type') 
+                    ->where(function ($inner) {
+                        $inner->whereNull('payment_type')
+                            ->orWhereNotIn('payment_type', ['reprint', 'third_party']);
+                    })
                     ->oldest('created_at');
             }])
             ->select(
@@ -1808,7 +1811,10 @@ class ThirdPartyController extends Controller
         
         $completedPayment = $application->payment()
             ->where('payment_status', 'completed')
-            ->whereNull('payment_type') 
+            ->where(function ($inner) {
+                $inner->whereNull('payment_type')
+                    ->orWhereNotIn('payment_type', ['reprint', 'third_party']);
+            })
             ->oldest('created_at')
             ->first();
         
@@ -1842,6 +1848,11 @@ class ThirdPartyController extends Controller
                     
                     $application->fpx_payment_time = $formattedTime;
                 }
+            }
+
+            if (empty($application->fpx_payment_time) && $application->payment_date) {
+                $application->fpx_payment_time = \Carbon\Carbon::parse($application->payment_date)
+                    ->format('d/m/Y h:i:s A');
             }
         }
 
