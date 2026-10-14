@@ -852,6 +852,22 @@ class PayController extends Controller
                     'updated_at' => now()
                 ]);
 
+            if ($paymentStatus === 'completed' && empty($paymentRecord->receipt_number)) {
+                try {
+                    $receiptGuard = $this->generateReceiptNumber();
+                    DB::table('payments')
+                        ->where('seller_order_no', $fpx_sellerOrderNo)
+                        ->where(function ($query) {
+                            $query->whereNull('receipt_number')
+                                ->orWhere('receipt_number', '');
+                        })
+                        ->update(['receipt_number' => $receiptGuard->number]);
+                    $receiptGuard->release();
+                } catch (\Throwable $e) {
+                    \Log::error('Failed to assign receipt number on FPX return: ' . $e->getMessage());
+                }
+            }
+
             // Send notifications only for completed payments
             if ($paymentStatus === 'completed') {
                 
