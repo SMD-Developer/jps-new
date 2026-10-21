@@ -61,11 +61,11 @@
                     <p class="font-print" style="text-align:justify;">
 
                         <?php
-                            if($application->land_unit == '1'){
-                                $hectare = number_format($application->land_area/10000, 2);
-                            }else{
-                                $hectare = number_format($application->hectare, 2);
-                            }
+                            $hectare = \App\Helpers\LandHelper::displayHectare(
+                                $application->land_area,
+                                $application->land_unit,
+                                $application->hectare
+                            );
                         ?>
 
                         @if($application->appeal === 'yes' && $application->appeal_status === 'approved')

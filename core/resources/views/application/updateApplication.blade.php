@@ -1233,7 +1233,10 @@
                 }
         
                 // If everything is valid, proceed with form submission
-                const hectareValue = parseFloat($('input[name="hectare"]').val()) || 0;
+                const displayedHectare = parseFloat($('#hectare').val());
+                const hectareValue = !isNaN(displayedHectare)
+                    ? displayedHectare
+                    : (parseFloat($('input[name="hectare"]').val()) || 0);
                 const adjustmentValue = parseFloat($('input[name="adjustment_percentage"]').val()) || 0;
         
                 $('input[name="hectare"]').val(hectareValue.toFixed(2));
@@ -1659,7 +1662,7 @@
                     }
                     
                     hectareInput.value = hectares.toFixed(2);
-                    document.getElementById('hectare_input').value = hectares.toFixed(3);
+                    document.getElementById('hectare_input').value = hectares.toFixed(2);
                     
                     if (document.getElementById('hectare-display')) {
                         document.getElementById('hectare-display').value = hectares.toFixed(2);
@@ -1821,7 +1824,7 @@
                     }
                     
                     if (hectareHiddenInput) {
-                        hectareHiddenInput.value = hectares.toFixed(3);
+                        hectareHiddenInput.value = hectares.toFixed(2);
                     }
                 } else {
                     if (hectareDisplay) {
@@ -2069,7 +2072,7 @@
                 if (hectareInput) {
                     hectareInput.value = hectares.toFixed(2);
                     if (document.getElementById('hectare_input')) {
-                        document.getElementById('hectare_input').value = hectares.toFixed(3);
+                        document.getElementById('hectare_input').value = hectares.toFixed(2);
                     }
 
                     if (typeof updateAllValues === 'function') {

@@ -154,9 +154,9 @@
                     <p>Dengan segala hormatnya saya diarahkan merujuk kepada perkara tersebut di atas.</p>
                     <p style="text-align:justify;">
                         2. Berdasarkan geran tanah yang dilampirkan, keluasan tanah yang perlu di bayar ialah
-                        <b>{{ number_format($application->hectare, 2) }} hektar</b>. Oleh yang demikian pihak tuan adalah
+                        <b>{{ \App\Helpers\LandHelper::displayHectare($application->land_area, $application->land_unit, $application->hectare) }} hektar</b>. Oleh yang demikian pihak tuan adalah
                         dikehendaki membayar caruman parit ke jabatan ini <b>berjumlah RM {{ number_format($application->final_amount, 2) }}
-                            (RM {{ number_format($application->cost, 2) }} x {{ number_format($application->hectare, 2) }} hektar).
+                            (RM {{ number_format($application->cost, 2) }} x {{ \App\Helpers\LandHelper::displayHectare($application->land_area, $application->land_unit, $application->hectare) }} hektar).
                         </b>
                         <br><br>
                             3. Jabatan ini hanya akan mempertimbangkan kelulusan pelan-pelan kerja tanah dan sistem saliran di atas setelah bayaran 
